@@ -131,12 +131,12 @@
 }
 
 % ---------------------------------------------------------------------------
-% Tata letak isi: 12 pt, spasi 1,5 baris Word (20,7 pt), paragraf +6 pt,
-% indentasi baris pertama 1,27 cm.
+% Tata letak isi: 12 pt, spasi 1,5 baris Word (20,7 pt), tanpa jarak antar
+% paragraf seperti template Word 2025, indentasi baris pertama 1,27 cm.
 % ---------------------------------------------------------------------------
 \setstretch{1.43}
 \setlength{\parindent}{1.27cm}
-\setlength{\parskip}{6pt}
+\setlength{\parskip}{0pt}
 % Pedoman dan template Word tidak memenggal kata di ujung baris; kata yang
 % tidak muat dipindahkan utuh ke baris berikutnya. Nyalakan pemenggalan
 % dengan opsi class "pemenggalan".
@@ -177,19 +177,22 @@
   {\centering\bfseries\upn@fontbab}{BAB \thechapter}{0pt}{\MakeUppercase}
 \titleformat{name=\chapter,numberless}[block]
   {\centering\bfseries\upn@fontbab}{}{0pt}{\upn@kapital}
-% Dikalibrasi terhadap Pedoman hlm. 31: puncak "BAB I" +-31 mm, judul ke teks 41,6 pt.
-\titlespacing*{\chapter}{0pt}{-22.7pt}{14pt}
-\titlespacing*{name=\chapter,numberless}{0pt}{-22.7pt}{14pt}
+% Dikalibrasi terhadap Pedoman hlm. 31: puncak "BAB I" +-31 mm; judul ke teks
+% 41,4 pt (satu baris kosong) seperti template Word 2025.
+\titlespacing*{\chapter}{0pt}{-22.7pt}{21.3pt}
+\titlespacing*{name=\chapter,numberless}{0pt}{-22.7pt}{21.3pt}
 \titleformat{\section}[hang]
   {\bfseries\normalsize}{\makebox[1.27cm][l]{\thesection.}}{0pt}{}
 \titleformat{\subsection}[hang]
   {\bfseries\normalsize}{\thesubsection.}{0.5em}{}
 \titleformat{\subsubsection}[hang]
   {\bfseries\normalsize}{\thesubsubsection.}{0.5em}{}
-% Ditambah \parskip 6 pt: sebelum subbab +12 pt, sub-subbab +9 pt (Pedoman hlm. 31-38).
-\titlespacing*{\section}{0pt}{6pt}{0pt}
-\titlespacing*{\subsection}{0pt}{3pt}{0pt}
-\titlespacing*{\subsubsection}{0pt}{3pt}{0pt}
+% Sebelum judul: subbab 32,6 pt dan sub-subbab 29,6 pt antar garis dasar
+% (Pedoman hlm. 31-38). Sesudah judul tanpa jarak tambahan; kalimat pertama
+% langsung di baris berikutnya (atas permintaan dosen pembimbing).
+\titlespacing*{\section}{0pt}{12pt}{0pt}
+\titlespacing*{\subsection}{0pt}{9pt}{0pt}
+\titlespacing*{\subsubsection}{0pt}{9pt}{0pt}
 
 % ---------------------------------------------------------------------------
 % Daftar isi, gambar, tabel
@@ -291,15 +294,17 @@
   \renewcommand{\theequation}{L\arabic{lampiran}.\arabic{equation}}}
 
 % ---------------------------------------------------------------------------
-% Sampul (Pedoman 2025 hlm. 8-10): pita oranye 10-20 mm, logo 4 x 4 cm pada
-% 20 mm dari kiri dan 30 mm dari atas, pita kuning 80-85 mm, teks Arial rata
-% kiri pada 35 mm dari kiri.
+% Sampul mengikuti "template skripsi 2025.docx": tanpa pita oranye, logo
+% 3,82 cm pada 40,4 mm dari kiri dan 13 mm dari atas, pita kuning bergaris
+% tepi gelap pada 61-65 mm, teks Arial pada 39,9 mm dari kiri. Posisi diukur
+% dari PDF template tersebut (koordinat garis dasar baris pertama tiap blok).
 % ---------------------------------------------------------------------------
 \definecolor{upnoranye}{HTML}{FF914D}
-\definecolor{upnkuning}{HTML}{F4FF00}
+\definecolor{upnkuning}{HTML}{FFFF00}
+\definecolor{upntepipita}{HTML}{263953}
 
 \newcommand{\upn@labeljenis}{%
-  \ifupn@praskripsi PRA-\textbf{SKRIPSI}\else\textbf{SKRIPSI}\fi}
+  \textbf{\ifupn@praskripsi PRA-SKRIPSI\else SKRIPSI\fi}}
 
 \newcommand{\buatsampul}{%
   \clearpage
@@ -309,45 +314,42 @@
   \IfFileExists{\upn@logo}{}{%
     \ClassError{upnjatim-skripsi}{Logo tidak ditemukan: \upn@logo}{Periksa kunci logo pada metadata.tex.}}%
   \begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm,
-      shift={(current page.north west)}]
+      shift={(current page.north west)},
+      blok/.style={anchor=base west,inner sep=0pt}]
     \ifupn@sampuloranye
-      \fill[upnoranye] (0,85) rectangle (210,297);
+      \fill[upnoranye] (0,65.7) rectangle (210,297);
     \fi
-    \fill[upnoranye] (0,10) rectangle (210,20);
-    \fill[upnkuning] (0,80) rectangle (210,85);
-    \node[anchor=north west,inner sep=0pt] at (20,30)
-      {\includegraphics[width=4cm,height=4cm,keepaspectratio]{\upn@logo}};
-    \node[anchor=north west,inner sep=0pt,text width=140mm,align=left] at (35,96)
-      {\upn@fontsampul
-       \ifupn@sampuloranye\color{white}\fi
-       \setstretch{1}%
-       \hyphenpenalty=10000\exhyphenpenalty=10000
-       \setlength{\parskip}{0pt}%
-       \raggedright
-       {\fontsize{14pt}{17pt}\selectfont\upn@labeljenis\par}
-       \vspace{8mm}
-       {\fontsize{18pt}{26pt}\selectfont\bfseries\MakeUppercase{\upn@judul}\par}
-       \vspace{20mm}
-       {\fontsize{14pt}{22pt}\selectfont
-        \textbf{\MakeUppercase{\upn@nama}}\par
-        NPM \upn@npm\par
-        \vspace{11mm}
-        \textbf{DOSEN PEMBIMBING}\par
-        \fontsize{14pt}{19pt}\selectfont
-        \upn@pembimbingsatu\par
-        \ifx\upn@pembimbingdua\@empty\else\upn@pembimbingdua\par\fi}};
-    \node[anchor=north west,inner sep=0pt,text width=150mm,align=left] at (35,236)
-      {\upn@fontsampul
-       \ifupn@sampuloranye\color{white}\fi
-       \setstretch{1}%
-       \raggedright
-       \fontsize{12pt}{18.5pt}\selectfont\bfseries
+    \filldraw[fill=upnkuning,draw=upntepipita,line width=0.9mm]
+      (-2,61.25) rectangle (206.35,65.25);
+    \node[anchor=north west,inner sep=0pt] at (40.4,13)
+      {\includegraphics[width=38.2mm,keepaspectratio]{\upn@logo}};
+    \begin{scope}[every node/.append style={font=\upn@fontsampul\setstretch{1}}]
+    \ifupn@sampuloranye\color{white}\fi
+    \node[blok] at (39.86,85.36)
+      {\fontsize{14pt}{16.1pt}\selectfont\upn@labeljenis};
+    \node[blok] at (39.86,102.19)
+      {\parbox[t]{140mm}{\fontsize{18pt}{20.7pt}\selectfont\bfseries
+       \setlength{\parskip}{0pt}\hyphenpenalty=10000\exhyphenpenalty=10000
+       \tolerance=9999\emergencystretch=3em\hbadness=10000
+       \MakeUppercase{\upn@judul}\par}};
+    \node[blok] at (39.86,149.55)
+      {\parbox[t]{140mm}{\fontsize{14pt}{16.1pt}\selectfont\raggedright
+       \textbf{\MakeUppercase{\upn@nama}}\par
+       NPM \upn@npm\par}};
+    \node[blok] at (39.86,180.38)
+      {\parbox[t]{140mm}{\fontsize{14pt}{16.1pt}\selectfont\raggedright
+       \textbf{DOSEN PEMBIMBING}\par
+       \upn@pembimbingsatu\par
+       \ifx\upn@pembimbingdua\@empty\else\upn@pembimbingdua\par\fi}};
+    \node[blok] at (39.86,216.23)
+      {\parbox[t]{150mm}{\fontsize{12pt}{13.8pt}\selectfont\bfseries\raggedright
        \MakeUppercase{\upn@kementerian}\par
        \MakeUppercase{\upn@universitas}\par
        \MakeUppercase{\upn@fakultas}\par
        \MakeUppercase{Program Studi \upn@prodi}\par
        \MakeUppercase{\upn@kota}\par
-       \upn@tahun};
+       \upn@tahun\par}};
+    \end{scope}
   \end{tikzpicture}%
   \null
   \clearpage

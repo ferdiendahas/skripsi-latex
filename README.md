@@ -26,7 +26,7 @@ template Word skripsi 2025.
 | Kode sumber | Courier New 9 pt, spasi tunggal, bernomor baris |
 | Nomor halaman | romawi kecil untuk bagian awal, arab mulai BAB I, tengah bawah |
 | Daftar pustaka | gaya IEEE |
-| Sampul | Arial, logo 4 × 4 cm, pita oranye `#ff914d` dan kuning `#f4ff00` |
+| Sampul | Arial, logo 3,8 cm, pita kuning `#ffff00` bergaris tepi gelap (mengikuti `template skripsi 2025.docx`) |
 
 ## Instalasi
 
