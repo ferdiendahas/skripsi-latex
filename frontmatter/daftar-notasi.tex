@@ -22,8 +22,8 @@
   $\beta_m$ & : & Koefisien komponen bulanan \\
   $\varepsilon_{t+1}$ & : & Galat regresi HAR-RV yang diasumsikan
     berrata-rata nol \\
-  $F_m(\mathbf{x})$ & : & Model GBDT gabungan setelah $m$ iterasi \\
-  $h_m(\mathbf{x})$ & : & Pohon ke-$m$, dilatih pada gradien fungsi
+  $F_b(\mathbf{x})$ & : & Model GBDT gabungan setelah $b$ iterasi \\
+  $h_b(\mathbf{x})$ & : & Pohon ke-$b$, dilatih pada gradien fungsi
     \textit{loss} \\
   $\eta$ & : & Laju pembelajaran \\
   $RS_t^-$ & : & \textit{Realized semivariance} negatif pada hari $t$ \\
@@ -31,8 +31,8 @@
     dalamnya terpenuhi dan 0 bila tidak \\
   $\sigma^2_{P,t}$ & : & Estimator varians \textit{range} Parkinson pada
     hari $t$ \\
-  $H_t$ & : & Harga tertinggi pada hari $t$ \\
-  $L_t$ & : & Harga terendah pada hari $t$ \\
+  $P^{H}_t$ & : & Harga tertinggi pada hari $t$ \\
+  $P^{L}_t$ & : & Harga terendah pada hari $t$ \\
   $\text{Amihud}_t$ & : & Ukuran \textit{illiquidity} pada hari $t$ \\
   $QV_{t,i}$ & : & Volume dalam dolar (USDT) pada bar ke-$i$ \\
   $N_t$ & : & Jumlah bar bervolume positif pada hari $t$ \\
@@ -48,12 +48,14 @@
   $\text{UDmax}$ & : & Statistik uji perubahan struktural maksimum \\
   $\sup F_T(m)$ & : & Statistik $F$ terbesar atas semua kemungkinan
     penempatan $m$ titik patah \\
+  $m$ & : & Jumlah titik patah pada uji Bai--Perron \\
   $M$ & : & Jumlah maksimum titik patah yang diuji \\
   $\varepsilon$ & : & Proporsi \textit{trimming}, yaitu panjang minimum tiap
     segmen pada uji Bai--Perron \\
   $\mu$ & : & Fraksi ukuran jendela bergulir pada \textit{Fluctuation test},
-    dengan $m = \mu n$ \\
-  $D$ & : & Statistik Kolmogorov--Smirnov dua sampel \\
+    dengan $n_F = \mu n$ \\
+  $n_F$ & : & Ukuran jendela bergulir pada \textit{Fluctuation test} \\
+  $D^{\text{KS}}$ & : & Statistik Kolmogorov--Smirnov dua sampel \\
   $D_t$ & : & Selisih $\Delta L_t$ antara strategi pembaruan S2-365 dan S1 \\
   $W$ & : & Panjang jendela data latih \textit{rolling}, dalam hari \\
 \end{longtable}

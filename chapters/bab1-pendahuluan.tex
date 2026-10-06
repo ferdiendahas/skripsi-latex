@@ -74,22 +74,18 @@ dan hilang mengikuti kondisi pasar.
 Persoalan berikutnya adalah cara model diperbarui, yaitu seberapa banyak data
 lama yang masih layak dipakai untuk melatih ulang model. Pilihan antara
 \textit{rolling window} dan \textit{expanding window} berpengaruh terhadap
-akurasi peramalan, termasuk pada Bitcoin \cite{akgun2025,feng2024window}. Namun,
-Akgun dan Gulay hanya menguji model GARCH tanpa HAR dan tanpa uji formal
-\cite{akgun2025}, sedangkan Feng, Qi, dan Lucey memvariasikan
-\textit{hyperparameter} model ML, bukan panjang data latih \cite{feng2024ml}.
+akurasi peramalan volatilitas \cite{feng2024window}, termasuk pada aset kripto
+\cite{akgun2025}. Namun, Akgun dan Gulay melaporkan perbandingan kedua skema
+tersebut secara rinci hanya untuk model tipe GARCH, tanpa HAR sebagai
+pembanding dan tanpa uji signifikansi \cite{akgun2025}, sedangkan Feng, Qi, dan
+Lucey memvariasikan \textit{hyperparameter} model ML, bukan panjang data latih
+\cite{feng2024ml}.
 Chassot dan Audrino menunjukkan pada 1.445 saham bahwa model ML gagal
 mengalahkan HAR yang diberi skema \textit{fitting} yang tepat, sehingga
 perbandingan ML dengan HAR dapat bias apabila HAR tidak diperlakukan setara
 \cite{chassot2026}. Belum jelas apakah strategi pembaruan memengaruhi kinerja
 relatif ML terhadap HAR secara berbeda pada era pasar yang berbeda.
 
-% CEK: Verifikasi Crossref mengubah dua rujukan di paragraf ini. Judul asli
-% akgun2025 adalah "Dynamics in Realized Volatility Forecasting: Evaluating
-% GARCH Models and Deep Learning Algorithms Across Parameter Variations",
-% sehingga klaim "hanya menguji model GARCH" perlu dicek ulang terhadap full
-% text. feng2024window ternyata ditulis tiga penulis (Feng, Zhang, Wang),
-% bukan Feng sendiri; sesuaikan penyebutannya bila disebut di dalam kalimat.
 % CEK: Feng (2024) baru metadata; Feng, Qi & Lucey (2024) dan Chassot & Audrino
 % (2026) baru abstrak. Klaim pembeda di paragraf ini bergantung pada full text
 % keduanya (checklist novelty).

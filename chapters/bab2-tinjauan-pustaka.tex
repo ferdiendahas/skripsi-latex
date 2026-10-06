@@ -45,15 +45,13 @@ menerapkan \textit{Fluctuation test} pada peramalan \textit{Value at Risk} dan
 \cite{trucios2023}. Penelitian tersebut menunjukkan bahwa alat uji instabilitas
 relevan untuk aset kripto, tetapi tidak mencakup model ML maupun target RV.
 
-% CEK: Judul asli akgun2025 menurut Crossref adalah "Dynamics in Realized
-% Volatility Forecasting: Evaluating GARCH Models and Deep Learning Algorithms
-% Across Parameter Variations". Klaim "hanya untuk model GARCH, tanpa HAR,
-% tanpa uji formal, dan dengan data hingga 2021" belum tentu masih tepat;
-% pastikan dari full text sebelum draf diserahkan.
 \textbf{Pengaruh \textit{window} data latih.} Akgun dan Gulay membandingkan
-\textit{rolling} dan \textit{expanding window} pada Bitcoin, tetapi hanya untuk
-model GARCH, tanpa HAR, tanpa uji formal, dan dengan data hingga 2021
-\cite{akgun2025}. Chassot dan Audrino menunjukkan pada 1.445 saham bahwa model
+sebelas model tipe GARCH dan tiga model \textit{deep learning} untuk peramalan
+volatilitas Bitcoin, Ethereum, dan Binance Coin hingga akhir 2021
+\cite{akgun2025}. Perbandingan \textit{rolling} dan \textit{expanding window}
+dilaporkan secara rinci untuk model tipe GARCH, dengan hasil bahwa
+\textit{rolling window} umumnya lebih akurat; perbandingan tersebut tidak
+menyertakan HAR dan tidak disertai uji signifikansi. Chassot dan Audrino menunjukkan pada 1.445 saham bahwa model
 ML gagal mengalahkan HAR ketika HAR diberi skema \textit{fitting} yang tepat
 \cite{chassot2026}, sehingga keunggulan ML yang dilaporkan dapat merupakan
 artefak perlakuan \textit{window} yang tidak setara.
@@ -62,10 +60,7 @@ artefak perlakuan \textit{window} yang tidak setara.
 pembagian era pasar Bitcoin dan menunjukkan perubahan persistensi RV serta
 hubungan volatilitas--likuiditas antarera \cite{do2026}. Mokni dkk.
 menunjukkan bahwa efisiensi pasar Bitcoin berganti-ganti dan hubungan
-likuiditas dapat berbalik tanda % CEK: Judul asli agakishiev2025 adalah "Regime switching forecasting for
-% cryptocurrencies". Klaim "manfaat pemodelan regime hilang pada data uji
-% akibat ketidakstasioneran" belum diverifikasi dari full text.
-\cite{mokni2024}. Agakishiev dkk. menemukan
+likuiditas dapat berbalik tanda \cite{mokni2024}. Agakishiev dkk. menemukan
 bahwa manfaat pemodelan \textit{regime} hilang pada data uji akibat
 ketidakstasioneran \cite{agakishiev2025}.
 
@@ -104,8 +99,9 @@ terdahulu.
     Trucíos \& Taylor \cite{trucios2023} & VaR/ES kripto &
     Tidak (model ekonometrik) & Ya (Fluctuation test) & Tidak & Tidak \\
     \hline
-    Akgun \& Gulay \cite{akgun2025} & Volatilitas Bitcoin s.d. 2021 &
-    Tidak (GARCH) & Tidak & Ya (rolling vs expanding) & Tidak \\
+    Akgun \& Gulay \cite{akgun2025} & Volatilitas BTC, ETH, BNB s.d. 2021 &
+    Tidak (GARCH dan \textit{deep learning}) & Tidak &
+    Ya (rolling vs expanding, dilaporkan untuk GARCH) & Tidak \\
     \hline
     Chassot \& Audrino \cite{chassot2026} & 1.445 saham & Ya &
     Belum diketahui & Ya (skema fitting HAR) & Belum diketahui \\
@@ -278,15 +274,15 @@ ketiga komponen tersebut.
 \textit{Gradient boosting decision tree} (GBDT) membangun model prediksi
 sebagai penjumlahan berurutan pohon keputusan, dengan setiap pohon baru dilatih
 untuk mengoreksi kesalahan gabungan pohon-pohon sebelumnya. Secara umum, model
-pada iterasi ke-$m$ adalah
+pada iterasi ke-$b$ adalah
 \begin{equation}
-  F_m(\mathbf{x}) = F_{m-1}(\mathbf{x}) + \eta\, h_m(\mathbf{x}),
+  F_b(\mathbf{x}) = F_{b-1}(\mathbf{x}) + \eta\, h_b(\mathbf{x}),
   \label{eq:gbdt}
 \end{equation}
 \begin{keterangan}
-  \item[$F_m(\mathbf{x})$] model gabungan setelah $m$ iterasi,
+  \item[$F_b(\mathbf{x})$] model gabungan setelah $b$ iterasi,
   \item[$\mathbf{x}$] vektor fitur masukan,
-  \item[$h_m(\mathbf{x})$] pohon ke-$m$, dilatih pada gradien fungsi
+  \item[$h_b(\mathbf{x})$] pohon ke-$b$, dilatih pada gradien fungsi
     \textit{loss},
   \item[$\eta$] laju pembelajaran.
 \end{keterangan}
@@ -377,17 +373,17 @@ informatif untuk meramal volatilitas pada saham \cite{patton2015}. Karena
 $RV_t = RS_t^- + RS_t^+$, fitur yang digunakan adalah proporsi $RS_t^-/RV_t$
 agar tidak menimbulkan kolinearitas sempurna dengan komponen HAR.
 
-Estimator \textit{range} Parkinson memanfaatkan harga tertinggi $H_t$ dan
-terendah $L_t$ dalam satu hari \cite{parkinson1980}:
+Estimator \textit{range} Parkinson memanfaatkan harga tertinggi $P^{H}_t$ dan
+terendah $P^{L}_t$ dalam satu hari \cite{parkinson1980}:
 \begin{equation}
-  \sigma^2_{P,t} = \frac{(\ln H_t - \ln L_t)^2}{4 \ln 2}.
+  \sigma^2_{P,t} = \frac{(\ln P^{H}_t - \ln P^{L}_t)^2}{4 \ln 2}.
   \label{eq:parkinson}
 \end{equation}
 \begin{keterangan}
   \item[$\sigma^2_{P,t}$] estimator varians \textit{range} Parkinson
     pada hari $t$,
-  \item[$H_t$] harga tertinggi pada hari $t$,
-  \item[$L_t$] harga terendah pada hari $t$.
+  \item[$P^{H}_t$] harga tertinggi pada hari $t$,
+  \item[$P^{L}_t$] harga terendah pada hari $t$.
 \end{keterangan}
 Estimator ini mengasumsikan perdagangan kontinu, asumsi yang lebih terpenuhi
 pada Bitcoin yang diperdagangkan 24 jam sehari dibanding saham.
@@ -494,7 +490,7 @@ sebuah model secara signifikan lebih buruk daripada \textit{loss in-sample}-nya
 \textbf{relatif} antarmodel, bukan pada kerusakan satu model.
 
 \textit{Fluctuation test} dari Giacomini dan Rossi menghitung statistik DM
-secara bergulir pada jendela berukuran $m = \mu n$ dan membandingkannya dengan
+secara bergulir pada jendela berukuran $n_F = \mu n$ dan membandingkannya dengan
 nilai kritis khusus yang memperhitungkan pengujian berulang
 \cite{giacomini2010}. Uji ini menunjukkan kapan satu model lebih unggul, tetapi
 hipotesis nolnya adalah kedua model sama akurat di setiap titik waktu, bukan
@@ -667,22 +663,23 @@ istilah yang dipakai adalah \textbf{pergeseran distribusi fitur}, bukan
 Pergeseran distribusi satu fitur antara data latih dan bulan uji diukur dengan
 statistik Kolmogorov--Smirnov dua sampel,
 \begin{equation}
-  D = \sup_x \left| \hat{F}_{\text{latih}}(x) - \hat{F}_{\text{uji}}(x) \right|,
+  D^{\text{KS}} = \sup_x
+  \left| \hat{F}_{\text{latih}}(x) - \hat{F}_{\text{uji}}(x) \right|,
   \label{eq:ks}
 \end{equation}
 \begin{keterangan}
-  \item[$D$] statistik Kolmogorov--Smirnov dua sampel,
+  \item[$D^{\text{KS}}$] statistik Kolmogorov--Smirnov dua sampel,
   \item[$\hat{F}_{\text{latih}}(x)$] fungsi distribusi kumulatif empiris
     data latih,
   \item[$\hat{F}_{\text{uji}}(x)$] fungsi distribusi kumulatif empiris
     bulan uji,
   \item[$\sup_x$] nilai terbesar atas seluruh $x$.
 \end{keterangan}
-Nilai $D$ adalah jarak terbesar antara kedua fungsi distribusi kumulatif
-empiris. Uji KS per
+Nilai $D^{\text{KS}}$ adalah jarak terbesar antara kedua fungsi distribusi
+kumulatif empiris. Uji KS per
 fitur merupakan salah satu pendekatan untuk mendeteksi pergeseran data
-\cite{rabanser2019}. Nilai $D$ dirata-ratakan antarfitur untuk memperoleh satu
-ukuran pergeseran per bulan.
+\cite{rabanser2019}. Nilai $D^{\text{KS}}$ dirata-ratakan antarfitur untuk
+memperoleh satu ukuran pergeseran per bulan.
 
 % CEK: Rabanser dkk. (2019) belum dicek.
 
@@ -697,14 +694,11 @@ Karena itu, penelitian ini memakai Amihud sebagai fitur model LGBM-X dan
 estimator
 Abdi--Ranaldo, yang dihitung dari harga OHLC harian, sebagai variabel likuiditas
 dalam analisis asosiasi kinerja relatif dengan kondisi pasar, dengan estimator
-% CEK: Judul asli zhang2024 adalah "Relationships among return and liquidity
-% of cryptocurrencies", bukan survei proksi likuiditas. Pastikan kalimat
-% penutup paragraf ini masih didukung oleh isi papernya.
 Corwin--Schultz sebagai uji sensitivitas. Amihud tidak disertakan pada HAR-X
 karena berkolinearitas tinggi dengan komponen HAR berdasarkan pemeriksaan pada
-\textit{window} awal; rinciannya diuraikan pada Bab III. Zhang dkk. juga
-membahas penggunaan proksi likuiditas harian pada pasar kripto
-\cite{zhang2024}.
+\textit{window} awal; rinciannya diuraikan pada Bab III. Proksi likuiditas harian juga
+dipakai Zhang dkk. untuk mengkaji hubungan antara \textit{return} dan
+likuiditas aset kripto \cite{zhang2024}.
 
 % CEK: Paper asli estimator Abdi--Ranaldo (2017) dan Corwin--Schultz (2012)
 % belum ada di daftar referensi. Tambahkan ke references.bib setelah
