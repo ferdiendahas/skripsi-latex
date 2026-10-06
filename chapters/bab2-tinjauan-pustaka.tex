@@ -45,6 +45,11 @@ menerapkan \textit{Fluctuation test} pada peramalan \textit{Value at Risk} dan
 \cite{trucios2023}. Penelitian tersebut menunjukkan bahwa alat uji instabilitas
 relevan untuk aset kripto, tetapi tidak mencakup model ML maupun target RV.
 
+% CEK: Judul asli akgun2025 menurut Crossref adalah "Dynamics in Realized
+% Volatility Forecasting: Evaluating GARCH Models and Deep Learning Algorithms
+% Across Parameter Variations". Klaim "hanya untuk model GARCH, tanpa HAR,
+% tanpa uji formal, dan dengan data hingga 2021" belum tentu masih tepat;
+% pastikan dari full text sebelum draf diserahkan.
 \textbf{Pengaruh \textit{window} data latih.} Akgun dan Gulay membandingkan
 \textit{rolling} dan \textit{expanding window} pada Bitcoin, tetapi hanya untuk
 model GARCH, tanpa HAR, tanpa uji formal, dan dengan data hingga 2021
@@ -57,7 +62,10 @@ artefak perlakuan \textit{window} yang tidak setara.
 pembagian era pasar Bitcoin dan menunjukkan perubahan persistensi RV serta
 hubungan volatilitas--likuiditas antarera \cite{do2026}. Mokni dkk.
 menunjukkan bahwa efisiensi pasar Bitcoin berganti-ganti dan hubungan
-likuiditas dapat berbalik tanda \cite{mokni2024}. Agakishiev dkk. menemukan
+likuiditas dapat berbalik tanda % CEK: Judul asli agakishiev2025 adalah "Regime switching forecasting for
+% cryptocurrencies". Klaim "manfaat pemodelan regime hilang pada data uji
+% akibat ketidakstasioneran" belum diverifikasi dari full text.
+\cite{mokni2024}. Agakishiev dkk. menemukan
 bahwa manfaat pemodelan \textit{regime} hilang pada data uji akibat
 ketidakstasioneran \cite{agakishiev2025}.
 
@@ -163,7 +171,8 @@ logaritmik intraday didefinisikan sebagai
 \end{equation}
 \begin{keterangan}
   \item[$r_{t,i}$] \textit{return} logaritmik intraday pada bar ke-$i$ hari $t$,
-  \item[$C_{t,i}$] harga penutupan bar 5 menit ke-$i$ pada hari $t$,
+  \item[$C_{t,i}$] harga penutupan bar 5 menit ke-$i$ pada hari $t$; untuk
+    $i = 1$, $C_{t,0}$ adalah harga penutupan bar terakhir hari $t-1$,
   \item[$i$] nomor urut bar dalam satu hari, bernilai 1 sampai 288.
 \end{keterangan}
 \textit{Realized variance} harian adalah
@@ -215,6 +224,7 @@ model HAR-RV dalam bentuk logaritma yang digunakan pada penelitian ini adalah
 \end{equation}
 \begin{keterangan}
   \item[$RV_{t+1}$] RV hari berikutnya, yaitu target peramalan,
+  \item[$RV_t$] RV hari $t$, yaitu komponen harian,
   \item[$RV_t^{(w)}$] rata-rata RV tujuh hari terakhir hingga hari $t$,
     yaitu komponen mingguan,
   \item[$RV_t^{(m)}$] rata-rata RV tiga puluh hari terakhir hingga hari $t$,
@@ -290,7 +300,7 @@ yang memecah seluruh daun pada kedalaman yang sama
 (Gambar~\ref{fig:pohon-lgbm}). Pertumbuhan \textit{leaf-wise} cenderung lebih
 akurat tetapi lebih rentan \textit{overfitting} pada data kecil, sehingga
 diperlukan regularisasi seperti membatasi jumlah daun dan jumlah minimum data
-per daun.
+per daun \cite{ke2017}.
 
 \begin{figure}[htbp]
   \centering
@@ -299,7 +309,7 @@ per daun.
       pecah/.style={draw,circle,fill=black!12,inner sep=0pt,minimum size=5mm}]
     % Panel kiri: level-wise
     \begin{scope}
-      \node[simpul] (a) at (28,0) {};
+      \node[pecah] (a) at (28,0) {};
       \node[pecah] (b) at (14,14) {};
       \node[pecah] (c) at (42,14) {};
       \node[simpul] (d) at (7,28) {};
@@ -311,7 +321,7 @@ per daun.
     \end{scope}
     % Panel kanan: leaf-wise
     \begin{scope}[xshift=70mm]
-      \node[simpul] (a2) at (28,0) {};
+      \node[pecah] (a2) at (28,0) {};
       \node[pecah] (b2) at (14,14) {};
       \node[simpul] (c2) at (42,14) {};
       \node[simpul] (d2) at (7,28) {};
@@ -322,6 +332,11 @@ per daun.
             (e2) -- (f2) (e2) -- (g2);
       \node[font=\small] at (28,56) {(b) \textit{Leaf-wise}};
     \end{scope}
+    % Legenda di bawah kedua panel.
+    \node[pecah] (lg1) at (22,68) {};
+    \node[anchor=west,font=\small] at (26,68) {simpul yang dipecah};
+    \node[simpul] (lg2) at (72,68) {};
+    \node[anchor=west,font=\small] at (76,68) {daun};
   \end{tikzpicture}
   \caption{Pertumbuhan Pohon \textit{Level-wise} dan \textit{Leaf-wise}}
   \label{fig:pohon-lgbm}
@@ -460,10 +475,11 @@ yang dipilih otomatis menurut Andrews \cite{andrews1991}.
 Ketika sejumlah uji dijalankan sekaligus, peluang menemukan hasil signifikan
 secara kebetulan meningkat. Prosedur Holm mengendalikan peluang tersebut dengan
 mengurutkan \textit{p-value} dan membandingkannya dengan ambang yang makin
-longgar secara bertahap \cite{holm1979}. Penelitian ini menetapkan satu uji
-konfirmatori per rumusan masalah sebelum melihat hasil
-\textit{out-of-sample}, sedangkan uji lain diperlakukan sebagai eksploratori
-dengan koreksi Holm.
+longgar secara bertahap \cite{holm1979}. Penelitian ini menetapkan uji
+konfirmatori untuk setiap hipotesis sebelum melihat hasil
+\textit{out-of-sample}. Hipotesis H2b terdiri atas dua uji sehingga
+\textit{p-value}-nya dikoreksi dengan prosedur Holm, sedangkan uji lain
+diperlakukan sebagai eksploratori dengan koreksi Holm.
 
 % CEK: Diebold & Mariano (1995) dan Andrews (1991) belum dicek.
 
@@ -552,7 +568,8 @@ Gambar~\ref{fig:strategi} merangkum ketiga strategi yang digunakan.
     \textit{Landmark} atau \textit{growing window}
     \cite{gama2014,cerqueira2020} \\
     \hline
-    S2 & Rolling & Dilatih ulang bulanan dengan $W$ hari terakhir &
+    S2 & Rolling & Dilatih ulang bulanan dengan $W$ hari terakhir,
+    $W \in \{365, 730\}$; uji konfirmatori memakai $W = 365$ (S2-365) &
     \textit{Fixed-size sliding window} \cite{gama2014} \\
     \hline
   \end{tabular}
@@ -670,16 +687,24 @@ ukuran pergeseran per bulan.
 % CEK: Rabanser dkk. (2019) belum dicek.
 
 \subsection{Proksi Likuiditas}
+\label{subsec:likuiditas}
 Likuiditas pasar kripto dapat diukur dengan berbagai proksi berbasis data harga
 dan volume. Brauneis dkk. menunjukkan bahwa proksi yang paling baik menangkap
 variasi likuiditas kripto antarwaktu berbeda dengan proksi yang paling baik
 menangkap levelnya: estimator \textit{spread} Abdi--Ranaldo unggul untuk
 variasi waktu, sedangkan ukuran Amihud unggul untuk level \cite{brauneis2021}.
-Karena itu, penelitian ini memakai Amihud sebagai fitur model dan estimator
+Karena itu, penelitian ini memakai Amihud sebagai fitur model LGBM-X dan
+estimator
 Abdi--Ranaldo, yang dihitung dari harga OHLC harian, sebagai variabel likuiditas
 dalam analisis asosiasi kinerja relatif dengan kondisi pasar, dengan estimator
-Corwin--Schultz sebagai uji sensitivitas. Zhang dkk. juga membahas penggunaan
-proksi likuiditas harian pada pasar kripto \cite{zhang2024}.
+% CEK: Judul asli zhang2024 adalah "Relationships among return and liquidity
+% of cryptocurrencies", bukan survei proksi likuiditas. Pastikan kalimat
+% penutup paragraf ini masih didukung oleh isi papernya.
+Corwin--Schultz sebagai uji sensitivitas. Amihud tidak disertakan pada HAR-X
+karena berkolinearitas tinggi dengan komponen HAR berdasarkan pemeriksaan pada
+\textit{window} awal; rinciannya diuraikan pada Bab III. Zhang dkk. juga
+membahas penggunaan proksi likuiditas harian pada pasar kripto
+\cite{zhang2024}.
 
 % CEK: Paper asli estimator Abdi--Ranaldo (2017) dan Corwin--Schultz (2012)
 % belum ada di daftar referensi. Tambahkan ke references.bib setelah
@@ -719,6 +744,9 @@ pemeriksaan kewajaran \cite{gama2014}.
   \end{tabular}
   \endgroup
 \end{table}
+
+Pada HAR-X, fitur X tidak mencakup ukuran Amihud (lihat
+Subbab~\ref{subsec:likuiditas}).
 
 Alur kerangka pemikiran ditunjukkan pada Gambar~\ref{fig:kerangka}.
 
@@ -826,10 +854,13 @@ tersebut. Mokni dkk. menunjukkan hubungan likuiditas dapat berbalik tanda
 \cite{mokni2024}, dan kepentingan fitur tidak konsisten antarstudi
 \cite{wang2023,feng2024ml}. Karena itu H2b dirumuskan dua arah.
 
-\textbf{H3.} Pada era \textit{institutional}, kinerja relatif ML terhadap
-HAR-RV lebih baik pada strategi \textit{rolling} dibandingkan
-\textit{expanding}. Dengan $D_t = \Delta L_t(\text{S2}) - \Delta L_t(\text{S1})$,
-H3 didukung bila rata-rata $D_t$ negatif dan signifikan. Hipotesis ini
+\textbf{H3.} Pada era \textit{institutional}, kinerja relatif LGBM-X terhadap
+HAR-RV lebih baik pada strategi \textit{rolling} 365 hari (S2-365)
+dibandingkan \textit{expanding} (S1). Dengan
+$D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$, dan $\Delta L_t$
+adalah selisih \textit{loss} LGBM-X terhadap HAR-RV pada
+Persamaan~\ref{eq:delta-loss}, H3 didukung bila rata-rata $D_t$ negatif dan
+signifikan. Hipotesis ini
 didasarkan pada \textit{trade-off} bias--varians \cite{rossi2013} dan perubahan
 persistensi RV antarera \cite{do2026}: hubungan yang dipelajari dari era awal
 dapat usang, dan LGBM-X yang lebih fleksibel diduga lebih terdampak data usang
@@ -863,11 +894,15 @@ Tabel~\ref{tab:ringkasan}. Uji konfirmatori ditetapkan sebelum hasil
     \hline
     RQ2 Asosiasi dengan kondisi pasar & H2a, H2b &
     H2a: uji-F bersama (HAC) pada regresi $\Delta L$ bulanan terhadap
-    4 karakteristik pasar. H2b: uji-t HAC beda rata-rata kontribusi fitur X
-    antara dua era \\
+    4 karakteristik pasar. H2b: dua uji-t HAC beda rata-rata antara era
+    \textit{transition} dan \textit{institutional}, untuk
+    $\Delta L(\text{HAR-X} - \text{HAR})$ dan
+    $\Delta L(\text{LGBM-X} - \text{LGBM-HAR})$, dengan koreksi Holm \\
     \hline
     RQ3 Strategi pembaruan $\times$ era & H3 &
-    Uji-t HAC pada rata-rata $D_t$ di era \textit{institutional} \\
+    Uji-t HAC dua sisi pada rata-rata
+    $D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$ pasangan LGBM-X
+    dan HAR-RV di era \textit{institutional} \\
     \hline
   \end{tabular}
   \endgroup

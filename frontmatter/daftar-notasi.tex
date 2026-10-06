@@ -1,9 +1,61 @@
 \chapter*{Daftar Notasi}
 \phantomsection
 \addcontentsline{toc}{chapter}{DAFTAR NOTASI}
-\begin{tabular}{@{}p{2.5cm}@{}p{0.6cm}@{}p{\dimexpr\textwidth-3.1cm\relax}@{}}
-  $V_i$ & : & Nilai akhir alternatif ke-$i$ \\
-  $W_j$ & : & Bobot kriteria ke-$j$ \\
-  $n$   & : & Banyaknya kriteria \\
-\end{tabular}
+% Arti tiap simbol diambil dari blok "keterangan" di bawah persamaan Bab II;
+% urutannya mengikuti kemunculan pertama di naskah. Memakai longtable agar
+% daftar ini boleh berlanjut ke halaman berikutnya.
+\begingroup
+\setstretch{1.2}
+\begin{longtable}{@{}p{3cm}@{}p{0.6cm}@{}p{\dimexpr\textwidth-3.6cm\relax}@{}}
+  $r_{t,i}$ & : & \textit{Return} logaritmik intraday pada bar ke-$i$ hari $t$ \\
+  $C_{t,i}$ & : & Harga penutupan bar 5 menit ke-$i$ pada hari $t$; untuk
+    $i = 1$, $C_{t,0}$ adalah harga penutupan bar terakhir hari $t-1$ \\
+  $RV_t$ & : & \textit{Realized variance} harian pada hari $t$, yaitu
+    komponen harian \\
+  $RV_t^{(w)}$ & : & Rata-rata RV tujuh hari terakhir hingga hari $t$, yaitu
+    komponen mingguan \\
+  $RV_t^{(m)}$ & : & Rata-rata RV tiga puluh hari terakhir hingga hari $t$,
+    yaitu komponen bulanan \\
+  $\beta_0$ & : & Konstanta regresi HAR-RV \\
+  $\beta_d$ & : & Koefisien komponen harian \\
+  $\beta_w$ & : & Koefisien komponen mingguan \\
+  $\beta_m$ & : & Koefisien komponen bulanan \\
+  $\varepsilon_{t+1}$ & : & Galat regresi HAR-RV yang diasumsikan
+    berrata-rata nol \\
+  $F_m(\mathbf{x})$ & : & Model GBDT gabungan setelah $m$ iterasi \\
+  $h_m(\mathbf{x})$ & : & Pohon ke-$m$, dilatih pada gradien fungsi
+    \textit{loss} \\
+  $\eta$ & : & Laju pembelajaran \\
+  $RS_t^-$ & : & \textit{Realized semivariance} negatif pada hari $t$ \\
+  $\mathbf{1}(\cdot)$ & : & Fungsi indikator, bernilai 1 bila syarat di
+    dalamnya terpenuhi dan 0 bila tidak \\
+  $\sigma^2_{P,t}$ & : & Estimator varians \textit{range} Parkinson pada
+    hari $t$ \\
+  $H_t$ & : & Harga tertinggi pada hari $t$ \\
+  $L_t$ & : & Harga terendah pada hari $t$ \\
+  $\text{Amihud}_t$ & : & Ukuran \textit{illiquidity} pada hari $t$ \\
+  $QV_{t,i}$ & : & Volume dalam dolar (USDT) pada bar ke-$i$ \\
+  $N_t$ & : & Jumlah bar bervolume positif pada hari $t$ \\
+  $F_t$ & : & Ramalan RV untuk hari $t$ \\
+  $L^{\text{QLIKE}}_t$ & : & Nilai \textit{loss} QLIKE pada hari $t$ \\
+  $L^{\text{MSE}}_t$ & : & Nilai \textit{loss} MSE pada hari $t$ \\
+  $\Delta L_t$ & : & Selisih \textit{loss} harian antara model
+    \textit{machine learning} dan HAR-RV \\
+  $DM$ & : & Statistik uji Diebold--Mariano \\
+  $\widehat{V}_{\text{HAC}}$ & : & Estimator varians jangka panjang yang
+    konsisten terhadap heteroskedastisitas dan autokorelasi \\
+  $n$ & : & Jumlah observasi pada periode uji \\
+  $\text{UDmax}$ & : & Statistik uji perubahan struktural maksimum \\
+  $\sup F_T(m)$ & : & Statistik $F$ terbesar atas semua kemungkinan
+    penempatan $m$ titik patah \\
+  $M$ & : & Jumlah maksimum titik patah yang diuji \\
+  $\varepsilon$ & : & Proporsi \textit{trimming}, yaitu panjang minimum tiap
+    segmen pada uji Bai--Perron \\
+  $\mu$ & : & Fraksi ukuran jendela bergulir pada \textit{Fluctuation test},
+    dengan $m = \mu n$ \\
+  $D$ & : & Statistik Kolmogorov--Smirnov dua sampel \\
+  $D_t$ & : & Selisih $\Delta L_t$ antara strategi pembaruan S2-365 dan S1 \\
+  $W$ & : & Panjang jendela data latih \textit{rolling}, dalam hari \\
+\end{longtable}
+\endgroup
 \clearpage

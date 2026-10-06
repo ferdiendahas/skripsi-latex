@@ -1,10 +1,21 @@
 % references.bib -- dibangun dari Lampiran A narasi_draft_bab1_bab2.md
 %
-% CEK: Nama depan/inisial penulis pada entri berikut belum diverifikasi dari
-% sumber asli dan hanya memuat nama keluarga: do2026, mokni2024, yi2023,
-% zhang2024, agakishiev2025, oprea2026, qiu2025, trucios2023, chassot2026,
-% akgun2025, feng2024window, feng2024ml. Lengkapi dari halaman DOI
-% masing-masing sebelum draf diserahkan; jangan diisi tebakan.
+% Status verifikasi metadata (judul, penulis, volume, nomor, halaman):
+%
+% SUDAH diverifikasi terhadap Crossref (api.crossref.org/works/<DOI>),
+% 6 Oktober 2026:
+%   agakishiev2025, akgun2025, andrews1991, chassot2026, christensen2023,
+%   do2026, dudek2024, feng2024ml, feng2024window, huang2024, mokni2024,
+%   oprea2026, qiu2025, trucios2023, wang2023, yi2023, zhang2024
+%
+% BELUM diverifikasi; metadata masih berasal dari dokumen riset atau ingatan,
+% dan harus dicocokkan ke sumber asli sebelum draf diserahkan:
+%   amihud2002, andersen1998, bai1998, bai2003, barndorff2010, brauneis2021,
+%   cerqueira2020, chen2016, corsi2009, diebold1995, gama2014, giacomini2009,
+%   giacomini2010, grinsztajn2022, holm1979, ke2017, liu2015, martins2016,
+%   morenotorres2012, nakamoto2008, newey1987, parkinson1980, patton2011,
+%   patton2015, rabanser2019, rossi2013, suarez2023, tashman2000, zliobaite2015
+%
 % CEK: Paper asli estimator Abdi--Ranaldo (2017) dan Corwin--Schultz (2012)
 % belum masuk daftar ini (lihat catatan 2.2.12). Tambahkan setelah diverifikasi.
 % CEK: Pesaran & Timmermann dikutip melalui rossi2013; tidak perlu entri
@@ -187,7 +198,9 @@
   doi     = {10.2307/1913610}
 }
 
-% CEK: volume/nomor/halaman andrews1991 belum diverifikasi dari sumber asli.
+% CEK: volume dan nomor andrews1991 cocok dengan Crossref. Rentang halaman
+% dipertahankan 817--858 karena Crossref hanya mencatat halaman awal (817);
+% pastikan rentang akhirnya dari sumber asli.
 @article{andrews1991,
   author  = {Andrews, Donald W. K.},
   title   = {Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation},
@@ -366,53 +379,59 @@
 }
 
 @article{do2026,
-  author  = {Do, Hung Xuan},
-  title   = {Maturation of Bitcoin Market Microstructure},
+  author  = {Do, Kim-Oanh},
+  title   = {Maturation of Bitcoin market microstructure: Evidence of institutional-grade liquidity and efficiency (2012–2025)},
   journal = {Borsa Istanbul Review},
   volume  = {26},
   pages   = {100869},
   year    = {2026},
-  doi     = {10.1016/j.bir.2026.100869}
+  doi     = {10.1016/j.bir.2026.100869},
+  number  = {5}
 }
 
 @article{mokni2024,
   author  = {Mokni, Khaled and El Montasser, Ghassen and Ajmi, Ahdi Noomen and Bouri, Elie},
-  title   = {On the Efficiency and Its Drivers in the Cryptocurrency Market: The Case of Bitcoin and Ethereum},
+  title   = {On the efficiency and its drivers in the cryptocurrency market: the case of Bitcoin and Ethereum},
   journal = {Financial Innovation},
   volume  = {10},
   pages   = {39},
   year    = {2024},
-  doi     = {10.1186/s40854-023-00566-3}
+  doi     = {10.1186/s40854-023-00566-3},
+  number  = {1}
 }
 
 @article{yi2023,
   author  = {Yi, Eojin and Yang, Biao and Jeong, Minhyuk and Sohn, Sungbin and Ahn, Kwangwon},
-  title   = {Market Efficiency of Cryptocurrency: Evidence from the Bitcoin Market},
+  title   = {Market efficiency of cryptocurrency: evidence from the Bitcoin market},
   journal = {Scientific Reports},
   volume  = {13},
   pages   = {4789},
   year    = {2023},
-  doi     = {10.1038/s41598-023-31618-4}
+  doi     = {10.1038/s41598-023-31618-4},
+  number  = {1}
 }
 
 @article{zhang2024,
-  author  = {Zhang, Wei and Zhu, Pengfei and Li, Yang and Jin, Yihan and Xia, Yunpeng},
-  title   = {Liquidity Measures of the Cryptocurrency Market},
+  author  = {Zhang, Mianmian and Zhu, Bing and Li, Ziyuan and Jin, Siyuan and Xia, Yong},
+  title   = {Relationships among return and liquidity of cryptocurrencies},
   journal = {Financial Innovation},
   volume  = {10},
   pages   = {3},
   year    = {2024},
-  doi     = {10.1186/s40854-023-00532-z}
+  doi     = {10.1186/s40854-023-00532-z},
+  number  = {1}
 }
 
 @article{agakishiev2025,
   author  = {Agakishiev, Ilgar and H{\"a}rdle, Wolfgang Karl and Becker, Milos and Zuo, Zhasmina},
-  title   = {Regime Modelling in Cryptocurrency Markets},
+  title   = {Regime switching forecasting for cryptocurrencies},
   journal = {Digital Finance},
   volume  = {7},
   pages   = {107--131},
   year    = {2025},
-  doi     = {10.1007/s42521-024-00123-2}
+  doi     = {10.1007/s42521-024-00123-2},
+  author  = {Agakishiev, Ilyas and Härdle, Wolfgang Karl and Becker, Denis and Zuo, Xiaorui},
+  number  = {1}
 }
 
 % ---------------------------------------------------------------------------
@@ -420,17 +439,18 @@
 % ---------------------------------------------------------------------------
 @article{dudek2024,
   author  = {Dudek, Grzegorz and Fiszeder, Piotr and Kobus, Pawe{\l} and Orzeszko, Witold},
-  title   = {Forecasting Cryptocurrencies Volatility Using Statistical and Machine Learning Methods: A Comparative Study},
+  title   = {Forecasting cryptocurrencies volatility using statistical and machine learning methods: A comparative study},
   journal = {Applied Soft Computing},
   volume  = {151},
   pages   = {111132},
   year    = {2024},
-  doi     = {10.1016/j.asoc.2023.111132}
+  doi     = {10.1016/j.asoc.2023.111132},
+  author  = {Dudek, Grzegorz and Fiszeder, Piotr and Kobus, Paweł and Orzeszko, Witold}
 }
 
 @article{huang2024,
-  author  = {Huang, Yuping and Sangiorgi, Ivan and Urquhart, Andrew},
-  title   = {Forecasting Bitcoin Volatility Using Machine Learning Techniques},
+  author  = {Huang, Zih-Chun and Sangiorgi, Ivan and Urquhart, Andrew},
+  title   = {Forecasting Bitcoin volatility using machine learning techniques},
   journal = {Journal of International Financial Markets, Institutions and Money},
   volume  = {97},
   pages   = {102064},
@@ -439,8 +459,8 @@
 }
 
 @article{wang2023,
-  author  = {Wang, Yifan and Andreeva, Galina and Martin-Barragan, Belen},
-  title   = {Machine Learning Approaches to Forecasting Cryptocurrency Volatility: Considering Internal and External Determinants},
+  author  = {Wang, Yijun and Andreeva, Galina and Martin-Barragan, Belen},
+  title   = {Machine learning approaches to forecasting cryptocurrency volatility: Considering internal and external determinants},
   journal = {International Review of Financial Analysis},
   volume  = {90},
   pages   = {102914},
@@ -460,8 +480,8 @@
 }
 
 @article{feng2024ml,
-  author  = {Feng, Qi and Qi, Yunfeng and Lucey, Brian M.},
-  title   = {Enhancing Cryptocurrency Volatility Forecasting with Machine Learning},
+  author  = {Feng, Lingbing and Qi, Jiajun and Lucey, Brian},
+  title   = {Enhancing cryptocurrency market volatility forecasting with daily dynamic tuning strategy},
   journal = {International Review of Financial Analysis},
   volume  = {94},
   pages   = {103239},
@@ -470,8 +490,8 @@
 }
 
 @article{qiu2025,
-  author  = {Qiu, Yue and Qu, Zhiwei and Shi, Yanchu and Xie, Tian},
-  title   = {Forecasting Cryptocurrency Volatility: Model Specification Matters},
+  author  = {Qiu, Yue and Qu, Shaoguang and Shi, Zhentao and Xie, Tian},
+  title   = {Predicting cryptocurrency volatility: The power of model clustering},
   journal = {Economic Modelling},
   volume  = {144},
   pages   = {106986},
@@ -481,18 +501,19 @@
 
 @article{trucios2023,
   author  = {Truc{\'i}os, Carlos and Taylor, James W.},
-  title   = {A Comparison of Methods for Forecasting Value at Risk and Expected Shortfall of Cryptocurrencies},
+  title   = {A comparison of methods for forecasting value at risk and expected shortfall of cryptocurrencies},
   journal = {Journal of Forecasting},
   volume  = {42},
   number  = {4},
   pages   = {989--1007},
   year    = {2023},
-  doi     = {10.1002/for.2929}
+  doi     = {10.1002/for.2929},
+  author  = {Trucíos, Carlos and Taylor, James W.}
 }
 
 @article{chassot2026,
   author  = {Chassot, Jonathan and Audrino, Francesco},
-  title   = {HARd to Beat: The Overlooked Impact of Rolling Windows in the Era of Machine Learning},
+  title   = {HARd to beat: The overlooked impact of rolling windows in the era of machine learning},
   journal = {International Journal of Forecasting},
   volume  = {42},
   number  = {2},
@@ -503,11 +524,12 @@
 
 @article{oprea2026,
   author  = {Oprea, Simona-Vasilica and B{\^a}ra, Adela},
-  title   = {Regime-Aware Forecasting of Cryptocurrency Prices},
+  title   = {Regime-Aware Adaptive Forecasting Framework for Bitcoin Prices Using Probabilistic Generative Models},
   journal = {Computational Economics},
   year    = {2026},
   note    = {Online first},
-  doi     = {10.1007/s10614-026-11338-3}
+  doi     = {10.1007/s10614-026-11338-3},
+  author  = {Oprea, Simona-Vasilica and Bâra, Adela}
 }
 
 % ---------------------------------------------------------------------------
@@ -515,17 +537,18 @@
 % ---------------------------------------------------------------------------
 @article{akgun2025,
   author  = {Akgun, Omer Burak and Gulay, Emrah},
-  title   = {Forecasting Bitcoin Volatility: A Comparison of Rolling and Expanding Window Approaches},
+  title   = {Dynamics in Realized Volatility Forecasting: Evaluating GARCH Models and Deep Learning Algorithms Across Parameter Variations},
   journal = {Computational Economics},
   volume  = {65},
   pages   = {3971--4013},
   year    = {2025},
-  doi     = {10.1007/s10614-024-10694-2}
+  doi     = {10.1007/s10614-024-10694-2},
+  number  = {6}
 }
 
 @article{feng2024window,
-  author  = {Feng, Shuo},
-  title   = {Rolling Window, Expanding Window, or Both?},
+  author  = {Feng, Yuqing and Zhang, Yaojie and Wang, Yudong},
+  title   = {Out‐of‐sample volatility prediction: Rolling window, expanding window, or both?},
   journal = {Journal of Forecasting},
   volume  = {43},
   number  = {3},
