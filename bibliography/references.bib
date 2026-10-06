@@ -1,31 +1,18 @@
-@book{goodfellow2016deep,
-  author    = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron},
-  title     = {Deep Learning},
-  publisher = {MIT Press},
-  address   = {Cambridge, MA},
-  year      = {2016}
-}
+% references.bib -- dibangun dari Lampiran A narasi_draft_bab1_bab2.md
+%
+% CEK: Nama depan/inisial penulis pada entri berikut belum diverifikasi dari
+% sumber asli dan hanya memuat nama keluarga: do2026, mokni2024, yi2023,
+% zhang2024, agakishiev2025, oprea2026, qiu2025, trucios2023, chassot2026,
+% akgun2025, feng2024window, feng2024ml. Lengkapi dari halaman DOI
+% masing-masing sebelum draf diserahkan; jangan diisi tebakan.
+% CEK: Paper asli estimator Abdi--Ranaldo (2017) dan Corwin--Schultz (2012)
+% belum masuk daftar ini (lihat catatan 2.2.12). Tambahkan setelah diverifikasi.
+% CEK: Pesaran & Timmermann dikutip melalui rossi2013; tidak perlu entri
+% tersendiri kecuali dibaca langsung.
 
-@article{lecun1998gradient,
-  author  = {LeCun, Yann and Bottou, L{\'e}on and Bengio, Yoshua and Haffner, Patrick},
-  title   = {Gradient-Based Learning Applied to Document Recognition},
-  journal = {Proceedings of the IEEE},
-  volume  = {86},
-  number  = {11},
-  pages   = {2278--2324},
-  year    = {1998},
-  doi     = {10.1109/5.726791}
-}
-
-@inproceedings{vaswani2017attention,
-  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  title     = {Attention Is All You Need},
-  booktitle = {Advances in Neural Information Processing Systems},
-  volume    = {30},
-  pages     = {5998--6008},
-  year      = {2017}
-}
-
+% ---------------------------------------------------------------------------
+% Pedoman dan rujukan institusional
+% ---------------------------------------------------------------------------
 @manual{pedoman2025,
   author       = {{Fakultas Ilmu Komputer UPN ``Veteran'' Jawa Timur}},
   title        = {Pedoman Penyusunan Laporan Skripsi, Tesis dan Rangkaian Pelaksanaan Ujian Komprehensif},
@@ -39,4 +26,510 @@
   title   = {Kamus Besar Bahasa Indonesia (KBBI) Daring},
   url     = {https://kbbi.kemdikbud.go.id/},
   urldate = {2026-09-13}
+}
+
+% ---------------------------------------------------------------------------
+% Realized variance, HAR, dan estimator volatilitas
+% ---------------------------------------------------------------------------
+@article{andersen1998,
+  author  = {Andersen, Torben G. and Bollerslev, Tim},
+  title   = {Answering the Skeptics: Yes, Standard Volatility Models Do Provide Accurate Forecasts},
+  journal = {International Economic Review},
+  volume  = {39},
+  number  = {4},
+  pages   = {885--905},
+  year    = {1998},
+  doi     = {10.2307/2527343}
+}
+
+@article{corsi2009,
+  author  = {Corsi, Fulvio},
+  title   = {A Simple Approximate Long-Memory Model of Realized Volatility},
+  journal = {Journal of Financial Econometrics},
+  volume  = {7},
+  number  = {2},
+  pages   = {174--196},
+  year    = {2009},
+  doi     = {10.1093/jjfinec/nbp001}
+}
+
+@article{liu2015,
+  author  = {Liu, Lily Y. and Patton, Andrew J. and Sheppard, Kevin},
+  title   = {Does Anything Beat 5-Minute RV? A Comparison of Realized Measures across Multiple Asset Classes},
+  journal = {Journal of Econometrics},
+  volume  = {187},
+  number  = {2},
+  pages   = {293--311},
+  year    = {2015},
+  doi     = {10.1016/j.jeconom.2015.02.008}
+}
+
+@article{parkinson1980,
+  author  = {Parkinson, Michael},
+  title   = {The Extreme Value Method for Estimating the Variance of the Rate of Return},
+  journal = {The Journal of Business},
+  volume  = {53},
+  number  = {1},
+  pages   = {61--65},
+  year    = {1980},
+  doi     = {10.1086/296071}
+}
+
+@incollection{barndorff2010,
+  author    = {Barndorff-Nielsen, Ole E. and Kinnebrock, Silja and Shephard, Neil},
+  title     = {Measuring Downside Risk: Realised Semivariance},
+  booktitle = {Volatility and Time Series Econometrics: Essays in Honor of Robert F. Engle},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {117--136},
+  year      = {2010}
+}
+
+@article{patton2015,
+  author  = {Patton, Andrew J. and Sheppard, Kevin},
+  title   = {Good Volatility, Bad Volatility: Signed Jumps and the Persistence of Volatility},
+  journal = {The Review of Economics and Statistics},
+  volume  = {97},
+  number  = {3},
+  pages   = {683--697},
+  year    = {2015},
+  doi     = {10.1162/REST_a_00503}
+}
+
+% ---------------------------------------------------------------------------
+% Likuiditas
+% ---------------------------------------------------------------------------
+@article{amihud2002,
+  author  = {Amihud, Yakov},
+  title   = {Illiquidity and Stock Returns: Cross-Section and Time-Series Effects},
+  journal = {Journal of Financial Markets},
+  volume  = {5},
+  number  = {1},
+  pages   = {31--56},
+  year    = {2002},
+  doi     = {10.1016/S1386-4181(01)00024-6}
+}
+
+@article{brauneis2021,
+  author  = {Brauneis, Alexander and Mestel, Roland and Riordan, Ryan and Theissen, Erik},
+  title   = {How to Measure the Liquidity of Cryptocurrency Markets?},
+  journal = {Journal of Banking \& Finance},
+  volume  = {124},
+  pages   = {106041},
+  year    = {2021},
+  doi     = {10.1016/j.jbankfin.2020.106041}
+}
+
+% ---------------------------------------------------------------------------
+% Machine learning: model dan data tabular
+% ---------------------------------------------------------------------------
+@inproceedings{ke2017,
+  author    = {Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
+  title     = {LightGBM: A Highly Efficient Gradient Boosting Decision Tree},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  pages     = {3146--3154},
+  year      = {2017}
+}
+
+@inproceedings{chen2016,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {XGBoost: A Scalable Tree Boosting System},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages     = {785--794},
+  year      = {2016},
+  doi       = {10.1145/2939672.2939785}
+}
+
+@inproceedings{grinsztajn2022,
+  author    = {Grinsztajn, L{\'e}o and Oyallon, Edouard and Varoquaux, Ga{\"e}l},
+  title     = {Why Do Tree-Based Models Still Outperform Deep Learning on Typical Tabular Data?},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {35},
+  year      = {2022},
+  eprint    = {2207.08815},
+  eprinttype = {arXiv}
+}
+
+% ---------------------------------------------------------------------------
+% Fungsi loss dan uji perbandingan peramalan
+% ---------------------------------------------------------------------------
+@article{patton2011,
+  author  = {Patton, Andrew J.},
+  title   = {Volatility Forecast Comparison Using Imperfect Volatility Proxies},
+  journal = {Journal of Econometrics},
+  volume  = {160},
+  number  = {1},
+  pages   = {246--256},
+  year    = {2011},
+  doi     = {10.1016/j.jeconom.2010.03.034}
+}
+
+@article{diebold1995,
+  author  = {Diebold, Francis X. and Mariano, Roberto S.},
+  title   = {Comparing Predictive Accuracy},
+  journal = {Journal of Business \& Economic Statistics},
+  volume  = {13},
+  number  = {3},
+  pages   = {253--263},
+  year    = {1995},
+  doi     = {10.1080/07350015.1995.10524599}
+}
+
+@article{newey1987,
+  author  = {Newey, Whitney K. and West, Kenneth D.},
+  title   = {A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix},
+  journal = {Econometrica},
+  volume  = {55},
+  number  = {3},
+  pages   = {703--708},
+  year    = {1987},
+  doi     = {10.2307/1913610}
+}
+
+% CEK: volume/nomor/halaman andrews1991 belum diverifikasi dari sumber asli.
+@article{andrews1991,
+  author  = {Andrews, Donald W. K.},
+  title   = {Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation},
+  journal = {Econometrica},
+  volume  = {59},
+  number  = {3},
+  pages   = {817--858},
+  year    = {1991},
+  doi     = {10.2307/2938229}
+}
+
+@article{holm1979,
+  author  = {Holm, Sture},
+  title   = {A Simple Sequentially Rejective Multiple Test Procedure},
+  journal = {Scandinavian Journal of Statistics},
+  volume  = {6},
+  number  = {2},
+  pages   = {65--70},
+  year    = {1979}
+}
+
+% ---------------------------------------------------------------------------
+% Instabilitas peramalan dan perubahan struktural
+% ---------------------------------------------------------------------------
+@article{giacomini2009,
+  author  = {Giacomini, Raffaella and Rossi, Barbara},
+  title   = {Detecting and Predicting Forecast Breakdowns},
+  journal = {The Review of Economic Studies},
+  volume  = {76},
+  number  = {2},
+  pages   = {669--705},
+  year    = {2009},
+  doi     = {10.1111/j.1467-937X.2009.00545.x}
+}
+
+@article{giacomini2010,
+  author  = {Giacomini, Raffaella and Rossi, Barbara},
+  title   = {Forecast Comparisons in Unstable Environments},
+  journal = {Journal of Applied Econometrics},
+  volume  = {25},
+  number  = {4},
+  pages   = {595--620},
+  year    = {2010},
+  doi     = {10.1002/jae.1177}
+}
+
+@incollection{rossi2013,
+  author    = {Rossi, Barbara},
+  title     = {Advances in Forecasting under Instability},
+  booktitle = {Handbook of Economic Forecasting},
+  volume    = {2},
+  publisher = {Elsevier},
+  pages     = {1203--1324},
+  year      = {2013},
+  doi       = {10.1016/B978-0-444-62731-5.00021-X}
+}
+
+@article{martins2016,
+  author  = {Martins, Luis F. and Perron, Pierre},
+  title   = {Improved Tests for Forecast Comparisons in the Presence of Instabilities},
+  journal = {Journal of Time Series Analysis},
+  volume  = {37},
+  number  = {5},
+  pages   = {650--659},
+  year    = {2016},
+  doi     = {10.1111/jtsa.12179}
+}
+
+@article{bai1998,
+  author  = {Bai, Jushan and Perron, Pierre},
+  title   = {Estimating and Testing Linear Models with Multiple Structural Changes},
+  journal = {Econometrica},
+  volume  = {66},
+  number  = {1},
+  pages   = {47--78},
+  year    = {1998},
+  doi     = {10.2307/2998540}
+}
+
+@article{bai2003,
+  author  = {Bai, Jushan and Perron, Pierre},
+  title   = {Computation and Analysis of Multiple Structural Change Models},
+  journal = {Journal of Applied Econometrics},
+  volume  = {18},
+  number  = {1},
+  pages   = {1--22},
+  year    = {2003},
+  doi     = {10.1002/jae.659}
+}
+
+% ---------------------------------------------------------------------------
+% Evaluasi out-of-sample, concept drift, dan pergeseran data
+% ---------------------------------------------------------------------------
+@article{tashman2000,
+  author  = {Tashman, Leonard J.},
+  title   = {Out-of-Sample Tests of Forecasting Accuracy: An Analysis and Review},
+  journal = {International Journal of Forecasting},
+  volume  = {16},
+  number  = {4},
+  pages   = {437--450},
+  year    = {2000},
+  doi     = {10.1016/S0169-2070(00)00065-0}
+}
+
+@article{cerqueira2020,
+  author  = {Cerqueira, Vitor and Torgo, Lu{\'i}s and Mozeti{\v{c}}, Igor},
+  title   = {Evaluating Time Series Forecasting Models: An Empirical Study on Performance Estimation Methods},
+  journal = {Machine Learning},
+  volume  = {109},
+  pages   = {1997--2028},
+  year    = {2020},
+  doi     = {10.1007/s10994-020-05910-7}
+}
+
+@article{gama2014,
+  author  = {Gama, Jo{\~a}o and {\v{Z}}liobait{\.e}, Indr{\.e} and Bifet, Albert and Pechenizkiy, Mykola and Bouchachia, Abdelhamid},
+  title   = {A Survey on Concept Drift Adaptation},
+  journal = {ACM Computing Surveys},
+  volume  = {46},
+  number  = {4},
+  pages   = {44:1--44:37},
+  year    = {2014},
+  doi     = {10.1145/2523813}
+}
+
+@article{zliobaite2015,
+  author  = {{\v{Z}}liobait{\.e}, Indr{\.e} and Budka, Marcin and Stahl, Frederic},
+  title   = {Towards Cost-Sensitive Adaptation: When Is It Worth Updating Your Predictive Model?},
+  journal = {Neurocomputing},
+  volume  = {150},
+  pages   = {240--249},
+  year    = {2015},
+  doi     = {10.1016/j.neucom.2014.05.084}
+}
+
+@article{morenotorres2012,
+  author  = {Moreno-Torres, Jose G. and Raeder, Troy and Alaiz-Rodr{\'i}guez, Roc{\'i}o and Chawla, Nitesh V. and Herrera, Francisco},
+  title   = {A Unifying View on Dataset Shift in Classification},
+  journal = {Pattern Recognition},
+  volume  = {45},
+  number  = {1},
+  pages   = {521--530},
+  year    = {2012},
+  doi     = {10.1016/j.patcog.2011.06.019}
+}
+
+@inproceedings{rabanser2019,
+  author    = {Rabanser, Stephan and G{\"u}nnemann, Stephan and Lipton, Zachary C.},
+  title     = {Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {32},
+  year      = {2019},
+  eprint    = {1810.11953},
+  eprinttype = {arXiv}
+}
+
+@article{suarez2023,
+  author  = {Su{\'a}rez-Cetrulo, Andr{\'e}s L. and Quintana, David and Cervantes, Alejandro},
+  title   = {A Survey on Machine Learning for Recurring Concept Drifting Data Streams},
+  journal = {Expert Systems with Applications},
+  volume  = {213},
+  pages   = {118934},
+  year    = {2023},
+  doi     = {10.1016/j.eswa.2022.118934}
+}
+
+% ---------------------------------------------------------------------------
+% Bitcoin: pasar, efisiensi, dan likuiditas
+% ---------------------------------------------------------------------------
+@online{nakamoto2008,
+  author  = {Nakamoto, Satoshi},
+  title   = {Bitcoin: A Peer-to-Peer Electronic Cash System},
+  year    = {2008},
+  url     = {https://bitcoin.org/bitcoin.pdf},
+  urldate = {2026-10-05}
+}
+
+@article{do2026,
+  author  = {Do, Hung Xuan},
+  title   = {Maturation of Bitcoin Market Microstructure},
+  journal = {Borsa Istanbul Review},
+  volume  = {26},
+  pages   = {100869},
+  year    = {2026},
+  doi     = {10.1016/j.bir.2026.100869}
+}
+
+@article{mokni2024,
+  author  = {Mokni, Khaled and El Montasser, Ghassen and Ajmi, Ahdi Noomen and Bouri, Elie},
+  title   = {On the Efficiency and Its Drivers in the Cryptocurrency Market: The Case of Bitcoin and Ethereum},
+  journal = {Financial Innovation},
+  volume  = {10},
+  pages   = {39},
+  year    = {2024},
+  doi     = {10.1186/s40854-023-00566-3}
+}
+
+@article{yi2023,
+  author  = {Yi, Eojin and Yang, Biao and Jeong, Minhyuk and Sohn, Sungbin and Ahn, Kwangwon},
+  title   = {Market Efficiency of Cryptocurrency: Evidence from the Bitcoin Market},
+  journal = {Scientific Reports},
+  volume  = {13},
+  pages   = {4789},
+  year    = {2023},
+  doi     = {10.1038/s41598-023-31618-4}
+}
+
+@article{zhang2024,
+  author  = {Zhang, Wei and Zhu, Pengfei and Li, Yang and Jin, Yihan and Xia, Yunpeng},
+  title   = {Liquidity Measures of the Cryptocurrency Market},
+  journal = {Financial Innovation},
+  volume  = {10},
+  pages   = {3},
+  year    = {2024},
+  doi     = {10.1186/s40854-023-00532-z}
+}
+
+@article{agakishiev2025,
+  author  = {Agakishiev, Ilgar and H{\"a}rdle, Wolfgang Karl and Becker, Milos and Zuo, Zhasmina},
+  title   = {Regime Modelling in Cryptocurrency Markets},
+  journal = {Digital Finance},
+  volume  = {7},
+  pages   = {107--131},
+  year    = {2025},
+  doi     = {10.1007/s42521-024-00123-2}
+}
+
+% ---------------------------------------------------------------------------
+% Peramalan volatilitas dan harga kripto dengan machine learning
+% ---------------------------------------------------------------------------
+@article{dudek2024,
+  author  = {Dudek, Grzegorz and Fiszeder, Piotr and Kobus, Pawe{\l} and Orzeszko, Witold},
+  title   = {Forecasting Cryptocurrencies Volatility Using Statistical and Machine Learning Methods: A Comparative Study},
+  journal = {Applied Soft Computing},
+  volume  = {151},
+  pages   = {111132},
+  year    = {2024},
+  doi     = {10.1016/j.asoc.2023.111132}
+}
+
+@article{huang2024,
+  author  = {Huang, Yuping and Sangiorgi, Ivan and Urquhart, Andrew},
+  title   = {Forecasting Bitcoin Volatility Using Machine Learning Techniques},
+  journal = {Journal of International Financial Markets, Institutions and Money},
+  volume  = {97},
+  pages   = {102064},
+  year    = {2024},
+  doi     = {10.1016/j.intfin.2024.102064}
+}
+
+@article{wang2023,
+  author  = {Wang, Yifan and Andreeva, Galina and Martin-Barragan, Belen},
+  title   = {Machine Learning Approaches to Forecasting Cryptocurrency Volatility: Considering Internal and External Determinants},
+  journal = {International Review of Financial Analysis},
+  volume  = {90},
+  pages   = {102914},
+  year    = {2023},
+  doi     = {10.1016/j.irfa.2023.102914}
+}
+
+@article{christensen2023,
+  author  = {Christensen, Kim and Siggaard, Mathias and Veliyev, Bezirgen},
+  title   = {A Machine Learning Approach to Volatility Forecasting},
+  journal = {Journal of Financial Econometrics},
+  volume  = {21},
+  number  = {5},
+  pages   = {1680--1727},
+  year    = {2023},
+  doi     = {10.1093/jjfinec/nbac020}
+}
+
+@article{feng2024ml,
+  author  = {Feng, Qi and Qi, Yunfeng and Lucey, Brian M.},
+  title   = {Enhancing Cryptocurrency Volatility Forecasting with Machine Learning},
+  journal = {International Review of Financial Analysis},
+  volume  = {94},
+  pages   = {103239},
+  year    = {2024},
+  doi     = {10.1016/j.irfa.2024.103239}
+}
+
+@article{qiu2025,
+  author  = {Qiu, Yue and Qu, Zhiwei and Shi, Yanchu and Xie, Tian},
+  title   = {Forecasting Cryptocurrency Volatility: Model Specification Matters},
+  journal = {Economic Modelling},
+  volume  = {144},
+  pages   = {106986},
+  year    = {2025},
+  doi     = {10.1016/j.econmod.2024.106986}
+}
+
+@article{trucios2023,
+  author  = {Truc{\'i}os, Carlos and Taylor, James W.},
+  title   = {A Comparison of Methods for Forecasting Value at Risk and Expected Shortfall of Cryptocurrencies},
+  journal = {Journal of Forecasting},
+  volume  = {42},
+  number  = {4},
+  pages   = {989--1007},
+  year    = {2023},
+  doi     = {10.1002/for.2929}
+}
+
+@article{chassot2026,
+  author  = {Chassot, Jonathan and Audrino, Francesco},
+  title   = {HARd to Beat: The Overlooked Impact of Rolling Windows in the Era of Machine Learning},
+  journal = {International Journal of Forecasting},
+  volume  = {42},
+  number  = {2},
+  pages   = {330--343},
+  year    = {2026},
+  doi     = {10.1016/j.ijforecast.2025.06.003}
+}
+
+@article{oprea2026,
+  author  = {Oprea, Simona-Vasilica and B{\^a}ra, Adela},
+  title   = {Regime-Aware Forecasting of Cryptocurrency Prices},
+  journal = {Computational Economics},
+  year    = {2026},
+  note    = {Online first},
+  doi     = {10.1007/s10614-026-11338-3}
+}
+
+% ---------------------------------------------------------------------------
+% Panjang window data latih
+% ---------------------------------------------------------------------------
+@article{akgun2025,
+  author  = {Akgun, Omer Burak and Gulay, Emrah},
+  title   = {Forecasting Bitcoin Volatility: A Comparison of Rolling and Expanding Window Approaches},
+  journal = {Computational Economics},
+  volume  = {65},
+  pages   = {3971--4013},
+  year    = {2025},
+  doi     = {10.1007/s10614-024-10694-2}
+}
+
+@article{feng2024window,
+  author  = {Feng, Shuo},
+  title   = {Rolling Window, Expanding Window, or Both?},
+  journal = {Journal of Forecasting},
+  volume  = {43},
+  number  = {3},
+  pages   = {567--582},
+  year    = {2024},
+  doi     = {10.1002/for.3046}
 }

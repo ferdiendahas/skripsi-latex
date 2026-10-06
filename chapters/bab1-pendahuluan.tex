@@ -1,37 +1,190 @@
 \chapter{Pendahuluan}
-Pendahuluan menjelaskan apa yang akan dikerjakan dalam penelitian dan mengapa
-penelitian tersebut perlu dikerjakan.
 
 \section{Latar Belakang}
-Uraikan latar belakang munculnya ide penelitian. Mulailah dari konteks umum,
-lalu persempit menuju masalah khusus yang akan diselesaikan (teknik piramida
-terbalik). Dukung setiap klaim dengan fakta dari pustaka atau pengamatan,
-misalnya hasil penelitian terdahulu \cite{lecun1998gradient,vaswani2017attention}.
+Volatilitas merupakan masukan utama dalam manajemen risiko, penetapan harga
+derivatif, dan alokasi aset, sehingga ketepatan peramalannya berdampak langsung
+pada keputusan finansial. Volatilitas tidak dapat diamati secara langsung,
+tetapi dapat diukur melalui \textit{realized variance} (RV), yaitu jumlah
+kuadrat \textit{return} intraday dalam satu hari. Andersen dan Bollerslev
+menunjukkan bahwa proksi volatilitas yang berisik membuat model tampak buruk,
+sedangkan RV yang dihitung dari data intraday memberikan ukuran yang jauh lebih
+akurat \cite{andersen1998}. Di antara model peramalan RV, model
+\textit{Heterogeneous Autoregressive} (HAR-RV) yang diusulkan Corsi menjadi
+pembanding yang sulit dikalahkan karena strukturnya sederhana namun mampu
+menangkap sifat memori panjang volatilitas melalui rata-rata RV harian,
+mingguan, dan bulanan \cite{corsi2009}.
 
-Akhiri bagian ini dengan pernyataan yang menjembatani latar belakang dengan
-rumusan masalah. Istilah asing yang belum diserap ditulis miring, misalnya
-\textit{machine learning}.
+Bitcoin, aset kripto pertama yang diperkenalkan melalui sistem pembayaran
+elektronik \textit{peer-to-peer} \cite{nakamoto2008}, merupakan objek yang
+menarik untuk peramalan volatilitas karena karakteristik pasarnya berubah
+substansial dalam satu dekade terakhir. Do membagi perkembangan pasar Bitcoin
+periode 2012--2025 ke dalam tiga era, yaitu \textit{niche},
+\textit{transition}, dan \textit{institutional}, dengan persistensi RV yang
+berbeda antarera dan respons \textit{illiquidity} terhadap guncangan
+volatilitas yang lebih kecil serta lebih singkat pada era \textit{institutional}
+\cite{do2026}. Perubahan tersebut tidak berlangsung mulus. Efisiensi pasar
+Bitcoin berganti-ganti dari waktu ke waktu, dan koefisien likuiditas dapat
+berbalik tanda sebelum dan sesudah pandemi COVID-19 \cite{mokni2024}. Kondisi
+ini memunculkan kemungkinan bahwa hubungan antara informasi pasar dan
+volatilitas yang dipelajari sebuah model pada satu periode tidak lagi berlaku
+pada periode berikutnya.
+
+Perubahan karakteristik pasar perlu dibedakan dari klaim bahwa volatilitas
+Bitcoin tidak dapat diramal. Literatur efisiensi pasar Bitcoin menguji apakah
+\textit{return} dapat diprediksi dari informasi masa lalu
+\cite{yi2023,mokni2024,do2026}. Pasar yang mendekati efisien dalam pengertian
+tersebut tetap dapat memiliki volatilitas yang terprediksi, karena volatilitas
+cenderung mengelompok: hari yang bergejolak cenderung diikuti hari yang
+bergejolak. Sifat inilah yang dimanfaatkan model HAR-RV \cite{corsi2009}.
+Dengan demikian, peramalan volatilitas Bitcoin tetap bermakna meskipun
+efisiensi \textit{return}-nya meningkat.
+
+Berbagai penelitian telah membandingkan model \textit{machine learning} (ML)
+dengan HAR-RV dalam meramalkan volatilitas. Christensen, Siggaard, dan Veliyev
+menjadi salah satu rujukan utama perbandingan ML dan HAR \cite{christensen2023}.
+Pada Bitcoin, Huang, Sangiorgi, dan Urquhart melaporkan bahwa LSTM hanya unggul
+tipis atas HAR, sementara HAR lebih baik ketika terjadi lonjakan volatilitas
+\cite{huang2024}. Dudek dkk. membandingkan sejumlah model pada periode
+2019--2021 dan melaporkan kinerjanya sebagai satu angka agregat; kinerja pada
+hari dengan RV terendah dan tertinggi hanya dibedakan secara deskriptif tanpa
+uji formal \cite{dudek2024}. Pola serupa tampak pada penelitian lain: hampir
+semuanya memakai satu periode uji dan melaporkan hasil agregat, dan sebagian
+memakai fungsi \textit{loss} yang tidak robust terhadap proksi volatilitas yang
+berisik \cite{huang2024,wang2023,dudek2024,oprea2026,patton2011}.
+
+% CEK: Christensen dkk. (2023) baru metadata. Klaim dibatasi pada "rujukan
+% perbandingan ML dan HAR"; perinci setelah full text dibaca.
+
+Pelaporan hasil agregat menyimpan persoalan. Bahwa kinerja relatif model dapat
+berubah antarperiode uji sudah dikenal dalam literatur peramalan
+\cite{tashman2000}, dan literatur ML menegaskan bahwa rata-rata kinerja dapat
+menyembunyikan perilaku model sepanjang waktu \cite{gama2014}. Literatur
+\textit{forecasting under instability} menyediakan alat uji untuk mendeteksi
+perubahan kinerja relatif tersebut \cite{giacomini2010,rossi2013,martins2016}.
+Alat uji ini sudah diterapkan pada aset kripto oleh Trucíos dan Taylor, tetapi
+untuk peramalan \textit{Value at Risk} dan \textit{Expected Shortfall} dengan
+model ekonometrik, bukan untuk perbandingan ML dan HAR pada RV
+\cite{trucios2023}. Dengan kata lain, belum jelas apakah keunggulan atau
+kekalahan ML terhadap HAR pada volatilitas Bitcoin bersifat stabil, atau muncul
+dan hilang mengikuti kondisi pasar.
+
+% CEK: Giacomini & Rossi (2010) baru metadata; Trucíos & Taylor (2023) baru
+% abstrak.
+
+Persoalan berikutnya adalah cara model diperbarui, yaitu seberapa banyak data
+lama yang masih layak dipakai untuk melatih ulang model. Pilihan antara
+\textit{rolling window} dan \textit{expanding window} berpengaruh terhadap
+akurasi peramalan, termasuk pada Bitcoin \cite{akgun2025,feng2024window}. Namun,
+Akgun dan Gulay hanya menguji model GARCH tanpa HAR dan tanpa uji formal
+\cite{akgun2025}, sedangkan Feng, Qi, dan Lucey memvariasikan
+\textit{hyperparameter} model ML, bukan panjang data latih \cite{feng2024ml}.
+Chassot dan Audrino menunjukkan pada 1.445 saham bahwa model ML gagal
+mengalahkan HAR yang diberi skema \textit{fitting} yang tepat, sehingga
+perbandingan ML dengan HAR dapat bias apabila HAR tidak diperlakukan setara
+\cite{chassot2026}. Belum jelas apakah strategi pembaruan memengaruhi kinerja
+relatif ML terhadap HAR secara berbeda pada era pasar yang berbeda.
+
+% CEK: Feng (2024) baru metadata; Feng, Qi & Lucey (2024) dan Chassot & Audrino
+% (2026) baru abstrak. Klaim pembeda di paragraf ini bergantung pada full text
+% keduanya (checklist novelty).
+
+Penelitian ini juga memperhatikan persoalan pengukuran. \textit{Loss} absolut
+otomatis meningkat ketika volatilitas tinggi karena skala targetnya membesar,
+sehingga kenaikan \textit{loss} tidak dapat langsung ditafsirkan sebagai
+penurunan kualitas model. Untuk itu, objek analisis penelitian ini adalah
+selisih \textit{loss} harian antara model ML dan HAR-RV pada hari yang sama,
+yang menetralkan efek skala tersebut. Fungsi \textit{loss} utama yang digunakan
+adalah QLIKE karena robust terhadap proksi volatilitas yang berisik dan tidak
+bergantung pada skala \cite{patton2011}.
+
+Berdasarkan uraian tersebut, penelitian ini menguji stabilitas kinerja relatif
+LightGBM \cite{ke2017} terhadap HAR-RV dalam meramalkan \textit{realized
+variance} harian BTC/USDT spot di Binance yang dihitung dari \textit{return}
+5 menit. Penelitian menggunakan desain $2 \times 2$ (HAR, HAR-X, LGBM-HAR, dan
+LGBM-X) untuk memisahkan kontribusi non-linearitas dari kontribusi informasi
+tambahan, serta membandingkan strategi pembaruan \textit{static},
+\textit{expanding}, dan \textit{rolling} dengan perlakuan yang setara bagi
+HAR-RV. Penelitian ini memperluas Dudek dkk. \cite{dudek2024} dengan menguji
+kestabilan kinerja relatif sepanjang waktu, faktor pasar yang berasosiasi
+dengan perubahannya, dan pengaruh strategi pembaruan model. Kontribusi
+penelitian terletak pada rancangan evaluasi model ML pada data yang berubah,
+yang memadukan strategi pembaruan dari literatur \textit{concept drift} dengan
+uji kestabilan dari ekonometrika; kedua literatur ini dicatat masih kurang
+terhubung \cite{suarez2023}. Kontribusi tersebut bukan algoritma baru maupun
+teori keuangan.
 
 \section{Rumusan Masalah}
-Tuliskan pertanyaan penelitian dalam kalimat tanya. Pertanyaan yang baik
-memiliki ciri sebagai berikut:
+Berdasarkan latar belakang di atas, rumusan masalah penelitian ini adalah
+sebagai berikut.
 \begin{enumerate}
-  \item Jelas: memakai bahasa Indonesia baku dan mudah dipahami.
-  \item Relevan: sesuai dengan hal yang diteliti dan konteks keilmuannya.
-  \item Fokus: terarah pada masalah yang ingin diselesaikan.
-  \item Dapat terjawab: dapat diukur melalui penelitian sesuai batas waktu dan
-        sumber daya.
+  \item Sejauh mana kinerja relatif model \textit{machine learning} terhadap
+        HAR-RV dalam meramalkan \textit{realized variance} Bitcoin stabil
+        sepanjang periode pengujian?
+  \item Apakah variasi kinerja relatif tersebut berasosiasi dengan
+        karakteristik pasar dan pergeseran distribusi fitur?
+  \item Apakah strategi pembaruan model dan panjang \textit{window} data latih
+        memengaruhi kinerja relatif \textit{machine learning} terhadap HAR-RV
+        secara berbeda pada era pasar yang berbeda?
 \end{enumerate}
 
+% CEK: Dokumen riset menulis "keunggulan relatif"; di sini diselaraskan menjadi
+% "kinerja relatif" mengikuti istilah judul v2.5. Substansi RQ tidak berubah.
+% Konfirmasi ke pembimbing.
+
 \section{Tujuan Penelitian}
-Tuliskan tujuan dalam kalimat pernyataan yang sederhana, jelas, dan selaras
-dengan setiap rumusan masalah.
+Tujuan penelitian ini adalah sebagai berikut.
+\begin{enumerate}
+  \item Menguji secara formal kestabilan kinerja relatif model \textit{machine
+        learning} terhadap HAR-RV, dengan dekomposisi $2 \times 2$ untuk
+        melihat sumber perbedaan kinerja, yaitu non-linearitas atau informasi
+        tambahan.
+  \item Mengidentifikasi kondisi pasar, yang diukur melalui karakteristik pasar
+        dan pergeseran distribusi fitur, ketika model \textit{machine learning}
+        lebih unggul atau lebih buruk daripada HAR-RV.
+  \item Mengevaluasi apakah data dari era awal membantu atau merugikan kinerja
+        relatif \textit{machine learning} terhadap HAR-RV, dengan perlakuan
+        \textit{window} yang setara bagi kedua model.
+\end{enumerate}
 
 \section{Manfaat Penelitian}
-Uraikan dampak positif penelitian bagi ruang lingkup yang lebih luas atau bagi
-pemangku kepentingan. Jangan menuliskan ``untuk memenuhi syarat memperoleh gelar
-sarjana'' sebagai manfaat.
+
+\subsection{Manfaat Teoretis}
+Penelitian ini memberikan bukti empiris mengenai kestabilan kinerja relatif
+model \textit{machine learning} terhadap HAR-RV pada peramalan volatilitas
+Bitcoin lintas era pasar, beserta sumber perbedaan kinerjanya melalui
+dekomposisi $2 \times 2$. Penelitian ini juga menyediakan rancangan evaluasi
+temporal, meliputi \textit{pipeline} data, strategi pembaruan model, dan uji
+kestabilan, yang dapat direplikasi pada aset dan model lain.
+
+\subsection{Manfaat Praktis}
+Bagi praktisi dan pengembang sistem peramalan, hasil penelitian ini membantu
+menentukan apakah model \textit{machine learning} layak digunakan dibandingkan
+model sederhana, dalam kondisi pasar apa kinerjanya cenderung berubah, dan
+seberapa banyak data historis yang sebaiknya dipakai ketika model dilatih
+ulang.
 
 \section{Batasan Masalah}
-Nyatakan batasan dan asumsi yang menjelaskan ruang lingkup masalah. Batasan yang
-sangat teknis lebih tepat diletakkan di bab metodologi.
+
+% CEK: Sub-bab ini tidak ada di template prodi. Pertahankan hanya bila
+% pembimbing menyetujui; bila tidak, pindahkan isinya ke Bab III (ruang lingkup
+% penelitian).
+
+Agar penelitian terarah, batasan masalah ditetapkan sebagai berikut.
+\begin{enumerate}
+  \item Data yang digunakan adalah harga BTC/USDT spot dari arsip publik
+        Binance dengan resolusi 5 menit, sejak awal ketersediaan data pada
+        Agustus 2017 hingga September 2026. Kesimpulan tidak digeneralisasi ke
+        pasar \textit{perpetual} maupun bursa lain.
+  \item Target peramalan adalah \textit{realized variance} harian untuk horizon
+        satu hari ke depan.
+  \item Model yang dibandingkan adalah HAR-RV, HAR-X, LGBM-HAR, dan LGBM-X,
+        dengan \textit{naive persistence} sebagai pembanding dasar. Model
+        \textit{deep learning} tidak termasuk dalam cakupan penelitian.
+  \item Periode pengujian mencakup era \textit{transition} dan
+        \textit{institutional}; era \textit{niche} tidak tercakup karena data
+        spot Binance baru tersedia sejak 2017.
+  \item Seluruh variabel pasar diturunkan dari data OHLCV. Penelitian bersifat
+        asosiatif sehingga tidak mengklaim hubungan kausal, tidak mengklaim
+        pembuktian \textit{concept drift} atau \textit{covariate shift} dalam
+        arti formal, dan tidak menjelaskan struktur mikro pasar Bitcoin.
+\end{enumerate}
