@@ -768,6 +768,32 @@ def _sect_salin(asal: ET.Element, *, margin_nol: bool, format_nomor: str,
     return sect
 
 
+def _sisip_tc(badan: ET.Element, gaya: str, kode: str,
+              entri: list[tuple[str, str, str, str]]) -> None:
+    """Tambahkan field TC tersembunyi ke tiap paragraf bergaya `gaya`, agar
+    TOC \\f <kode> dapat mengumpulkannya. Teksnya diambil dari .lof/.lot
+    (keterangan pendek, tanpa sitasi) bila jumlahnya cocok, seperti PDF."""
+    paragrafs = [p for p in badan.iter(f"{W}p")
+                 if p.find(f"{W}pPr/{W}pStyle") is not None
+                 and p.find(f"{W}pPr/{W}pStyle").get(f"{W}val") == gaya]
+    dari_latex = [_teks_entri(*e[:3])[0] for e in entri] if len(entri) == len(paragrafs) else None
+    for paragraf in paragrafs:
+        ppr = paragraf.find(f"{W}pPr")
+        st = ppr.find(f"{W}pStyle") if ppr is not None else None
+        if st is None or st.get(f"{W}val") != gaya:
+            continue
+        teks = "".join(t.text or "" for t in paragraf.iter(f"{W}t")).strip()
+        if dari_latex:
+            teks = dari_latex[paragrafs.index(paragraf)]
+        teks = " ".join(teks.split()).replace('"', "'")
+        if not teks:
+            continue
+        for xml in (f'<w:r {NS}><w:fldChar w:fldCharType="begin"/></w:r>',
+                    f'<w:r {NS}><w:instrText xml:space="preserve"> TC "{teks}" \\f {kode} \\l 1 </w:instrText></w:r>',
+                    f'<w:r {NS}><w:fldChar w:fldCharType="end"/></w:r>'):
+            paragraf.append(ET.fromstring(xml))
+
+
 def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     """Tambah sampul, daftar isi/gambar/tabel, dan nomor halaman pada .docx."""
     with zipfile.ZipFile(docx) as zin:
@@ -788,6 +814,16 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
         sect_akhir.remove(simpul)
     sect_akhir.insert(0, _rujukan_footer())
     _atur(sect_akhir, "pgNumType", fmt="decimal", start="1")
+
+    # Gambar tanpa keterangan (mis. glif di sel tabel) dijadikan figure oleh
+    # Pandoc dengan keterangan berupa alt bawaan "image". Keterangan itu tampil
+    # di sel dan ikut terhitung di daftar gambar, jadi dibuang.
+    for induk in list(badan.iter()):
+        for paragraf in list(induk.findall(f"{W}p")):
+            st = paragraf.find(f"{W}pPr/{W}pStyle")
+            if (st is not None and st.get(f"{W}val") == "ImageCaption"
+                    and "".join(t.text or "" for t in paragraf.iter(f"{W}t")).strip() == "image"):
+                induk.remove(paragraf)
 
     # DAFTAR PUSTAKA dan LAMPIRAN bukan bab bernomor; pakai gaya tanpa nomor
     # agar tidak menambah hitungan bab.
@@ -826,13 +862,18 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     # gambar/tabel hanya dibuat bila keterangannya memang ada di naskah.
     # Sakelar \t pada field TOC mencocokkan NAMA gaya ("Image Caption"), bukan
     # ID-nya ("ImageCaption"); dengan ID, Word menganggap daftarnya kosong.
-    for judul, gaya, nama in (("DAFTAR GAMBAR", "ImageCaption", "Image Caption"),
-                              ("DAFTAR TABEL", "TableCaption", "Table Caption")):
+    # Daftar gambar/tabel memakai field TC tersembunyi pada tiap keterangan
+    # (\\f g untuk gambar, \\f t untuk tabel). Sakelar \\t berbasis nama gaya
+    # gagal di sebagian Word (nama gaya dan pemisah daftar bergantung pada
+    # pengaturan regional), sehingga daftar menjadi kosong saat diperbarui.
+    for judul, gaya, kode in (("DAFTAR GAMBAR", "ImageCaption", "g"),
+                              ("DAFTAR TABEL", "TableCaption", "t")):
         if f'w:val="{gaya}"' not in mentah:
             continue
-        awalan.append(ET.fromstring(_p_judul(judul)))
         entri = baca_daftar("lof" if gaya == "ImageCaption" else "lot")
-        for xml in _p_daftar_terisi(rf' TOC \h \z \t "{nama},1" ', entri):
+        _sisip_tc(badan, gaya, kode, entri)
+        awalan.append(ET.fromstring(_p_judul(judul)))
+        for xml in _p_daftar_terisi(rf' TOC \h \z \f {kode} ', entri):
             awalan.append(ET.fromstring(xml))
     # Paragraf terakhir bagian awal memuat properti seksinya.
     _anak(awalan[-1], "pPr").append(
@@ -930,7 +971,11 @@ def main() -> int:
 
     # Tahap 1: LaTeX -> Markdown, tanpa citeproc.
     antara = subprocess.run(
+        # --columns besar: tabel tanpa lebar kolom eksplisit tidak diberi lebar
+        # relatif dari panjang teks Markdown (mis. path gambar), sehingga Word
+        # mengatur lebarnya sendiri dari isi sel.
         ["pandoc", str(sumber), "--from=latex", "--to=markdown", "--wrap=preserve",
+         "--columns=100000",
          f"--resource-path={ROOT}"],
         capture_output=True, text=True,
     )
@@ -946,10 +991,6 @@ def main() -> int:
         count=1,
         flags=re.M,
     )
-    # Gambar tanpa keterangan (mis. glif di dalam sel tabel) diberi alt "image"
-    # oleh Pandoc, lalu dijadikan figure berketerangan "image" yang tampil di
-    # sel dan masuk Daftar Gambar. Alt kosong membuatnya tetap gambar biasa.
-    markdown = markdown.replace("![image](", "![](")
     berkas_md = kerja / "sumber.md"
     berkas_md.write_text(markdown, encoding="utf-8")
 
