@@ -8,7 +8,7 @@ all: praskripsi
 praskripsi:
 	$(LATEXMK) -outdir=$(OUT) praskripsi.tex
 
-docx:
+docx: praskripsi
 	python3 scripts/build_docx.py
 
 watch:

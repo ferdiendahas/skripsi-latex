@@ -269,11 +269,14 @@ Bagian yang sama seperti PDF:
 
 - **sampul** disisipkan sebagai gambar halaman penuh, diambil dari halaman
   pertama PDF (karena itu PDF dibuat lebih dulu bila belum ada);
-- **daftar isi dan daftar tabel/gambar** berupa *field* Word berisi nomor
-  halaman sebenarnya. Daftar gambar/tabel hanya dibuat bila naskah memang
-  memuat keterangan gambar/tabel, karena *field* kosong membuat Word
-  menampilkan pesan galat. Klik kanan daftar lalu pilih *Update Field* bila
-  isinya belum muncul;
+- **daftar isi dan daftar tabel/gambar** berupa *field* Word yang sudah
+  terisi entri dan nomor halaman dari PDF (`build/praskripsi.toc/.lof/.lot`),
+  jadi langsung tampil walau Word tidak memperbaruinya. Saat dibuka, Word
+  bertanya apakah *field* diperbarui; pilih **Yes** agar nomor halaman
+  menyesuaikan tata letak Word. `make docx` selalu mengompilasi PDF dulu
+  supaya daftar tidak basi;
+- **keterangan gambar/tabel** mengikuti `\captionsetup` di class: ukuran
+  huruf, tebal seluruhnya atau labelnya saja, dan perataan;
 - **penomoran judul** memakai *multilevel list* Word yang ditautkan ke gaya
   Heading 1--4. Menyisipkan subbab di Word membuat nomor sesudahnya
   menyesuaikan sendiri;
@@ -285,7 +288,6 @@ Yang masih berbeda:
 - penomoran halaman Word tidak persis sama dengan PDF karena Word mengatur
   ulang baris dan pemenggalan halaman;
 - gambar TikZ hanya diganti penanda teks bila `xelatex` atau `pdftoppm` tidak tersedia;
-- judul tabel diletakkan Word di bawah tabel, bukan di atas;
 - sampul berupa gambar, jadi teksnya tidak dapat disunting di Word. Ubah
   `metadata.tex` lalu jalankan `make docx` lagi.
 

@@ -185,6 +185,20 @@ def bersihkan(teks: str, nomor_bab: int) -> str:
     teks = re.sub(r"\\newcolumntype\{(\w)\}(?:\[\d\])?\{.*\}\s*\n", "", teks)
     teks = re.sub(r"(?<=[|@])L\{", "p{", teks)
     teks = re.sub(r"\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}", "", teks)
+    # longtable: judul kolom untuk halaman lanjutan (\\endfirsthead ...
+    # \\endhead) dibaca Pandoc sebagai baris biasa, sehingga tercetak dua kali.
+    teks = re.sub(r"\\endfirsthead.*?\\endhead", r"\\endhead", teks, flags=re.S)
+    # Baris baru di dalam sel ikut dipertahankan oleh --wrap=preserve dan
+    # memecah tabel Markdown antara; satukan isi tiap tabel menjadi satu baris
+    # (komentar dibuang dulu agar tidak menelan sisa baris).
+    def _satukan(m: re.Match) -> str:
+        isi = re.sub(r"(?<!\\)%[^\n]*", "", m.group(0))
+        # Sisipan kolom >{...}/<{...} dari paket array membuat Pandoc kehilangan
+        # judul kolom \\multicolumn dan sel \\multirow; perataannya tidak
+        # berpengaruh di Word, jadi dibuang.
+        isi = re.sub(r"[<>]\{(?:[^{}]|\{[^{}]*\})*\}", "", isi)
+        return " ".join(isi.split())
+    teks = re.sub(r"\\begin\{(tabular|longtable)\}.*?\\end\{\1\}", _satukan, teks, flags=re.S)
     # Opsi penempatan float ([htbp], [!htb]) menjadi atribut figure yang
     # tidak dapat ditulis sebagai gambar Markdown; tanpa dibuang, Pandoc
     # menuliskan figure sebagai HTML mentah yang hilang di .docx.
@@ -245,6 +259,9 @@ def nomori_keterangan(teks: str, nomor: list[str]) -> str:
         label = next(antre, None)
         if cap is None or label is None:
             return isi
+        ket = gaya_keterangan()
+        if ket["label_tebal"] and not ket["tebal_semua"]:
+            label = f"\\textbf{{{label}}}"
         return isi[:cap.end()] + label + " " + isi[cap.end():]
 
     def _lingkungan(m: re.Match) -> str:
@@ -311,6 +328,31 @@ def _atur_font(gaya: ET.Element, ukuran: str, tebal: bool, miring: bool = False)
         simpul.set(f"{W}val", "1" if aktif else "0")
 
 
+UKURAN_LATEX = {"scriptsize": "16", "footnotesize": "20", "small": "22",
+                "normalsize": "24", "large": "28"}
+
+
+def gaya_keterangan() -> dict[str, object]:
+    """Baca \\captionsetup dari class agar keterangan di Word sama dengan PDF:
+    ukuran huruf, label saja yang tebal atau seluruhnya, dan perataan."""
+    cls = baca(ROOT / "upnjatim-skripsi.cls")
+    umum = re.search(r"\\captionsetup\{([^\n]*)\}\s*\n", cls)
+    tabel = re.search(r"\\captionsetup\[table\]\{([^\n]*)\}", cls)
+    gambar = re.search(r"\\captionsetup\[figure\]\{([^\n]*)\}", cls)
+    opsi = umum.group(1) if umum else ""
+    font = re.search(r"(?<!label)font=(\{[^}]*\}|[^,]*)", opsi)
+    token = font.group(1).strip("{}").split(",") if font else ["normalsize", "bf"]
+    token = [t.strip() for t in token]
+    rata = lambda m: ("center" if m and "justification=centering" in m.group(1) else "left")
+    return {
+        "sz": next((UKURAN_LATEX[t] for t in token if t in UKURAN_LATEX), SZ_ISI),
+        "tebal_semua": "bf" in token,
+        "label_tebal": "labelfont=bf" in opsi,
+        "rata_tabel": rata(tabel),
+        "rata_gambar": "center" if gambar is None else rata(gambar),
+    }
+
+
 def reference_docx(tujuan: Path) -> Path:
     """Buat reference.docx dari bawaan Pandoc, lalu setel gayanya sesuai pedoman."""
     bawaan = tujuan.parent / "reference-bawaan.docx"
@@ -338,6 +380,7 @@ def reference_docx(tujuan: Path) -> Path:
         _atur(ppr, "spacing", line=SPASI_15, lineRule="auto", before="0", after="0")
         _atur(ppr, "jc", val="both")
 
+    ket = gaya_keterangan()
     aturan = {
         "Normal": (SZ_ISI, False, "both", None),
         "BodyText": (SZ_ISI, False, "both", None),
@@ -347,9 +390,9 @@ def reference_docx(tujuan: Path) -> Path:
         "Heading2": (SZ_ISI, True, "left", ("240", "120")),
         "Heading3": (SZ_ISI, True, "left", ("180", "120")),
         "Heading4": (SZ_ISI, True, "left", ("180", "120")),
-        "Caption": (SZ_ISI, True, "left", ("120", "120")),
-        "TableCaption": (SZ_ISI, True, "left", ("120", "120")),
-        "ImageCaption": (SZ_ISI, True, "center", ("120", "120")),
+        "Caption": (ket["sz"], ket["tebal_semua"], ket["rata_tabel"], ("120", "120")),
+        "TableCaption": (ket["sz"], ket["tebal_semua"], ket["rata_tabel"], ("120", "120")),
+        "ImageCaption": (ket["sz"], ket["tebal_semua"], ket["rata_gambar"], ("120", "120")),
         "Bibliography": (SZ_ISI, False, "both", None),
         "Title": (SZ_BAB, True, "center", ("240", "240")),
         "Author": (SZ_ISI, False, "center", None),
@@ -451,6 +494,21 @@ def reference_docx(tujuan: Path) -> Path:
             tabs.remove(simpul)
         _atur(tabs, "tab", val="right", leader="dot", pos=LEBAR_TEKS)
 
+    # Gaya entri daftar gambar/tabel ("table of figures" di Word).
+    gaya = _gaya(akar, "TableofFigures")
+    if gaya is None:
+        gaya = ET.SubElement(akar, f"{W}style")
+        gaya.set(f"{W}type", "paragraph")
+        gaya.set(f"{W}styleId", "TableofFigures")
+        _atur(gaya, "name", val="table of figures")
+        _atur(gaya, "basedOn", val="Normal")
+    ppr = _anak(gaya, "pPr")
+    _atur(ppr, "jc", val="left")
+    _atur(ppr, "spacing", before="0", after="0", line=SPASI_15, lineRule="auto")
+    _atur(ppr, "ind", left="0", firstLine="0")
+    tabs = _anak(ppr, "tabs")
+    _atur(tabs, "tab", val="right", leader="dot", pos=LEBAR_TEKS)
+
     kode = _gaya(akar, "SourceCode") or _gaya(akar, "VerbatimChar")
     if kode is not None:
         rpr = _anak(kode, "rPr")
@@ -531,6 +589,75 @@ def _p_field(instruksi: str) -> str:
         f"<w:r><w:t>Klik kanan daftar ini lalu pilih Update Field.</w:t></w:r>"
         f'<w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>'
     )
+
+
+SIMBOL = {"\\epsilon": "ϵ", "\\varepsilon": "ε", "\\ell": "ℓ", "\\times": "×",
+          "\\leftarrow": "←", "\\rightarrow": "→", "\\pm": "±"}
+
+
+def latex_ke_teks(teks: str) -> str:
+    """Ubah teks entri .toc/.lof/.lot menjadi teks biasa untuk daftar Word."""
+    teks = re.sub(r"\\MakeUppercase\s*(?:\[\])?\s*\{([^{}]*)\}", lambda m: m.group(1).upper(), teks)
+    teks = re.sub(r"\\enquote\s*\{([^{}]*)\}", r"“\1”", teks)
+    # unicode-math menulis simbol miring sebagai \\mitepsilon, \\mitell, dst.
+    teks = teks.replace("\\mit", "\\")
+    for perintah, ganti in SIMBOL.items():
+        teks = teks.replace(perintah, ganti)
+    teks = teks.replace("\\ignorespaces", "").replace("~", " ").replace("$", "")
+    teks = re.sub(r"\\[a-zA-Z]+\*?\s*", "", teks)     # sisa perintah, isinya dipertahankan
+    teks = teks.replace("{", "").replace("}", "").replace("\\", "")
+    return " ".join(teks.split())
+
+
+def baca_daftar(akhiran: str) -> list[tuple[str, str, str, str]]:
+    """Entri (jenis, nomor, judul, halaman) dari berkas daftar keluaran LaTeX."""
+    berkas = ROOT / "build" / f"praskripsi.{akhiran}"
+    if not berkas.is_file():
+        return []
+    entri = []
+    for m in re.finditer(r"\\contentsline \{(\w+)\}\{(.*)\}\{([^{}]*)\}\{[^{}]*\}%", baca(berkas)):
+        jenis, isi, halaman = m.groups()
+        nomor = re.match(r"\\numberline \{([^{}]*)\}", isi)
+        judul = isi[nomor.end():] if nomor else isi
+        entri.append((jenis, nomor.group(1) if nomor else "", latex_ke_teks(judul), halaman))
+    return entri
+
+
+def _teks_entri(jenis: str, nomor: str, judul: str) -> tuple[str, str]:
+    """Teks entri dan gayanya, mengikuti tampilan daftar pada PDF."""
+    if jenis == "chapter":
+        return (f"BAB {nomor} {judul.upper()}" if nomor else judul.upper()), "TOC1"
+    if jenis in ("figure", "table"):
+        label = "Gambar" if jenis == "figure" else "Tabel"
+        return f"{label} {nomor} {judul}", "TableofFigures"
+    gaya = {"section": "TOC2", "subsection": "TOC3"}.get(jenis, "TOC3")
+    return f"{nomor} {judul}".strip(), gaya
+
+
+def _p_daftar_terisi(instruksi: str, entri: list[tuple[str, str, str, str]]) -> list[str]:
+    """Field TOC yang sudah berisi entri dan nomor halaman dari PDF.
+
+    Word tidak selalu memperbarui field yang ditandai dirty (terutama di
+    macOS), sehingga daftar kosong. Dengan isi awal ini daftar langsung
+    tampil; pembaruan field oleh Word hanya menyesuaikan nomor halaman."""
+    if not entri:
+        return [_p_field(instruksi)]
+    paragraf = []
+    for indeks, (jenis, nomor, judul, halaman) in enumerate(entri):
+        teks, gaya = _teks_entri(jenis, nomor, judul)
+        awal = ""
+        if indeks == 0:
+            awal = (f'<w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r>'
+                    f'<w:r><w:instrText xml:space="preserve">{instruksi}</w:instrText></w:r>'
+                    f'<w:r><w:fldChar w:fldCharType="separate"/></w:r>')
+        akhir = '<w:r><w:fldChar w:fldCharType="end"/></w:r>' if indeks == len(entri) - 1 else ""
+        teks_xml = teks.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        paragraf.append(
+            f'<w:p {NS}><w:pPr><w:pStyle w:val="{gaya}"/></w:pPr>{awal}'
+            f'<w:r><w:t xml:space="preserve">{teks_xml}</w:t></w:r>'
+            f'<w:r><w:tab/></w:r><w:r><w:t>{halaman}</w:t></w:r>{akhir}</w:p>'
+        )
+    return paragraf
 
 
 def _p_sampul() -> str:
@@ -688,7 +815,13 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     p_isi = ET.fromstring(_p_judul("DAFTAR ISI"))
     _anak(_anak(p_isi, "pPr"), "pageBreakBefore").set(f"{W}val", "0")
     awalan.append(p_isi)
-    awalan.append(ET.fromstring(_p_field(r' TOC \o "1-3" \h \z \u ')))
+    # Entri bab bernomor dan subbab saja; daftar pada bagian awal tidak
+    # dicantumkan, sama seperti field TOC Word yang hanya membaca gaya Heading.
+    isi_toc = [e for e in baca_daftar("toc")
+               if e[0] != "chapter" or e[1] or not e[2].upper().startswith("DAFTAR ")
+               or e[2].upper().startswith("DAFTAR PUSTAKA")]
+    for xml in _p_daftar_terisi(r' TOC \o "1-3" \h \z \u ', isi_toc):
+        awalan.append(ET.fromstring(xml))
     # Field TOC yang kosong membuat Word menampilkan pesan galat, jadi daftar
     # gambar/tabel hanya dibuat bila keterangannya memang ada di naskah.
     # Sakelar \t pada field TOC mencocokkan NAMA gaya ("Image Caption"), bukan
@@ -698,7 +831,9 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
         if f'w:val="{gaya}"' not in mentah:
             continue
         awalan.append(ET.fromstring(_p_judul(judul)))
-        awalan.append(ET.fromstring(_p_field(rf' TOC \h \z \t "{nama},1" ')))
+        entri = baca_daftar("lof" if gaya == "ImageCaption" else "lot")
+        for xml in _p_daftar_terisi(rf' TOC \h \z \t "{nama},1" ', entri):
+            awalan.append(ET.fromstring(xml))
     # Paragraf terakhir bagian awal memuat properti seksinya.
     _anak(awalan[-1], "pPr").append(
         _sect_salin(sect_akhir, margin_nol=False, format_nomor="lowerRoman",
@@ -712,14 +847,24 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     # meminta konfirmasi pemutakhiran format setiap kali disimpan.
     if "word/settings.xml" in isi:
         pengaturan = isi["word/settings.xml"].decode("utf-8")
+        # Skema OOXML mewajibkan urutan: updateFields lalu compat, keduanya
+        # sebelum rsids/themeFontLang/clrSchemeMapping dan seterusnya.
+        sisip = ""
+        # Minta Word memperbarui semua field (daftar isi, gambar, tabel) saat
+        # berkas dibuka; Word menampilkan dialog konfirmasi sekali.
+        if "updateFields" not in pengaturan:
+            sisip += '<w:updateFields w:val="true"/>'
         if "compatibilityMode" not in pengaturan:
-            pengaturan = pengaturan.replace(
-                "</w:settings>",
-                '<w:compat><w:compatSetting w:name="compatibilityMode" '
-                'w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>'
-                "</w:compat></w:settings>",
-            )
-            isi["word/settings.xml"] = pengaturan.encode("utf-8")
+            sisip += ('<w:compat><w:compatSetting w:name="compatibilityMode" '
+                      'w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>'
+                      "</w:compat>")
+        if sisip:
+            sesudah = re.search(r"<(?:w:hdrShapeDefaults|w:footnotePr|w:endnotePr|w:compat|"
+                                r"w:docVars|w:rsids|m:mathPr|w:attachedSchema|"
+                                r"w:themeFontLang|w:clrSchemeMapping)\b", pengaturan)
+            posisi = sesudah.start() if sesudah else pengaturan.index("</w:settings>")
+            pengaturan = pengaturan[:posisi] + sisip + pengaturan[posisi:]
+        isi["word/settings.xml"] = pengaturan.encode("utf-8")
 
     _pasang_penomoran(isi)
     isi["word/footer1.xml"] = _footer_xml()
@@ -801,6 +946,10 @@ def main() -> int:
         count=1,
         flags=re.M,
     )
+    # Gambar tanpa keterangan (mis. glif di dalam sel tabel) diberi alt "image"
+    # oleh Pandoc, lalu dijadikan figure berketerangan "image" yang tampil di
+    # sel dan masuk Daftar Gambar. Alt kosong membuatnya tetap gambar biasa.
+    markdown = markdown.replace("![image](", "![](")
     berkas_md = kerja / "sumber.md"
     berkas_md.write_text(markdown, encoding="utf-8")
 
