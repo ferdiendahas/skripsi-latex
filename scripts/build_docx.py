@@ -164,6 +164,35 @@ def _gambar_aset(path: str, ukuran: str) -> str:
     return f"\\texttt{{[{path}]}}"
 
 
+LEBAR_TEKS_CM = 14.0
+
+
+def _lebar_kolom(tabel: str) -> str:
+    """Beri lebar pada kolom c/l/r bila kolom lain memakai p{...}.
+
+    Pandoc menghitung lebar kolom tanpa ukuran dari panjang isinya di
+    Markdown antara; untuk sel bergambar itu panjang path berkasnya, sehingga
+    kolom tersebut membengkak dan kolom lain terjepit di Word."""
+    m = re.match(r"\\begin\{(?:tabular|longtable)\}(?:\[[^\]]*\])?\{", tabel)
+    if not m:
+        return tabel
+    awal, dalam, i = m.end(), 1, m.end()
+    while i < len(tabel) and dalam:
+        dalam += {"{": 1, "}": -1}.get(tabel[i], 0)
+        i += 1
+    spek = tabel[awal:i - 1]
+    lebar = [float(x) for x in re.findall(r"p\{([\d.]+)cm\}", spek)]
+    polos = re.sub(r"p\{[^}]*\}", "", spek)
+    jumlah_polos = len(re.findall(r"[clr]", polos))
+    if not lebar or not jumlah_polos:
+        return tabel
+    sisa = (LEBAR_TEKS_CM - sum(lebar)) / jumlah_polos
+    ukuran = f"p{{{min(2.5, max(1.5, sisa)):.1f}cm}}"
+    bagian = re.split(r"(p\{[^}]*\})", spek)
+    spek_baru = "".join(b if b.startswith("p{") else re.sub(r"[clr]", ukuran, b) for b in bagian)
+    return tabel[:awal] + spek_baru + tabel[i - 1:]
+
+
 def bersihkan(teks: str, nomor_bab: int) -> str:
     """Terjemahkan perintah khusus class agar dimengerti Pandoc."""
     teks = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",
@@ -197,6 +226,7 @@ def bersihkan(teks: str, nomor_bab: int) -> str:
         # judul kolom \\multicolumn dan sel \\multirow; perataannya tidak
         # berpengaruh di Word, jadi dibuang.
         isi = re.sub(r"[<>]\{(?:[^{}]|\{[^{}]*\})*\}", "", isi)
+        isi = _lebar_kolom(isi)
         return " ".join(isi.split())
     teks = re.sub(r"\\begin\{(tabular|longtable)\}.*?\\end\{\1\}", _satukan, teks, flags=re.S)
     # Opsi penempatan float ([htbp], [!htb]) menjadi atribut figure yang
@@ -794,6 +824,77 @@ def _sisip_tc(badan: ET.Element, gaya: str, kode: str,
             paragraf.append(ET.fromstring(xml))
 
 
+TWIP_CM = 567
+
+
+def lebar_tabel_latex(sumber: Path) -> list[list[float | None]]:
+    """Lebar kolom (cm) tiap tabel sesuai urutan di sumber; None = tanpa ukuran."""
+    hasil = []
+    for m in re.finditer(r"\\begin\{(?:tabular|longtable)\}(?:\[[^\]]*\])?\{", baca(sumber)):
+        teks, awal, dalam, i = m.string, m.end(), 1, m.end()
+        while i < len(teks) and dalam:
+            dalam += {"{": 1, "}": -1}.get(teks[i], 0)
+            i += 1
+        kolom = []
+        for k in re.finditer(r"p\{([^}]*)\}|[clr]", teks[awal:i - 1]):
+            if k.group(1) is None:
+                kolom.append(None)
+                continue
+            ukuran = k.group(1).replace(" ", "")
+            cm = re.fullmatch(r"([\d.]+)cm", ukuran)
+            lebar_teks = re.fullmatch(r"([\d.]*)\\textwidth", ukuran)
+            if cm:
+                kolom.append(float(cm.group(1)))
+            elif lebar_teks:
+                kolom.append(float(lebar_teks.group(1) or 1) * LEBAR_TEKS_CM)
+            else:
+                kolom.append(None)
+        hasil.append(kolom)
+    return hasil
+
+
+def _setel_lebar_tabel(badan: ET.Element, lebar: list[list[float | None]]) -> None:
+    """Pakai lebar kolom LaTeX pada tabel Word. Markdown antara tidak membawa
+    lebar kolom, sehingga Pandoc menebaknya dari panjang teks sel."""
+    tabel = list(badan.iter(f"{W}tbl"))
+    if len(tabel) != len(lebar):
+        return
+    for tbl, kolom in zip(tabel, lebar):
+        if not kolom or all(k is None for k in kolom):
+            continue
+        tetap = [k for k in kolom if k is not None]
+        sisa = max(LEBAR_TEKS_CM - sum(tetap), 0)
+        kosong = len(kolom) - len(tetap)
+        isi = [k if k is not None else (sisa / kosong if kosong else 0) for k in kolom]
+        skala = min(1.0, LEBAR_TEKS_CM / sum(isi))      # jangan melebihi lebar teks
+        twip = [round(k * skala * TWIP_CM) for k in isi]
+        grid = tbl.find(f"{W}tblGrid")
+        if grid is None or len(grid.findall(f"{W}gridCol")) != len(twip):
+            continue
+        for kol, w in zip(grid.findall(f"{W}gridCol"), twip):
+            kol.set(f"{W}w", str(w))
+        tblpr = tbl.find(f"{W}tblPr")
+        _atur(tblpr, "tblW", w=str(sum(twip)), type="dxa")
+        _atur(tblpr, "tblLayout", type="fixed")
+        for baris in tbl.findall(f"{W}tr"):
+            posisi = 0
+            for sel in baris.findall(f"{W}tc"):
+                tcpr = sel.find(f"{W}tcPr")
+                if tcpr is None:
+                    tcpr = ET.Element(f"{W}tcPr")
+                    sel.insert(0, tcpr)
+                rentang = tcpr.find(f"{W}gridSpan")
+                n = int(rentang.get(f"{W}val")) if rentang is not None else 1
+                lebar_sel = sum(twip[posisi:posisi + n])
+                posisi += n
+                tcw = tcpr.find(f"{W}tcW")
+                if tcw is None:
+                    tcw = ET.Element(f"{W}tcW")
+                    tcpr.insert(0, tcw)
+                tcw.set(f"{W}w", str(lebar_sel))
+                tcw.set(f"{W}type", "dxa")
+
+
 def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     """Tambah sampul, daftar isi/gambar/tabel, dan nomor halaman pada .docx."""
     with zipfile.ZipFile(docx) as zin:
@@ -814,6 +915,10 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
         sect_akhir.remove(simpul)
     sect_akhir.insert(0, _rujukan_footer())
     _atur(sect_akhir, "pgNumType", fmt="decimal", start="1")
+
+    sumber_tex = docx.parent / "docx" / "sumber.tex"
+    if sumber_tex.is_file():
+        _setel_lebar_tabel(badan, lebar_tabel_latex(sumber_tex))
 
     # Gambar tanpa keterangan (mis. glif di sel tabel) dijadikan figure oleh
     # Pandoc dengan keterangan berupa alt bawaan "image". Keterangan itu tampil
