@@ -43,6 +43,7 @@
 \RequirePackage{graphicx}
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,shapes.misc,calc}
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
 \RequirePackage{caption}
@@ -230,8 +231,40 @@
 \captionsetup{font={normalsize,bf},labelsep=space,skip=6pt}
 \captionsetup[table]{position=top,justification=raggedright,singlelinecheck=false}
 \captionsetup[figure]{position=bottom,justification=centering}
+% Lebar judul longtable bawaan hanya 4 inci (kotak di tengah), sehingga judul
+% yang rata kiri tampak menjorok. Samakan dengan lebar teks.
+\setlength{\LTcapwidth}{\textwidth}
 \newcommand{\sumber}[1]{%
   \par\vspace{3pt}{\centering\fontsize{11pt}{13pt}\selectfont Sumber: #1\par}}
+
+% Placeholder gambar: #1 berkas di assets/gambar/, #2 lebar, #3 tinggi. Selama
+% berkasnya belum ada, tampil kotak bertuliskan nama berkas; begitu berkas
+% ditaruh, gambar asli langsung dipasang tanpa mengubah naskah. Sesudah
+% menambah gambar, kompilasi dengan `latexmk -g` agar perubahan terdeteksi.
+\newcommand{\gambarsementara}[3]{%
+  \IfFileExists{assets/gambar/#1}%
+    {\includegraphics[width=#2,height=#3,keepaspectratio]{assets/gambar/#1}}%
+    {{\setlength{\fboxsep}{0pt}%
+      \fbox{\parbox[c][#3][c]{#2}{\centering\footnotesize\ttfamily
+        assets/gambar/#1}}}}}
+
+% Diagram TikZ hitam putih. Bentuk baku diagram alir: lonjong untuk
+% mulai/selesai, persegi untuk proses, belah ketupat untuk keputusan, jajar
+% genjang untuk masukan/keluaran. Pemakaian:
+%   \begin{tikzpicture}[alir] \node[terminal] (a) {Mulai}; ... \end{tikzpicture}
+\tikzset{
+  alir/.style={font=\small, node distance=5mm and 10mm,
+    every node/.append style={align=center}},
+  terminal/.style={draw, rounded rectangle, minimum width=2.4cm,
+    minimum height=7mm},
+  proses/.style={draw, rectangle, text width=3.8cm, minimum height=7mm},
+  keputusan/.style={draw, diamond, aspect=2.4, inner sep=1pt,
+    text width=2.6cm},
+  io/.style={draw, trapezium, trapezium left angle=70,
+    trapezium right angle=110, trapezium stretches body,
+    text width=3.4cm, minimum height=7mm},
+  panah/.style={-{Stealth[length=2mm]}},
+}
 
 \DeclareCaptionFont{upnkode}{\fontsize{9pt}{11pt}\selectfont}
 \captionsetup[lstlisting]{font=upnkode,labelfont=bf,labelsep=colon,

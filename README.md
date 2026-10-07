@@ -188,6 +188,7 @@ appendices/lampiran-1.tex
 | `\daftarpustaka` | cetak daftar pustaka IEEE |
 | `\lampiran{Judul}` | mulai lampiran bernomor |
 | `\sumber{...}` | baris sumber di bawah tabel/gambar |
+| `\gambarsementara{berkas}{lebar}{tinggi}` | kotak *placeholder* bertuliskan `assets/gambar/berkas`; otomatis berganti ke gambar asli begitu berkasnya ada |
 
 Opsi class:
 
@@ -203,6 +204,35 @@ template Word: kata yang tidak muat dipindahkan utuh ke baris berikutnya.
 Akibatnya jarak antarkata pada teks rata kanan-kiri bisa melebar, persis
 seperti keluaran Word. Opsi `pemenggalan` mengembalikan perilaku LaTeX biasa
 yang memakai tanda hubung.
+
+### Gambar dan diagram
+
+Diagram digambar dengan TikZ hitam putih. Class sudah memuat pustaka TikZ
+yang umum dan gaya diagram alir berbentuk baku:
+
+```latex
+\begin{tikzpicture}[alir]
+  \node[terminal] (a) {Mulai};
+  \node[io, below=of a] (b) {Citra masukan};
+  \node[proses, below=of b] (c) {Praproses};
+  \node[keputusan, below=of c] (d) {Selesai?};
+  \draw[panah] (a) -- (b);  \draw[panah] (b) -- (c);  \draw[panah] (c) -- (d);
+\end{tikzpicture}
+```
+
+`terminal` lonjong untuk mulai/selesai, `proses` persegi, `keputusan` belah
+ketupat, `io` jajar genjang untuk masukan/keluaran, dan `panah` untuk anak
+panah.
+
+Untuk gambar yang belum jadi, pakai `\gambarsementara{bab2/contoh.png}{10cm}{5cm}`.
+Begitu `assets/gambar/bab2/contoh.png` ditaruh, gambar asli langsung terpasang.
+`latexmk` tidak tahu berkas yang dicek dengan cara ini, jadi sesudah menambah
+gambar kompilasi dengan `latexmk -g -outdir=build praskripsi.tex`.
+
+Bila keterangan memuat sitasi, beri keterangan pendek tanpa sitasi untuk
+daftar gambar/tabel, misalnya
+`\caption[Blok encoder Transformer]{Blok encoder Transformer~\cite{vaswani2017}}`.
+Tanpa itu, sitasi ikut tercetak di daftar pada bagian awal.
 
 Tanpa opsi `ketat`, font TeX Gyre (Termes, Heros, Cursor) otomatis dipakai bila
 font resmi tidak tersedia, misalnya di Overleaf. Gunakan font resmi untuk
@@ -228,7 +258,12 @@ Berkas `.docx` dibuat langsung dari sumber LaTeX, sehingga:
 - rumus menjadi persamaan Word asli yang masih dapat disunting;
 - sitasi `\cite{...}` menjadi `[1]` dan daftar pustaka IEEE ikut tercetak,
   dibuat dari `bibliography/references.bib` memakai `assets/ieee.csl`;
-- acuan `\ref{...}` diganti nomornya, misalnya `Persamaan 2.1`.
+- acuan `\ref{...}` diganti nomornya, misalnya `Persamaan 2.1`;
+- keterangan diberi nomor seperti PDF (`Gambar 2.1 ...`, `Tabel 2.1 ...`),
+  termasuk tabel `longtable`;
+- **diagram TikZ dirender menjadi gambar** dengan class yang sama seperti
+  PDF (butuh `xelatex` dan `pdftoppm` dari Poppler; hasilnya disimpan di
+  `build/docx/tikz/` dan hanya dirender ulang bila kodenya berubah).
 
 Bagian yang sama seperti PDF:
 
@@ -237,7 +272,8 @@ Bagian yang sama seperti PDF:
 - **daftar isi dan daftar tabel/gambar** berupa *field* Word berisi nomor
   halaman sebenarnya. Daftar gambar/tabel hanya dibuat bila naskah memang
   memuat keterangan gambar/tabel, karena *field* kosong membuat Word
-  menampilkan pesan galat;
+  menampilkan pesan galat. Klik kanan daftar lalu pilih *Update Field* bila
+  isinya belum muncul;
 - **penomoran judul** memakai *multilevel list* Word yang ditautkan ke gaya
   Heading 1--4. Menyisipkan subbab di Word membuat nomor sesudahnya
   menyesuaikan sendiri;
@@ -248,7 +284,7 @@ Yang masih berbeda:
 
 - penomoran halaman Word tidak persis sama dengan PDF karena Word mengatur
   ulang baris dan pemenggalan halaman;
-- gambar TikZ diganti penanda teks; gambar dari berkas biasa tetap ikut;
+- gambar TikZ hanya diganti penanda teks bila `xelatex` atau `pdftoppm` tidak tersedia;
 - judul tabel diletakkan Word di bawah tabel, bukan di atas;
 - sampul berupa gambar, jadi teksnya tidak dapat disunting di Word. Ubah
   `metadata.tex` lalu jalankan `make docx` lagi.

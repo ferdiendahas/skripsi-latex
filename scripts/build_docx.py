@@ -97,15 +97,98 @@ def ganti_perintah(teks: str, nama: str, ubah) -> str:
         sisa = sisa[posisi:]
 
 
+GAMBAR_KOSONG = (  # PNG 1x1 putih, dipakai bila TikZ gagal dirender
+    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06"
+    b"\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\x9cc\xf8\xff\xff?\x00\x05\xfe"
+    b"\x02\xfe\xa7V\x81\x1d\x00\x00\x00\x00IEND\xaeB`\x82"
+)
+
+
+def render_tikz(kode: str) -> Path | None:
+    """Render satu tikzpicture menjadi PNG dengan class yang sama seperti PDF.
+
+    Pandoc tidak dapat membaca TikZ. Bila figure hanya berisi teks pengganti,
+    Pandoc menuliskannya sebagai HTML mentah yang dibuang oleh penulis .docx,
+    sehingga keterangan gambarnya ikut hilang dan Daftar Gambar kosong. Karena
+    itu tiap diagram dirender sungguhan, lalu dipasang sebagai gambar biasa.
+    """
+    import hashlib
+    folder = ROOT / "build" / "docx" / "tikz"
+    folder.mkdir(parents=True, exist_ok=True)
+    kunci = hashlib.sha1(kode.encode("utf-8")).hexdigest()[:12]
+    png = folder / f"tikz-{kunci}.png"
+    if png.is_file():
+        return png
+    if shutil.which("xelatex") is None or shutil.which("pdftoppm") is None:
+        return None
+    tex = folder / f"tikz-{kunci}.tex"
+    tex.write_text(
+        "\\documentclass[jenis=praskripsi]{upnjatim-skripsi}\n"
+        "\\input{metadata}\n"
+        "\\usepackage[active,tightpage]{preview}\n"
+        "\\PreviewEnvironment{tikzpicture}\n"
+        "\\setlength\\PreviewBorder{3pt}\n"
+        "\\begin{document}\n" + kode + "\n\\end{document}\n",
+        encoding="utf-8",
+    )
+    subprocess.run(
+        ["xelatex", "-interaction=nonstopmode", "-halt-on-error",
+         f"-output-directory={folder}", str(tex)],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    pdf = tex.with_suffix(".pdf")
+    if not pdf.is_file():
+        return None
+    subprocess.run(
+        ["pdftoppm", "-r", "300", "-png", "-singlefile", str(pdf), str(png.with_suffix(""))],
+        capture_output=True, check=False,
+    )
+    return png if png.is_file() else None
+
+
+def _tikz_ke_gambar(m: re.Match) -> str:
+    png = render_tikz(m.group(0))
+    if png is None:
+        png = ROOT / "build" / "docx" / "tikz" / "kosong.png"
+        png.parent.mkdir(parents=True, exist_ok=True)
+        png.write_bytes(GAMBAR_KOSONG)
+        return (f"\\includegraphics{{{png}}}\n"
+                "\\textit{[Gambar TikZ hanya tersedia pada versi PDF]}")
+    return f"\\includegraphics{{{png}}}"
+
+
+def _gambar_aset(path: str, ukuran: str) -> str:
+    """Gambar dari assets/gambar/; bila belum ada, tulis nama berkasnya."""
+    if (ROOT / path).is_file():
+        return f"\\includegraphics[{ukuran}]{{{ROOT / path}}}"
+    return f"\\texttt{{[{path}]}}"
+
+
 def bersihkan(teks: str, nomor_bab: int) -> str:
     """Terjemahkan perintah khusus class agar dimengerti Pandoc."""
-    # TikZ tidak dapat dirender Pandoc; beri penanda agar tidak hilang diam-diam.
-    teks = re.sub(
-        r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",
-        r"\\textit{[Gambar TikZ hanya tersedia pada versi PDF]}",
-        teks,
-        flags=re.S,
-    )
+    teks = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",
+                  _tikz_ke_gambar, teks, flags=re.S)
+    # \gambarsementara{berkas}{lebar}{tinggi} dari class.
+    teks = re.sub(r"\\gambarsementara\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}",
+                  lambda m: _gambar_aset(f"assets/gambar/{m.group(1)}", f"width={m.group(2)}"),
+                  teks)
+    # \glif[lebar]{kelompok}{nama}: glif tabel aksara (assets/gambar/<bab>/glif/).
+    def _glif(m: re.Match) -> str:
+        cocok = sorted((ROOT / "assets" / "gambar").glob(f"*/glif/{m.group(1)}/{m.group(2)}.png"))
+        if cocok:
+            return f"\\includegraphics[height=1cm]{{{cocok[0]}}}"
+        return f"\\texttt{{[{m.group(2)}]}}"
+    teks = re.sub(r"\\glif(?:\[[^\]]*\])?\{([^}]*)\}\{([^}]*)\}", _glif, teks)
+    # Definisi makro yang hanya berarti untuk PDF dibuang; Pandoc tidak
+    # memahami \newcolumntype maupun \IfFileExists di dalam makro.
+    teks = re.sub(r"\\newcommand\{\\glif\}\[[^\]]*\]\[[^\]]*\]\{.*?\n\n", "\n\n", teks, flags=re.S)
+    teks = re.sub(r"\\newcolumntype\{(\w)\}(?:\[\d\])?\{.*\}\s*\n", "", teks)
+    teks = re.sub(r"(?<=[|@])L\{", "p{", teks)
+    teks = re.sub(r"\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}", "", teks)
+    # Opsi penempatan float ([htbp], [!htb]) menjadi atribut figure yang
+    # tidak dapat ditulis sebagai gambar Markdown; tanpa dibuang, Pandoc
+    # menuliskan figure sebagai HTML mentah yang hilang di .docx.
+    teks = re.sub(r"\\begin\{(figure|table)\}\[[^\]]*\]", r"\\begin{\1}", teks)
     teks = ganti_perintah(teks, "sumber", lambda isi: f"\n\nSumber: {isi}\n\n")
     teks = ganti_perintah(teks, "lampiran", lambda isi: f"\\chapter{{Lampiran: {isi}}}")
     teks = teks.replace("\\checkmark", "✓")
@@ -115,33 +198,72 @@ def bersihkan(teks: str, nomor_bab: int) -> str:
     return teks
 
 
-def kumpulkan_label(berkas: list[Path]) -> dict[str, str]:
-    """Petakan label ke nomor (mis. eq:bobot -> 2.1) seperti penomoran LaTeX."""
+LINGKUNGAN = r"\\begin\{(equation|table|figure|longtable)\}(.*?)\\end\{\1\}"
+
+
+def kumpulkan_label(berkas: list[Path]) -> tuple[dict[str, str], dict[Path, list[str]]]:
+    """Petakan label ke nomor (mis. eq:bobot -> 2.1) seperti penomoran LaTeX.
+
+    Juga mengembalikan nomor tiap figure/table per berkas, sesuai urutan
+    kemunculan, untuk ditulis di depan keterangannya (longtable dihitung
+    sebagai tabel, sama seperti LaTeX)."""
     peta: dict[str, str] = {}
-    bab = 0
+    nomor_keterangan: dict[Path, list[str]] = {}
+    bab = lampiran = 0
     for path in berkas:
         teks = baca(path)
-        if "\\chapter{" in teks and "\\lampiran{" not in teks:
-            bab += 1
+        if "\\lampiran{" in teks:
+            lampiran += 1
+            awalan = f"L{lampiran}"
+        else:
+            if "\\chapter{" in teks:
+                bab += 1
+            awalan = str(bab)
         cacah = {"equation": 0, "table": 0, "figure": 0}
-        for m in re.finditer(r"\\begin\{(equation|table|figure)\}(.*?)\\end\{\1\}", teks, re.S):
-            jenis, isi = m.group(1), m.group(2)
+        daftar = []
+        for m in re.finditer(LINGKUNGAN, teks, re.S):
+            jenis = "table" if m.group(1) == "longtable" else m.group(1)
             cacah[jenis] += 1
-            label = re.search(r"\\label\{([^}]+)\}", isi)
+            nomor = f"{awalan}.{cacah[jenis]}"
+            if jenis != "equation":
+                daftar.append(("Tabel" if jenis == "table" else "Gambar") + f" {nomor}")
+            label = re.search(r"\\label\{([^}]+)\}", m.group(2))
             if label:
-                peta[label.group(1)] = f"{bab}.{cacah[jenis]}"
-    return peta
+                peta[label.group(1)] = nomor
+        nomor_keterangan[path] = daftar
+    return peta, nomor_keterangan
+
+
+def nomori_keterangan(teks: str, nomor: list[str]) -> str:
+    """Tulis "Gambar 2.1 " / "Tabel 2.1 " di depan isi \\caption, karena Pandoc
+    tidak menomori keterangan. \\caption* (tanpa nomor) dilewati."""
+    antre = iter(nomor)
+
+    def _satu(m: re.Match) -> str:
+        isi = m.group(0)
+        cap = re.search(r"\\caption(?:\[[^\]]*\])?\{", isi)
+        label = next(antre, None)
+        if cap is None or label is None:
+            return isi
+        return isi[:cap.end()] + label + " " + isi[cap.end():]
+
+    def _lingkungan(m: re.Match) -> str:
+        if m.group(1) == "equation":
+            return m.group(0)
+        return _satu(m)
+
+    return re.sub(LINGKUNGAN, _lingkungan, teks, flags=re.S)
 
 
 def sumber_gabungan(meta: dict[str, str], berkas: list[Path], blok_sampul: bool = True) -> str:
     # Blok judul teks hanya dipakai bila gambar sampul tidak tersedia, agar
     # sampulnya tidak tampil dua kali.
     bagian = [blok_judul(meta)] if blok_sampul else []
-    peta_label = kumpulkan_label(berkas)
+    peta_label, nomor_keterangan = kumpulkan_label(berkas)
     nomor_bab = 0
     pustaka_tercetak = False
     for path in berkas:
-        teks = baca(path)
+        teks = nomori_keterangan(baca(path), nomor_keterangan[path])
         teks = re.sub(r"\\ref\{([^}]+)\}", lambda m: peta_label.get(m.group(1), "?"), teks)
         # Daftar pustaka dicetak sebelum lampiran, sama seperti keluaran PDF.
         if "\\lampiran{" in teks and not pustaka_tercetak:
@@ -569,11 +691,14 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     awalan.append(ET.fromstring(_p_field(r' TOC \o "1-3" \h \z \u ')))
     # Field TOC yang kosong membuat Word menampilkan pesan galat, jadi daftar
     # gambar/tabel hanya dibuat bila keterangannya memang ada di naskah.
-    for judul, gaya in (("DAFTAR GAMBAR", "ImageCaption"), ("DAFTAR TABEL", "TableCaption")):
+    # Sakelar \t pada field TOC mencocokkan NAMA gaya ("Image Caption"), bukan
+    # ID-nya ("ImageCaption"); dengan ID, Word menganggap daftarnya kosong.
+    for judul, gaya, nama in (("DAFTAR GAMBAR", "ImageCaption", "Image Caption"),
+                              ("DAFTAR TABEL", "TableCaption", "Table Caption")):
         if f'w:val="{gaya}"' not in mentah:
             continue
         awalan.append(ET.fromstring(_p_judul(judul)))
-        awalan.append(ET.fromstring(_p_field(rf' TOC \h \z \t "{gaya},1" ')))
+        awalan.append(ET.fromstring(_p_field(rf' TOC \h \z \t "{nama},1" ')))
     # Paragraf terakhir bagian awal memuat properti seksinya.
     _anak(awalan[-1], "pPr").append(
         _sect_salin(sect_akhir, margin_nol=False, format_nomor="lowerRoman",
@@ -684,6 +809,8 @@ def main() -> int:
         "pandoc", str(berkas_md),
         "--from=markdown",
         "--citeproc",
+        # Locale Indonesia agar "hlm. 18" dikenali sebagai halaman: [31, hlm. 18].
+        "--metadata=lang:id-ID",
         f"--bibliography={ROOT / 'bibliography' / 'references.bib'}",
         f"--csl={csl}",
         f"--reference-doc={reference_docx(kerja / 'reference.docx')}",
