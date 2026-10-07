@@ -340,6 +340,38 @@ def _atur(induk: ET.Element, tag: str, **atribut: str) -> None:
         simpul.set(f"{W}{kunci}", nilai)
 
 
+# Urutan anak elemen menurut skema OOXML. Word menolak berkas ("unreadable
+# content") bila urutannya salah, sedangkan _atur menambah elemen di akhir.
+URUTAN = {
+    "pPr": ["pStyle", "keepNext", "keepLines", "pageBreakBefore", "framePr",
+            "widowControl", "numPr", "suppressLineNumbers", "pBdr", "shd", "tabs",
+            "suppressAutoHyphens", "kinsoku", "wordWrap", "overflowPunct",
+            "topLinePunct", "autoSpaceDE", "autoSpaceDN", "bidi", "adjustRightInd",
+            "snapToGrid", "spacing", "ind", "contextualSpacing", "mirrorIndents",
+            "suppressOverlap", "jc", "textDirection", "textAlignment",
+            "textboxTightWrap", "outlineLvl", "divId", "cnfStyle", "rPr", "sectPr",
+            "pPrChange"],
+    "tblPr": ["tblStyle", "tblpPr", "tblOverlap", "bidiVisual", "tblStyleRowBandSize",
+              "tblStyleColBandSize", "tblW", "jc", "tblCellSpacing", "tblInd",
+              "tblBorders", "shd", "tblLayout", "tblCellMar", "tblLook", "tblCaption",
+              "tblDescription"],
+    "tcPr": ["cnfStyle", "tcW", "gridSpan", "hMerge", "vMerge", "tcBorders", "shd",
+             "noWrap", "tcMar", "textDirection", "tcFitText", "vAlign", "hideMark"],
+}
+
+
+def urutkan_skema(akar: ET.Element) -> None:
+    """Susun ulang anak pPr/tblPr/tcPr sesuai urutan skema (stabil)."""
+    for nama, urutan in URUTAN.items():
+        for simpul in akar.iter(f"{W}{nama}"):
+            anak = list(simpul)
+            peringkat = {t: i for i, t in enumerate(urutan)}
+            anak.sort(key=lambda e: peringkat.get(e.tag.replace(W, ""), len(urutan)))
+            for e in list(simpul):
+                simpul.remove(e)
+            simpul.extend(anak)
+
+
 def _gaya(akar: ET.Element, style_id: str) -> ET.Element | None:
     for gaya in akar.findall(f"{W}style"):
         if gaya.get(f"{W}styleId") == style_id:
@@ -524,6 +556,17 @@ def reference_docx(tujuan: Path) -> Path:
             tabs.remove(simpul)
         _atur(tabs, "tab", val="right", leader="dot", pos=LEBAR_TEKS)
 
+    # Paragraf gambar mewarisi Normal (rata kanan-kiri, menjorok 1,27 cm);
+    # gambar harus di tengah seperti PDF.
+    for style_id in ("Figure", "CaptionedFigure"):
+        gaya = _gaya(akar, style_id)
+        if gaya is not None:
+            ppr = _anak(gaya, "pPr")
+            _atur(ppr, "jc", val="center")
+            _atur(ppr, "ind", left="0", firstLine="0")
+            _atur(ppr, "spacing", before="120", after="0", line="240", lineRule="auto")
+            _anak(ppr, "keepNext")
+
     # Gaya entri daftar gambar/tabel ("table of figures" di Word).
     gaya = _gaya(akar, "TableofFigures")
     if gaya is None:
@@ -545,6 +588,7 @@ def reference_docx(tujuan: Path) -> Path:
         _atur(rpr, "rFonts", ascii="Courier New", hAnsi="Courier New", cs="Courier New")
         _atur(rpr, "sz", val=SZ_KODE)
         _atur(rpr, "szCs", val=SZ_KODE)
+    urutkan_skema(akar)
     isi["word/styles.xml"] = ET.tostring(akar, encoding="UTF-8", xml_declaration=True)
 
     dokumen = ET.fromstring(isi["word/document.xml"])
@@ -762,6 +806,7 @@ def _pasang_penomoran(isi: dict[str, bytes]) -> None:
         numpr = _anak(_anak(gaya, "pPr"), "numPr")
         _atur(numpr, "ilvl", val=str(tingkat))
         _atur(numpr, "numId", val=ID_NOMOR)
+    urutkan_skema(akar_gaya)
     isi["word/styles.xml"] = ET.tostring(akar_gaya, encoding="UTF-8", xml_declaration=True)
 
 
@@ -825,6 +870,7 @@ def _sisip_tc(badan: ET.Element, gaya: str, kode: str,
 
 
 TWIP_CM = 567
+TABCOLSEP_CM = 0.2117   # \tabcolsep bawaan LaTeX: 6 pt
 
 
 def lebar_tabel_latex(sumber: Path) -> list[list[float | None]]:
@@ -853,10 +899,24 @@ def lebar_tabel_latex(sumber: Path) -> list[list[float | None]]:
     return hasil
 
 
+def _rapikan_tabel(tbl: ET.Element) -> None:
+    """Tabel di tengah halaman; judul kolom dan sel bergambar rata tengah,
+    seperti keluaran PDF."""
+    _atur(tbl.find(f"{W}tblPr"), "jc", val="center")
+    baris = tbl.findall(f"{W}tr")
+    for indeks, tr in enumerate(baris):
+        for paragraf in tr.iter(f"{W}p"):
+            ada_teks = any((t.text or "").strip() for t in paragraf.iter(f"{W}t"))
+            if indeks == 0 or (paragraf.find(f".//{W}drawing") is not None and not ada_teks):
+                _atur(_anak(paragraf, "pPr"), "jc", val="center")
+
+
 def _setel_lebar_tabel(badan: ET.Element, lebar: list[list[float | None]]) -> None:
     """Pakai lebar kolom LaTeX pada tabel Word. Markdown antara tidak membawa
     lebar kolom, sehingga Pandoc menebaknya dari panjang teks sel."""
     tabel = list(badan.iter(f"{W}tbl"))
+    for tbl in tabel:
+        _rapikan_tabel(tbl)
     if len(tabel) != len(lebar):
         return
     for tbl, kolom in zip(tabel, lebar):
@@ -866,6 +926,9 @@ def _setel_lebar_tabel(badan: ET.Element, lebar: list[list[float | None]]) -> No
         sisa = max(LEBAR_TEKS_CM - sum(tetap), 0)
         kosong = len(kolom) - len(tetap)
         isi = [k if k is not None else (sisa / kosong if kosong else 0) for k in kolom]
+        # p{w} di LaTeX adalah lebar isi; tiap kolom masih mendapat \\tabcolsep
+        # (6 pt) di kiri dan kanan, jadi lebar sel sebenarnya w + 2 x 6 pt.
+        isi = [k + 2 * TABCOLSEP_CM for k in isi]
         skala = min(1.0, LEBAR_TEKS_CM / sum(isi))      # jangan melebihi lebar teks
         twip = [round(k * skala * TWIP_CM) for k in isi]
         grid = tbl.find(f"{W}tblGrid")
@@ -987,6 +1050,7 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
 
     for posisi, simpul in enumerate(awalan):
         badan.insert(posisi, simpul)
+    urutkan_skema(akar)
     isi["word/document.xml"] = ET.tostring(akar, encoding="UTF-8", xml_declaration=True)
 
     # Tanpa penanda versi, Word membuka berkas dalam mode kompatibilitas dan
