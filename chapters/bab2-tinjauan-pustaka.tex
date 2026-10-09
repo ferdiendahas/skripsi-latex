@@ -1,15 +1,5 @@
 \chapter{Tinjauan Pustaka}
 
-% Daftar keterangan variabel yang dipasang di bawah setiap persamaan.
-\newenvironment{keterangan}{%
-  \par\vspace{3pt}\noindent dengan:\par\nobreak
-  % leftmargin = labelwidth + labelsep agar baris sambungan rata dengan
-  % baris pertama keterangan, bukan menjorok lebih dalam.
-  \begin{description}[leftmargin=2.8cm,labelwidth=2.4cm,labelsep=0.4cm,
-    align=left,font=\normalfont,topsep=2pt,itemsep=0pt,parsep=0pt]%
-}{%
-  \end{description}\par\vspace{3pt}%
-}
 
 \section{Penelitian Terdahulu}
 Penelitian terdahulu yang relevan dikelompokkan ke dalam empat kelompok:
@@ -165,22 +155,11 @@ logaritmik intraday didefinisikan sebagai
   \qquad i = 1, \dots, 288,
   \label{eq:return}
 \end{equation}
-\begin{keterangan}
-  \item[$r_{t,i}$] \textit{return} logaritmik intraday pada bar ke-$i$ hari $t$,
-  \item[$C_{t,i}$] harga penutupan bar 5 menit ke-$i$ pada hari $t$; untuk
-    $i = 1$, $C_{t,0}$ adalah harga penutupan bar terakhir hari $t-1$,
-  \item[$i$] nomor urut bar dalam satu hari, bernilai 1 sampai 288.
-\end{keterangan}
 \textit{Realized variance} harian adalah
 \begin{equation}
   RV_t = \sum_{i=1}^{288} r_{t,i}^2 .
   \label{eq:rv}
 \end{equation}
-\begin{keterangan}
-  \item[$RV_t$] \textit{realized variance} harian pada hari $t$,
-  \item[$r_{t,i}$] \textit{return} logaritmik intraday pada
-    Persamaan~\ref{eq:return}.
-\end{keterangan}
 Corsi mendefinisikan \textit{realized volatility} sebagai akar dari besaran
 tersebut \cite{corsi2009}. Penelitian ini menggunakan skala varians karena
 fungsi \textit{loss} QLIKE dihitung pada skala varians \cite{patton2011}.
@@ -218,20 +197,6 @@ model HAR-RV dalam bentuk logaritma yang digunakan pada penelitian ini adalah
   + \beta_m \ln RV_t^{(m)} + \varepsilon_{t+1}.
   \label{eq:har}
 \end{equation}
-\begin{keterangan}
-  \item[$RV_{t+1}$] RV hari berikutnya, yaitu target peramalan,
-  \item[$RV_t$] RV hari $t$, yaitu komponen harian,
-  \item[$RV_t^{(w)}$] rata-rata RV tujuh hari terakhir hingga hari $t$,
-    yaitu komponen mingguan,
-  \item[$RV_t^{(m)}$] rata-rata RV tiga puluh hari terakhir hingga hari $t$,
-    yaitu komponen bulanan,
-  \item[$j$] indeks pergeseran hari ke belakang dari hari $t$,
-  \item[$\beta_0$] konstanta regresi,
-  \item[$\beta_d$] koefisien komponen harian,
-  \item[$\beta_w$] koefisien komponen mingguan,
-  \item[$\beta_m$] koefisien komponen bulanan,
-  \item[$\varepsilon_{t+1}$] galat yang diasumsikan berrata-rata nol.
-\end{keterangan}
 Corsi menggunakan lag 1, 5, dan 22 hari yang mencerminkan hari perdagangan
 pasar saham. Bitcoin diperdagangkan setiap hari tanpa libur, sehingga horizon
 mingguan dan bulanan disesuaikan menjadi 7 dan 30 hari; lag 5 dan 22 hari
@@ -279,13 +244,6 @@ pada iterasi ke-$b$ adalah
   F_b(\mathbf{x}) = F_{b-1}(\mathbf{x}) + \eta\, h_b(\mathbf{x}),
   \label{eq:gbdt}
 \end{equation}
-\begin{keterangan}
-  \item[$F_b(\mathbf{x})$] model gabungan setelah $b$ iterasi,
-  \item[$\mathbf{x}$] vektor fitur masukan,
-  \item[$h_b(\mathbf{x})$] pohon ke-$b$, dilatih pada gradien fungsi
-    \textit{loss},
-  \item[$\eta$] laju pembelajaran.
-\end{keterangan}
 LightGBM merupakan implementasi GBDT yang dirancang untuk
 efisiensi pada data besar melalui dua teknik, yaitu \textit{Gradient-based
 One-Side Sampling} (GOSS) dan \textit{Exclusive Feature Bundling} (EFB), dengan
@@ -363,11 +321,6 @@ dari \textit{return} negatif \cite{barndorff2010}:
   RS_t^- = \sum_{i=1}^{288} r_{t,i}^2 \, \mathbf{1}(r_{t,i} < 0).
   \label{eq:semivarians}
 \end{equation}
-\begin{keterangan}
-  \item[$RS_t^-$] \textit{realized semivariance} negatif pada hari $t$,
-  \item[$\mathbf{1}(\cdot)$] fungsi indikator, bernilai 1 bila syarat di
-    dalamnya terpenuhi dan 0 bila tidak.
-\end{keterangan}
 Patton dan Sheppard menunjukkan bahwa \textit{semivariance} negatif lebih
 informatif untuk meramal volatilitas pada saham \cite{patton2015}. Karena
 $RV_t = RS_t^- + RS_t^+$, fitur yang digunakan adalah proporsi $RS_t^-/RV_t$
@@ -379,12 +332,6 @@ terendah $P^{L}_t$ dalam satu hari \cite{parkinson1980}:
   \sigma^2_{P,t} = \frac{(\ln P^{H}_t - \ln P^{L}_t)^2}{4 \ln 2}.
   \label{eq:parkinson}
 \end{equation}
-\begin{keterangan}
-  \item[$\sigma^2_{P,t}$] estimator varians \textit{range} Parkinson
-    pada hari $t$,
-  \item[$P^{H}_t$] harga tertinggi pada hari $t$,
-  \item[$P^{L}_t$] harga terendah pada hari $t$.
-\end{keterangan}
 Estimator ini mengasumsikan perdagangan kontinu, asumsi yang lebih terpenuhi
 pada Bitcoin yang diperdagangkan 24 jam sehari dibanding saham.
 
@@ -396,13 +343,6 @@ dalam versi \textit{realized} dari bar 5 menit:
   \frac{\left|r_{t,i}\right|}{QV_{t,i}},
   \label{eq:amihud}
 \end{equation}
-\begin{keterangan}
-  \item[$\text{Amihud}_t$] ukuran \textit{illiquidity} pada hari $t$,
-  \item[$r_{t,i}$] \textit{return} intraday pada bar ke-$i$,
-  \item[$QV_{t,i}$] volume dalam dolar (USDT) pada bar ke-$i$,
-  \item[$N_t$] jumlah bar bervolume positif pada hari $t$,
-  \item[$10^6$] faktor penskalaan agar besarannya mudah dibaca.
-\end{keterangan}
 Amihud diperlakukan sebagai proksi dampak harga, bukan
 biaya transaksi \cite{amihud2002,brauneis2021}. Fitur lainnya adalah
 \textit{return} harian, logaritma volume dolar, dan perubahan logaritma volume.
@@ -419,12 +359,6 @@ Untuk ramalan $F_t$ dan proksi $RV_t$:
   L^{\text{MSE}}_t = (RV_t - F_t)^2.
   \label{eq:loss}
 \end{equation}
-\begin{keterangan}
-  \item[$L^{\text{QLIKE}}_t$] nilai \textit{loss} QLIKE pada hari $t$,
-  \item[$L^{\text{MSE}}_t$] nilai \textit{loss} MSE pada hari $t$,
-  \item[$F_t$] ramalan RV untuk hari $t$,
-  \item[$RV_t$] proksi volatilitas teramati pada Persamaan~\ref{eq:rv}.
-\end{keterangan}
 QLIKE homogen berderajat nol, artinya nilainya tidak berubah bila $RV_t$ dan
 $F_t$ dikalikan konstanta yang sama, sehingga \textit{loss} tidak membesar
 hanya karena volatilitas sedang tinggi. QLIKE juga menghukum ramalan yang
@@ -438,12 +372,6 @@ Objek analisis penelitian ini adalah selisih \textit{loss} harian
   \Delta L_t = L_t(\text{ML}) - L_t(\text{HAR}),
   \label{eq:delta-loss}
 \end{equation}
-\begin{keterangan}
-  \item[$\Delta L_t$] selisih \textit{loss} harian antara kedua model,
-  \item[$L_t(\text{ML})$] \textit{loss} model \textit{machine learning}
-    pada hari $t$,
-  \item[$L_t(\text{HAR})$] \textit{loss} model HAR-RV pada hari $t$.
-\end{keterangan}
 Nilai $\Delta L_t$ yang negatif menunjukkan model ML lebih akurat pada hari
 tersebut.
 Karena kedua model dievaluasi pada hari dan proksi yang sama, $\Delta L_t$
@@ -457,14 +385,6 @@ Statistik ujinya adalah
   DM = \frac{\overline{\Delta L}}{\sqrt{\widehat{V}_{\text{HAC}} / n}},
   \label{eq:dm}
 \end{equation}
-\begin{keterangan}
-  \item[$DM$] statistik uji Diebold--Mariano,
-  \item[$\overline{\Delta L}$] rata-rata selisih \textit{loss} selama
-    periode uji,
-  \item[$\widehat{V}_{\text{HAC}}$] estimator varians jangka panjang yang
-    konsisten terhadap heteroskedastisitas dan autokorelasi,
-  \item[$n$] jumlah observasi pada periode uji.
-\end{keterangan}
 Penelitian ini menggunakan estimator Newey--West \cite{newey1987} dengan \textit{bandwidth}
 yang dipilih otomatis menurut Andrews \cite{andrews1991}.
 
@@ -507,12 +427,6 @@ penempatan $m$ titik patah, statistik UDmax didefinisikan sebagai
   \text{UDmax} = \max_{1 \le m \le M} \sup F_T(m),
   \label{eq:udmax}
 \end{equation}
-\begin{keterangan}
-  \item[$\text{UDmax}$] statistik uji perubahan struktural maksimum,
-  \item[$\sup F_T(m)$] statistik $F$ terbesar atas semua kemungkinan
-    penempatan $m$ titik patah,
-  \item[$M$] jumlah maksimum titik patah yang diuji.
-\end{keterangan}
 Statistik ini menguji hipotesis nol tanpa perubahan melawan alternatif adanya
 satu hingga $M$ perubahan. Setiap segmen dibatasi minimal sebesar proporsi
 \textit{trimming} $\varepsilon$ dari sampel. Bai dan Perron menganjurkan UDmax
@@ -667,14 +581,6 @@ statistik Kolmogorov--Smirnov dua sampel,
   \left| \hat{F}_{\text{latih}}(x) - \hat{F}_{\text{uji}}(x) \right|,
   \label{eq:ks}
 \end{equation}
-\begin{keterangan}
-  \item[$D^{\text{KS}}$] statistik Kolmogorov--Smirnov dua sampel,
-  \item[$\hat{F}_{\text{latih}}(x)$] fungsi distribusi kumulatif empiris
-    data latih,
-  \item[$\hat{F}_{\text{uji}}(x)$] fungsi distribusi kumulatif empiris
-    bulan uji,
-  \item[$\sup_x$] nilai terbesar atas seluruh $x$.
-\end{keterangan}
 Nilai $D^{\text{KS}}$ adalah jarak terbesar antara kedua fungsi distribusi
 kumulatif empiris. Uji KS per
 fitur merupakan salah satu pendekatan untuk mendeteksi pergeseran data
