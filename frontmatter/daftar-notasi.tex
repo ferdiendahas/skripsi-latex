@@ -72,6 +72,37 @@
   $\sup_x$ & : & Nilai terbesar atas seluruh $x$ \\
   $D_t$ & : & Selisih $\Delta L_t$ antara strategi pembaruan S2-365 dan S1 \\
   $W$ & : & Panjang jendela data latih \textit{rolling}, dalam hari \\
+  $C_t$ & : & Harga penutupan bar terakhir hari $t$ \\
+  $t^*$ & : & Hari contoh pada perhitungan manual (30 Agustus 2018) \\
+  $\hat{y}_{t+1}$ & : & Ramalan $\ln RV_{t+1}$ sebelum dikembalikan ke skala
+    level \\
+  $\hat{\sigma}^2$ & : & Varians residual untuk koreksi bias transformasi
+    logaritma \\
+  $\underline{F}$ & : & Batas bawah ramalan, persentil ke-1 target $RV$ pada
+    \textit{window} latih \\
+  $F_{t+1}$ & : & Ramalan RV hari $t+1$ setelah koreksi bias dan batas bawah \\
+  $\bar{p}_t$ & : & Rata-rata logaritma harga tertinggi dan terendah hari
+    $t$ pada estimator Abdi--Ranaldo \\
+  $c_t$ & : & Logaritma harga penutupan hari $t$ \\
+  $s_t$ & : & \textit{Spread} Abdi--Ranaldo harian \\
+  $\tau$ & : & Indeks bulan uji pada regresi karakteristik pasar \\
+  $\overline{\Delta L}_\tau$ & : & Rata-rata $\Delta L_t$ pada bulan $\tau$ \\
+  $z_{k,\tau}$ & : & Variabel karakteristik pasar ke-$k$ pada bulan $\tau$ \\
+  $k$ & : & Indeks variabel karakteristik pasar, bernilai 1 sampai 4 \\
+  $\gamma_k$ & : & Koefisien variabel karakteristik pasar ke-$k$ \\
+  $\alpha$ & : & Konstanta regresi karakteristik pasar dan regresi era \\
+  $\delta$ & : & Koefisien variabel \textit{dummy} era \\
+  $\text{Era}_\tau$ & : & Variabel \textit{dummy} era \textit{institutional}
+    pada bulan $\tau$ \\
+  $\text{Era}_t$ & : & Variabel \textit{dummy} era \textit{institutional}
+    pada hari $t$ \\
+  $u_\tau$ & : & Galat regresi karakteristik pasar bulan $\tau$ \\
+  $e_t$ & : & Galat regresi era pada hari $t$ \\
+  $\ell$ & : & Jumlah titik patah pada uji perubahan berurutan
+    $\sup F(\ell+1 \mid \ell)$ \\
+  $R$ & : & Jumlah replikasi simulasi Monte Carlo \\
+  $R^{+}$ & : & Jumlah statistik simulasi yang tidak lebih kecil daripada
+    statistik amatan \\
 \end{longtable}
 \endgroup
 \clearpage

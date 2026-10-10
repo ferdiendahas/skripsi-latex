@@ -594,21 +594,18 @@ memperoleh satu ukuran pergeseran per bulan.
 Likuiditas pasar kripto dapat diukur dengan berbagai proksi berbasis data harga
 dan volume. Brauneis dkk. menunjukkan bahwa proksi yang paling baik menangkap
 variasi likuiditas kripto antarwaktu berbeda dengan proksi yang paling baik
-menangkap levelnya: estimator \textit{spread} Abdi--Ranaldo unggul untuk
+menangkap levelnya: estimator \textit{spread} Abdi--Ranaldo \cite{abdi2017} unggul untuk
 variasi waktu, sedangkan ukuran Amihud unggul untuk level \cite{brauneis2021}.
 Karena itu, penelitian ini memakai Amihud sebagai fitur model LGBM-X dan
 estimator
 Abdi--Ranaldo, yang dihitung dari harga OHLC harian, sebagai variabel likuiditas
 dalam analisis asosiasi kinerja relatif dengan kondisi pasar, dengan estimator
-Corwin--Schultz sebagai uji sensitivitas. Amihud tidak disertakan pada HAR-X
+Corwin--Schultz \cite{corwin2012} sebagai uji sensitivitas. Amihud tidak disertakan pada HAR-X
 karena berkolinearitas tinggi dengan komponen HAR berdasarkan pemeriksaan pada
 \textit{window} awal; rinciannya diuraikan pada Bab III. Proksi likuiditas harian juga
 dipakai Zhang dkk. untuk mengkaji hubungan antara \textit{return} dan
 likuiditas aset kripto \cite{zhang2024}.
 
-% CEK: Paper asli estimator Abdi--Ranaldo (2017) dan Corwin--Schultz (2012)
-% belum ada di daftar referensi. Tambahkan ke references.bib setelah
-% diverifikasi; sementara klaim disandarkan pada Brauneis dkk. (2021).
 
 \section{Kerangka Pemikiran}
 Kerangka pemikiran penelitian ini berangkat dari dua fakta. Pertama,

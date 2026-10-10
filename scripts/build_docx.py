@@ -899,6 +899,40 @@ def lebar_tabel_latex(sumber: Path) -> list[list[float | None]]:
     return hasil
 
 
+def tabel_tanpa_garis(sumber: Path) -> list[bool]:
+    """Tabel mana yang tidak bergaris di LaTeX, yaitu tanpa "|" pada
+    spesifikasi kolom dan tanpa \\hline. Gaya tabel bawaan Pandoc selalu
+    bergaris, sehingga tabel seperti Daftar Notasi perlu dimatikan bordernya
+    secara eksplisit agar sama dengan PDF."""
+    teks = baca(sumber)
+    hasil = []
+    for m in re.finditer(r"\\begin\{(tabular|longtable)\}(?:\[[^\]]*\])?\{", teks):
+        dalam, i = 1, m.end()
+        while i < len(teks) and dalam:
+            dalam += {"{": 1, "}": -1}.get(teks[i], 0)
+            i += 1
+        spek = teks[m.end():i - 1]
+        akhir = teks.find("\\end{%s}" % m.group(1), i)
+        isi = teks[i:akhir if akhir != -1 else len(teks)]
+        hasil.append("|" not in spek and "\\hline" not in isi)
+    return hasil
+
+
+def _matikan_border(badan: ET.Element, tanpa_garis: list[bool]) -> None:
+    """Setel tblBorders nil pada tabel yang polos di LaTeX."""
+    tabel = list(badan.iter(f"{W}tbl"))
+    if len(tabel) != len(tanpa_garis):
+        return
+    for tbl, polos in zip(tabel, tanpa_garis):
+        if not polos:
+            continue
+        batas = _anak(tbl.find(f"{W}tblPr"), "tblBorders")
+        for lama in list(batas):
+            batas.remove(lama)
+        for sisi in ("top", "left", "bottom", "right", "insideH", "insideV"):
+            _atur(batas, sisi, val="nil", sz="0")
+
+
 def _rapikan_tabel(tbl: ET.Element) -> None:
     """Tabel di tengah halaman; judul kolom dan sel bergambar rata tengah,
     seperti keluaran PDF."""
@@ -982,6 +1016,7 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     sumber_tex = docx.parent / "docx" / "sumber.tex"
     if sumber_tex.is_file():
         _setel_lebar_tabel(badan, lebar_tabel_latex(sumber_tex))
+        _matikan_border(badan, tabel_tanpa_garis(sumber_tex))
 
     # Gambar tanpa keterangan (mis. glif di sel tabel) dijadikan figure oleh
     # Pandoc dengan keterangan berupa alt bawaan "image". Keterangan itu tampil
@@ -993,8 +1028,11 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
                     and "".join(t.text or "" for t in paragraf.iter(f"{W}t")).strip() == "image"):
                 induk.remove(paragraf)
 
-    # DAFTAR PUSTAKA dan LAMPIRAN bukan bab bernomor; pakai gaya tanpa nomor
-    # agar tidak menambah hitungan bab.
+    # Hanya paragraf yang diawali "BAB " yang merupakan bab bernomor. Judul
+    # lain pada Heading1 (DAFTAR PUSTAKA, LAMPIRAN, Daftar Notasi, dan daftar
+    # lain yang ditambahkan kemudian) dipindah ke gaya tanpa nomor agar tidak
+    # menambah hitungan bab. Memakai daftar putih nama judul membuat judul baru
+    # diam-diam ikut terhitung.
     for paragraf in badan.findall(f"{W}p"):
         ppr = paragraf.find(f"{W}pPr")
         if ppr is None:
@@ -1003,7 +1041,7 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
         if gaya is None or gaya.get(f"{W}val") != "Heading1":
             continue
         teks = "".join(simpul.text or "" for simpul in paragraf.iter(f"{W}t"))
-        if teks.upper().startswith(("DAFTAR PUSTAKA", "LAMPIRAN")):
+        if not teks.upper().startswith("BAB "):
             gaya.set(f"{W}val", GAYA_TANPA_NOMOR)
 
     awalan: list[ET.Element] = []
