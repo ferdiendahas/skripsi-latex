@@ -1,7 +1,7 @@
 \chapter{Metodologi}
 
 Bab ini menguraikan rancangan penelitian yang digunakan untuk menjawab ketiga
-rumusan masalah pada Subbab 1.2, meliputi jenis dan alur penelitian, data,
+rumusan masalah pada Subbab~\ref{sec:rumusan}, meliputi jenis dan alur penelitian, data,
 rancangan model dan skema pembaruan, contoh perhitungan, serta rancangan
 evaluasi dan pengujian hipotesis.
 
@@ -13,6 +13,16 @@ harian BTC/USDT spot satu hari ke depan. Penelitian bersifat implementatif:
 seluruh tahapan, mulai dari pengolahan data, pelatihan model, hingga pengujian
 statistik, diimplementasikan sebagai satu \textit{pipeline} perangkat lunak
 yang dapat dijalankan ulang.
+
+Strategi penelitian berupa eksperimen komputasional dengan evaluasi
+\textit{out-of-sample} secara \textit{walk-forward}. Subjek penelitian adalah
+data harga BTC/USDT pasar spot, yang merupakan data sekunder dan tersedia
+secara publik, sehingga penelitian tidak terikat pada lokasi fisik tertentu.
+Data dikumpulkan dengan mengunduh arsip publik Binance
+(Subbab~\ref{subsec:data}), sedangkan analisis dilakukan dengan membandingkan
+selisih \textit{loss} harian antarmodel dan mengujinya secara statistik
+(Subbab~\ref{sec:evaluasi}). Peralatan yang digunakan diuraikan pada
+Subbab~\ref{subsec:peralatan}.
 
 Seluruh keputusan desain, termasuk pasangan model, skema, fungsi \textit{loss},
 dan uji konfirmatori untuk setiap hipotesis (Tabel~\ref{tab:ringkasan}),
@@ -34,68 +44,65 @@ untuk RQ1--RQ3.
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[x=1mm,y=-1mm,
-      kotak/.style={draw,align=center,inner sep=2pt,font=\footnotesize,
-        text width=58mm,minimum height=9mm},
-      ujung/.style={kotak,rounded corners=3mm},
-      sisi/.style={draw,align=center,inner sep=2pt,font=\footnotesize,
-        text width=32mm,minimum height=16mm},
-      rq/.style={draw,align=center,inner sep=2pt,font=\footnotesize,
-        text width=30mm,minimum height=15mm},
-      pn/.style={->,>=latex}]
+  \begin{tikzpicture}[alir, x=1mm, y=-1mm,
+      every node/.append style={font=\footnotesize},
+      proses/.append style={text width=54mm, minimum height=8mm},
+      io/.append style={text width=48mm, minimum height=8mm},
+      terminal/.append style={minimum width=26mm, minimum height=7mm},
+      sisi/.style={proses, text width=30mm, minimum height=13mm},
+      rq/.style={proses, text width=29mm, minimum height=13mm}]
 
-    % Kolom utama
-    \node[ujung] (n1) at (0,0)
-      {Arsip Binance BTC/USDT spot 5 menit};
-    \node[kotak] (n2) at (0,16) {Audit data dan tabel harian};
-    \node[kotak] (n3) at (0,32) {Target $RV_{t+1}$ dan fitur (HAR, X)};
-    \node[kotak] (n4) at (0,48)
+    % Kolom utama: terminal, masukan, proses, keluaran, terminal
+    \node[terminal] (mulai) at (0,0) {Mulai};
+    \node[io] (n1) at (0,14) {Arsip Binance BTC/USDT spot 5 menit};
+    \node[proses] (n2) at (0,28) {Audit data dan tabel harian};
+    \node[proses] (n3) at (0,42) {Target $RV_{t+1}$ dan fitur (HAR, X)};
+    \node[proses] (n4) at (0,57)
       {\textit{Window} awal: cek VIF dan \textit{tuning}
        (\textit{forward-chaining})};
-    \node[kotak] (n5) at (0,66)
+    \node[proses] (n5) at (0,73)
       {\textit{Walk-forward} bulanan: S0, S1, S2};
-    \node[kotak] (n6) at (0,82)
+    \node[proses] (n6) at (0,87)
       {HAR, HAR-X, LGBM-HAR, LGBM-X, \textit{naive}};
-    \node[kotak] (n7) at (0,98) {\textit{Loss} harian QLIKE dan MSE};
-    \node[kotak] (n8) at (0,114) {$\Delta L_t$ terhadap HAR-RV};
+    \node[proses] (n7) at (0,101) {\textit{Loss} harian QLIKE dan MSE};
+    \node[proses] (n8) at (0,115) {$\Delta L_t$ terhadap HAR-RV};
 
-    % Masukan samping khusus RQ2
-    \node[sisi] (pasar) at (54,24) {Karakteristik\\pasar bulanan};
+    % Masukan samping yang hanya memasok RQ2
+    \node[sisi] (pasar) at (52,33) {Karakteristik\\pasar bulanan};
 
     % Tiga rumusan masalah
-    \node[rq] (rq1) at (-36,142) {RQ1\\UDmax $\rightarrow$ DM};
-    \node[rq] (rq2) at (0,142) {RQ2\\regresi $\Delta L$ bulanan};
-    \node[rq] (rq3) at (36,142) {RQ3\\$D_t$ antarstrategi};
+    \node[rq] (rq1) at (-35,141) {RQ1\\UDmax $\rightarrow$ DM};
+    \node[rq] (rq2) at (0,141) {RQ2\\regresi $\Delta L$ bulanan};
+    \node[rq] (rq3) at (35,141) {RQ3\\$D_t$ antarstrategi};
 
-    \node[ujung] (simp) at (0,168) {Kesimpulan};
+    \node[io] (simp) at (0,164) {Kesimpulan RQ1--RQ3};
+    \node[terminal] (selesai) at (0,180) {Selesai};
 
-    % Panah kolom utama
-    \foreach \a/\b in {n1/n2, n2/n3, n3/n4, n4/n5, n5/n6, n6/n7, n7/n8}
-      {\draw[pn] (\a) -- (\b);}
+    \foreach \a/\b in {mulai/n1, n1/n2, n2/n3, n3/n4, n4/n5, n5/n6, n6/n7,
+                       n7/n8, simp/selesai}
+      {\draw[panah] (\a) -- (\b);}
+    \draw[panah] (n2.east) -- (pasar.west);
 
-    % Audit data memasok karakteristik pasar bulanan
-    \draw[pn] (n2.east) -- (pasar.west);
-
-    % Satu panah dari delta L, lalu dibagikan ke ketiga RQ
-    \draw (0,123) -- (0,130);
-    \draw (-36,130) -- (36,130);
-    \draw[pn] (-36,130) -- (rq1.north);
-    \draw[pn] (-6,130) -- (-6,134.5);
-    % Karakteristik pasar hanya memberi masukan ke RQ2; digambar lebih dulu
-    % agar garis RQ3 di bawah tampak melompatinya.
-    \draw[pn] (pasar.south) -- (54,132) -- (6,132) -- (6,134.5);
-    \draw[white,line width=2.4pt] (36,130) -- (36,134.5);
-    \draw[pn] (36,130) -- (rq3.north);
+    % Satu panah dari delta L, lalu dibagikan ke ketiga kotak RQ
+    \draw (0,119) -- (0,129);
+    \draw (-35,129) -- (35,129);
+    \draw[panah] (-35,129) -- (rq1.north);
+    \draw[panah] (-5,129) -- (-5,134.5);
+    % Digambar sebelum garis RQ3 agar persilangannya tampak melompat
+    \draw[panah] (pasar.south) -- (52,132) -- (5,132) -- (5,134.5);
+    \draw[white,line width=2.4pt] (35,129) -- (35,134.5);
+    \draw[panah] (35,129) -- (rq3.north);
 
     % Ketiga RQ bermuara pada kesimpulan
-    \draw (-36,149.5) -- (-36,158);
-    \draw (0,149.5) -- (0,158);
-    \draw (36,149.5) -- (36,158);
-    \draw (-36,158) -- (36,158);
-    \draw[pn] (0,158) -- (simp.north);
+    \draw (-35,147.5) -- (-35,156);
+    \draw (0,147.5) -- (0,156);
+    \draw (35,147.5) -- (35,156);
+    \draw (-35,156) -- (35,156);
+    \draw[panah] (0,156) -- (simp.north);
   \end{tikzpicture}
   \caption{Alur Penelitian}
   \label{fig:alur}
+  \sumber{rancangan penelitian}
 \end{figure}
 
 \subsection{Tahap Uji Kelayakan}
@@ -110,8 +117,9 @@ digunakan untuk mengubah rumusan masalah, hipotesis, maupun uji konfirmatori.
 % Jangan menambahkan angka hasil pilot.
 
 \subsection{Peralatan Penelitian}
+\label{subsec:peralatan}
 Implementasi menggunakan bahasa Python 3.12 dengan pustaka \texttt{pandas},
-\texttt{numpy}, \texttt{lightgbm} (versi 4 ke atas), \texttt{scikit-learn},
+\texttt{numpy}, \texttt{lightgbm} versi 4, \texttt{scikit-learn},
 \texttt{statsmodels}, \texttt{scipy}, dan \texttt{matplotlib}. Estimator
 kovarians HAC diimplementasikan sendiri mengikuti kernel Bartlett dengan
 \textit{bandwidth} otomatis Andrews \cite{andrews1991} dan diverifikasi
@@ -119,21 +127,28 @@ menghasilkan nilai yang identik dengan fungsi \texttt{kernHAC} paket R
 \texttt{sandwich}. Seluruh pelatihan memakai \textit{seed} tetap (42) dan mode
 deterministik LightGBM.
 
+% CEK: isi versi persis dari pip show lightgbm di .venv; samakan dengan URL
+% dokumentasi di references.bib
 % CEK: spesifikasi perangkat keras (laptop/OS) bila diminta pedoman; isi dari
 % Ferdi.
 
 \section{Desain Sistem}
 
 \subsection{Data}
+\label{subsec:data}
 Data yang digunakan adalah \textit{klines} (OHLCV) BTC/USDT pasar spot dengan
 resolusi 5 menit dari arsip publik Binance (\texttt{data.binance.vision}),
 diunduh per bulan dan diverifikasi dengan \textit{checksum} SHA-256 resmi.
 Periode data adalah 17 Agustus 2017, yaitu awal ketersediaan arsip, hingga
-30 September 2026. Kolom yang digunakan adalah harga pembukaan, tertinggi,
+30 September 2026. Tanggal awal yang sama juga digunakan pada penelitian
+peramalan risiko aset kripto dengan data Binance \cite{trucios2023}. Kolom
+yang digunakan adalah harga pembukaan, tertinggi,
 terendah, penutupan, serta \textit{quote asset volume} (volume dalam USDT)
 sebagai volume dolar. Ringkasan data ditunjukkan pada Tabel~\ref{tab:data} dan
 pergerakannya pada Gambar~\ref{fig:data}.
 
+% CEK: redaksi baris Sumber untuk tabel rancangan sendiri dikonfirmasi ke
+% prodi/pembimbing
 \begin{table}[htbp]
   \caption{Ringkasan Data Penelitian}
   \label{tab:data}
@@ -161,6 +176,7 @@ pergerakannya pada Gambar~\ref{fig:data}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{data Binance, diolah}
 \end{table}
 
 Pemilihan pasar spot didasarkan pada tiga alasan: histori spot tersedia sejak
@@ -170,8 +186,10 @@ efek \textit{funding rate}, likuidasi, dan basis; serta keterbandingan dengan
 literatur \cite{dudek2024}. Penggunaan satu bursa sepanjang periode juga
 mencegah perubahan antarera tercampur dengan efek pergantian sumber data,
 berbeda dengan Do yang berganti dari Bitstamp ke Binance pada November 2019
-\cite{do2026}. Resolusi 5 menit dipilih sebagai kompromi yang aman lintas era
-likuiditas (Subbab 2.2.3) \cite{liu2015}.
+\cite{do2026}. Resolusi 5 menit dipilih sebagai kompromi yang aman lintas era likuiditas
+(Subbab~\ref{subsec:rv}) \cite{liu2015}, dan resolusi yang sama digunakan
+pada penelitian volatilitas kripto sebelumnya
+\cite{dudek2024,feng2024ml,qiu2025}.
 
 \begin{figure}[htbp]
   \centering
@@ -179,14 +197,14 @@ likuiditas (Subbab 2.2.3) \cite{liu2015}.
   \caption{Harga Penutupan dan \textit{Realized Variance} Harian BTC/USDT
     Spot, 17 Agustus 2017--30 September 2026}
   \label{fig:data}
+  \sumber{data Binance, diolah}
 \end{figure}
 
 {\small Keterangan: garis putus-putus menandai batas era \textit{transition}
 dan \textit{institutional} (1 Januari 2021) mengikuti Do \cite{do2026}; arsir
 menandai \textit{crash} Maret 2020, Terra (Mei 2022), dan FTX (November 2022);
 garis merah menandai \textit{flash crash} 17 Agustus 2023 dan 10 Oktober 2025
-(``10/10''). Sumbu vertikal berskala logaritmik. Sumber: data Binance,
-diolah.\par}
+(``10/10''). Sumbu vertikal berskala logaritmik.\par}
 
 \subsection{Audit dan Pra-pemrosesan Data}
 \label{subsec:audit}
@@ -209,15 +227,16 @@ Tahapan audit adalah sebagai berikut.
 \end{enumerate}
 
 \subsection{Target dan Fitur}
+\label{subsec:fitur}
 Target peramalan adalah $RV_{t+1}$ (Persamaan~\eqref{eq:rv}); model dilatih
 pada $\ln RV_{t+1}$ lalu ramalannya dikembalikan ke skala level
 (Subbab~\ref{subsec:teknis}). Seluruh fitur hari $t$ hanya memakai data hingga
 akhir hari $t$. Tiga puluh hari pertama digunakan sebagai periode pemanasan
-untuk rata-rata bulanan. Fitur dan model yang memakainya ditunjukkan pada
+untuk rata-rata bulanan. Horizon mingguan dan bulanan HAR ditetapkan 7 dan
+30 hari, menyesuaikan perdagangan aset kripto yang berlangsung 24 jam setiap
+hari \cite{qiu2025}. Fitur dan model yang memakainya ditunjukkan pada
 Tabel~\ref{tab:fitur}.
 
-% CEK: $C_t$ pada baris return harian = harga penutupan bar terakhir hari $t$;
-% sudah ditambahkan ke frontmatter/daftar-notasi.tex.
 \begin{table}[htbp]
   \caption{Fitur dan Model Pemakainya}
   \label{tab:fitur}
@@ -249,6 +268,7 @@ Tabel~\ref{tab:fitur}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}
 
 Kolinearitas diperiksa dengan \textit{variance inflation factor} (VIF) pada
@@ -256,8 +276,10 @@ Kolinearitas diperiksa dengan \textit{variance inflation factor} (VIF) pada
 volume dolar (VIF 18,2) menunjukkan kolinearitas tinggi; secara konstruksi log
 Amihud mendekati setengah $\ln RV$ dikurangi log volume dolar. Sesuai aturan
 yang ditetapkan sebelumnya, log Amihud dibuang dari HAR-X saja, sehingga VIF
-maksimum fitur X pada HAR-X menjadi 6,9. LGBM-X tetap memakai kesembilan fitur
-karena model pohon tidak terpengaruh kolinearitas dalam estimasi.
+maksimum fitur X pada HAR-X menjadi 6,9. % CEK: klaim umum tanpa sitasi; cari rujukan bila pembimbing meminta
+LGBM-X tetap memakai kesembilan fitur karena model pohon tidak mengestimasi
+koefisien regresi, sehingga kolinearitas tidak menimbulkan ketidakstabilan
+estimasi seperti pada OLS.
 
 \subsection{Model}
 Model yang digunakan mengikuti desain $2 \times 2$ pada
@@ -270,10 +292,22 @@ $\widehat{RV}_{t+1} = RV_t$ sebagai pemeriksaan kewajaran.
   \item \textbf{LGBM-HAR dan LGBM-X} menggunakan LightGBM \cite{ke2017} dengan
         \textit{objective} regresi kuadrat, \textit{bagging} 80\% data per
         pohon, dan \textit{hyperparameter} hasil \textit{tuning}
-        (Subbab~\ref{subsec:tuning}).
-  \item \textbf{Random Forest} dengan masukan yang sama dengan LGBM-X
-        (300 pohon, minimum 20 observasi per daun, 33\% fitur per pemisahan)
-        digunakan hanya sebagai uji sensitivitas jenis model pohon.
+        (Subbab~\ref{subsec:tuning}). Penelitian ini menggunakan mode
+        \textit{boosting} standar LightGBM dengan \textit{bagging} sebagai
+        regularisasi; GOSS dan EFB yang dirancang untuk mempercepat pelatihan
+        pada data besar dan fitur jarang tidak berperan karena data latih
+        hanya berisi ratusan hingga ribuan baris dengan sembilan fitur padat.
+        Dengan \texttt{num\_leaves} = 3, setiap pohon hanya memiliki dua
+        pemecahan sehingga perbedaan pertumbuhan \textit{leaf-wise} dan
+        \textit{level-wise} praktis hilang.
+  % CEK: setelan 300 pohon/min 20/33\% adalah keputusan desain (config.py),
+  % bukan dari Breiman (2001)
+  \item \textbf{Random Forest} \cite{breiman2001}, yaitu rata-rata banyak
+        pohon regresi yang masing-masing dilatih pada sampel
+        \textit{bootstrap} dengan pemilihan fitur acak di setiap pemisahan,
+        dengan masukan yang sama dengan LGBM-X (300 pohon, minimum
+        20 observasi per daun, 33\% fitur per pemisahan) digunakan hanya
+        sebagai uji sensitivitas jenis model pohon.
 \end{itemize}
 
 \subsection{Aturan Teknis Peramalan}
@@ -289,11 +323,14 @@ Aturan berikut berlaku sama untuk semua model.
         latih, dihitung pada 20\% akhir \textit{window}; setelah itu model
         dilatih ulang pada seluruh \textit{window}. Residual
         \textit{in-sample} tidak dipakai karena LightGBM cenderung
-        \textit{overfit}.
+        \textit{overfit}. Koreksi serupa digunakan pada peramalan RV dengan
+        \textit{machine learning} \cite{christensen2023}.
   \item \textbf{Batas bawah ramalan.} Ramalan dibatasi minimal sebesar
         persentil ke-1 target $RV$ pada \textit{window} latih,
         $\underline{F}$, karena QLIKE menghukum ramalan yang terlalu rendah
-        jauh lebih berat \cite{patton2011}.
+        jauh lebih berat \cite{patton2011}. Pembatasan ramalan dengan nilai
+        minimum dari data latih juga digunakan oleh Christensen dkk.
+        \cite{christensen2023}.
 \end{enumerate}
 
 Ramalan akhir adalah
@@ -310,7 +347,11 @@ Sebagai uji sensitivitas, koreksi bias ditiadakan.
 \textit{Hyperparameter} LightGBM dituning \textbf{sekali} pada \textit{window}
 awal (Agustus 2017 -- Agustus 2018) dengan validasi \textit{forward-chaining}
 lima lipatan \cite{cerqueira2020}, lalu dikunci untuk seluruh periode
-pengujian. Metrik pemilihan adalah rata-rata QLIKE ramalan $\exp(\hat y)$
+pengujian. Parameter \texttt{num\_leaves} dan \texttt{min\_child\_samples}
+(nama lain \texttt{min\_data\_in\_leaf}) merupakan parameter utama untuk
+mengendalikan kompleksitas pohon dan mencegah \textit{overfitting}
+\cite{lightgbmtuning}, sedangkan \texttt{reg\_lambda} merupakan penalti L2
+terhadap bobot daun \cite{chen2016}. Metrik pemilihan adalah rata-rata QLIKE ramalan $\exp(\hat y)$
 antarlipatan. Bila kombinasi terbaik berada di tepi ruang pencarian untuk
 \texttt{min\_child\_samples} atau \texttt{n\_estimators}, ruang pencarian
 diperluas satu langkah ke arah tepi tersebut, maksimal dua kali, dengan batas
@@ -340,6 +381,7 @@ pencarian dan nilai terkunci ditunjukkan pada Tabel~\ref{tab:tuning}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}
 
 Nilai \texttt{min\_child\_samples} = 5 pada LGBM-X merupakan batas bawah ruang
@@ -387,6 +429,7 @@ bersama.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}
 
 Pembagian era mengikuti Do \cite{do2026}, dengan batas 1 Januari 2021 antara
@@ -419,6 +462,7 @@ $RV$ tanggal 31 Agustus 2018, dengan 339 observasi latih (tanggal target
 digit bermakna dan telah dicocokkan dengan keluaran implementasi.
 
 \subsection{\textit{Realized Variance} dan Komponen HAR}
+\label{subsec:manual-rv}
 \textit{Return} bar pertama hari $t^*$ dihitung terhadap harga penutupan bar
 terakhir 29 Agustus 2018, yaitu 7.031,22. Lima bar pertama ditunjukkan pada
 Tabel~\ref{tab:manual-rv}.
@@ -451,6 +495,7 @@ Tabel~\ref{tab:manual-rv}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{hasil perhitungan}
 \end{table}
 
 Penjumlahan kuadrat \textit{return} atas 288 bar (Persamaan~\eqref{eq:rv})
@@ -504,12 +549,13 @@ Komponen HAR dihitung dari rata-rata RV harian, mingguan, dan bulanan
     \hline
   \end{tabular}
   \endgroup
+  \sumber{hasil perhitungan}
 \end{table}
 
 \subsection{Fitur X}
 Keenam fitur X pada hari $t^*$ ditunjukkan pada Tabel~\ref{tab:manual-x}.
 Model HAR-X tidak memakai log Amihud, sesuai hasil pemeriksaan VIF pada
-Subbab~\ref{subsec:audit}; fitur tersebut hanya dipakai LGBM-X.
+Subbab~\ref{subsec:fitur}; fitur tersebut hanya dipakai LGBM-X.
 
 \begin{table}[htbp]
   \caption{Fitur X pada Hari $t^*$}
@@ -536,10 +582,11 @@ Subbab~\ref{subsec:audit}; fitur tersebut hanya dipakai LGBM-X.
     Log Amihud & $10^6 \times$ rata-rata $|r_{t,i}|/QV_{t,i}$ =
       $0{,}00116494$ & $-6{,}75508$ \\
     \hline
-    Proporsi semivarians negatif & lihat Subbab 3.3.1 & 0,497908 \\
+    Proporsi semivarians negatif & lihat Subbab~\ref{subsec:manual-rv} & 0,497908 \\
     \hline
   \end{tabular}
   \endgroup
+  \sumber{hasil perhitungan}
 \end{table}
 
 \subsection{Peramalan HAR-RV dan LGBM-HAR}
@@ -568,9 +615,10 @@ jumlah nilai daun dari 300 pohon (Persamaan~\eqref{eq:gbdt}). Struktur dua
 pohon pertama beserta lintasan hari $t^*$ ditunjukkan pada
 Gambar~\ref{fig:manual-pohon}.
 
-% CEK: jumlah n per daun pohon ke-1 (256) tidak konsisten dengan bagging 80%
-% dari 339 obs (~271); sedang dicek di chat script. Karena itu n tidak
-% ditampilkan.
+% CEK: n per daun tidak ditampilkan. Dugaan (v2.7 Bagian XII no. 6): bagging
+% LightGBM memilih tiap baris dengan peluang 80%, sehingga jumlah baris per
+% pohon berfluktuasi (pohon 1: 256, pohon 2: 272). Verifikasi dengan leaf_count
+% beberapa pohon sebelum menampilkan n.
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[x=1mm,y=-1mm,
@@ -610,11 +658,11 @@ Gambar~\ref{fig:manual-pohon}.
   \end{tikzpicture}
   \caption{Struktur Pohon ke-1 dan ke-2 LGBM-HAR pada Contoh Perhitungan}
   \label{fig:manual-pohon}
-  \sumber{Garis tebal menandai lintasan hari $t^*$, dengan
-    $\ln RV^{(m)}_{t^*} = -6{,}66633$}
+  \sumber{hasil perhitungan}
 \end{figure}
 
-Hari $t^*$ memiliki $\ln RV^{(m)}_{t^*} = -6{,}66633$, yang memenuhi syarat
+Pada Gambar~\ref{fig:manual-pohon}, garis tebal menandai lintasan hari $t^*$.
+Hari tersebut memiliki $\ln RV^{(m)}_{t^*} = -6{,}66633$, yang memenuhi syarat
 pemisahan pertama pada kedua pohon, sehingga keduanya berakhir di daun 0.
 Kontribusi pohon ke-1 adalah $-6{,}06517$, yaitu gabungan nilai awal
 $-6{,}03756$ dan nilai daun $-0{,}0276166$; kontribusi pohon ke-2 adalah
@@ -648,15 +696,17 @@ Persamaan~\eqref{eq:loss} dan ditunjukkan pada Tabel~\ref{tab:manual-loss}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{hasil perhitungan}
 \end{table}
 
 Selisih \textit{loss} pada hari tersebut (Persamaan~\eqref{eq:delta-loss})
 adalah $\Delta L = 0{,}209076 - 0{,}236783 = -0{,}0277067$. Nilai negatif
 menunjukkan LGBM-HAR lebih akurat \textbf{pada hari contoh ini saja}; satu
 hari tidak dapat dijadikan dasar kesimpulan, sehingga pengujian dilakukan atas
-seluruh periode \textit{out-of-sample} sebagaimana diuraikan pada Subbab 3.4.
+seluruh periode \textit{out-of-sample} sebagaimana diuraikan pada Subbab~\ref{sec:evaluasi}.
 
 \section{Evaluasi dan Pengujian Hipotesis}
+\label{sec:evaluasi}
 
 \subsection{Fungsi \textit{Loss} dan Selisih \textit{Loss}}
 Setiap ramalan dievaluasi dengan QLIKE sebagai \textit{loss} utama dan MSE
@@ -671,20 +721,21 @@ secara eksploratori.
 Uji konfirmatori setiap hipotesis mengikuti Tabel~\ref{tab:ringkasan}.
 Rincian pelaksanaannya adalah sebagai berikut.
 \begin{enumerate}
-  \item \textbf{RQ1.} UDmax (Persamaan~\eqref{eq:udmax}) pada rata-rata
+  \item \textbf{H1.} UDmax (Persamaan~\eqref{eq:udmax}) pada rata-rata
         $\Delta L_t$ dengan \textit{trimming} $\varepsilon = 0{,}15$ dan
         maksimum lima perubahan, statistik Wald memakai kovarians HAC
         \cite{bai1998,bai2003,martins2016}. Bila UDmax tidak menolak $H_0$,
         dilanjutkan dengan uji tipe Diebold--Mariano
         (Persamaan~\eqref{eq:dm}) pada seluruh sampel.
-  \item \textbf{RQ2.} H2a diuji dengan regresi rata-rata $\Delta L$ bulanan
+  \item \textbf{H2a.} Diuji dengan regresi rata-rata $\Delta L$ bulanan
         pada empat karakteristik pasar (Subbab~\ref{subsec:rq2var}), dengan
-        uji-F bersama berbasis kovarians HAC. H2b diuji dengan regresi
+        uji-F bersama berbasis kovarians HAC.
+  \item \textbf{H2b.} Diuji dengan regresi
         $\Delta L_t = \alpha + \delta\,\text{Era}_t + e_t$ untuk dua
         pasangan kontribusi fitur X (HAR-X--HAR dan LGBM-X--LGBM-HAR), uji-t
         HAC pada $\delta$, dengan koreksi Holm atas dua uji tersebut
         \cite{holm1979}.
-  \item \textbf{RQ3.} Uji-t HAC dua sisi pada rata-rata $D_t$ (Subbab 2.4) di
+  \item \textbf{H3.} Uji-t HAC dua sisi pada rata-rata $D_t$ (Subbab~\ref{sec:hipotesis}) di
         era \textit{institutional}, pada periode bersama S2-365 dan S1. H3
         didukung bila rata-rata $D_t$ negatif dan signifikan; rata-rata
         positif yang signifikan dibaca sebagai dukungan bagi hipotesis
@@ -731,10 +782,12 @@ Tabel~\ref{tab:rq2var}.
     \hline
     Pergeseran distribusi fitur & rata-rata $D^{\text{KS}}$
       (Persamaan~\eqref{eq:ks}) antara \textit{window} latih S2-365 dan bulan
-      uji atas sembilan fitur LGBM-X \\
+      uji atas sembilan fitur LGBM-X; dipakai sebagai besaran, bukan sebagai
+      keputusan uji \\
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}
 
 \textit{Spread} Abdi--Ranaldo harian dihitung sebagai
@@ -744,8 +797,13 @@ Tabel~\ref{tab:rq2var}.
 \end{equation}
 dengan $\bar{p}_t = (\ln P^H_t + \ln P^L_t)/2$ dan $c_t$ logaritma harga
 penutupan hari $t$. Nilai negatif di bawah akar dijadikan nol sebelum
-dirata-rata. Sebagai uji sensitivitas, estimator Corwin--Schultz
-\cite{corwin2012} digunakan sebagai pengganti. Sebagai pelengkap deskriptif,
+dirata-rata. Estimator ini merupakan versi dua hari terkoreksi
+(\textit{two-day corrected}) yang kemudian dirata-ratakan per bulan
+\cite{abdi2017}. Perhitungan likuiditas memakai seluruh hari dalam bulan,
+termasuk hari yang ditandai tidak lengkap pada Subbab~\ref{subsec:audit}. Sebagai uji sensitivitas, estimator Corwin--Schultz
+\cite{corwin2012} digunakan sebagai pengganti; penyesuaian harga
+\textit{overnight} pada estimator tersebut tidak diperlukan karena BTC/USDT
+diperdagangkan 24 jam tanpa jeda. Sebagai pelengkap deskriptif,
 dihitung pula \textit{population stability index} (PSI) antara \textit{window}
 latih dan bulan uji.
 
@@ -761,7 +819,8 @@ $\text{Era}_\tau$ variabel \textit{dummy} era \textit{institutional} yang
 selalu disertakan. Untuk menghindari regresi palsu, setiap regresor diuji
 dengan ADF \cite{dickey1979} dan KPSS \cite{kwiatkowski1992}; regresor
 di-\textit{differencing} bila ADF gagal menolak akar unit ($p > 0{,}05$)
-\textbf{dan} KPSS menolak stasioneritas ($p < 0{,}05$). Hipotesis yang diuji
+\textbf{dan} KPSS menolak stasioneritas ($p < 0{,}05$), yaitu kombinasi hasil
+yang menunjukkan adanya akar unit \cite{kwiatkowski1992}. Hipotesis yang diuji
 adalah $\gamma_1 = \gamma_2 = \gamma_3 = \gamma_4 = 0$. Interpretasi bersifat
 asosiatif, bukan kausal.
 
@@ -820,6 +879,7 @@ Tabel~\ref{tab:sensitivitas}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}
 
 \section{Jadwal Penelitian}
@@ -828,7 +888,7 @@ Jadwal pelaksanaan penelitian ditunjukkan pada Tabel~\ref{tab:jadwal}.
 % CEK: kolom bulan dan tanda centang diisi Ferdi sesuai rencana dan kalender
 % prodi. Jangan menebak durasi.
 \begin{table}[htbp]
-  \caption{Jadwal penelitian}
+  \caption{Jadwal Penelitian}
   \label{tab:jadwal}
   \centering
   \begingroup
@@ -854,4 +914,5 @@ Jadwal pelaksanaan penelitian ditunjukkan pada Tabel~\ref{tab:jadwal}.
     \hline
   \end{tabular}
   \endgroup
+  \sumber{rancangan penelitian}
 \end{table}

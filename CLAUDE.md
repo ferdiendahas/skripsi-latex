@@ -8,13 +8,13 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 
 ## Sumber konteks (`context/`)
 Baca hanya bagian yang relevan dengan tugas; jangan memuat semuanya.
-- `KOREKSI.md` — **baca lebih dulu.** Daftar bagian dokumen riset yang salah atau usang.
-- `hasil_riset_bitcoin_v2_5.md` — desain riset, literatur, RQ/hipotesis. Sebagian sudah usang (lihat KOREKSI).
+- `hasil_riset_bitcoin_v2.7.md` — **rujukan desain utama.** Desain riset, literatur, RQ/hipotesis. Koreksi dari `KOREKSI.md` lama sudah diserap ke dokumen ini.
 - `hasil_eksperimen_bitcoin_v2_5.md` — kronologi, hasil, deviasi implementasi, dan **source code final** (`rvlib/`).
+- `arsip/` — dokumen lama yang sudah digantikan (`hasil_riset_bitcoin_v2.5.md`, `KOREKSI.md`). Disimpan sebagai jejak, bukan rujukan.
 - `perhitungan_manual.md` — angka Subbab 3.3 (window awal, terverifikasi terhadap kode).
 - `briefs/` — instruksi kerja per tugas. Bila Ferdi bilang "kerjakan brief X", ikuti brief itu persis dan kirim laporan balik sesuai format di bagian akhirnya.
 
-**Urutan otoritas bila bertentangan:** brief terbaru > `KOREKSI.md` > source code di `hasil_eksperimen` > `hasil_riset`.
+**Urutan otoritas bila bertentangan:** brief terbaru > `hasil_riset_bitcoin_v2.7.md` > source code di `hasil_eksperimen_bitcoin_v2_5.md` > dokumen lama di `arsip/`.
 
 ## Aturan menulis
 - **Jangan mengarang** angka, metadata referensi, klaim isi paper, atau parameter. Bila tidak bisa dipastikan, tulis komentar `% CEK: <alasan>` dan biarkan.
