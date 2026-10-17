@@ -1,76 +1,47 @@
-% Draf Bab I — versi bahasa sederhana (14 Okt 2026)
-% Prinsip: kalimat pendek, satu ide per kalimat, istilah dijelaskan saat
-% pertama muncul, klaim hanya sebatas yang tercatat di hasil_riset v2.8 atau
-% sudah diperiksa dari PDF. Klaim yang belum bisa dipastikan diberi % CEK.
-% Rumusan masalah tidak diubah isinya (terkunci); hanya dirapikan bahasanya.
-
+% Bab I v4 (16 Okt 2026) — sumber: context/briefs/brief_agen_bab1_v4.md.
+% Klaim paper hanya dari context/kartu_paper.md. RQ terkunci (anti-HARKing).
 \chapter{Pendahuluan}
 
 \section{Latar Belakang}
 
-% P0 — hook: kestabilan kinerja, bukan sekadar akurasi rata-rata
-% [kartu C2; sitasi do2026 sengaja diulang di P3, lihat aturan sitasi Ferdi]
-Keandalan peramalan volatilitas tidak hanya ditentukan oleh kecilnya kesalahan
-ramalan secara rata-rata, tetapi juga oleh konsistensi kinerja model ketika
-kondisi pasar berubah. Model yang unggul pada satu periode pengujian belum
-tentu tetap unggul pada periode berikutnya. Persoalan ini nyata pada Bitcoin,
-yang karakteristik pasarnya berubah substansial sepanjang 2012--2025
-\cite{do2026}. Karena itu, evaluasi model peramalan volatilitas Bitcoin perlu
-memeriksa bukan hanya tingkat kesalahan secara keseluruhan, tetapi juga
-kestabilan kinerja relatif antarmodel dari waktu ke waktu.
+% P1 — hook: pasar berubah, apakah model terbaik tetap terbaik   [kartu C1, C2, C3]
+Sejak diperkenalkan sebagai sistem uang elektronik tanpa lembaga perantara
+\cite{nakamoto2008}, Bitcoin telah melewati tiga era pasar. Era \textit{niche}
+didominasi pengguna awal, era \textit{transition} diikuti investor perorangan
+secara luas, dan era \textit{institutional} melibatkan lembaga keuangan,
+termasuk melalui ETF spot sejak 2024. Dari era ke era, volatilitas turun
+tajam, volume transaksi naik, biaya transaksi turun, dan likuiditas makin
+tahan terhadap guncangan \cite{do2026}. Namun, perubahan tersebut tidak
+berjalan mulus. Tingkat efisiensi pasar Bitcoin berganti-ganti antara periode
+efisien dan tidak efisien \cite{mokni2024}. Kondisi ini memunculkan
+pertanyaan penting bagi peramalan: apakah model yang paling akurat pada satu
+periode masih paling akurat ketika kondisi pasar sudah berubah?
 
-% P1 — Bitcoin dan efisiensi pasar   [kartu C1, C4]
-Bitcoin merupakan aset kripto pertama yang diperkenalkan sebagai sistem
-uang elektronik yang memungkinkan pembayaran langsung antarpengguna tanpa
-melalui lembaga perantara \cite{nakamoto2008}. Sejak itu, banyak penelitian
-menguji apakah harga Bitcoin dapat ditebak dari data harga masa lalu. Salah
-satunya menemukan bahwa pasar Bitcoin mendekati efisien dalam bentuk lemah,
-artinya \textit{return} Bitcoin sulit diprediksi dari histori harganya
-\cite{yi2023}. Akan tetapi, efisiensi bentuk lemah hanya berkaitan dengan arah
-perubahan harga. Besarnya perubahan harga, atau volatilitas, merupakan
-persoalan yang berbeda dan tetap penting untuk diramalkan.
-% CEK (Ferdi): tulis ulang kalimat "Akan tetapi ..." dengan kata-kata sendiri.
-% Audit 16 Okt menemukan substansinya juga perlu diperbaiki: efisiensi bentuk
-% lemah bukan "hanya soal arah perubahan harga", melainkan soal sulitnya
-% memakai informasi harga masa lalu untuk memprediksi return secara konsisten.
-% Efisiensi tersebut tidak menutup kemungkinan besarnya perubahan harga tetap
-% dapat diramalkan. Perbaiki isinya sekaligus saat menulis ulang.
+% P2 — efisiensi bukan berarti volatilitas tak bisa diramal   [kartu C4, C3, A1, D6]
+Penelitian tentang efisiensi pasar Bitcoin umumnya menguji apakah
+\textit{return} dapat ditebak dari harga masa lalu \cite{yi2023,mokni2024}.
+Pertanyaan ini berbeda dengan peramalan volatilitas. Sulitnya menebak arah
+return tidak berarti besarnya perubahan harga, atau volatilitas, juga sulit
+diramalkan. Ramalan volatilitas tetap dibutuhkan dalam penentuan harga opsi,
+alokasi portofolio, lindung nilai, dan pengelolaan risiko
+\cite{andersen1998,chassot2026}.
+% CEK (Ferdi): tulis ulang kalimat "Sulitnya menebak arah return ..." dengan
+% kata-kata sendiri.
 
-% P2 — kegunaan ramalan volatilitas dan RV   [kartu A1, A2]
-Ramalan volatilitas dibutuhkan dalam berbagai keputusan keuangan, seperti
-penentuan harga opsi, alokasi portofolio, lindung nilai, dan pengelolaan
-risiko \cite{andersen1998}. Masalahnya, volatilitas tidak dapat diamati secara
-langsung sehingga harus diukur dari data harga. Salah satu ukuran yang umum
-dipakai yaitu \textit{realized variance} (RV). RV merupakan jumlah kuadrat
-\textit{return} intrahari dalam satu hari, sedangkan \textit{return}
-merupakan perubahan logaritma harga pada selang waktu pendek, misalnya lima
-menit. RV berada pada skala varians, sedangkan volatilitas umumnya dinyatakan
-sebagai akar kuadratnya. Penelitian ini bekerja pada skala varians, dan kata
-volatilitas dipakai hanya untuk menyebut konsep umumnya. Proksi varians
-berupa kuadrat \textit{return} harian sangat berisik \cite{andersen1998}.
-Akibatnya, model peramalan dapat terlihat buruk padahal ramalannya cukup
-akurat. Ketika diukur dengan RV dari \textit{return} lima menit, model yang
-sama terlihat jauh lebih akurat.
-Pada 31 aset dari lima kelas aset, RV dari \textit{return} lima menit juga
-sulit dikalahkan secara signifikan oleh ukuran lain yang lebih rumit
-\cite{liu2015}.
-
-% P3 — pasar Bitcoin berubah   [kartu C2, C3]
-Selain itu, kondisi pasar Bitcoin terus berubah. Sepanjang 2012--2025, pasar
-tersebut dapat dibagi menjadi tiga era \cite{do2026}. Era pertama
-(\textit{niche}) didominasi pengguna awal dan spekulan perorangan. Era kedua
-(\textit{transition}) ditandai partisipasi investor perorangan secara luas,
-perdagangan kontrak berjangka, dan berkembangnya bursa besar. Era ketiga
-(\textit{institutional}) ditandai masuknya lembaga keuangan, termasuk ETF spot
-Bitcoin pada 2024. Dari era ke era, volatilitas turun tajam, volume transaksi
-naik, dan biaya transaksi turun. Pada era \textit{institutional}, likuiditas
-juga lebih tahan terhadap guncangan volatilitas dan lebih cepat kembali
-normal. Perubahan ini tidak berjalan mulus. Dengan data hingga 2023,
-penelitian lain menemukan bahwa tingkat efisiensi pasar Bitcoin berganti-ganti
-antara periode efisien dan tidak efisien, serta pengaruh likuiditas terhadap
-efisiensi berubah besar setelah pandemi COVID-19 \cite{mokni2024}. Akibatnya,
-pola yang dipelajari sebuah model pada satu periode bisa saja tidak berlaku
-lagi pada periode berikutnya.
+% P3 — realized variance   [kartu A1 (ulang), A2]
+Masalahnya, volatilitas tidak dapat diamati secara langsung sehingga harus
+diukur dari data harga. Salah satu ukuran yang umum dipakai yaitu
+\textit{realized variance} (RV). RV merupakan jumlah kuadrat return intrahari
+dalam satu hari, sedangkan return merupakan perubahan logaritma harga pada
+selang waktu pendek, misalnya lima menit. RV berada pada skala varians,
+sedangkan volatilitas umumnya dinyatakan sebagai akar kuadratnya. Penelitian
+ini bekerja pada skala varians, dan kata volatilitas dipakai untuk menyebut
+konsep umumnya. Ukuran volatilitas dari kuadrat return harian sangat berisik,
+sehingga model peramalan dapat terlihat buruk padahal ramalannya cukup akurat.
+Ketika diukur dengan RV dari return lima menit, model yang sama terlihat jauh
+lebih akurat \cite{andersen1998}. Pada 31 aset dari lima kelas aset, RV dari
+return lima menit juga sulit dikalahkan secara signifikan oleh ukuran lain
+yang lebih rumit \cite{liu2015}.
 
 % P4 — HAR-RV   [kartu A3, D7]
 Salah satu model untuk meramalkan RV merupakan \textit{Heterogeneous
@@ -78,14 +49,15 @@ Autoregressive model of Realized Volatility} (HAR-RV). Model ini memanfaatkan
 sifat volatilitas yang cenderung bertahan lama, yaitu besarnya perubahan harga
 hari ini masih berkaitan dengan besarnya perubahan harga hingga beberapa bulan
 sebelumnya. HAR-RV meramalkan RV hari berikutnya dari rata-rata RV harian,
-mingguan, dan bulanan. Walaupun hanya berupa regresi
-linear sederhana, HAR-RV lebih akurat daripada model autoregresif biasa dan
-hasilnya sebanding dengan model memori panjang yang lebih rumit
-\cite{corsi2009}. Pada aset kripto yang diperdagangkan setiap hari tanpa
-libur, rata-rata mingguan dan bulanan pada HAR-RV disesuaikan menjadi 7 dan 30
-hari \cite{qiu2025}.
+mingguan, dan bulanan. Walaupun hanya berupa regresi linear sederhana, HAR-RV
+lebih akurat daripada model autoregresif biasa dan hasilnya sebanding dengan
+model memori panjang yang lebih rumit \cite{corsi2009}. Pada aset kripto yang
+diperdagangkan setiap hari tanpa libur, rata-rata mingguan dan bulanan pada
+HAR-RV disesuaikan menjadi 7 dan 30 hari \cite{qiu2025}.
 
-% P5 — ML dan LightGBM   [kartu D4, I1, I5, I4]
+% P5 — ML dan LightGBM   [kartu D4, I1, I4, I5]
+% Catatan: penelitian ini memakai gbdt + bagging tanpa GOSS; jangan sebut
+% GOSS/EFB sebagai alasan memilih LightGBM.
 Selain model ekonometrika, model \textit{machine learning} (ML) juga mulai
 dipakai untuk meramalkan volatilitas aset kripto. Pada empat aset kripto,
 \textit{random forest} dan LSTM menghasilkan ramalan volatilitas yang
@@ -93,17 +65,16 @@ signifikan lebih akurat daripada model GARCH \cite{wang2023}. Di antara model
 ML, penelitian ini memilih LightGBM. LightGBM merupakan implementasi
 \textit{gradient boosting decision tree} (GBDT), yaitu model yang
 menggabungkan banyak pohon keputusan secara bertahap. LightGBM dipilih karena
-tiga alasan. Pertama, LightGBM dilengkapi teknik GOSS dan EFB sehingga
-pelatihannya jauh lebih cepat dengan akurasi yang hampir sama \cite{ke2017}.
-Kecepatan ini penting karena model dalam penelitian ini dilatih ulang
-berkali-kali. Kedua, pada data tabular berukuran menengah, model berbasis
-pohon masih lebih unggul daripada \textit{deep learning}
-\cite{grinsztajn2022}. Ketiga, LightGBM banyak dipakai dalam peramalan. Pada
-kompetisi peramalan M5, semua metode teratas merupakan metode ML, dan LightGBM
-dipakai oleh tim-tim teratas. Namun, keunggulan tersebut didukung oleh
-banyaknya deret data yang saling berkaitan dan data tambahan
-\cite{makridakis2022}, kondisi yang berbeda dengan peramalan satu deret
-volatilitas. Pemilihan LightGBM tidak dimaksudkan untuk menyatakan bahwa
+tiga alasan. Pertama, LightGBM dirancang untuk mempercepat pelatihan GBDT
+dengan akurasi yang hampir sama \cite{ke2017}. Kecepatan ini penting karena
+model dalam penelitian ini dilatih ulang berkali-kali. Kedua, pada data
+tabular berukuran menengah, model berbasis pohon masih lebih unggul daripada
+\textit{deep learning} \cite{grinsztajn2022}. Ketiga, LightGBM banyak dipakai
+dalam peramalan. Pada kompetisi peramalan M5, semua metode teratas merupakan
+metode ML, dan LightGBM dipakai oleh tim-tim teratas. Namun, keunggulan
+tersebut didukung oleh banyaknya deret data yang saling berkaitan dan data
+tambahan \cite{makridakis2022}, kondisi yang berbeda dengan peramalan satu
+deret volatilitas. Pemilihan LightGBM tidak dimaksudkan untuk menyatakan bahwa
 LightGBM lebih unggul daripada model ML lain. LightGBM dipakai sebagai wakil
 model berbasis pohon yang efisien untuk dilatih ulang secara berkala.
 % CEK (Ferdi): Makridakis hlm. 1346 menyebut LightGBM dipakai 50 tim teratas,
@@ -118,9 +89,9 @@ baru lebih unggul setelah diberi data tambahan \cite{christensen2023}. Pada
 Bitcoin, LSTM dengan masukan yang setara dengan HAR-RV hanya sedikit lebih
 akurat, dan perbedaannya hanya signifikan untuk ramalan 60 hari ke depan
 \cite{huang2024}. Pada empat aset kripto, model sederhana seperti HAR-RV tidak
-signifikan lebih buruk daripada LSTM atau \textit{random forest}. Perbedaan
-kinerja pada hari yang paling tenang dan paling bergejolak hanya dijelaskan,
-tanpa diuji secara statistik \cite{dudek2024}.
+signifikan lebih buruk daripada LSTM atau random forest. Perbedaan kinerja
+pada hari yang paling tenang dan paling bergejolak hanya dijelaskan, tanpa
+diuji secara statistik \cite{dudek2024}.
 
 % P7 — LightGBM dan model pohon vs HAR-RV   [kartu D8, D9, D10, D11]
 % Catatan: dudek2025lgbm = preprint; kilic2025 dan pyrlik2021 = working paper.
@@ -156,34 +127,32 @@ kinerja relatif LightGBM terhadap HAR-RV pada Bitcoin tetap sama sepanjang
 waktu, atau berubah mengikuti kondisi pasar.
 
 % P9 — masalah kedua: cara memperbarui model   [kartu G3, F1, F2, D5]
-Masalah berikutnya merupakan cara memperbarui model, yaitu berapa banyak data
+Masalah berikutnya menyangkut cara memperbarui model, yaitu berapa banyak data
 lama yang perlu dipakai saat model dilatih ulang. Ada tiga cara yang umum.
 Model bisa tidak dilatih ulang sama sekali (\textit{static}). Model juga bisa
 dilatih ulang hanya dengan data terbaru, misalnya satu tahun terakhir
-(\textit{rolling window}). Cara lainnya merupakan melatih ulang model dengan
-seluruh data yang tersedia (\textit{expanding window}). Secara teori,
-\textit{rolling window} lebih menguntungkan bila pola data berubah besar dan
-sering, sedangkan \textit{expanding window} lebih menguntungkan bila
-perubahannya kecil atau tidak ada \cite{rossi2013}. Pada peramalan volatilitas
-indeks saham S\&P~500 dengan HAR-RV, \textit{window} yang lebih akurat
-berganti-ganti antara \textit{rolling} dan \textit{expanding}
-\cite{feng2024window}. Pada aset kripto, \textit{rolling} umumnya lebih akurat
-daripada \textit{expanding}, tetapi perbandingan rincinya hanya untuk model
+(\textit{rolling window}). Cara lainnya yaitu melatih ulang model dengan
+seluruh data yang tersedia (\textit{expanding window}). Secara teori, rolling
+window lebih menguntungkan bila pola data berubah besar dan sering, sedangkan
+expanding window lebih menguntungkan bila perubahannya kecil atau tidak ada
+\cite{rossi2013}. Pada peramalan volatilitas indeks saham S\&P~500 dengan
+HAR-RV, \textit{window} yang lebih akurat berganti-ganti antara rolling dan
+expanding \cite{feng2024window}. Pada aset kripto, rolling umumnya lebih
+akurat daripada expanding, tetapi perbandingan rincinya hanya untuk model
 GARCH, tanpa HAR-RV, dan tanpa uji statistik \cite{akgun2025}. Penelitian ML
-lain pada Bitcoin hanya memakai \textit{rolling window} dan mengubah
-panjangnya sebagai uji tambahan, tanpa membandingkannya dengan
-\textit{expanding window} \cite{feng2024ml}.
+lain pada Bitcoin hanya memakai rolling window dan mengubah panjangnya sebagai
+uji tambahan, tanpa membandingkannya dengan expanding window
+\cite{feng2024ml}.
 
-% P10 — perlakuan pembaruan yang adil   [kartu D6]
+% P10 — perlakuan pembaruan yang adil   [kartu D6 (ulang)]
 Cara memperbarui model juga memengaruhi hasil perbandingan ML dan HAR-RV.
 Pada 1.445 saham Amerika Serikat, model ML tidak lebih baik daripada HAR-RV
 jika hanya diberi data volatilitas dan HAR-RV dilatih ulang setiap hari dengan
-\textit{rolling window} yang sesuai. Namun, pada penelitian tersebut model ML
-tidak dilatih ulang, sedangkan HAR-RV dilatih ulang setiap hari
-\cite{chassot2026}. Artinya, perbandingan ML dan HAR-RV baru adil jika
-keduanya diperbarui dengan cara yang sama. Sejauh penelusuran penulis, juga
-belum diketahui apakah pengaruh cara memperbarui model berbeda pada era pasar
-yang berbeda.
+rolling window yang sesuai. Namun, pada penelitian tersebut model ML tidak
+dilatih ulang, sedangkan HAR-RV dilatih ulang setiap hari \cite{chassot2026}.
+Artinya, perbandingan ML dan HAR-RV baru adil jika keduanya diperbarui dengan
+cara yang sama. Sejauh penelusuran penulis, juga belum diketahui apakah
+pengaruh cara memperbarui model berbeda pada era pasar yang berbeda.
 
 % P11 — cara mengukur kesalahan   [kartu H1]
 Penelitian ini juga memperhatikan cara mengukur kesalahan ramalan. Saat
@@ -191,35 +160,33 @@ volatilitas tinggi, selisih antara ramalan dan nilai aktual cenderung membesar
 karena nilai yang diramal memang besar. Jadi, kesalahan yang besar belum tentu
 berarti modelnya memburuk. Karena itu, penelitian ini membandingkan selisih
 kesalahan antara model ML dan HAR-RV pada hari yang sama. Ukuran kesalahan
-utamanya merupakan QLIKE. QLIKE menilai kesalahan dari perbandingan (rasio)
+utamanya yaitu QLIKE. QLIKE menilai kesalahan dari perbandingan (rasio)
 antara nilai aktual dan ramalan, bukan dari selisihnya. Karena berbasis rasio,
-nilai QLIKE tidak ikut membesar ketika tingkat volatilitas naik, sehingga
-kesalahan antarperiode tetap sebanding. Sifat itulah yang membuat QLIKE
-dipakai sebagai ukuran utama. QLIKE juga tetap memberi urutan model yang benar
-walaupun proksi yang dipakai berisik, selama proksi tersebut tidak bias.
-Sebagai pelengkap, dipakai juga \textit{mean squared error} (MSE), yang
-memiliki sifat ketahanan yang sama \cite{patton2011}.
+nilai QLIKE tidak otomatis membesar hanya karena tingkat volatilitas naik,
+sehingga kesalahan pada periode tenang dan periode bergejolak lebih sebanding.
+QLIKE juga tetap memberi urutan model yang benar walaupun proksi yang dipakai
+berisik, selama proksi tersebut tidak bias. Sebagai pelengkap, dipakai juga
+\textit{mean squared error} (MSE), yang memiliki sifat ketahanan yang sama
+\cite{patton2011}.
 
-% P12 — yang dilakukan penelitian ini   [kartu D3, J5]
+% P12 — yang dilakukan penelitian ini   [kartu D3 (ulang), J5]
 Berdasarkan uraian tersebut, penelitian ini menguji apakah kinerja relatif
-LightGBM terhadap HAR-RV dalam meramalkan \textit{realized variance} harian
-Bitcoin stabil dari waktu ke waktu. Data yang dipakai merupakan harga BTC/USDT
-pasar spot di Binance, dan RV dihitung dari \textit{return} lima menit.
-Penelitian ini membandingkan empat model, yaitu HAR, HAR-X, LGBM-HAR, dan
-LGBM-X. Huruf X menandakan model yang diberi data pasar tambahan. Dengan cara
-ini, dapat dilihat apakah perbedaan kinerja LightGBM berasal dari modelnya
-atau dari data tambahannya. Penelitian ini juga membandingkan cara memperbarui
-model \textit{static}, \textit{expanding}, dan \textit{rolling}, dengan
-perlakuan yang sama untuk HAR-RV. Penelitian ini mengembangkan salah satu
-penelitian terdahulu \cite{dudek2024} pada tiga hal, yaitu kestabilan kinerja
-dari
-waktu ke waktu, kaitannya dengan kondisi pasar, dan pengaruh cara memperbarui
-model. Penelitian ini tidak mengusulkan algoritma baru. Kontribusinya
-merupakan cara mengevaluasi model ML pada data yang terus berubah, dengan
-memadukan strategi pembaruan model dari bidang ML dan uji kestabilan ramalan
-dari bidang peramalan deret waktu. Kurangnya keterkaitan antara ML untuk data
-yang terus mengalir (\textit{data stream}) dan literatur deret waktu masih
-disebut sebagai masalah terbuka \cite{suarez2023}.
+LightGBM terhadap HAR-RV dalam meramalkan RV harian Bitcoin stabil dari waktu
+ke waktu. Data yang dipakai merupakan harga BTC/USDT pasar spot di Binance,
+dan RV dihitung dari return lima menit. Penelitian ini membandingkan empat
+model, yaitu HAR, HAR-X, LGBM-HAR, dan LGBM-X. Huruf X menandakan model yang
+diberi data pasar tambahan. Dengan cara ini, dapat dilihat apakah perbedaan
+kinerja LightGBM berasal dari modelnya atau dari data tambahannya. Penelitian
+ini juga membandingkan cara memperbarui model static, expanding, dan rolling,
+dengan perlakuan yang sama untuk HAR-RV. Penelitian ini mengembangkan salah
+satu penelitian terdahulu \cite{dudek2024} pada tiga hal, yaitu kestabilan
+kinerja dari waktu ke waktu, kaitannya dengan kondisi pasar, dan pengaruh
+cara memperbarui model. Penelitian ini tidak mengusulkan algoritma baru.
+Kontribusinya berupa cara mengevaluasi model ML pada data yang terus berubah,
+dengan memadukan strategi pembaruan model dari bidang ML dan uji kestabilan
+ramalan dari bidang peramalan deret waktu. Kurangnya keterkaitan antara ML
+untuk data yang terus mengalir (\textit{data stream}) dan literatur deret
+waktu masih disebut sebagai masalah terbuka \cite{suarez2023}.
 
 \section{Rumusan Masalah}
 \label{sec:rumusan}
@@ -240,13 +207,15 @@ sebagai berikut.
 Tujuan penelitian ini adalah sebagai berikut.
 \begin{enumerate}
   \item Menguji secara statistik apakah kinerja relatif LightGBM terhadap
-        HAR-RV stabil sepanjang periode pengujian, serta melihat apakah
-        perbedaan kinerjanya berasal dari model atau dari data tambahan.
-  \item Mengetahui kondisi pasar yang berkaitan dengan perubahan kinerja
-        relatif LightGBM terhadap HAR-RV.
-  \item Mengetahui pengaruh cara memperbarui model terhadap kinerja relatif
-        LightGBM pada setiap era pasar, dengan perlakuan yang sama untuk
-        HAR-RV.
+        HAR-RV dalam meramalkan \textit{realized variance} Bitcoin stabil
+        sepanjang periode pengujian.
+  \item Menganalisis keterkaitan perubahan kinerja relatif tersebut dengan
+        karakteristik pasar dan pergeseran distribusi fitur, termasuk apakah
+        kontribusi data pasar tambahan berbeda antarera.
+  \item Menganalisis pengaruh strategi pembaruan model dan panjang
+        \textit{window} data latih terhadap kinerja relatif LightGBM
+        terhadap HAR-RV pada era pasar yang berbeda, dengan perlakuan yang
+        sama untuk HAR-RV.
 \end{enumerate}
 
 \section{Manfaat Penelitian}
@@ -263,7 +232,7 @@ Bagi pengembang sistem peramalan, hasil penelitian ini dapat membantu
 menentukan apakah model ML layak dipakai dibandingkan model sederhana, kapan
 kinerjanya cenderung berubah, dan seberapa banyak data lama yang sebaiknya
 dipakai saat model dilatih ulang. Manfaat ini tetap ada apa pun hasilnya,
-baik ML terbukti lebih unggul, setara, maupun lebih buruk.
+baik ML lebih unggul, setara, maupun lebih buruk.
 
 \section{Batasan Masalah}
 Batasan masalah penelitian ini adalah sebagai berikut.
@@ -272,9 +241,9 @@ Batasan masalah penelitian ini adalah sebagai berikut.
         publik Binance dengan resolusi lima menit, dari Agustus 2017 hingga
         September 2026. Hasil penelitian tidak berlaku umum untuk pasar
         \textit{perpetual} atau bursa lain.
-  \item Yang diramalkan merupakan \textit{realized variance} harian untuk
+  \item Variabel yang diramalkan yaitu \textit{realized variance} harian untuk
         satu hari ke depan.
-  \item Model yang dibandingkan merupakan HAR-RV, HAR-X, LGBM-HAR, dan
+  \item Model yang dibandingkan yaitu HAR-RV, HAR-X, LGBM-HAR, dan
         LGBM-X, ditambah model naif sebagai pembanding dasar. Model
         \textit{deep learning} tidak termasuk.
   \item Periode pengujian mencakup era \textit{transition} dan

@@ -7,19 +7,18 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 - Uji konfirmatori sudah dijalankan, jadi **RQ, hipotesis, judul, dan uji konfirmatori tidak boleh diubah** mengikuti hasil (anti-HARKing).
 
 ## Sumber konteks (`context/`)
-Baca hanya bagian yang relevan dengan tugas; jangan memuat semuanya.
-- `hasil_riset_bitcoin_v2.7.md` — **rujukan desain utama.** Desain riset, literatur, RQ/hipotesis. Koreksi dari `KOREKSI.md` lama sudah diserap ke dokumen ini.
-- `hasil_eksperimen_bitcoin_v2_5.md` — kronologi, hasil, deviasi implementasi, dan **source code final** (`rvlib/`).
-- `arsip/` — dokumen lama yang sudah digantikan (`hasil_riset_bitcoin_v2.5.md`, `KOREKSI.md`). Disimpan sebagai jejak, bukan rujukan.
-- `perhitungan_manual.md` — angka Subbab 3.3 (window awal, terverifikasi terhadap kode).
-- `briefs/` — instruksi kerja per tugas. Bila Ferdi bilang "kerjakan brief X", ikuti brief itu persis dan kirim laporan balik sesuai format di bagian akhirnya.
+- `hasil_riset_bitcoin_v2.9.md` — rujukan desain utama (RQ, hipotesis, desain, Lampiran A revisi teks).
+- `kartu_paper.md` — **satu-satunya sumber klaim isi paper.** Klaim yang tidak ada di kartu dianggap belum terverifikasi; tulis `% CEK:`.
+- `perhitungan_manual.md` — angka Subbab 3.3.
+- `briefs/` — instruksi kerja per tugas.
+- `arsip/` — dokumen lama (v2.5–v2.8, `hasil_eksperimen_bitcoin_v2_5.md`, `KOREKSI.md`).
 
-**Urutan otoritas bila bertentangan:** brief terbaru > `hasil_riset_bitcoin_v2.7.md` > source code di `hasil_eksperimen_bitcoin_v2_5.md` > dokumen lama di `arsip/`.
+**Urutan otoritas:** brief terbaru > `kartu_paper.md` (isi paper) > `hasil_riset_bitcoin_v2.9.md` > source code di `arsip/hasil_eksperimen_bitcoin_v2_5.md` > dokumen lama.
 
 ## Aturan menulis
 - **Jangan mengarang** angka, metadata referensi, klaim isi paper, atau parameter. Bila tidak bisa dipastikan, tulis komentar `% CEK: <alasan>` dan biarkan.
 - Pertahankan semua `% CEK:` yang sudah ada kecuali brief menyuruh menghapus.
-- Klaim isi paper harus sesuai status bacaan di dokumen riset (✅F full text, ✅A abstrak, ✅M metadata, ⚠ belum dicek). Paper ✅A/✅M hanya boleh dikutip untuk klaim umum, dengan `% CEK:`.
+- Klaim isi paper hanya boleh ditulis bila tercatat di `kartu_paper.md` (lihat baris "Boleh dikutip untuk" / "Jangan").
 - Notasi pasar: **BTC/USDT** = spot (yang dipakai). BTCUSDT tanpa garis miring = perpetual; hanya untuk nama berkas arsip Binance.
 - Istilah asing `\textit{}` pada kemunculan pertama per bab; nama model (LightGBM, HAR-RV) tidak miring.
 - Notasi wajib konsisten dengan `frontmatter/daftar-notasi.tex`. Simbol baru ditambahkan ke sana. Simbol yang sudah terpakai tidak boleh diberi makna kedua (mis. $m$ = jumlah titik patah; $D^{\text{KS}}$ vs $D_t$; $P^H_t, P^L_t$ untuk harga, $L$ untuk loss).
