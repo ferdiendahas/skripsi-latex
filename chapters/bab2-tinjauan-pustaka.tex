@@ -9,7 +9,7 @@ pohon dengan HAR, uji instabilitas peramalan pada aset kripto, pengaruh
 \textit{window} data latih, serta perubahan karakteristik pasar Bitcoin.
 
 % [kartu D3, D2, D4, D5, D7, D1]
-\textbf{Perbandingan ML dan HAR untuk volatilitas.} Dudek dkk. merupakan
+\textbf{(1) Perbandingan ML dan HAR untuk volatilitas.} Dudek dkk. merupakan
 penelitian acuan utama. Penelitian tersebut membandingkan 12 metode untuk
 volatilitas harian BTC, ETH, LTC, dan XMR dari bursa Kraken, dengan RV dari
 \textit{return} 5 menit, \textit{rolling window} 23 bulan, dan pelatihan ulang
@@ -41,7 +41,7 @@ menargetkan harga, bukan volatilitas, dan tanpa HAR sebagai pembanding
 
 % [kartu D8, D9, D10, D11]
 % Catatan: dudek2025lgbm = preprint; kilic2025 dan pyrlik2021 = working paper.
-\textbf{Model berbasis pohon dan HAR.} Dudek, Kasprzyk, dan Pełka meramalkan RV
+\textbf{(2) Model berbasis pohon dan HAR.} Dudek, Kasprzyk, dan Pełka meramalkan RV
 harian BTC/USD dengan LightGBM dan 69 prediktor \cite{dudek2025lgbm}. LightGBM
 menghasilkan MSE lebih rendah daripada HAR, tetapi uji DM hanya signifikan
 pada satu perbandingan, dan menurut uji Wilcoxon LightGBM tidak lebih baik
@@ -60,7 +60,7 @@ per kuartal, tetapi perubahan kinerja relatif tersebut tidak diuji secara
 statistik.
 
 % [kartu E3]
-\textbf{Uji instabilitas peramalan pada aset kripto.} Trucíos dan Taylor
+\textbf{(3) Uji instabilitas peramalan pada aset kripto.} Trucíos dan Taylor
 menerapkan \textit{Fluctuation test} pada peramalan \textit{Value at Risk} dan
 \textit{Expected Shortfall} Bitcoin dan Ethereum dengan model ekonometrik
 \cite{trucios2023}. Hasilnya, keunggulan satu model atas model lain hanya
@@ -68,7 +68,7 @@ muncul sesaat pada sebagian perbandingan. Penelitian tersebut menunjukkan bahwa 
 relevan untuk aset kripto, tetapi tidak mencakup model ML maupun target RV.
 
 % [kartu F1, F2, D6]
-\textbf{Pengaruh \textit{window} data latih.} Feng, Zhang, dan Wang
+\textbf{(4) Pengaruh \textit{window} data latih.} Feng, Zhang, dan Wang
 membandingkan \textit{rolling} dan \textit{expanding window} pada HAR-RV untuk
 RV S\&P~500 dan menemukan bahwa \textit{window} yang lebih baik berganti
 sepanjang waktu, tetapi keunggulannya cenderung bertahan dalam periode yang
@@ -84,7 +84,7 @@ Namun, model ML pada penelitian tersebut tidak dilatih ulang, sehingga
 perbandingannya juga tidak sepenuhnya setara.
 
 % [kartu C2, C3, E1]
-\textbf{Perubahan pasar Bitcoin dan peran \textit{regime}.} Do membagi pasar
+\textbf{(5) Perubahan pasar Bitcoin dan peran \textit{regime}.} Do membagi pasar
 Bitcoin 2012--2025 ke dalam tiga era dan menunjukkan bahwa respons
 \textit{illiquidity} terhadap guncangan volatilitas melemah pada era
 \textit{institutional} \cite{do2026}. Mokni dkk. menunjukkan bahwa efisiensi
@@ -143,13 +143,13 @@ terdahulu.
     Chassot \& Audrino \cite{chassot2026} & RV 1.445 saham AS, 2015--2023 &
     Ya & Tidak (grafik, tanpa uji) & Ya (untuk HAR; ML statis) & Tidak \\
     \hline
-    \textbf{Penelitian ini} & RV BTC/USDT spot, 2018--2026 &
+    \textbf{Penelitian ini} & RV BTC/USDT spot, data 2017--2026, evaluasi 2018--2026 &
     Ya, perlakuan setara & Ya (UDmax; Fluctuation test eksploratori) &
     Ya (static, expanding, rolling) & Ya (regresi dengan uji formal) \\
     \hline
   \end{tabular}
   \endgroup
-  \sumber{diolah dari penelitian terdahulu}
+  \sumber{diolah dari \cite{dudek2024,huang2024,feng2024ml,trucios2023,akgun2025,chassot2026,brauneis2026,kilic2025}}
 \end{table}
 
 Berdasarkan Tabel~\ref{tab:posisi}, celah penelitian ini merupakan gabungan
@@ -214,7 +214,9 @@ logaritmik intraday didefinisikan sebagai
   \qquad i = 1, \dots, 288,
   \label{eq:return}
 \end{equation}
-\textit{Realized variance} harian merupakan
+dengan $C_{t,0}$ harga penutupan bar terakhir hari $t-1$, sehingga
+\textit{return} bar pertama setiap hari dihitung terhadap penutupan hari
+sebelumnya. \textit{Realized variance} harian merupakan
 \begin{equation}
   RV_t = \sum_{i=1}^{288} r_{t,i}^2 .
   \label{eq:rv}
@@ -256,6 +258,9 @@ merupakan
   + \beta_m \ln RV_t^{(m)} + \varepsilon_{t+1}.
   \label{eq:har}
 \end{equation}
+Regresor mingguan dan bulanan merupakan logaritma dari rata-rata RV, yaitu
+$\ln RV_t^{(w)}$ dan $\ln RV_t^{(m)}$ dengan $RV_t^{(w)}$ dan $RV_t^{(m)}$ dari
+Persamaan~\eqref{eq:rata-rv}, bukan rata-rata dari logaritma RV.
 Corsi membentuk rata-rata mingguan dan bulanan dari 5 dan 22 hari
 \cite{corsi2009}, sesuai jumlah hari perdagangan pasar saham. Bitcoin
 diperdagangkan setiap hari tanpa libur, sehingga horizon mingguan dan bulanan
@@ -273,23 +278,28 @@ mengilustrasikan ketiga komponen tersebut.
       every node/.style={font=\small},
       jendela/.style={draw,fill=black!10,minimum height=5mm,inner sep=0pt},
       kotak/.style={draw,minimum width=18mm,minimum height=8mm,align=center}]
-    % Garis waktu di bawah; satu hari = 3 mm, hari t berada di x = 90.
-    \draw[->] (0,30) -- (102,30);
+    % Satu hari = 3 mm dan hari t berada di x = 90, sehingga ketiga jendela
+    % berakhir tepat pada tanda t: harian 87--90, mingguan 72--90, bulanan
+    % 3--90. Keterangan diletakkan di atas tiap jendela, bukan menimpanya.
+    \node[jendela,minimum width=3mm,anchor=east]  (d) at (90,12) {};
+    \node[jendela,minimum width=18mm,anchor=east] (w) at (90,26) {};
+    \node[jendela,minimum width=87mm,anchor=east] (m) at (90,40) {};
+    \node[anchor=east] at (90,5)  {harian (1 hari)\quad $RV_t$};
+    \node[anchor=east] at (90,19) {mingguan (7 hari)\quad $RV^{(w)}_t$};
+    \node[anchor=west] at (3,33)  {bulanan (30 hari)\quad $RV^{(m)}_t$};
+    % Garis waktu di bawah ketiga jendela.
+    \draw[->] (0,48) -- (102,48);
     \foreach \x/\l in {3/{$t-29$}, 72/{$t-6$}, 90/{$t$}} {
-      \draw (\x,28.8) -- (\x,31.2);
-      \node[below=1pt] at (\x,31.2) {\l};
+      \draw (\x,46.8) -- (\x,49.2);
+      \node[below=1pt] at (\x,49.2) {\l};
     }
-    % Tiga jendela rata-rata yang sama-sama berakhir pada hari t.
-    \node[jendela,minimum width=3mm,anchor=east] (d) at (93,6) {};
-    \node[jendela,minimum width=21mm,anchor=east] (w) at (93,14) {};
-    \node[jendela,minimum width=90mm,anchor=east] (m) at (93,22) {};
-    \node[anchor=east] at (d.west) {harian (1 hari) \quad $RV_t$};
-    \node[anchor=east] at (w.west) {mingguan (7 hari) \quad $RV^{(w)}_t$};
-    \node[anchor=west,fill=black!10,inner sep=1pt] at (5,22)
-      {bulanan (30 hari) \quad $RV^{(m)}_t$};
     % Ketiga komponen masuk ke model, keluarannya ramalan hari t+1.
-    \node[kotak] (har) at (110,14) {HAR-RV};
-    \foreach \n in {d,w,m} {\draw[-{Stealth[length=2mm]}] (\n.east) -- (har.west);}
+    \node[kotak] (har) at (110,26) {HAR-RV};
+    % Ketiga jendela disatukan pada satu jalur pengumpul di x = 96 lalu masuk
+    % ke model lewat satu panah, agar kepala panahnya tidak bertumpuk.
+    \foreach \y in {12,26,40} {\draw (90,\y) -- (96,\y);}
+    \draw (96,12) -- (96,40);
+    \draw[-{Stealth[length=2mm]}] (96,26) -- (har.west);
     \draw[-{Stealth[length=2mm]}] (har.east) -- ++(5,0)
       node[right] {$\widehat{RV}_{t+1}$};
   \end{tikzpicture}
@@ -521,7 +531,14 @@ satu hingga $M$ perubahan. Setiap segmen dibatasi minimal sebesar proporsi
 dijalankan lebih dahulu; bila menolak, jumlah titik patah ditentukan dengan uji
 berurutan $\sup F(\ell+1 \mid \ell)$ \cite{bai2003}. Penelitian ini menggunakan
 UDmax sebagai uji konfirmatori kestabilan dan \textit{Fluctuation test} sebagai
-visualisasi eksploratori.
+visualisasi eksploratori. Secara operasional, kinerja relatif disebut stabil
+bila UDmax tidak menemukan perubahan struktural yang signifikan pada rata-rata
+$\Delta L_t$. Hasil yang tidak signifikan dibaca sebagai tidak ditemukannya
+bukti perubahan, bukan bukti bahwa kinerja pasti stabil, karena kesimpulan
+tersebut bergantung pada daya uji. Peran kedua uji juga berbeda: UDmax
+menjawab apakah rata-rata $\Delta L_t$ berubah sepanjang waktu, sedangkan uji
+DM menjawab apakah rata-rata $\Delta L_t$ pada seluruh periode berbeda dari
+nol.
 
 
 \subsection{Evaluasi Out-of-Sample dan Strategi Pembaruan Model}
@@ -572,7 +589,7 @@ Gambar~\ref{fig:strategi} merangkum ketiga strategi yang digunakan.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian, diolah dari literatur}
+  \sumber{diolah dari \cite{tashman2000,gama2014,cerqueira2020,zliobaite2015}}
 \end{table}
 
 \begin{figure}[htbp]
@@ -610,7 +627,6 @@ Gambar~\ref{fig:strategi} merangkum ketiga strategi yang digunakan.
   \end{tikzpicture}
   \caption{Skema Strategi Pembaruan Model Static, Expanding, dan Rolling}
   \label{fig:strategi}
-  \sumber{rancangan penelitian}
 \end{figure}
 
 Pilihan strategi melibatkan \textit{trade-off} bias dan varians. Menyertakan
@@ -734,7 +750,6 @@ pemeriksaan kewajaran.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 Pada HAR-X, fitur X tidak mencakup ukuran Amihud (lihat
@@ -802,7 +817,6 @@ Alur kerangka pemikiran ditunjukkan pada Gambar~\ref{fig:kerangka}.
   \end{tikzpicture}
   \caption{Kerangka Pemikiran Penelitian}
   \label{fig:kerangka}
-  \sumber{rancangan penelitian}
 \end{figure}
 
 \section{Hipotesis Penelitian}
@@ -814,7 +828,11 @@ berikut.
 $\Delta L(\text{LGBM-X} - \text{HAR})$ tidak konstan sepanjang periode
 pengujian. Hipotesis ini diturunkan dari perubahan karakteristik pasar Bitcoin
 lintas era \cite{do2026,mokni2024} dan dari literatur instabilitas peramalan
-\cite{rossi2013,martins2016}.
+\cite{rossi2013,martins2016}. Karena LGBM-X berbeda dari HAR-RV dalam
+algoritma sekaligus fitur masukan, H1 menguji kinerja relatif paket model dan
+fitur, bukan efek algoritma murni. Sumber perbedaannya diurai melalui pasangan
+dekomposisi pada desain $2 \times 2$ (Tabel~\ref{tab:desain}) dan melalui
+H2b.
 
 \textbf{H2a.} Selisih \textit{loss} bulanan berasosiasi dengan sedikitnya satu
 karakteristik pasar, yaitu level volatilitas, volatilitas dari volatilitas,
@@ -829,7 +847,10 @@ volatilitas terhadap \textit{illiquidity}, sedangkan penelitian ini memakai
 likuiditas dan volume untuk meramal RV; H2b merupakan perluasan dari temuan
 tersebut. Mokni dkk. menunjukkan hubungan likuiditas dapat berbalik tanda
 \cite{mokni2024}, dan kepentingan fitur tidak konsisten antarstudi
-\cite{wang2023,feng2024ml}. Karena itu H2b dirumuskan dua arah.
+\cite{wang2023,feng2024ml}. Karena itu H2b dirumuskan dua arah. Karena log Amihud hanya dipakai pada
+LGBM-X, kontribusi fitur X pada HAR dan pada LightGBM tidak dihitung dari
+himpunan fitur yang persis sama. Perbedaan kontribusi antara keduanya tidak
+dapat sepenuhnya diatribusikan pada algoritma.
 
 \textbf{H3.} Pada era \textit{institutional}, kinerja relatif LGBM-X terhadap
 HAR-RV lebih baik pada strategi \textit{rolling} 365 hari (S2-365)
@@ -841,7 +862,11 @@ signifikan. Hipotesis ini
 didasarkan pada \textit{trade-off} bias--varians \cite{pesaran2007,rossi2013}
 dan perubahan karakteristik pasar antarera \cite{do2026}: hubungan yang
 dipelajari dari era awal dapat usang, dan LGBM-X yang lebih fleksibel diduga
-lebih terdampak data usang daripada HAR.
+lebih terdampak data usang daripada HAR. Uji konfirmatori untuk RQ3 dibatasi
+pada perbandingan S2-365 dan S1 di era \textit{institutional}. Panjang
+\textit{window} lain (180, 730, dan 1.095 hari serta Tertunda-365) dan era
+\textit{transition} dianalisis secara eksploratori, sehingga kesimpulan
+konfirmatori RQ3 hanya berlaku untuk perbandingan tersebut.
 
 \textbf{Hipotesis tandingan.} Hasil yang berlawanan dengan H3 tetap bermakna.
 Data sebelum perubahan struktural dapat tetap berguna \cite{pesaran2007}.
@@ -860,29 +885,32 @@ Tabel~\ref{tab:ringkasan}. Uji konfirmatori ditetapkan sebelum hasil
   \centering
   \begingroup
   \setstretch{1}\small
-  \begin{tabular}{|p{0.22\textwidth}|c|p{0.47\textwidth}|}
+  \begin{tabular}{|p{0.18\textwidth}|c|p{0.36\textwidth}|p{0.2\textwidth}|}
     \hline
     \textbf{Rumusan masalah} & \textbf{Hipotesis} &
-    \textbf{Uji konfirmatori} \\
+    \textbf{Uji konfirmatori} & \textbf{Eksploratori} \\
     \hline
     RQ1 Kestabilan kinerja relatif & H1 &
     UDmax pada rata-rata $\Delta L(\text{LGBM-X} - \text{HAR})$, skema rolling
     365 hari, QLIKE, HAC, $\varepsilon = 0{,}15$, maksimum 5 perubahan; bila
-    tidak menolak, uji DM pada seluruh sampel \\
+    tidak menolak, uji DM pada seluruh sampel &
+    Uji berurutan $\sup F(\ell+1 \mid \ell)$; Fluctuation test; daya UDmax \\
     \hline
     RQ2 Asosiasi dengan kondisi pasar & H2a, H2b &
     H2a: uji-F bersama (HAC) pada regresi $\Delta L$ bulanan terhadap
     4 karakteristik pasar. H2b: dua uji-t HAC beda rata-rata antara era
     \textit{transition} dan \textit{institutional}, untuk
     $\Delta L(\text{HAR-X} - \text{HAR})$ dan
-    $\Delta L(\text{LGBM-X} - \text{LGBM-HAR})$, dengan koreksi Holm \\
+    $\Delta L(\text{LGBM-X} - \text{LGBM-HAR})$, dengan koreksi Holm &
+    PSI deskriptif; Corwin--Schultz (sensitivitas) \\
     \hline
     RQ3 Strategi pembaruan $\times$ era & H3 &
     Uji-t HAC dua sisi pada rata-rata
     $D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$ pasangan LGBM-X
-    dan HAR-RV di era \textit{institutional} \\
+    dan HAR-RV di era \textit{institutional} &
+    \textit{Window} 180, 730, 1.095, Tertunda-365; era \textit{transition};
+    skema S0 \\
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}

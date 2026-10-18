@@ -1,10 +1,5 @@
 \chapter{Metodologi}
 
-Bab ini menguraikan rancangan penelitian yang digunakan untuk menjawab ketiga
-rumusan masalah pada Subbab~\ref{sec:rumusan}, meliputi jenis dan alur penelitian, data,
-rancangan model dan skema pembaruan, contoh perhitungan, serta rancangan
-evaluasi dan pengujian hipotesis.
-
 \section{Metode Penelitian}
 Penelitian ini merupakan penelitian kuantitatif eksperimental dengan data
 sekunder deret waktu. Objek yang dievaluasi merupakan kinerja relatif model
@@ -88,7 +83,6 @@ konfirmatori dan analisis eksploratori untuk RQ1--RQ3.
   \end{tikzpicture}
   \caption{Alur Penelitian}
   \label{fig:alur}
-  \sumber{rancangan penelitian}
 \end{figure}
 
 \subsection{Tahap Uji Kelayakan}
@@ -126,7 +120,12 @@ Data yang digunakan merupakan \textit{klines} (OHLCV) BTC/USDT pasar spot dengan
 resolusi 5 menit dari arsip publik Binance (\texttt{data.binance.vision}),
 diunduh per bulan dan diverifikasi dengan \textit{checksum} SHA-256 resmi.
 Periode data adalah 17 Agustus 2017, yaitu awal ketersediaan arsip, hingga
-30 September 2026. Tanggal awal yang sama juga digunakan pada penelitian
+30 September 2026. Periode data mentah dibedakan dari periode evaluasi. Data
+17 Agustus 2017 hingga 31 Agustus 2018 berfungsi sebagai \textit{window} latih
+awal dan data \textit{tuning}, periode evaluasi utama berlangsung 1 September
+2018 hingga 30 September 2026, dan skema eksploratori dengan \textit{window}
+lebih panjang dimulai lebih lambat (Tabel~\ref{tab:oos}). Tanggal awal yang
+sama juga digunakan pada penelitian
 peramalan risiko aset kripto dengan data Binance \cite{trucios2023}. Kolom
 yang digunakan adalah harga pembukaan, tertinggi,
 terendah, penutupan, serta \textit{quote asset volume} (volume dalam USDT)
@@ -254,7 +253,6 @@ Tabel~\ref{tab:fitur}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 Kolinearitas diperiksa dengan \textit{variance inflation factor} (VIF) pada
@@ -307,7 +305,13 @@ Aturan berikut berlaku sama untuk semua model.
         $\exp(\hat y_{t+1} + \hat\sigma^2/2)$. Nilai $\hat\sigma^2$ adalah
         varians residual model yang dilatih pada 80\% awal \textit{window}
         latih, dihitung pada 20\% akhir \textit{window}; setelah itu model
-        dilatih ulang pada seluruh \textit{window}. Residual
+        dilatih ulang pada seluruh \textit{window}. Koreksi ini tepat bila
+        galat pada skala logaritma kira-kira berdistribusi normal dengan
+        varians konstan. Karena asumsi tersebut tidak dijamin, koreksi dipakai
+        sebagai pendekatan, bukan diklaim optimal, dan uji sensitivitas tanpa
+        koreksi disertakan. Koreksi diterapkan dengan cara yang sama pada
+        keempat model; model \textit{naive} tidak memerlukannya karena tidak
+        memakai skala logaritma. Residual
         \textit{in-sample} tidak dipakai karena LightGBM cenderung
         \textit{overfit}.
         % CEK: preseden koreksi bias pada Christensen dkk. (2023) belum
@@ -371,7 +375,6 @@ pencarian dan nilai terkunci ditunjukkan pada Tabel~\ref{tab:tuning}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 Nilai \texttt{min\_child\_samples} = 5 pada LGBM-X merupakan batas bawah ruang
@@ -382,9 +385,21 @@ desain untuk menjaga regularisasi.
 Peramalan dilakukan secara \textit{walk-forward} bulanan: pada awal setiap
 bulan uji, model dilatih ulang (kecuali S0) menggunakan data dengan tanggal
 target sebelum bulan tersebut, lalu meramalkan setiap hari dalam bulan itu.
+Parameter model tetap selama satu bulan uji, tetapi fitur untuk meramalkan
+hari $t+1$ dihitung dari data hingga akhir hari $t$. RV aktual selama bulan
+berjalan baru masuk ke data latih pada pelatihan ulang bulan berikutnya.
+Aturan ini berlaku sama untuk HAR-RV dan LightGBM.
 Ketiga strategi utama mengikuti Tabel~\ref{tab:strategi} dan
 Gambar~\ref{fig:strategi}. Model HAR-RV memakai strategi dan \textit{window}
 yang sama dengan model ML pada setiap sel perbandingan \cite{chassot2026}.
+Perlakuan setara dalam penelitian ini berarti kedua model memakai periode data
+latih, jadwal pelatihan ulang, dan periode evaluasi yang sama; struktur dan
+prosedur estimasinya tetap berbeda. Koefisien HAR-RV dan pohon LightGBM
+sama-sama diestimasi ulang setiap bulan, sedangkan \textit{hyperparameter}
+LightGBM dituning sekali pada \textit{window} awal lalu dikunci
+(Subbab~\ref{subsec:tuning}).
+% CEK (Ferdi): retuning berkala belum dijalankan. Putuskan: jalankan sebagai
+% sensitivitas, atau tulis sebagai keterbatasan di Bab V.
 Awal periode \textit{out-of-sample} setiap skema ditunjukkan pada
 Tabel~\ref{tab:oos}; perbandingan antarskema selalu dilakukan pada periode
 bersama.
@@ -419,12 +434,14 @@ bersama.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 Pembagian era mengikuti Do \cite{do2026}, dengan batas 1 Januari 2021 antara
-era \textit{transition} dan \textit{institutional}; data tahun 2026
-diperlakukan sebagai kelanjutan era \textit{institutional} dan diuji
+era \textit{transition} dan \textit{institutional}. Batas tersebut merupakan
+klasifikasi operasional yang diadopsi dari penelitian terdahulu, bukan titik
+perubahan struktural yang diuji dalam penelitian ini. Klasifikasi Do berakhir
+pada 2025, sehingga data tahun 2026 diperlakukan sebagai kelanjutan era
+\textit{institutional} berdasarkan keputusan operasional dan diuji
 sensitivitasnya. Batas era hanya digunakan dalam analisis, tidak sebagai fitur
 model.
 
@@ -485,7 +502,6 @@ Tabel~\ref{tab:manual-rv}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{hasil perhitungan}
 \end{table}
 
 Penjumlahan kuadrat \textit{return} atas 288 bar (Persamaan~\eqref{eq:rv})
@@ -539,7 +555,6 @@ Komponen HAR dihitung dari rata-rata RV harian, mingguan, dan bulanan
     \hline
   \end{tabular}
   \endgroup
-  \sumber{hasil perhitungan}
 \end{table}
 
 \subsection{Fitur X}
@@ -576,7 +591,6 @@ Subbab~\ref{subsec:fitur}; fitur tersebut hanya dipakai LGBM-X.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{hasil perhitungan}
 \end{table}
 
 \subsection{Peramalan HAR-RV dan LGBM-HAR}
@@ -648,7 +662,6 @@ Gambar~\ref{fig:manual-pohon}.
   \end{tikzpicture}
   \caption{Struktur Pohon ke-1 dan ke-2 LGBM-HAR pada Contoh Perhitungan}
   \label{fig:manual-pohon}
-  \sumber{hasil perhitungan}
 \end{figure}
 
 Pada Gambar~\ref{fig:manual-pohon}, garis tebal menandai lintasan hari $t^*$.
@@ -686,7 +699,6 @@ Persamaan~\eqref{eq:loss} dan ditunjukkan pada Tabel~\ref{tab:manual-loss}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{hasil perhitungan}
 \end{table}
 
 Selisih \textit{loss} pada hari tersebut (Persamaan~\eqref{eq:delta-loss})
@@ -705,7 +717,10 @@ merupakan selisih \textit{loss} harian $\Delta L_t$
 (Persamaan~\eqref{eq:delta-loss}). Pasangan konfirmatori merupakan LGBM-X
 terhadap HAR-RV pada skema S2-365; pasangan lain, yaitu LGBM-HAR--HAR,
 HAR-X--HAR, LGBM-X--LGBM-HAR, dan LGBM-X--HAR-X, digunakan untuk dekomposisi
-secara eksploratori.
+secara eksploratori. Dengan demikian, pasangan konfirmatori menilai LightGBM
+beserta fitur tambahannya. Efek algoritma dibaca dari pasangan
+LGBM-HAR--HAR-RV yang memakai masukan sama, dan efek fitur dari pasangan
+HAR-X--HAR-RV serta LGBM-X--LGBM-HAR.
 
 \subsection{Uji Konfirmatori}
 Uji konfirmatori setiap hipotesis mengikuti Tabel~\ref{tab:ringkasan}.
@@ -716,7 +731,9 @@ Rincian pelaksanaannya adalah sebagai berikut.
         maksimum lima perubahan, statistik Wald memakai kovarians HAC
         \cite{bai1998,bai2003,martins2016}. Bila UDmax tidak menolak $H_0$,
         dilanjutkan dengan uji tipe Diebold--Mariano
-        (Persamaan~\eqref{eq:dm}) pada seluruh sampel.
+        (Persamaan~\eqref{eq:dm}) pada seluruh sampel. Daya UDmax diperiksa pada
+        analisis eksploratori, sehingga hasil yang tidak signifikan dapat
+        dibaca bersama besaran perubahan yang mampu dideteksi.
   \item \textbf{H2a.} Diuji dengan regresi rata-rata $\Delta L$ bulanan
         pada empat karakteristik pasar (Subbab~\ref{subsec:rq2var}), dengan
         uji-F bersama berbasis kovarians HAC.
@@ -729,7 +746,10 @@ Rincian pelaksanaannya adalah sebagai berikut.
         era \textit{institutional}, pada periode bersama S2-365 dan S1. H3
         didukung bila rata-rata $D_t$ negatif dan signifikan; rata-rata
         positif yang signifikan dibaca sebagai dukungan bagi hipotesis
-        tandingan.
+        tandingan. Uji konfirmatori untuk RQ3 dibatasi pada perbandingan
+        S2-365 dan S1 di era \textit{institutional}. Panjang \textit{window}
+        lain (180, 730, dan 1.095 hari serta Tertunda-365) dan era
+        \textit{transition} dianalisis secara eksploratori.
 \end{enumerate}
 
 Semua uji menggunakan taraf signifikansi 5\% dan kovarians HAC Newey--West
@@ -777,7 +797,6 @@ Tabel~\ref{tab:rq2var}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 \textit{Spread} Abdi--Ranaldo harian dihitung sebagai
@@ -811,7 +830,9 @@ dengan ADF \cite{dickey1979} dan KPSS \cite{kwiatkowski1992}; regresor
 di-\textit{differencing} bila ADF gagal menolak akar unit ($p > 0{,}05$)
 \textbf{dan} KPSS menolak stasioneritas ($p < 0{,}05$), yaitu kombinasi hasil
 yang menunjukkan adanya akar unit \cite{kwiatkowski1992}. Hipotesis yang diuji
-adalah $\gamma_1 = \gamma_2 = \gamma_3 = \gamma_4 = 0$. Interpretasi bersifat
+adalah $\gamma_1 = \gamma_2 = \gamma_3 = \gamma_4 = 0$. Periode evaluasi utama menyediakan hingga 97 bulan (September 2018 hingga
+September 2026); jumlah bulan yang benar-benar masuk regresi setelah
+\textit{differencing} dilaporkan pada Bab IV. Interpretasi bersifat
 asosiatif, bukan kausal.
 
 \subsection{Analisis Eksploratori}
@@ -869,7 +890,6 @@ Tabel~\ref{tab:sensitivitas}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}
 
 \section{Jadwal Penelitian}
@@ -904,5 +924,4 @@ Jadwal pelaksanaan penelitian ditunjukkan pada Tabel~\ref{tab:jadwal}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{rancangan penelitian}
 \end{table}

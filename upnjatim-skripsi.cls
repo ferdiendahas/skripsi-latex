@@ -362,7 +362,7 @@
       {\fontsize{14pt}{16.1pt}\selectfont\upn@labeljenis};
     \node[blok] at (39.86,102.19)
       {\parbox[t]{140mm}{\fontsize{18pt}{20.7pt}\selectfont\bfseries
-       \setlength{\parskip}{0pt}\hyphenpenalty=10000\exhyphenpenalty=10000
+       \setlength{\parskip}{0pt}\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000
        \tolerance=9999\emergencystretch=3em\hbadness=10000
        \MakeUppercase{\upn@judul}\par}};
     \node[blok] at (39.86,149.55)
