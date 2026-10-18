@@ -7,7 +7,7 @@ evaluasi dan pengujian hipotesis.
 
 \section{Metode Penelitian}
 Penelitian ini merupakan penelitian kuantitatif eksperimental dengan data
-sekunder deret waktu. Objek yang dievaluasi adalah kinerja relatif model
+sekunder deret waktu. Objek yang dievaluasi merupakan kinerja relatif model
 LightGBM terhadap model HAR-RV dalam meramalkan \textit{realized variance}
 harian BTC/USDT spot satu hari ke depan. Penelitian bersifat implementatif:
 seluruh tahapan, mulai dari pengolahan data, pelatihan model, hingga pengujian
@@ -15,7 +15,7 @@ statistik, diimplementasikan sebagai satu \textit{pipeline} perangkat lunak
 yang dapat dijalankan ulang.
 
 Strategi penelitian berupa eksperimen komputasional dengan evaluasi
-\textit{out-of-sample} secara \textit{walk-forward}. Subjek penelitian adalah
+\textit{out-of-sample} secara \textit{walk-forward}. Subjek penelitian merupakan
 data harga BTC/USDT pasar spot, yang merupakan data sekunder dan tersedia
 secara publik, sehingga penelitian tidak terikat pada lokasi fisik tertentu.
 Data dikumpulkan dengan mengunduh arsip publik Binance
@@ -38,67 +38,53 @@ tahapan berikut: (1) pengunduhan data dan verifikasi \textit{checksum};
 (2) audit dan pembentukan tabel harian; (3) pembentukan target dan fitur;
 (4) pemeriksaan kolinearitas dan \textit{tuning hyperparameter} pada
 \textit{window} awal; (5) peramalan \textit{walk-forward} untuk setiap skema
-pembaruan dan model; (6) perhitungan \textit{loss} harian dan selisih
-\textit{loss}; (7) pengujian hipotesis konfirmatori dan analisis eksploratori
-untuk RQ1--RQ3.
+pembaruan dan model; (6) perhitungan \textit{loss} harian, selisih
+\textit{loss}, dan karakteristik pasar bulanan; (7) pengujian hipotesis
+konfirmatori dan analisis eksploratori untuk RQ1--RQ3.
 
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[alir, x=1mm, y=-1mm,
       every node/.append style={font=\footnotesize},
-      proses/.append style={text width=54mm, minimum height=8mm},
-      io/.append style={text width=48mm, minimum height=8mm},
+      proses/.append style={text width=58mm, minimum height=7mm},
+      io/.append style={text width=50mm, minimum height=7mm},
       terminal/.append style={minimum width=26mm, minimum height=7mm},
-      sisi/.style={proses, text width=30mm, minimum height=13mm},
-      rq/.style={proses, text width=29mm, minimum height=13mm}]
+      rq/.style={proses, text width=30mm, minimum height=11mm}]
 
-    % Kolom utama: terminal, masukan, proses, keluaran, terminal
+    % Kolom utama: semua tahap berurutan dari atas ke bawah
     \node[terminal] (mulai) at (0,0) {Mulai};
-    \node[io] (n1) at (0,14) {Arsip Binance BTC/USDT spot 5 menit};
-    \node[proses] (n2) at (0,28) {Audit data dan tabel harian};
-    \node[proses] (n3) at (0,42) {Target $RV_{t+1}$ dan fitur (HAR, X)};
-    \node[proses] (n4) at (0,57)
-      {\textit{Window} awal: cek VIF dan \textit{tuning}
-       (\textit{forward-chaining})};
-    \node[proses] (n5) at (0,73)
-      {\textit{Walk-forward} bulanan: S0, S1, S2};
-    \node[proses] (n6) at (0,87)
-      {HAR, HAR-X, LGBM-HAR, LGBM-X, \textit{naive}};
-    \node[proses] (n7) at (0,101) {\textit{Loss} harian QLIKE dan MSE};
-    \node[proses] (n8) at (0,115) {$\Delta L_t$ terhadap HAR-RV};
-
-    % Masukan samping yang hanya memasok RQ2
-    \node[sisi] (pasar) at (52,33) {Karakteristik\\pasar bulanan};
+    \node[io] (n1) at (0,12) {Arsip Binance BTC/USDT spot 5 menit};
+    \node[proses] (n2) at (0,24) {(1--2) Unduh, verifikasi, audit data, dan
+      bentuk tabel harian};
+    \node[proses] (n3) at (0,36) {(3) Target $RV_{t+1}$ dan fitur (HAR, X)};
+    \node[proses] (n4) at (0,48) {(4) \textit{Window} awal: cek VIF dan
+      \textit{tuning}};
+    \node[proses] (n5) at (0,61) {(5) \textit{Walk-forward} bulanan S0, S1,
+      S2 untuk HAR, HAR-X, LGBM-HAR, LGBM-X, dan \textit{naive}};
+    \node[proses] (n6) at (0,80) {(6) \textit{Loss} harian QLIKE dan MSE,
+      $\Delta L_t$ terhadap HAR-RV, dan karakteristik pasar bulanan};
 
     % Tiga rumusan masalah
-    \node[rq] (rq1) at (-35,141) {RQ1\\UDmax $\rightarrow$ DM};
-    \node[rq] (rq2) at (0,141) {RQ2\\regresi $\Delta L$ bulanan};
-    \node[rq] (rq3) at (35,141) {RQ3\\$D_t$ antarstrategi};
+    \node[rq] (rq1) at (-36,104) {(7) RQ1\\UDmax, lalu DM};
+    \node[rq] (rq2) at (0,104) {(7) RQ2\\regresi $\Delta L$ bulanan};
+    \node[rq] (rq3) at (36,104) {(7) RQ3\\$D_t$ antarstrategi};
 
-    \node[io] (simp) at (0,164) {Kesimpulan RQ1--RQ3};
-    \node[terminal] (selesai) at (0,180) {Selesai};
+    \node[io] (simp) at (0,126) {Kesimpulan RQ1--RQ3};
+    \node[terminal] (selesai) at (0,139) {Selesai};
 
-    \foreach \a/\b in {mulai/n1, n1/n2, n2/n3, n3/n4, n4/n5, n5/n6, n6/n7,
-                       n7/n8, simp/selesai}
+    \foreach \a/\b in {mulai/n1, n1/n2, n2/n3, n3/n4, n4/n5, n5/n6,
+                       simp/selesai}
       {\draw[panah] (\a) -- (\b);}
-    \draw[panah] (n2.east) -- (pasar.west);
 
-    % Satu panah dari delta L, lalu dibagikan ke ketiga kotak RQ
-    \draw (0,119) -- (0,129);
-    \draw (-35,129) -- (35,129);
-    \draw[panah] (-35,129) -- (rq1.north);
-    \draw[panah] (-5,129) -- (-5,134.5);
-    % Digambar sebelum garis RQ3 agar persilangannya tampak melompat
-    \draw[panah] (pasar.south) -- (52,132) -- (5,132) -- (5,134.5);
-    \draw[white,line width=2.4pt] (35,129) -- (35,134.5);
-    \draw[panah] (35,129) -- (rq3.north);
+    % Satu garis dari tahap 6, dibagikan ke ketiga RQ
+    \draw (n6.south) -- (0,92);
+    \draw (-36,92) -- (36,92);
+    \foreach \x in {-36,0,36} {\draw[panah] (\x,92) -- (\x,98.5);}
 
     % Ketiga RQ bermuara pada kesimpulan
-    \draw (-35,147.5) -- (-35,156);
-    \draw (0,147.5) -- (0,156);
-    \draw (35,147.5) -- (35,156);
-    \draw (-35,156) -- (35,156);
-    \draw[panah] (0,156) -- (simp.north);
+    \foreach \x in {-36,0,36} {\draw (\x,109.5) -- (\x,116);}
+    \draw (-36,116) -- (36,116);
+    \draw[panah] (0,116) -- (simp.north);
   \end{tikzpicture}
   \caption{Alur Penelitian}
   \label{fig:alur}
@@ -136,7 +122,7 @@ deterministik LightGBM.
 
 \subsection{Data}
 \label{subsec:data}
-Data yang digunakan adalah \textit{klines} (OHLCV) BTC/USDT pasar spot dengan
+Data yang digunakan merupakan \textit{klines} (OHLCV) BTC/USDT pasar spot dengan
 resolusi 5 menit dari arsip publik Binance (\texttt{data.binance.vision}),
 diunduh per bulan dan diverifikasi dengan \textit{checksum} SHA-256 resmi.
 Periode data adalah 17 Agustus 2017, yaitu awal ketersediaan arsip, hingga
@@ -228,7 +214,7 @@ Tahapan audit adalah sebagai berikut.
 
 \subsection{Target dan Fitur}
 \label{subsec:fitur}
-Target peramalan adalah $RV_{t+1}$ (Persamaan~\eqref{eq:rv}); model dilatih
+Target peramalan merupakan $RV_{t+1}$ (Persamaan~\eqref{eq:rv}); model dilatih
 pada $\ln RV_{t+1}$ lalu ramalannya dikembalikan ke skala level
 (Subbab~\ref{subsec:teknis}). Seluruh fitur hari $t$ hanya memakai data hingga
 akhir hari $t$. Tiga puluh hari pertama digunakan sebagai periode pemanasan
@@ -315,7 +301,7 @@ $\widehat{RV}_{t+1} = RV_t$ sebagai pemeriksaan kewajaran.
 Aturan berikut berlaku sama untuk semua model.
 \begin{enumerate}
   \item \textbf{Koreksi bias transformasi log.} Karena ramalan optimal di
-        bawah QLIKE dan MSE adalah nilai harapan kondisional
+        bawah QLIKE dan MSE merupakan nilai harapan kondisional
         \cite{patton2011}, $\exp(\hat y)$ tanpa koreksi akan sistematis
         terlalu rendah. Ramalan dikoreksi menjadi
         $\exp(\hat y_{t+1} + \hat\sigma^2/2)$. Nilai $\hat\sigma^2$ adalah
@@ -323,14 +309,16 @@ Aturan berikut berlaku sama untuk semua model.
         latih, dihitung pada 20\% akhir \textit{window}; setelah itu model
         dilatih ulang pada seluruh \textit{window}. Residual
         \textit{in-sample} tidak dipakai karena LightGBM cenderung
-        \textit{overfit}. Koreksi serupa digunakan pada peramalan RV dengan
-        \textit{machine learning} \cite{christensen2023}.
+        \textit{overfit}.
+        % CEK: preseden koreksi bias pada Christensen dkk. (2023) belum
+        % tercatat di kartu D1; tambahkan kembali sitasinya setelah lokasinya
+        % diverifikasi di PDF.
   \item \textbf{Batas bawah ramalan.} Ramalan dibatasi minimal sebesar
         persentil ke-1 target $RV$ pada \textit{window} latih,
         $\underline{F}$, karena QLIKE menghukum ramalan yang terlalu rendah
-        jauh lebih berat \cite{patton2011}. Pembatasan ramalan dengan nilai
-        minimum dari data latih juga digunakan oleh Christensen dkk.
-        \cite{christensen2023}.
+        jauh lebih berat.
+        % CEK: preseden batas bawah pada Christensen dkk. (2023) belum
+        % tercatat di kartu D1; tambahkan kembali setelah diverifikasi.
 \end{enumerate}
 
 Ramalan akhir adalah
@@ -345,9 +333,11 @@ Sebagai uji sensitivitas, koreksi bias ditiadakan.
 \subsection{\textit{Tuning Hyperparameter}}
 \label{subsec:tuning}
 \textit{Hyperparameter} LightGBM dituning \textbf{sekali} pada \textit{window}
-awal (Agustus 2017 -- Agustus 2018) dengan validasi \textit{forward-chaining}
-lima lipatan \cite{cerqueira2020}, lalu dikunci untuk seluruh periode
-pengujian. Parameter \texttt{num\_leaves} dan \texttt{min\_child\_samples}
+awal (Agustus 2017 -- Agustus 2018), lalu dikunci untuk seluruh periode
+pengujian. Validasi silang acak tidak digunakan karena memutus urutan waktu
+\cite{cerqueira2020}. \textit{Tuning} dilakukan dengan validasi berurutan
+waktu (\textit{forward-chaining}) lima lipatan, yaitu setiap lipatan dilatih
+pada data sebelum lipatan validasinya. Parameter \texttt{num\_leaves} dan \texttt{min\_child\_samples}
 (nama lain \texttt{min\_data\_in\_leaf}) merupakan parameter utama untuk
 mengendalikan kompleksitas pohon dan mencegah \textit{overfitting}
 \cite{lightgbmtuning}, sedangkan \texttt{reg\_lambda} merupakan penalti L2
@@ -444,7 +434,7 @@ Langkah pencegahan kebocoran informasi masa depan:
   \item fitur hari $t$ hanya memakai data hingga akhir hari $t$, sedangkan
         target adalah hari $t+1$;
   \item \textit{tuning} hanya dilakukan pada \textit{window} awal dengan
-        \textit{forward-chaining}, bukan validasi silang acak
+        validasi berurutan waktu, bukan validasi silang acak
         \cite{cerqueira2020};
   \item $\hat\sigma^2$ dan batas bawah $\underline{F}$ dihitung hanya dari
         \textit{window} latih;
@@ -633,13 +623,13 @@ Gambar~\ref{fig:manual-pohon}.
       \node[simpul] (a) at (30,0) {$\ln RV^{(m)}_t \le -5{,}80353$};
       \node[daun,tebal] (a0) at (6,22) {daun 0\\$-6{,}06517$};
       \node[simpul] (a1) at (42,22) {$\ln RV_t \le -5{,}05151$};
-      \node[daun] (a11) at (30,46) {daun 1\\$-6{,}02747$};
-      \node[daun] (a12) at (56,46) {daun 2\\$-5{,}99638$};
+      \node[daun] (a11) at (30,40) {daun 1\\$-6{,}02747$};
+      \node[daun] (a12) at (56,40) {daun 2\\$-5{,}99638$};
       \draw[tebal] (a) -- node[above left,font=\scriptsize] {ya} (a0);
       \draw (a) -- node[above right,font=\scriptsize] {tidak} (a1);
-      \draw (a1) -- (a11);
-      \draw (a1) -- (a12);
-      \node[font=\small] at (30,58) {(a) Pohon ke-1};
+      \draw (a1) -- node[left,font=\scriptsize] {ya} (a11);
+      \draw (a1) -- node[right,font=\scriptsize] {tidak} (a12);
+      \node[font=\small] at (30,52) {(a) Pohon ke-1};
     \end{scope}
 
     % Panel kanan: pohon ke-2
@@ -647,13 +637,13 @@ Gambar~\ref{fig:manual-pohon}.
       \node[simpul] (b) at (30,0) {$\ln RV^{(m)}_t \le -5{,}80353$};
       \node[daun,tebal] (b0) at (6,22) {daun 0\\$-0{,}0260821$};
       \node[simpul] (b1) at (42,22) {$\ln RV_t \le -4{,}88302$};
-      \node[daun] (b11) at (30,46) {daun 1\\$0{,}00821454$};
-      \node[daun] (b12) at (56,46) {daun 2\\$0{,}0432716$};
+      \node[daun] (b11) at (30,40) {daun 1\\$0{,}00821454$};
+      \node[daun] (b12) at (56,40) {daun 2\\$0{,}0432716$};
       \draw[tebal] (b) -- node[above left,font=\scriptsize] {ya} (b0);
       \draw (b) -- node[above right,font=\scriptsize] {tidak} (b1);
-      \draw (b1) -- (b11);
-      \draw (b1) -- (b12);
-      \node[font=\small] at (30,58) {(b) Pohon ke-2};
+      \draw (b1) -- node[left,font=\scriptsize] {ya} (b11);
+      \draw (b1) -- node[right,font=\scriptsize] {tidak} (b12);
+      \node[font=\small] at (30,52) {(b) Pohon ke-2};
     \end{scope}
   \end{tikzpicture}
   \caption{Struktur Pohon ke-1 dan ke-2 LGBM-HAR pada Contoh Perhitungan}
@@ -711,8 +701,8 @@ seluruh periode \textit{out-of-sample} sebagaimana diuraikan pada Subbab~\ref{se
 \subsection{Fungsi \textit{Loss} dan Selisih \textit{Loss}}
 Setiap ramalan dievaluasi dengan QLIKE sebagai \textit{loss} utama dan MSE
 pada skala level sebagai pelengkap (Persamaan~\eqref{eq:loss}). Objek analisis
-adalah selisih \textit{loss} harian $\Delta L_t$
-(Persamaan~\eqref{eq:delta-loss}). Pasangan konfirmatori adalah LGBM-X
+merupakan selisih \textit{loss} harian $\Delta L_t$
+(Persamaan~\eqref{eq:delta-loss}). Pasangan konfirmatori merupakan LGBM-X
 terhadap HAR-RV pada skema S2-365; pasangan lain, yaitu LGBM-HAR--HAR,
 HAR-X--HAR, LGBM-X--LGBM-HAR, dan LGBM-X--HAR-X, digunakan untuk dekomposisi
 secara eksploratori.

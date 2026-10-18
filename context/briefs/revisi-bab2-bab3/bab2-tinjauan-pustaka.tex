@@ -1,0 +1,888 @@
+\chapter{Tinjauan Pustaka}
+
+
+\section{Penelitian Terdahulu}
+% Sumber klaim: context/kartu_paper.md (kode kartu di komentar tiap paragraf).
+Penelitian terdahulu yang relevan dikelompokkan ke dalam lima kelompok:
+perbandingan model ML dengan HAR untuk volatilitas, perbandingan model berbasis
+pohon dengan HAR, uji instabilitas peramalan pada aset kripto, pengaruh
+\textit{window} data latih, serta perubahan karakteristik pasar Bitcoin.
+
+% [kartu D3, D2, D4, D5, D7, D1]
+\textbf{Perbandingan ML dan HAR untuk volatilitas.} Dudek dkk. merupakan
+penelitian acuan utama. Penelitian tersebut membandingkan 12 metode untuk
+volatilitas harian BTC, ETH, LTC, dan XMR dari bursa Kraken, dengan RV dari
+\textit{return} 5 menit, \textit{rolling window} 23 bulan, dan pelatihan ulang
+setiap hari pada periode uji 2019--2021 \cite{dudek2024}. Model sederhana
+seperti HAR tidak signifikan lebih buruk daripada LSTM atau \textit{random
+forest}, sedangkan kinerja pada 5\% hari dengan RV terendah dan tertinggi hanya
+dibandingkan secara deskriptif tanpa uji signifikansi. Huang, Sangiorgi, dan
+Urquhart meramalkan RV Bitcoin dari data tik Bitstamp 2014--2021 dengan periode
+uji sekitar 290 hari \cite{huang2024}. Dengan masukan setara HAR, LSTM hanya
+unggul tipis, paling besar 1,56\%, dan perbedaannya hanya signifikan menurut uji
+DM pada horizon 60 hari. Pada horizon satu hari, HAR terlihat lebih tahan
+terhadap lonjakan volatilitas dibanding CNN-LSTM, tetapi hal ini hanya
+ditunjukkan melalui grafik. Pada saham DJIA, Christensen dkk. menemukan bahwa
+\textit{random forest} dengan masukan HAR saja sekitar setara dengan HAR dan
+\textit{gradient boosting} lebih buruk, sedangkan keunggulan model ML baru
+muncul setelah prediktor tambahan dimasukkan \cite{christensen2023}. Wang,
+Andreeva, dan Martin-Barragan menunjukkan bahwa \textit{random forest} dan LSTM
+mengungguli GARCH untuk volatilitas empat aset kripto, dengan determinan
+internal pasar sebagai prediktor terpenting \cite{wang2023}. Feng, Qi, dan
+Lucey meramalkan RV BTC/USD 2017--2022 dengan Lasso, Ridge, dan Elastic Net
+yang \textit{hyperparameter}-nya dituning ulang setiap hari, dan menemukan
+bahwa ketiganya mengungguli HAR-RV serta kepentingan indikator
+\textit{blockchain} meningkat sejak Oktober 2022 \cite{feng2024ml}. Qiu dkk.
+menunjukkan bahwa pada RV sepuluh aset kripto di Binance, kombinasi ramalan
+dari beberapa model HAR dan \textit{rough volatility} umumnya mengungguli model
+tunggal \cite{qiu2025}. Oprea dan Bâra mengkaji peran \textit{regime}, tetapi
+menargetkan harga, bukan volatilitas, dan tanpa HAR sebagai pembanding
+\cite{oprea2026}.
+
+% [kartu D8, D9, D10, D11]
+% Catatan: dudek2025lgbm = preprint; kilic2025 dan pyrlik2021 = working paper.
+\textbf{Model berbasis pohon dan HAR.} Dudek, Kasprzyk, dan Pełka meramalkan RV
+harian BTC/USD dengan LightGBM dan 69 prediktor \cite{dudek2025lgbm}. LightGBM
+menghasilkan MSE lebih rendah daripada HAR, tetapi uji DM hanya signifikan
+pada satu perbandingan, dan menurut uji Wilcoxon LightGBM tidak lebih baik
+daripada \textit{random forest}. Penelitian tersebut masih berupa
+\textit{preprint}. Brauneis dan Sahiner membandingkan HAR dengan LightGBM,
+XGBoost, dan beberapa model \textit{deep learning} pada RV enam jam delapan
+aset kripto \cite{brauneis2026}. Pada sebagian besar aset kripto, model ML
+lebih baik, tetapi pada Bitcoin HAR justru signifikan lebih akurat daripada
+semua model ML menurut QLIKE. Pada RV S\&P~500, Kılıç menemukan XGBoost sebagai
+model ML terburuk, dengan penurunan kinerja paling parah pada krisis 2008
+\cite{kilic2025}. Pada RV saham Rusia, Pyrlik, Elizarov, dan Leonova menemukan
+bahwa Lasso dan HAR-RV paling baik, sedangkan \textit{gradient boosting}
+paling buruk, dan model terbaik berganti dari kuartal ke kuartal
+\cite{pyrlik2021}. Kedua penelitian terakhir melaporkan hasil per tahun atau
+per kuartal, tetapi perubahan kinerja relatif tersebut tidak diuji secara
+statistik.
+
+% [kartu E3]
+\textbf{Uji instabilitas peramalan pada aset kripto.} Trucíos dan Taylor
+menerapkan \textit{Fluctuation test} pada peramalan \textit{Value at Risk} dan
+\textit{Expected Shortfall} Bitcoin dan Ethereum dengan model ekonometrik
+\cite{trucios2023}. Hasilnya, keunggulan satu model atas model lain hanya
+muncul sesaat pada sebagian perbandingan. Penelitian tersebut menunjukkan bahwa evaluasi sepanjang waktu
+relevan untuk aset kripto, tetapi tidak mencakup model ML maupun target RV.
+
+% [kartu F1, F2, D6]
+\textbf{Pengaruh \textit{window} data latih.} Feng, Zhang, dan Wang
+membandingkan \textit{rolling} dan \textit{expanding window} pada HAR-RV untuk
+RV S\&P~500 dan menemukan bahwa \textit{window} yang lebih baik berganti
+sepanjang waktu, tetapi keunggulannya cenderung bertahan dalam periode yang
+relatif panjang \cite{feng2024window}. Akgun dan Gulay membandingkan sebelas
+model tipe GARCH dan tiga model \textit{deep learning} untuk volatilitas
+Bitcoin, Ethereum, dan Binance Coin hingga akhir 2021 \cite{akgun2025}.
+Perbandingan \textit{rolling} dan \textit{expanding} dilaporkan rinci hanya
+untuk model tipe GARCH, dengan hasil \textit{rolling} umumnya lebih akurat,
+tanpa HAR dan tanpa uji signifikansi. Chassot dan Audrino menunjukkan pada
+1.445 saham bahwa model ML tidak mengungguli HAR ketika HAR diestimasi ulang
+setiap hari dengan \textit{rolling window} yang tepat \cite{chassot2026}.
+Namun, model ML pada penelitian tersebut tidak dilatih ulang, sehingga
+perbandingannya juga tidak sepenuhnya setara.
+
+% [kartu C2, C3, E1]
+\textbf{Perubahan pasar Bitcoin dan peran \textit{regime}.} Do membagi pasar
+Bitcoin 2012--2025 ke dalam tiga era dan menunjukkan bahwa respons
+\textit{illiquidity} terhadap guncangan volatilitas melemah pada era
+\textit{institutional} \cite{do2026}. Mokni dkk. menunjukkan bahwa efisiensi
+pasar Bitcoin berganti-ganti, dan pengaruh likuiditas terhadap efisiensi
+berbeda arah antarkuantil sebelum COVID-19 serta jauh lebih besar sesudahnya
+\cite{mokni2024}. Agakishiev dkk.
+menemukan bahwa manfaat informasi \textit{regime} tidak signifikan pada data
+validasi dan uji \cite{agakishiev2025}.
+
+Tabel~\ref{tab:posisi} merangkum posisi penelitian ini terhadap penelitian
+terdahulu.
+
+\begin{table}[htbp]
+  \caption{Matriks Posisi Penelitian terhadap Penelitian Terdahulu}
+  \label{tab:posisi}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  % Enam kolom tidak muat pada margin kiri 4 cm dengan tabcolsep bawaan dan
+  % pemenggalan kata dimatikan; keduanya dilonggarkan khusus di tabel ini.
+  \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.15\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.15\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.14\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.14\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.13\textwidth}|}
+    \hline
+    \textbf{Penelitian} & \textbf{Objek} & \textbf{Pembanding HAR} &
+    \textbf{Evaluasi sepanjang waktu} & \textbf{Variasi strategi window} &
+    \textbf{Asosiasi dengan kondisi pasar} \\
+    \hline
+    Dudek dkk. \cite{dudek2024} & RV 4 kripto, uji 2019--2021 & Ya &
+    Tidak (agregat) & Tidak (satu skema rolling) & Deskriptif, tanpa uji \\
+    \hline
+    Huang dkk. \cite{huang2024} & RV Bitcoin, uji $\pm$290 hari & Ya &
+    Tidak (agregat) & Tidak & Tidak \\
+    \hline
+    Feng, Qi \& Lucey \cite{feng2024ml} & RV BTC/USD, 2017--2022 & Ya &
+    Kepentingan fitur antarperiode & Hanya panjang rolling (uji ketahanan) &
+    Tidak \\
+    \hline
+    Brauneis \& Sahiner \cite{brauneis2026} & RV 6 jam 8 kripto, 2021--2022 &
+    Ya & Tidak (agregat) & Tidak & Tidak \\
+    \hline
+    Kılıç \cite{kilic2025} & RV S\&P~500, uji 2006--2023 & Ya (+ HAR
+    nonlinear) & Deskriptif per tahun & Tidak (expanding tahunan) & Tidak \\
+    \hline
+    Trucíos \& Taylor \cite{trucios2023} & VaR/ES BTC dan ETH &
+    Tidak (model ekonometrik) & Ya (Fluctuation test) & Tidak & Tidak \\
+    \hline
+    Akgun \& Gulay \cite{akgun2025} & Volatilitas BTC, ETH, BNB s.d. 2021 &
+    Tidak (GARCH dan \textit{deep learning}) & Tidak &
+    Ya (dilaporkan untuk GARCH) & Tidak \\
+    \hline
+    Chassot \& Audrino \cite{chassot2026} & RV 1.445 saham AS, 2015--2023 &
+    Ya & Tidak (grafik, tanpa uji) & Ya (untuk HAR; ML statis) & Tidak \\
+    \hline
+    \textbf{Penelitian ini} & RV BTC/USDT spot, 2018--2026 &
+    Ya, perlakuan setara & Ya (UDmax; Fluctuation test eksploratori) &
+    Ya (static, expanding, rolling) & Ya (regresi dengan uji formal) \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{diolah dari penelitian terdahulu}
+\end{table}
+
+Berdasarkan Tabel~\ref{tab:posisi}, celah penelitian ini merupakan gabungan
+dari: (1) uji kestabilan kinerja relatif ML terhadap HAR-RV pada RV Bitcoin
+lintas era pasar, (2) dekomposisi sumber perbedaan kinerja, (3) asosiasi
+perubahan kinerja dengan karakteristik pasar dan pergeseran distribusi fitur,
+serta (4) interaksi strategi pembaruan model dengan era pasar, dengan
+perlakuan \textit{window} yang setara bagi HAR-RV.
+
+\section{Landasan Teori}
+
+\subsection{Bitcoin dan Evolusi Karakteristik Pasarnya}
+% [kartu C1, C2, C3, J5]
+Bitcoin merupakan sistem uang elektronik \textit{peer-to-peer} yang
+memungkinkan transaksi tanpa perantara lembaga keuangan \cite{nakamoto2008}.
+Sejak diperdagangkan secara luas, pasar Bitcoin mengalami pendewasaan. Do
+membagi perkembangan tersebut ke dalam tiga era \cite{do2026}. Era
+\textit{niche} (2012--2016) didominasi pengguna awal dan spekulan perorangan.
+Era \textit{transition} (2017--2020) ditandai partisipasi investor perorangan
+secara luas, kontrak berjangka CME, dan berkembangnya bursa seperti Binance.
+Era \textit{institutional} (2021--2025) ditandai integrasi dengan keuangan
+tradisional, termasuk ETF spot Bitcoin sejak Januari 2024. Dari era ke era,
+RV turun tajam, volume naik, dan biaya transaksi turun. Respons
+\textit{illiquidity} terhadap guncangan volatilitas juga lebih kecil dan lebih
+singkat pada era \textit{institutional}. Data Do disambung dari dua bursa,
+yaitu Bitstamp (2012--Oktober 2019) dan Binance (November 2019--2025),
+sehingga perbandingan level antarera perlu dibaca dengan hati-hati.
+
+Perubahan karakteristik ini tidak monoton. Efisiensi pasar berganti-ganti
+antara periode efisien dan tidak efisien \cite{mokni2024}, dan pola data yang
+pernah muncul dapat berulang kembali \cite{suarez2023}. Penelitian ini memakai
+pembagian era dari Do hanya sebagai alat analisis, bukan sebagai masukan
+model.
+
+\subsection{Efisiensi Pasar dan Keterramalan Volatilitas}
+% [kartu C4, C3, C2, A3]
+Hipotesis pasar efisien bentuk lemah menyatakan bahwa \textit{return} tidak
+dapat diprediksi dari harga masa lalu \cite{yi2023}. Hasil pengujiannya pada
+Bitcoin beragam. Dengan data harian 2010--2019, pasar Bitcoin ditemukan
+mendekati efisien dan relatif stabil antartahun \cite{yi2023}. Dengan data
+2016--2023, efisiensinya berganti-ganti antara periode efisien dan tidak
+efisien \cite{mokni2024}. Pada era \textit{institutional}, \textit{return}
+Bitcoin mendekati \textit{random walk} \cite{do2026}. Perbedaan ini sebagian
+disebabkan oleh perbedaan ukuran dan periode yang dipakai.
+
+Keterramalan \textit{return} berbeda dengan keterramalan volatilitas. Pasar
+yang efisien dalam \textit{return} tetap dapat memiliki volatilitas yang
+terprediksi, karena besarnya perubahan harga cenderung bertahan:
+autokorelasi kuadrat dan nilai absolut \textit{return} tetap tinggi hingga
+hitungan bulan \cite{corsi2009}. Model HAR-RV memanfaatkan sifat ini dengan
+meregresikan volatilitas pada volatilitas masa lalunya. Karena itu,
+peningkatan efisiensi pasar tidak membuat peramalan volatilitas menjadi tidak
+bermakna.
+
+\subsection{Realized Variance sebagai Proksi Volatilitas}
+\label{subsec:rv}
+Misalkan $C_{t,i}$ adalah harga penutupan bar 5 menit ke-$i$ pada hari $t$.
+Satu hari UTC terdiri atas 288 bar 5 menit, sehingga \textit{return}
+logaritmik intraday didefinisikan sebagai
+\begin{equation}
+  r_{t,i} = \ln\!\left(\frac{C_{t,i}}{C_{t,i-1}}\right),
+  \qquad i = 1, \dots, 288,
+  \label{eq:return}
+\end{equation}
+\textit{Realized variance} harian merupakan
+\begin{equation}
+  RV_t = \sum_{i=1}^{288} r_{t,i}^2 .
+  \label{eq:rv}
+\end{equation}
+Corsi mendefinisikan \textit{realized volatility} sebagai akar dari besaran
+tersebut \cite{corsi2009}. Penelitian ini menggunakan skala varians karena
+fungsi \textit{loss} QLIKE dihitung pada skala varians \cite{patton2011}.
+
+Pemilihan RV sebagai proksi didasarkan pada rantai argumen berikut. Proksi
+volatilitas yang berisik, seperti kuadrat \textit{return} harian, membuat model
+tampak buruk walaupun sebenarnya baik, sedangkan RV dari data intraday jauh
+lebih akurat \cite{andersen1998}. Proksi yang berisik juga dapat mengacaukan
+urutan peringkat model, sehingga perbandingan model memerlukan fungsi
+\textit{loss} yang robust terhadap derau proksi \cite{patton2011}. Liu, Patton,
+dan Sheppard menunjukkan bahwa pada 31 aset dari lima kelas aset, RV 5 menit
+sulit dikalahkan secara signifikan oleh lebih dari 400 estimator lain, dan
+estimator yang lebih rumit justru memburuk relatif terhadap RV 5 menit pada
+periode derau dan volatilitas tinggi \cite{liu2015}. Karena likuiditas dan
+volatilitas Bitcoin berubah besar antarera \cite{do2026}, resolusi 5 menit
+dipilih sebagai pilihan yang aman di semua era.
+
+\subsection{Model Heterogeneous Autoregressive (HAR-RV)}
+Model HAR-RV didasarkan pada gagasan bahwa pelaku pasar memiliki horizon waktu
+yang berbeda, misalnya harian, mingguan, dan bulanan, sehingga volatilitas
+dipengaruhi oleh komponen volatilitas dari ketiga horizon tersebut
+\cite{corsi2009}. Meskipun berbentuk regresi linear sederhana, model ini mampu
+meniru sifat memori panjang volatilitas. Dengan rata-rata RV mingguan dan
+bulanan
+\begin{equation}
+  RV_t^{(w)} = \frac{1}{7}\sum_{j=0}^{6} RV_{t-j},
+  \qquad
+  RV_t^{(m)} = \frac{1}{30}\sum_{j=0}^{29} RV_{t-j},
+  \label{eq:rata-rv}
+\end{equation}
+model HAR-RV dalam bentuk logaritma yang digunakan pada penelitian ini
+merupakan
+\begin{equation}
+  \ln RV_{t+1} = \beta_0 + \beta_d \ln RV_t + \beta_w \ln RV_t^{(w)}
+  + \beta_m \ln RV_t^{(m)} + \varepsilon_{t+1}.
+  \label{eq:har}
+\end{equation}
+Corsi membentuk rata-rata mingguan dan bulanan dari 5 dan 22 hari
+\cite{corsi2009}, sesuai jumlah hari perdagangan pasar saham. Bitcoin
+diperdagangkan setiap hari tanpa libur, sehingga horizon mingguan dan bulanan
+disesuaikan menjadi 7 dan 30 hari \cite{qiu2025}; lag 5 dan 22 hari dipakai
+sebagai uji sensitivitas. Dalam evaluasi \textit{out-of-sample}, Corsi
+mengestimasi ulang model setiap hari pada jendela bergerak 1.000 observasi
+\cite{corsi2009}, sedangkan kinerja relatif model peramalan dapat berubah
+sepanjang waktu \cite{rossi2013}. Hal ini menjadi salah satu alasan
+stabilitas kinerja perlu diuji. Gambar~\ref{fig:har-komponen}
+mengilustrasikan ketiga komponen tersebut.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=-1mm,
+      every node/.style={font=\small},
+      jendela/.style={draw,fill=black!10,minimum height=5mm,inner sep=0pt},
+      kotak/.style={draw,minimum width=18mm,minimum height=8mm,align=center}]
+    % Garis waktu di bawah; satu hari = 3 mm, hari t berada di x = 90.
+    \draw[->] (0,30) -- (102,30);
+    \foreach \x/\l in {3/{$t-29$}, 72/{$t-6$}, 90/{$t$}} {
+      \draw (\x,28.8) -- (\x,31.2);
+      \node[below=1pt] at (\x,31.2) {\l};
+    }
+    % Tiga jendela rata-rata yang sama-sama berakhir pada hari t.
+    \node[jendela,minimum width=3mm,anchor=east] (d) at (93,6) {};
+    \node[jendela,minimum width=21mm,anchor=east] (w) at (93,14) {};
+    \node[jendela,minimum width=90mm,anchor=east] (m) at (93,22) {};
+    \node[anchor=east] at (d.west) {harian (1 hari) \quad $RV_t$};
+    \node[anchor=east] at (w.west) {mingguan (7 hari) \quad $RV^{(w)}_t$};
+    \node[anchor=west,fill=black!10,inner sep=1pt] at (5,22)
+      {bulanan (30 hari) \quad $RV^{(m)}_t$};
+    % Ketiga komponen masuk ke model, keluarannya ramalan hari t+1.
+    \node[kotak] (har) at (110,14) {HAR-RV};
+    \foreach \n in {d,w,m} {\draw[-{Stealth[length=2mm]}] (\n.east) -- (har.west);}
+    \draw[-{Stealth[length=2mm]}] (har.east) -- ++(5,0)
+      node[right] {$\widehat{RV}_{t+1}$};
+  \end{tikzpicture}
+  \caption{Ilustrasi Komponen Harian, Mingguan, dan Bulanan pada Model HAR-RV}
+  \label{fig:har-komponen}
+  \sumber{diolah dari Corsi \cite{corsi2009}}
+\end{figure}
+
+\subsection{LightGBM}
+\textit{Gradient boosting decision tree} (GBDT) membangun model prediksi
+sebagai penjumlahan berurutan pohon keputusan, dengan setiap pohon baru dilatih
+untuk mengoreksi kesalahan gabungan pohon-pohon sebelumnya. Secara umum, model
+pada iterasi ke-$b$ adalah
+\begin{equation}
+  F_b(\mathbf{x}) = F_{b-1}(\mathbf{x}) + \eta\, h_b(\mathbf{x}),
+  \label{eq:gbdt}
+\end{equation}
+dengan $\eta$ laju pembelajaran dan $h_b$ pohon ke-$b$. LightGBM merupakan
+implementasi GBDT berbasis histogram yang dilengkapi dua teknik, yaitu
+\textit{Gradient-based One-Side Sampling} (GOSS) dan \textit{Exclusive Feature
+Bundling} (EFB), sehingga pelatihannya jauh lebih cepat dengan akurasi yang
+hampir sama dengan implementasi GBDT lain \cite{ke2017}. LightGBM menumbuhkan
+pohon secara \textit{leaf-wise}, yaitu memecah daun dengan penurunan
+\textit{loss} terbesar, berbeda dari pertumbuhan \textit{level-wise} yang
+memecah seluruh daun pada kedalaman yang sama (Gambar~\ref{fig:pohon-lgbm}).
+Pada jumlah daun yang sama, pertumbuhan \textit{leaf-wise} umumnya mencapai
+\textit{loss} lebih rendah, tetapi dapat mengalami \textit{overfitting} pada
+data berukuran kecil \cite{lightgbmfeatures}. Karena itu, jumlah daun
+(\texttt{num\_leaves}) dan jumlah minimum data per daun
+(\texttt{min\_data\_in\_leaf}) menjadi parameter utama untuk mengendalikan
+kompleksitas pohon \cite{lightgbmtuning}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=-1mm,
+      simpul/.style={draw,circle,inner sep=0pt,minimum size=5mm},
+      pecah/.style={draw,circle,fill=black!12,inner sep=0pt,minimum size=5mm}]
+    % Panel kiri: level-wise
+    \begin{scope}
+      \node[pecah] (a) at (28,0) {};
+      \node[pecah] (b) at (14,14) {};
+      \node[pecah] (c) at (42,14) {};
+      \node[simpul] (d) at (7,28) {};
+      \node[simpul] (e) at (21,28) {};
+      \node[simpul] (f) at (35,28) {};
+      \node[simpul] (g) at (49,28) {};
+      \draw (a) -- (b) (a) -- (c) (b) -- (d) (b) -- (e) (c) -- (f) (c) -- (g);
+      \node[font=\small] at (28,50) {(a) \textit{Level-wise}};
+    \end{scope}
+    % Panel kanan: leaf-wise
+    \begin{scope}[xshift=70mm]
+      \node[pecah] (a2) at (28,0) {};
+      \node[pecah] (b2) at (14,14) {};
+      \node[simpul] (c2) at (42,14) {};
+      \node[simpul] (d2) at (7,28) {};
+      \node[pecah] (e2) at (21,28) {};
+      \node[simpul] (f2) at (14,42) {};
+      \node[simpul] (g2) at (28,42) {};
+      \draw (a2) -- (b2) (a2) -- (c2) (b2) -- (d2) (b2) -- (e2)
+            (e2) -- (f2) (e2) -- (g2);
+      \node[font=\small] at (28,50) {(b) \textit{Leaf-wise}};
+    \end{scope}
+    % Legenda di bawah kedua panel.
+    \node[pecah] (lg1) at (32,60) {};
+    \node[anchor=west,font=\small] at (35.5,60) {simpul yang dipecah};
+    \node[simpul] (lg2) at (82,60) {};
+    \node[anchor=west,font=\small] at (85.5,60) {daun};
+  \end{tikzpicture}
+  \caption{Pertumbuhan Pohon \textit{Level-wise} dan \textit{Leaf-wise}}
+  \label{fig:pohon-lgbm}
+  \sumber{Digambar ulang, diadaptasi dari dokumentasi LightGBM
+    \cite{lightgbmfeatures}}
+\end{figure}
+
+% [kartu I1, I2, I4, I5, D3, D10]
+LightGBM dipilih dengan tiga pertimbangan. Pertama, LightGBM dirancang untuk
+mempercepat pelatihan GBDT dengan akurasi yang hampir sama \cite{ke2017}.
+Sifat ini praktis karena model dalam penelitian ini dilatih ulang setiap bulan
+untuk beberapa skema pembaruan dan panjang \textit{window}. Akurasinya juga
+hampir sama dengan XGBoost \cite{ke2017,chen2016}, sehingga pilihan di antara
+keduanya bukan inti penelitian. Kedua, pada data tabular berukuran menengah
+(sekitar 10 ribu sampel), model berbasis pohon seperti \textit{random forest}
+dan XGBoost konsisten mengungguli \textit{deep learning}, bahkan setelah
+\textit{tuning} dengan anggaran besar \cite{grinsztajn2022}. Benchmark
+tersebut memakai data i.i.d., sedangkan data latih penelitian ini berupa fitur
+lag deret waktu sebanyak 365 hingga sekitar 2.900 baris. Karena itu, temuan
+tersebut dipakai sebagai dasar pemilihan kelas model, bukan jaminan kinerja.
+Ketiga, LightGBM banyak dipakai dalam peramalan. Pada kompetisi M5, semua
+metode teratas merupakan metode ML dan LightGBM dipakai oleh tim-tim teratas,
+walaupun keunggulan tersebut didukung oleh banyak deret yang saling berkaitan
+dan data tambahan \cite{makridakis2022}. Penelitian ini juga mengikuti arahan
+untuk menggunakan ML non-\textit{deep learning}.
+
+Model berbasis pohon tidak selalu unggul pada kondisi ekstrem. Pada
+volatilitas tinggi, \textit{random forest} dan LSTM termasuk model yang paling
+tidak akurat, walaupun perbandingan tersebut hanya deskriptif
+\cite{dudek2024}, dan XGBoost mengalami penurunan kinerja paling parah pada
+krisis 2008 \cite{kilic2025}. Karena itu, kekalahan model berbasis pohon pada
+hari lonjakan volatilitas merupakan kemungkinan yang perlu diantisipasi.
+
+\subsection{Fitur Berbasis Data Intraday}
+Selain tiga komponen HAR, penelitian ini menggunakan fitur tambahan (fitur X)
+yang seluruhnya diturunkan dari data OHLCV. Pada empat aset kripto,
+determinan internal pasar, seperti lag volatilitas dan informasi perdagangan,
+merupakan prediktor terpenting volatilitas \cite{wang2023}.
+
+\textit{Realized semivariance} negatif mengukur bagian variasi yang berasal
+dari \textit{return} negatif \cite{barndorff2010}:
+\begin{equation}
+  RS_t^- = \sum_{i=1}^{288} r_{t,i}^2 \, \mathbf{1}(r_{t,i} < 0).
+  \label{eq:semivarians}
+\end{equation}
+Patton dan Sheppard menunjukkan bahwa \textit{semivariance} negatif lebih
+informatif untuk meramal volatilitas pada saham \cite{patton2015}. Karena
+$RV_t = RS_t^- + RS_t^+$, fitur yang digunakan yaitu proporsi $RS_t^-/RV_t$
+agar tidak menimbulkan kolinearitas sempurna dengan komponen HAR.
+
+Estimator \textit{range} Parkinson memanfaatkan harga tertinggi $P^{H}_t$ dan
+terendah $P^{L}_t$ dalam satu hari \cite{parkinson1980}:
+\begin{equation}
+  \sigma^2_{P,t} = \frac{(\ln P^{H}_t - \ln P^{L}_t)^2}{4 \ln 2}.
+  \label{eq:parkinson}
+\end{equation}
+Estimator ini mengasumsikan perdagangan kontinu, asumsi yang lebih terpenuhi
+pada Bitcoin yang diperdagangkan 24 jam sehari dibanding saham.
+
+Ukuran \textit{illiquidity} Amihud mengukur dampak harga per satuan volume
+transaksi \cite{amihud2002}. Mengikuti Do \cite{do2026}, ukuran ini dihitung
+dalam versi \textit{realized} dari bar 5 menit:
+\begin{equation}
+  \text{Amihud}_t = 10^6 \cdot \frac{1}{N_t}\sum_{i}
+  \frac{\left|r_{t,i}\right|}{QV_{t,i}},
+  \label{eq:amihud}
+\end{equation}
+Amihud diperlakukan sebagai proksi dampak harga, bukan
+biaya transaksi \cite{amihud2002,brauneis2021}. Fitur lainnya yaitu
+\textit{return} harian, logaritma volume dolar, dan perubahan logaritma volume.
+
+\subsection{Fungsi Loss untuk Evaluasi Peramalan Volatilitas}
+Karena volatilitas sebenarnya tidak teramati, evaluasi peramalan menggunakan
+proksi RV. Patton menunjukkan bahwa hanya kelas fungsi \textit{loss} tertentu
+yang menghasilkan peringkat model yang konsisten ketika proksi yang digunakan
+berisik; dua anggota kelas tersebut yaitu MSE dan QLIKE \cite{patton2011}.
+Untuk ramalan $F_t$ dan proksi $RV_t$:
+\begin{equation}
+  L^{\text{QLIKE}}_t = \frac{RV_t}{F_t} - \ln\frac{RV_t}{F_t} - 1,
+  \qquad
+  L^{\text{MSE}}_t = (RV_t - F_t)^2.
+  \label{eq:loss}
+\end{equation}
+QLIKE homogen berderajat nol, artinya nilainya tidak berubah bila $RV_t$ dan
+$F_t$ dikalikan konstanta yang sama, sehingga \textit{loss} tidak otomatis
+membesar hanya karena volatilitas sedang tinggi. QLIKE juga memberikan daya uji
+Diebold--Mariano--West yang lebih tinggi daripada MSE \cite{patton2011}.
+Karena itu QLIKE digunakan sebagai \textit{loss} utama dan MSE sebagai
+pelengkap. Dari bentuk Persamaan~\eqref{eq:loss}, QLIKE juga menghukum
+ramalan yang terlalu rendah lebih berat daripada ramalan yang terlalu tinggi.
+Ramalan optimal di bawah kedua \textit{loss} tersebut merupakan nilai harapan
+kondisional \cite{patton2011}.
+% CEK: klaim "ramalan optimal = nilai harapan kondisional" belum tercatat di
+% kartu H1; cek Patton (2011) Proposition 1 sebelum hapus CEK ini.
+
+Objek analisis penelitian ini merupakan selisih \textit{loss} harian
+\begin{equation}
+  \Delta L_t = L_t(\text{ML}) - L_t(\text{HAR}),
+  \label{eq:delta-loss}
+\end{equation}
+Nilai $\Delta L_t$ yang negatif menunjukkan model ML lebih akurat pada hari
+tersebut.
+Karena kedua model dievaluasi pada hari dan proksi yang sama, $\Delta L_t$
+lebih sebanding antarperiode daripada \textit{loss} masing-masing model,
+terutama bila memakai QLIKE.
+
+\subsection{Uji Perbandingan Akurasi Peramalan}
+Uji Diebold--Mariano (DM) menguji apakah dua ramalan memiliki akurasi yang
+sama, dengan hipotesis nol $E[\Delta L_t] = 0$. Fungsi \textit{loss} yang
+dipakai tidak harus kuadratik maupun simetris, dan galat ramalan boleh
+berautokorelasi \cite{diebold1995}. Statistik ujinya adalah
+\begin{equation}
+  DM = \frac{\overline{\Delta L}}{\sqrt{\widehat{V}_{\text{HAC}} / n}},
+  \label{eq:dm}
+\end{equation}
+Penelitian ini menggunakan estimator Newey--West \cite{newey1987} dengan \textit{bandwidth}
+yang dipilih otomatis menurut Andrews \cite{andrews1991}.
+
+Ketika sejumlah uji dijalankan sekaligus, peluang menemukan hasil signifikan
+secara kebetulan meningkat. Prosedur Holm mengendalikan peluang tersebut dengan
+mengurutkan \textit{p-value} dan membandingkannya dengan ambang yang makin
+longgar secara bertahap \cite{holm1979}. Penelitian ini menetapkan uji
+konfirmatori untuk setiap hipotesis sebelum melihat hasil
+\textit{out-of-sample}. Hipotesis H2b terdiri atas dua uji sehingga
+\textit{p-value}-nya dikoreksi dengan prosedur Holm, sedangkan uji lain
+diperlakukan sebagai eksploratori dengan koreksi Holm.
+
+
+\subsection{Instabilitas Kinerja Peramalan dan Uji Perubahan Struktural}
+Uji DM membandingkan akurasi rata-rata pada seluruh periode uji. Ketika
+lingkungan berubah, kinerja relatif dua model dapat berbeda dari satu
+subperiode ke subperiode lain, dan rata-rata keseluruhan dapat menyembunyikan
+perubahan tersebut \cite{rossi2013}. Konsep ini perlu dibedakan dari
+\textit{forecast breakdown}, yaitu kondisi ketika \textit{loss out-of-sample}
+sebuah model secara signifikan lebih buruk daripada \textit{loss in-sample}-nya
+\cite{giacomini2009}. Penelitian ini berfokus pada perubahan kinerja
+\textbf{relatif} antarmodel, bukan pada kerusakan satu model.
+
+\textit{Fluctuation test} dari Giacomini dan Rossi menghitung statistik DM
+secara bergulir pada jendela berukuran $n_F = \mu n$ dan membandingkannya dengan
+nilai kritis khusus yang memperhitungkan pengujian berulang
+\cite{giacomini2010}. Uji ini menunjukkan kapan satu model lebih unggul, tetapi
+hipotesis nolnya merupakan kedua model sama akurat di setiap titik waktu,
+bukan bahwa kinerja relatifnya stabil. Kerangka uji tersebut juga mensyaratkan
+skema estimasi \textit{rolling} atau \textit{fixed}; skema \textit{expanding}
+hanya tersedia melalui versi West \cite{giacomini2010}. Martins dan Perron menunjukkan bahwa daya uji
+\textit{Fluctuation test} rendah dan tidak monoton setelah koreksi HAC, dan
+mengusulkan penggunaan uji perubahan struktural pada rata-rata selisih
+\textit{loss} \cite{martins2016}.
+
+Uji perubahan struktural Bai--Perron menguji keberadaan perubahan rata-rata
+$\Delta L_t$ pada titik waktu yang tidak diketahui \cite{bai1998}. Dengan
+$\sup F_T(m)$ adalah statistik \textit{F} terbesar atas semua kemungkinan
+penempatan $m$ titik patah, statistik UDmax didefinisikan sebagai
+\begin{equation}
+  \text{UDmax} = \max_{1 \le m \le M} \sup F_T(m),
+  \label{eq:udmax}
+\end{equation}
+Statistik ini menguji hipotesis nol tanpa perubahan melawan alternatif adanya
+satu hingga $M$ perubahan. Setiap segmen dibatasi minimal sebesar proporsi
+\textit{trimming} $\varepsilon$ dari sampel. Bai dan Perron menganjurkan UDmax
+dijalankan lebih dahulu; bila menolak, jumlah titik patah ditentukan dengan uji
+berurutan $\sup F(\ell+1 \mid \ell)$ \cite{bai2003}. Penelitian ini menggunakan
+UDmax sebagai uji konfirmatori kestabilan dan \textit{Fluctuation test} sebagai
+visualisasi eksploratori.
+
+
+\subsection{Evaluasi Out-of-Sample dan Strategi Pembaruan Model}
+Evaluasi model peramalan deret waktu harus menghormati urutan waktu. Tashman
+menekankan pentingnya evaluasi \textit{out-of-sample} dengan banyak titik asal
+peramalan, dan membedakan \textit{updating}, yaitu memasukkan data baru tanpa
+mengestimasi ulang parameter, dari \textit{recalibration}, yaitu mengestimasi
+ulang parameter dengan data terbaru \cite{tashman2000}. Validasi silang
+acak tidak cocok untuk deret waktu karena memutus urutan waktu. Untuk deret
+yang tidak stasioner, estimasi kinerja paling akurat diperoleh dari metode
+\textit{out-of-sample} berurutan, misalnya \textit{prequential in blocks}
+dengan \textit{window} yang bertambah atau bergeser \cite{cerqueira2020}.
+
+Dalam literatur \textit{concept drift}, cara model beradaptasi terhadap data
+yang berubah dikelompokkan antara lain berdasarkan pengelolaan \textit{window}
+data latih \cite{gama2014}. \textit{Window} yang tumbuh
+(\textit{expanding}) menyimpan seluruh histori, sedangkan \textit{window}
+geser berukuran tetap (\textit{rolling}) hanya memakai data terbaru.
+\textit{Window} pendek cepat beradaptasi ketika pola berubah, tetapi
+memperburuk kinerja ketika pola stabil; \textit{window} panjang sebaliknya
+\cite{gama2014}. Model yang tidak
+pernah dilatih ulang berfungsi sebagai pembanding untuk mengukur manfaat
+adaptasi \cite{zliobaite2015}. Tabel~\ref{tab:strategi} dan
+Gambar~\ref{fig:strategi} merangkum ketiga strategi yang digunakan.
+
+\begin{table}[htbp]
+  \caption{Strategi Pembaruan Model dan Padanannya dalam Literatur}
+  \label{tab:strategi}
+  \centering
+  \begingroup
+  \setstretch{1}\small
+  \begin{tabular}{|c|l|p{0.3\textwidth}|p{0.32\textwidth}|}
+    \hline
+    \textbf{Kode} & \textbf{Strategi} & \textbf{Data latih} &
+    \textbf{Padanan dalam literatur} \\
+    \hline
+    S0 & Static & Dilatih sekali pada window awal, tidak dilatih ulang &
+    \textit{Updating} tanpa rekalibrasi \cite{tashman2000}; pembanding manfaat
+    adaptasi \cite{zliobaite2015} \\
+    \hline
+    S1 & Expanding & Dilatih ulang bulanan dengan seluruh data yang tersedia &
+    \textit{Growing window} pada \textit{prequential in blocks}
+    \cite{cerqueira2020} \\
+    \hline
+    S2 & Rolling & Dilatih ulang bulanan dengan $W$ hari terakhir,
+    $W \in \{365, 730\}$; uji konfirmatori memakai $W = 365$ (S2-365) &
+    \textit{Sliding window} \cite{gama2014,cerqueira2020} \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{rancangan penelitian, diolah dari literatur}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=-1mm]
+    % Sumbu y dibalik (y=-1mm), sehingga posisi baris dihitung langsung di
+    % sini; jangan memakai yshift pada scope karena arahnya tidak ikut dibalik.
+    \tikzset{
+      latih/.style={draw,fill=black!12},
+      uji/.style={draw,fill=black!60}}
+    % Tiga strategi, masing-masing empat iterasi bulanan.
+    % S0 baris 0--12, S1 baris 20--32, S2 baris 40--52.
+    \foreach \i in {0,...,3} {
+      \pgfmathsetmacro\y{\i*4}
+      \pgfmathsetmacro\ujix{30+\i*6}
+      % S0: data latih tetap pada window awal
+      \filldraw[latih] (0,\y) rectangle (30,\y+3);
+      \filldraw[uji] (\ujix,\y) rectangle (\ujix+6,\y+3);
+      % S1: data latih memanjang dari titik awal
+      \filldraw[latih] (0,\y+20) rectangle (\ujix,\y+23);
+      \filldraw[uji] (\ujix,\y+20) rectangle (\ujix+6,\y+23);
+      % S2: data latih berukuran tetap yang bergeser
+      \filldraw[latih] (\i*6,\y+40) rectangle (\i*6+30,\y+43);
+      \filldraw[uji] (\ujix,\y+40) rectangle (\ujix+6,\y+43);
+    }
+    \node[anchor=east,font=\small\bfseries] at (-2,7.5) {S0};
+    \node[anchor=east,font=\small\bfseries] at (-2,27.5) {S1};
+    \node[anchor=east,font=\small\bfseries] at (-2,47.5) {S2};
+    % Sumbu waktu dan legenda
+    \draw[->] (0,60) -- (60,60) node[right,font=\small] {waktu};
+    \filldraw[latih] (0,68) rectangle (6,71);
+    \node[anchor=west,font=\small] at (8,69.5) {data latih};
+    \filldraw[uji] (32,68) rectangle (38,71);
+    \node[anchor=west,font=\small] at (40,69.5) {bulan uji};
+  \end{tikzpicture}
+  \caption{Skema Strategi Pembaruan Model Static, Expanding, dan Rolling}
+  \label{fig:strategi}
+  \sumber{rancangan penelitian}
+\end{figure}
+
+Pilihan strategi melibatkan \textit{trade-off} bias dan varians. Menyertakan
+data sebelum perubahan struktural menambah bias tetapi dapat mengurangi
+varians kesalahan ramalan, sehingga memakai sebagian data tersebut dapat
+optimal selama perubahannya tidak terlalu besar \cite{pesaran2007}. Secara
+umum, \textit{rolling window} cenderung lebih baik ketika perubahan besar dan
+berulang, sedangkan skema rekursif (\textit{expanding}) lebih baik ketika
+perubahan kecil atau tidak ada. Untuk model autoregresif seperti HAR, data
+sebelum perubahan bahkan dapat mengurangi bias dan varians sekaligus
+\cite{rossi2013}. Pilihan \textit{window} pada perbandingan ML dengan HAR juga
+harus setara, karena HAR yang diberi skema \textit{fitting} yang kurang tepat
+dapat membuat ML tampak unggul secara semu \cite{chassot2026}. Selain itu,
+skema \textit{rolling} menyamakan panjang data latih antarperiode
+\cite{tashman2000} dan sesuai dengan syarat kerangka uji Giacomini--Rossi
+\cite{giacomini2010}, sehingga uji formal kestabilan dijalankan pada skema
+\textit{rolling}.
+
+\subsection{Pergeseran Distribusi Data}
+Pergeseran data (\textit{dataset shift}) terjadi ketika distribusi bersama
+masukan dan target pada data uji berbeda dari data latih
+\cite{morenotorres2012}. Literatur menggunakan istilah yang berbeda untuk jenis
+perubahan yang sama, seperti dirangkum pada Tabel~\ref{tab:istilah}.
+
+% CEK: istilah virtual drift dan real concept drift dari Gama dkk. belum
+% tercatat di kartu J1; cek lokasinya (bagian 2) sebelum hapus CEK ini.
+\begin{table}[htbp]
+  \caption{Perbandingan Istilah Pergeseran Data menurut Gama dkk. dan
+    Moreno-Torres dkk.}
+  \label{tab:istilah}
+  \centering
+  \begingroup
+  \setstretch{1}\small
+  \begin{tabular}{|l|p{0.33\textwidth}|p{0.33\textwidth}|}
+    \hline
+    \textbf{Perubahan} & \textbf{Gama dkk. \cite{gama2014}} &
+    \textbf{Moreno-Torres dkk. \cite{morenotorres2012}} \\
+    \hline
+    $P(x)$ berubah & \textit{Virtual drift} (tanpa syarat mengenai
+    $P(y \mid x)$) & \textit{Covariate shift} (dengan syarat $P(y \mid x)$
+    tetap) \\
+    \hline
+    $P(y \mid x)$ berubah & \textit{Real concept drift} ($P(x)$ boleh berubah) &
+    \textit{Concept shift} (dengan syarat $P(x)$ tetap) \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{diolah dari Gama dkk. \cite{gama2014} dan Moreno-Torres dkk. \cite{morenotorres2012}}
+\end{table}
+
+Peramalan RV termasuk masalah $X \rightarrow Y$, karena fitur hari $t$
+mendahului target hari $t+1$, sehingga kerangka Moreno-Torres dkk. yang relevan
+\cite{morenotorres2012}. Penelitian ini hanya mengukur perubahan distribusi
+fitur $P(x)$ dan tidak menguji apakah $P(y \mid x)$ tetap. Oleh karena itu
+istilah yang dipakai yaitu \textbf{pergeseran distribusi fitur}, bukan
+\textit{covariate shift} atau \textit{concept drift} dalam arti formal.
+
+Pergeseran distribusi satu fitur antara data latih dan bulan uji diukur dengan
+statistik Kolmogorov--Smirnov dua sampel,
+\begin{equation}
+  D^{\text{KS}} = \sup_x
+  \left| \hat{F}_{\text{latih}}(x) - \hat{F}_{\text{uji}}(x) \right|,
+  \label{eq:ks}
+\end{equation}
+Nilai $D^{\text{KS}}$ merupakan jarak terbesar antara kedua fungsi distribusi
+kumulatif empiris. Uji KS per fitur merupakan salah satu pendekatan sederhana
+untuk mendeteksi pergeseran data dan menjadi pembanding yang kompetitif
+terhadap metode yang lebih kompleks \cite{rabanser2019}. Berbeda dari
+penggunaan sebagai uji hipotesis, penelitian ini tidak memakai
+\textit{p-value}-nya. Nilai $D^{\text{KS}}$ dirata-ratakan antarfitur sebagai
+ukuran besaran pergeseran per bulan.
+
+\subsection{Proksi Likuiditas}
+\label{subsec:likuiditas}
+Likuiditas pasar kripto dapat diukur dengan berbagai proksi berbasis data harga
+dan volume. Brauneis dkk. menunjukkan bahwa proksi yang paling baik menangkap
+variasi likuiditas kripto antarwaktu berbeda dengan proksi yang paling baik
+menangkap levelnya: estimator \textit{spread} Abdi--Ranaldo \cite{abdi2017} unggul untuk
+variasi waktu, sedangkan ukuran Amihud unggul untuk level \cite{brauneis2021}.
+Karena itu, penelitian ini memakai Amihud sebagai fitur model LGBM-X dan
+estimator
+Abdi--Ranaldo, yang dihitung dari harga OHLC harian, sebagai variabel likuiditas
+dalam analisis asosiasi kinerja relatif dengan kondisi pasar, dengan estimator
+Corwin--Schultz \cite{corwin2012} sebagai uji sensitivitas. Amihud tidak disertakan pada HAR-X
+karena berkolinearitas tinggi dengan komponen HAR berdasarkan pemeriksaan pada
+\textit{window} awal; rinciannya diuraikan pada Bab III. Proksi likuiditas harian juga
+dipakai Zhang dkk. untuk mengkaji hubungan antara \textit{return} dan
+likuiditas aset kripto \cite{zhang2024}.
+
+
+\section{Kerangka Pemikiran}
+Kerangka pemikiran penelitian ini berangkat dari dua fakta. Pertama,
+karakteristik pasar Bitcoin berubah lintas era \cite{do2026,mokni2024}. Kedua,
+perbandingan model ML dengan HAR-RV umumnya dilaporkan sebagai satu hasil
+agregat \cite{dudek2024,huang2024}, padahal kinerja relatif dapat berubah
+sepanjang waktu \cite{rossi2013,gama2014}. Dari kedua fakta tersebut,
+penelitian ini menanyakan apakah kinerja relatif LightGBM terhadap HAR-RV
+stabil, faktor pasar apa yang berasosiasi dengan perubahannya, dan bagaimana
+strategi pembaruan model memengaruhinya.
+
+Untuk menjawabnya, perbedaan kinerja diurai melalui desain $2 \times 2$ pada
+Tabel~\ref{tab:desain}. Perbandingan LGBM-HAR dengan HAR mengukur kontribusi
+non-linearitas, perbandingan HAR-X dengan HAR mengukur kontribusi informasi
+tambahan, dan perbandingan LGBM-X dengan HAR mengukur kontribusi total. Model
+\textit{naive persistence} ($\widehat{RV}_{t+1} = RV_t$) disertakan sebagai
+pemeriksaan kewajaran.
+
+\begin{table}[htbp]
+  \caption{Desain Perbandingan Model $2 \times 2$}
+  \label{tab:desain}
+  \centering
+  \begingroup
+  \setstretch{1}
+  \begin{tabular}{|l|c|c|}
+    \hline
+    & \textbf{Masukan HAR} & \textbf{Masukan HAR + fitur X} \\
+    \hline
+    \textbf{Linear} & HAR-RV (pembanding) & HAR-X \\
+    \hline
+    \textbf{Non-linear} & LGBM-HAR & LGBM-X \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{rancangan penelitian}
+\end{table}
+
+Pada HAR-X, fitur X tidak mencakup ukuran Amihud (lihat
+Subbab~\ref{subsec:likuiditas}).
+
+Alur kerangka pemikiran ditunjukkan pada Gambar~\ref{fig:kerangka}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=-1mm,
+      kotak/.style={draw,align=center,inner sep=2pt,font=\footnotesize},
+      fakta/.style={kotak,text width=58mm,minimum height=14mm},
+      lebar/.style={kotak,text width=122mm},
+      komponen/.style={kotak,text width=25mm,minimum height=22mm},
+      rq/.style={kotak,text width=34mm,minimum height=16mm},
+      panah/.style={-{Stealth[length=2mm]}}]
+
+    % Baris 1: dua fakta pembuka
+    \node[fakta] (fa) at (-32,0)
+      {Karakteristik pasar Bitcoin berubah lintas era
+       \cite{do2026,mokni2024}};
+    \node[fakta] (fb) at (32,0)
+      {Perbandingan ML dan HAR-RV umumnya dilaporkan sebagai hasil agregat
+       \cite{dudek2024,huang2024}};
+
+    % Baris 2: celah
+    \node[lebar,minimum height=14mm] (celah) at (0,26)
+      {\textbf{Celah:} belum diketahui apakah kinerja relatif ML terhadap
+       HAR-RV stabil, berasosiasi dengan kondisi pasar, dan dipengaruhi
+       strategi pembaruan};
+
+    % Baris 3: rancangan evaluasi (empat komponen sejajar)
+    \draw[dashed] (-64,44) rectangle (64,80);
+    \node[anchor=north west,font=\footnotesize\itshape] at (-63,45)
+      {Rancangan evaluasi};
+    \node[komponen] at (-46.5,64)
+      {Desain $2 \times 2$\\(HAR, HAR-X,\\LGBM-HAR,\\LGBM-X)};
+    \node[komponen] at (-15.5,64)
+      {Strategi pembaruan S0/S1/S2, perlakuan setara untuk HAR-RV};
+    \node[komponen] at (15.5,64)
+      {Selisih \textit{loss}\\$\Delta L$ (QLIKE)};
+    \node[komponen] at (46.5,64)
+      {Karakteristik pasar bulanan (untuk RQ2)};
+
+    % Baris 4: tiga rumusan masalah
+    \node[rq] (rq1) at (-42,104) {\textbf{RQ1}\\Kestabilan\\(UDmax)};
+    \node[rq] (rq2) at (0,104)
+      {\textbf{RQ2}\\Asosiasi kondisi pasar\\(regresi $\Delta L$ bulanan)};
+    \node[rq] (rq3) at (42,104)
+      {\textbf{RQ3}\\Strategi pembaruan\\$\times$ era ($D_t$)};
+
+    % Baris 5: kesimpulan
+    \node[lebar,minimum height=9mm] (simp) at (0,130) {\textbf{Kesimpulan}};
+
+    % Panah
+    \draw (fa.south) -- (-32,13) -- (32,13) -- (fb.south);
+    \draw[panah] (0,13) -- (celah.north);
+    \draw[panah] (celah.south) -- (0,44);
+    \draw (0,80) -- (0,88);
+    \draw (-42,88) -- (42,88);
+    \foreach \x in {-42,0,42} {\draw[panah] (\x,88) -- (\x,96);}
+    \foreach \x in {-42,0,42} {\draw (\x,112) -- (\x,119);}
+    \draw (-42,119) -- (42,119);
+    \draw[panah] (0,119) -- (simp.north);
+  \end{tikzpicture}
+  \caption{Kerangka Pemikiran Penelitian}
+  \label{fig:kerangka}
+  \sumber{rancangan penelitian}
+\end{figure}
+
+\section{Hipotesis Penelitian}
+\label{sec:hipotesis}
+Berdasarkan landasan teori di atas, hipotesis penelitian dirumuskan sebagai
+berikut.
+
+\textbf{H1.} Rata-rata selisih \textit{loss}
+$\Delta L(\text{LGBM-X} - \text{HAR})$ tidak konstan sepanjang periode
+pengujian. Hipotesis ini diturunkan dari perubahan karakteristik pasar Bitcoin
+lintas era \cite{do2026,mokni2024} dan dari literatur instabilitas peramalan
+\cite{rossi2013,martins2016}.
+
+\textbf{H2a.} Selisih \textit{loss} bulanan berasosiasi dengan sedikitnya satu
+karakteristik pasar, yaitu level volatilitas, volatilitas dari volatilitas,
+likuiditas, atau pergeseran distribusi fitur. Pendekatan meregresikan ukuran
+kinerja peramalan pada indikator yang teramati mengikuti semangat Giacomini dan
+Rossi \cite{giacomini2009}.
+
+\textbf{H2b.} Kontribusi fitur X terhadap kinerja relatif berbeda antara era
+\textit{transition} dan \textit{institutional}. Do menunjukkan bahwa hubungan
+volatilitas--likuiditas berubah antarera \cite{do2026}, tetapi Do menguji arah
+volatilitas terhadap \textit{illiquidity}, sedangkan penelitian ini memakai
+likuiditas dan volume untuk meramal RV; H2b merupakan perluasan dari temuan
+tersebut. Mokni dkk. menunjukkan hubungan likuiditas dapat berbalik tanda
+\cite{mokni2024}, dan kepentingan fitur tidak konsisten antarstudi
+\cite{wang2023,feng2024ml}. Karena itu H2b dirumuskan dua arah.
+
+\textbf{H3.} Pada era \textit{institutional}, kinerja relatif LGBM-X terhadap
+HAR-RV lebih baik pada strategi \textit{rolling} 365 hari (S2-365)
+dibandingkan \textit{expanding} (S1). Dengan
+$D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$, dan $\Delta L_t$
+adalah selisih \textit{loss} LGBM-X terhadap HAR-RV pada
+Persamaan~\ref{eq:delta-loss}, H3 didukung bila rata-rata $D_t$ negatif dan
+signifikan. Hipotesis ini
+didasarkan pada \textit{trade-off} bias--varians \cite{pesaran2007,rossi2013}
+dan perubahan karakteristik pasar antarera \cite{do2026}: hubungan yang
+dipelajari dari era awal dapat usang, dan LGBM-X yang lebih fleksibel diduga
+lebih terdampak data usang daripada HAR.
+
+\textbf{Hipotesis tandingan.} Hasil yang berlawanan dengan H3 tetap bermakna.
+Data sebelum perubahan struktural dapat tetap berguna \cite{pesaran2007}.
+Untuk model autoregresif, data sebelum perubahan struktural dapat mengurangi
+bias dan varians sekaligus, sehingga skema \textit{expanding} dapat lebih baik
+daripada \textit{rolling} \cite{rossi2013}. Selain itu, bila \textit{regime}
+volatilitas berulang, data lama tetap relevan \cite{gama2014,suarez2023}.
+
+Ringkasan rumusan masalah, hipotesis, dan uji konfirmatorinya disajikan pada
+Tabel~\ref{tab:ringkasan}. Uji konfirmatori ditetapkan sebelum hasil
+\textit{out-of-sample} dilihat.
+
+\begin{table}[htbp]
+  \caption{Ringkasan Rumusan Masalah, Hipotesis, dan Uji Konfirmatori}
+  \label{tab:ringkasan}
+  \centering
+  \begingroup
+  \setstretch{1}\small
+  \begin{tabular}{|p{0.22\textwidth}|c|p{0.47\textwidth}|}
+    \hline
+    \textbf{Rumusan masalah} & \textbf{Hipotesis} &
+    \textbf{Uji konfirmatori} \\
+    \hline
+    RQ1 Kestabilan kinerja relatif & H1 &
+    UDmax pada rata-rata $\Delta L(\text{LGBM-X} - \text{HAR})$, skema rolling
+    365 hari, QLIKE, HAC, $\varepsilon = 0{,}15$, maksimum 5 perubahan; bila
+    tidak menolak, uji DM pada seluruh sampel \\
+    \hline
+    RQ2 Asosiasi dengan kondisi pasar & H2a, H2b &
+    H2a: uji-F bersama (HAC) pada regresi $\Delta L$ bulanan terhadap
+    4 karakteristik pasar. H2b: dua uji-t HAC beda rata-rata antara era
+    \textit{transition} dan \textit{institutional}, untuk
+    $\Delta L(\text{HAR-X} - \text{HAR})$ dan
+    $\Delta L(\text{LGBM-X} - \text{LGBM-HAR})$, dengan koreksi Holm \\
+    \hline
+    RQ3 Strategi pembaruan $\times$ era & H3 &
+    Uji-t HAC dua sisi pada rata-rata
+    $D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$ pasangan LGBM-X
+    dan HAR-RV di era \textit{institutional} \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{rancangan penelitian}
+\end{table}
