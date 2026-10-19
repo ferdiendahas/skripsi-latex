@@ -92,6 +92,7 @@
    - Data diformulasikan: return 5 menit dibentuk dari titik tengah logaritmik kuotasi *bid–ask* yang diinterpolasi linear; return Jumat 21:00 – Minggu 21:00 GMT dibuang (hlm. 888).
    - Return 5 menit lalu diagregasi menjadi kuadrat return harian, 8 jam, 1 jam, dan 5 menit sebagai proksi volatilitas (Tabel 5, hlm. 900).
    - Sumber: kuotasi jaringan antarbank Reuters dari Olsen & Associates (hlm. 885 catatan kaki, hlm. 888).
+   - **Definisi RV:** proksi = jumlah kuadrat return intrahari (Σr², varians), return dalam persen harian, hlm. 888 dan 897; Tabel 5 hlm. 900.
 4. **Permasalahan utama:** banyak studi menyimpulkan model ARCH dan *stochastic volatility* memberi ramalan buruk karena R² evaluasinya rendah. Paper menguji apakah itu salah model atau akibat proksi volatilitas yang berisik (abstrak, hlm. 885; hlm. 886–887).
 5. **Metode / model:** GARCH(1,1) harian; turunan teoretis R² populasi dari model volatilitas kontinu (Tabel 2–4, hlm. 895–899); evaluasi Mincer–Zarnowitz dengan proksi berbagai frekuensi.
 6. **Hasil:**
@@ -133,6 +134,7 @@
    - Data mentah tik transaksi dan kuotasi dari Thomson Reuters Tick History (hlm. 297).
    - Diformulasikan menjadi lebih dari 400 *realized measure* (RV berbagai frekuensi, *realized kernel*, TSRV, MSRV, *pre-averaging*, dll.).
    - Data dibersihkan dengan aturan pada lampiran (hlm. 297).
+   - **Definisi RV:** RV = Σ r² (*realized variance*, varians), pers. 3 hlm. 294 dan hlm. 295.
 4. **Permasalahan utama:** banyaknya estimator variasi harga dari data frekuensi tinggi tanpa panduan mana yang sebaiknya dipakai (hlm. 293).
 5. **Metode / model:**
    - Perbandingan akurasi estimasi QV dengan RV 5 menit sebagai *benchmark*.
@@ -183,6 +185,7 @@
    - Diformulasikan dari data tik menjadi RV harian. RV di sini adalah **akar** jumlah kuadrat return intraday (pers. 3, hlm. 177).
    - Rata-rata mingguan (5 hari) dan bulanan (22 hari) dibentuk dari RV harian (pers. 4, hlm. 177).
    - Sumber spesifik data tidak disebut pada bagian yang dibaca.
+   - **Definisi RV:** RV_t = √(Σ r²) (akar, *realized volatility*), semua besaran disetahunkan; data empiris memakai estimator *two scales* dari data tik, pers. 3 hlm. 177, hlm. 178 dan 186.
 4. **Permasalahan utama:** model GARCH dan SV standar tidak mereproduksi fakta empiris volatilitas (memori panjang, *fat tails*, *multiscaling*), sedangkan model integrasi fraksional sulit diestimasi dan ditafsirkan (hlm. 174–175).
 5. **Metode / model:**
    - HAR(3)-RV, yaitu *cascade* komponen volatilitas harian, mingguan, dan bulanan yang menjadi AR terestriksi (pers. 8, hlm. 181).
@@ -531,6 +534,7 @@
    - Data frekuensi tinggi diformulasikan menjadi RV harian.
    - Dikombinasikan dengan prediktor tambahan dalam himpunan MALL, misalnya indeks Hang Seng dan indeks bisnis Aruoba–Diebold–Scotti (Tabel 1; hlm. PDF 14).
    - Sumber data frekuensi tinggi tidak dicatat pada bagian yang dibaca.
+   - **Definisi RV:** RV_t = Σ |ΔX|² dari return log 5 menit TAQ (varians), model utama pada level RV, pers. 2 hlm. PDF 4, data hlm. PDF 13.
 4. **Permasalahan utama:** seberapa akurat ML dibanding HAR dalam meramal RV, dan dari mana keunggulannya berasal (abstrak; hlm. PDF 1–3).
 5. **Metode / model:**
    - Keluarga HAR: HAR, HAR-X, LogHAR, LevHAR, SHAR, HARQ.
@@ -586,6 +590,7 @@
    - Diformulasikan dengan metode *pre-averaging* menjadi RV tik, 1 menit, 5 menit, dan 10 menit (hlm. 5–6).
    - RV juga diubah menjadi gambar *Markov Transition Field* (MTF) untuk input CNN (hlm. 7–8).
    - Periode dimulai 2014 karena porsi interval tanpa transaksi turun tajam dari 2013 ke 2014 (Tabel 2, hlm. 4).
+   - **Definisi RV:** RV_{t,N} = Σ r²_{t,j} dari return *pre-averaging* (varians), input dalam basis poin; Tabel 4 disetahunkan hanya untuk deskripsi, pers. 3 hlm. 6, Tabel 4 hlm. 5.
 4. **Permasalahan utama:** sedikit studi peramalan volatilitas Bitcoin yang memakai ML dengan data frekuensi tinggi, dan yang membandingkannya dengan HAR (hlm. 2–3).
 5. **Metode / model:** LSTM dan CNN-LSTM berinput gambar MTF, dibandingkan dengan HAR dan GARCH, untuk horizon 1, 7, 14, 30, dan 60 hari (hlm. 7).
 6. **Hasil:**
@@ -640,6 +645,7 @@
    - Data diambil langsung dari bursa Kraken; alasannya, data situs pemeringkat koin dinilai meragukan (hlm. 6).
    - Diformulasikan menjadi RV harian dari return 5 menit.
    - Rata-rata RV mingguan dan bulanan dipakai sebagai input semua model kecuali GARCH; GARCH memakai return harian (hlm. 3, 6–7).
+   - **Definisi RV:** RV_{d,t} = Σ r²_{k,t} dari return 5 menit (varians), model pada ln RV, pers. 1–2 hlm. 2, pers. 5 hlm. 3–4, catatan Tabel 1 hlm. 7.
 4. **Permasalahan utama:** mencari metode terbaik untuk meramal volatilitas harian dan mingguan kripto; studi sebelumnya sering hanya untuk BTC dan memakai harga harian (hlm. 1–3).
 5. **Metode / model:**
    - 12 metode: HAR, HAR-R (robust), ARFIMA, GARCH, LASSO, RR, SVR linear, SVR-RBF, MLP, FNM, RF, LSTM (abstrak; hlm. 3).
@@ -716,6 +722,7 @@
    - Data 5 menit dari cryptodatadownload.com (hlm. 5); bursanya tidak disebut pada bagian yang dibaca.
    - Dikombinasikan dengan banyak prediktor: komponen RV (*jump*, semivarians), label kalender, indikator makro dan ketidakpastian (FRED, policyuncertainty.com), indikator pasar, dan indikator *blockchain* (Tabel 1, hlm. 5).
    - Variabel makro di-*differencing*; variabel bulanan lag 1, harian lag 1–5, RV lag 1–22 (hlm. 6).
+   - **Definisi RV:** RV_t = Σ r²_{t,i} dengan r = 100 × selisih log harga (varians, return dalam persen), pers. 1 hlm. 3.
 4. **Permasalahan utama:** *tuning* manual dan parameter tetap kurang adaptif terhadap perubahan pasar (hlm. 2).
 5. **Metode / model:**
    - Lasso, Ridge, dan Elastic Net dengan "daily dynamic tuning": *grid search* ulang setiap hari dalam rolling window lebar tetap, dengan validasi silang 5 lipat (hlm. 4).
@@ -757,6 +764,7 @@
    - Data mentah transaksi intraday dari NYSE TAQ, diolah mengikuti Barndorff-Nielsen dkk. (2009) menjadi RV (hlm. 333).
    - Dikombinasikan dengan VIX (hlm. 333).
    - Data berlisensi dan tidak dibagikan; kode replikasi tersedia (hlm. 341).
+   - **Definisi RV:** RV_t = log(Σ r²) dari return 5 menit (log varians), pers. 1 hlm. 333.
 4. **Permasalahan utama:** skema *fitting* HAR (panjang window latih dan frekuensi estimasi ulang) sering diabaikan dalam perbandingan ML vs HAR (abstrak; hlm. 331).
 5. **Metode / model:**
    - HAR dan HAR-VIX (OLS, WLS, robust) dengan rolling window 630 hari dan estimasi ulang setiap hari.
@@ -796,6 +804,7 @@
 1. **Penulis, tahun:** Yue Qiu, Shaoguang Qu, Zhentao Shi, Tian Xie, 2025.
 2. **Data:** 10 aset kripto dari Binance, data 5 menit; mulai 17 Jan 2018 – 13 Des 2019 (berbeda per koin) sampai 2021 (hlm. 3).
 3. **Bentuk data & sumber:** data mentah Binance diformulasikan menjadi RV harian (hlm. 3); data tersedia di Mendeley Data (hlm. 1).
+   - **Definisi RV:** RV_t = Σ r²_{t,j} (varians), pers. 1 hlm. 3; Gambar 1 hlm. 4.
 4. **Masalah:** model tunggal terbatas untuk meramal volatilitas kripto; perlu kombinasi ramalan (abstrak).
 5. **Metode:**
    - 7 varian HAR dan 2 model *rough volatility* sebagai model individual.
@@ -820,6 +829,7 @@
    - RV harian BTC/USD dari return 5 menit, 2 Agu 2017 – 31 Mar 2023; **hanya Senin–Jumat**, 1.478 observasi (hlm. PDF 8).
    - Uji deterministik 1 Jan 2020 – 31 Mar 2023 (848 hari); uji probabilistik tahun 2021 (261 hari) (hlm. PDF 23).
 3. **Bentuk data & sumber:** dataset publik dari Fiszeder dkk. (2025) dengan 69 prediktor (pasar, perilaku, makro), log RV dan lag harian/mingguan/bulanan (hlm. PDF 8); *winsorization* 1–99% dan standardisasi yang dihitung dari data latih saja (hlm. PDF 23).
+   - **Definisi RV:** RV_{d,t} = Σ r²_{k,t}, K = 288 untuk 5 menit (varians), model umumnya pada ln RV, pers. 1 hlm. PDF 8–9.
 4. **Masalah:** meramal volatilitas Bitcoin secara deterministik dan probabilistik serta mengidentifikasi pendorongnya (abstrak).
 5. **Metode:**
    - LightGBM (variasi dengan/tanpa indikator *shock*, *ensemble* 32 model); kuantil dengan *pinball loss* dan simulasi residual (QRS).
@@ -849,6 +859,7 @@
 1. **Penulis, tahun:** Alexander Brauneis, Mehmet Sahiner, 2026.
 2. **Data:** 8 kripto (BTC, ETH, ADA, DOGE, DOT, LTC, SHIB, SOL), 21 Des 2021 – 22 Des 2022; RV **6 jam**, 1.461 observasi; 1.169 latih, 292 ramalan uji (hlm. 385–389).
 3. **Bentuk data & sumber:** harga 5 menit dari API Coinbase diformulasikan menjadi RV 6 jam (hlm. 385–386); dikombinasikan dengan sentimen berita hasil model bahasa (headlinehunter.ai) per 6 jam (hlm. 386).
+   - **Definisi RV:** RV_t = Σ_{i=2}^{72} (log P_{t_i}/P_{t_{i−1}})² dari harga 5 menit dalam interval 6 jam (varians); rumus QLIKE tidak ditulis, pers. 1 hlm. 386.
 4. **Masalah:** apakah ML dan sentimen berita memperbaiki ramalan volatilitas kripto dibanding HAR (hlm. 383).
 5. **Metode:**
    - HAR dengan rata-rata 8 dan 28 periode (2 dan 7 hari) (hlm. 387).
@@ -866,6 +877,7 @@
    - Penulis menyebut rata-rata 7 dan 30 periode "lebih tepat" untuk kripto, tetapi memakai 8 dan 28 periode 6 jam (2 dan 7 hari) (hlm. 387).
    - Validasi silang 5 lipat pada deret waktu.
    - QLIKE HAR bernilai positif besar untuk DOGE dan SHIB (9,89 dan 9,00) dibanding sekitar −6 untuk model lain (Tabel 4), mengindikasikan ramalan HAR mendekati nol atau negatif.
+   - Rumus QLIKE tidak dituliskan, dan nilainya negatif (mis. −7,36). Kemungkinan dipakai bentuk tanpa normalisasi (ln F + RV/F). Bentuk ini hanya berbeda dari QLIKE Patton oleh suku yang bergantung pada RV saja, sehingga urutan model dan uji DM-nya sama. Ini inferensi dari angka, bukan isi paper.
    - Hasil DM yang tidak mendukung diremehkan dengan alasan DM "bukan untuk membandingkan model" (hlm. 406–407).
 - **Boleh dikutip untuk:** pada Bitcoin, HAR mengungguli LightGBM (QLIKE, DM signifikan); hasil ML vs HAR berbeda antaraset. **Jangan** untuk klaim ML umumnya mengungguli HAR tanpa menyebut pengecualian Bitcoin.
 
@@ -876,7 +888,8 @@
 - **Versi dibaca:** FEDS 2025-061 (Juli 2025); hlm. PDF; bagian 1–6 dibaca.
 1. **Penulis, tahun:** Rehim Kılıç, 2025.
 2. **Data:** RV harian S&P 500 dari Bloomberg, Jan 1996 – Des 2023; uji per tahun 2006–2023 (hlm. PDF 9, 22).
-3. **Bentuk data & sumber:** data sudah berbentuk RV (Bloomberg); skenario kedua menambah prediktor makro-keuangan (hlm. PDF 10).
+3. **Bentuk data & sumber:** penulis membentuk RV harian dari harga 5 menit S&P 500 yang diambil dari Bloomberg (hlm. PDF 9); skenario kedua menambah prediktor makro-keuangan (hlm. PDF 10).
+   - **Definisi RV:** RV_t = Σ r²_s dari return log 5 menit S&P 500 yang dihitung penulis dari harga Bloomberg (varians); rumus QLIKE memakai exp(RV) walau transformasi log tidak disebut, pers. 2 hlm. PDF 9, pers. 23 hlm. PDF 53.
 4. **Masalah:** apakah ML lebih baik daripada model ekonometrik linear **dan nonlinear (perpindahan rezim)** untuk RV (abstrak).
 5. **Metode:**
    - ARFIMA, HAR, THAR, STHAR, MSHAR; XGBoost, DNN, BRNN, LSTM, LSTM-A, GRU.
@@ -892,7 +905,7 @@
 11. **Kejanggalan [PR]:**
    - Abstrak menyebut "rolling forecasts", tetapi desainnya *expanding* tahunan (hlm. PDF 22).
    - Penutup menyatakan frekuensi pelatihan ulang dan estimasi ulang "play a crucial role" (hlm. PDF 41), padahal paper ini hanya memakai satu skema.
-- **Boleh dikutip untuk:** model pohon (XGBoost) jatuh paling parah saat krisis; evaluasi ML vs HAR per tahun sudah pernah dilakukan secara deskriptif. **Jangan** untuk klaim uji kestabilan formal.
+- **Boleh dikutip untuk:** XGBoost terburuk di antara model ML; evaluasi per tahun secara deskriptif. **Jangan** kutip angka QLIKE (termasuk krisis 2008): rumus QLIKE pers. 23 memakai exp(RV), tidak konsisten dengan definisi RV pers. 2.
 
 ---
 
@@ -902,6 +915,7 @@
 1. **Penulis, tahun:** Vladimir Pyrlik, Pavel Elizarov, Aleksandra Leonova, 2021.
 2. **Data:** 9 saham teratas MICEX; data 5 menit 1 Jan 2016 – 31 Des 2020; uji 2018–2020 (hlm. PDF 3, 13).
 3. **Bentuk data & sumber:** diformulasikan menjadi log RV harian; dikombinasikan dengan variabel kalender, keuangan, *spillover*, dan makro berfrekuensi campuran (Tabel 1).
+   - **Definisi RV:** tidak ada rumus; hanya definisi verbal "sum of squared intraday stock returns" di pendahuluan; model dan RMSE pada log RV dari data 5 menit FINAM, hlm. PDF 4, 13, 15, 19.
 4. **Masalah:** apakah ML dan data berfrekuensi campuran memperbaiki ramalan RV di pasar Rusia dibanding HAR-RV (abstrak).
 5. **Metode:** Lasso, RF, Gradient Boosting, LSTM vs HAR-RV; **rolling**: latih 2 tahun, validasi 1 kuartal, uji 1 kuartal, bergeser per kuartal (hlm. PDF 13).
 6. **Hasil:**
@@ -1046,6 +1060,7 @@
 3. **Bentuk dataset dan sumber:**
    - Data sudah diformulasikan: RV 5 menit dari Oxford-Man Institute Realized Library (hlm. 570).
    - Uji ketahanan memakai *realized kernel* (hlm. 576).
+   - **Definisi RV:** RV_t = Σ r²_{i,t} (varians), data jadi RV 5 menit Oxford-Man, pers. 1 hlm. 569, hlm. 570.
 4. **Permasalahan utama:** memilih rolling atau expanding window untuk peramalan volatilitas masih menjadi pertanyaan terbuka (hlm. 567–568).
 5. **Metode / model:**
    - HAR-RV dengan rolling window dan expanding window.

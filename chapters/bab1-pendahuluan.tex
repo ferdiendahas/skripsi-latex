@@ -79,10 +79,14 @@ keunggulan LSTM atas HAR-RV hanya signifikan untuk ramalan 60 hari ke depan
 \cite{huang2024}. Untuk LightGBM, keunggulan atas HAR-RV pada RV harian
 Bitcoin umumnya tidak signifikan \cite{dudek2025lgbm}, sedangkan pada RV enam
 jam Bitcoin HAR-RV justru signifikan lebih akurat menurut QLIKE
-\cite{brauneis2026}. Pada RV saham, model berbasis pohon bahkan termasuk yang
+\cite{brauneis2026}. Pada volatilitas saham, model berbasis pohon bahkan termasuk yang
 paling buruk di antara model ML \cite{kilic2025,pyrlik2021}. Kedua penelitian
 tersebut melaporkan hasil per tahun atau per kuartal, tetapi perubahan kinerja
-antarperiode hanya dijelaskan, tanpa diuji secara statistik.
+antarperiode hanya dijelaskan, tanpa diuji secara statistik. Selain itu,
+penelitian-penelitian tersebut tidak memakai definisi target yang sama: ada
+yang meramalkan RV harian dan ada yang 6 jam, ada yang memakai skala level dan
+ada yang logaritma. Karena itu, sebagian perbedaan hasil dapat berasal dari
+perbedaan definisi target, bukan hanya dari modelnya.
 
 % P6 — masalah pertama: satu periode uji   [kartu F5, J1, G2, G4, E3]
 Sebagian besar penelitian tersebut menilai model pada satu periode pengujian

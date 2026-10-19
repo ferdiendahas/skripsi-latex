@@ -157,11 +157,51 @@ def _tikz_ke_gambar(m: re.Match) -> str:
     return f"\\includegraphics{{{png}}}"
 
 
+def _pindah_sumber(teks: str) -> str:
+    """Pindahkan \\sumber{...} dari dalam figure ke sesudah \\end{figure}.
+
+    Baris Sumber di dalam figure menjadi paragraf tersendiri, sehingga Pandoc
+    tidak dapat menulis figure sebagai gambar Markdown dan jatuh ke HTML
+    mentah yang hilang di .docx. Masalahnya sekeluarga dengan opsi float."""
+    def satu(m):
+        isi = m.group(0)
+        awal = re.search(r"\\sumber\{", isi)
+        if not awal:
+            return isi
+        i, lvl, j = awal.end(), 1, awal.end()
+        while j < len(isi) and lvl:
+            lvl += {"{": 1, "}": -1}.get(isi[j], 0)
+            j += 1
+        argumen = isi[i:j - 1]
+        tanpa = (isi[:awal.start()] + isi[j:]).rstrip()
+        return f"{tanpa}\n\n\\sumber{{{argumen}}}\n"
+    return re.sub(r"\\begin\{figure\}.*?\\end\{figure\}", satu, teks, flags=re.S)
+
+
 def _gambar_aset(path: str, ukuran: str) -> str:
-    """Gambar dari assets/gambar/; bila belum ada, tulis nama berkasnya."""
-    if (ROOT / path).is_file():
-        return f"\\includegraphics[{ukuran}]{{{ROOT / path}}}"
-    return f"\\texttt{{[{path}]}}"
+    """Gambar dari assets/gambar/; bila belum ada, tulis nama berkasnya.
+
+    Berkas PDF dirender ke PNG lebih dulu karena Word tidak menampilkan
+    gambar berformat PDF."""
+    berkas = ROOT / path
+    if not berkas.is_file():
+        return f"\\texttt{{[{path}]}}"
+    return f"\\includegraphics[{ukuran}]{{{_pdf_ke_png(berkas)}}}"
+
+
+def _pdf_ke_png(berkas: Path) -> Path:
+    """Render gambar PDF ke PNG; Word tidak menampilkan gambar PDF."""
+    if berkas.suffix.lower() != ".pdf" or shutil.which("pdftoppm") is None:
+        return berkas
+    folder = ROOT / "build" / "docx" / "aset"
+    folder.mkdir(parents=True, exist_ok=True)
+    png = folder / f"{berkas.stem}.png"
+    if not png.is_file():
+        subprocess.run(
+            ["pdftoppm", "-r", "300", "-png", "-singlefile",
+             str(berkas), str(png.with_suffix(""))],
+            check=False, capture_output=True)
+    return png if png.is_file() else berkas
 
 
 LEBAR_TEKS_CM = 14.0
@@ -197,6 +237,12 @@ def bersihkan(teks: str, nomor_bab: int) -> str:
     """Terjemahkan perintah khusus class agar dimengerti Pandoc."""
     teks = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",
                   _tikz_ke_gambar, teks, flags=re.S)
+    # \includegraphics ke berkas PDF dirender ke PNG agar tampil di Word.
+    teks = re.sub(
+        r"\\includegraphics(\[[^\]]*\])?\{([^}]*\.pdf)\}",
+        lambda m: "\\includegraphics%s{%s}" % (
+            m.group(1) or "", _pdf_ke_png(ROOT / m.group(2))),
+        teks)
     # \gambarsementara{berkas}{lebar}{tinggi} dari class.
     teks = re.sub(r"\\gambarsementara\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}",
                   lambda m: _gambar_aset(f"assets/gambar/{m.group(1)}", f"width={m.group(2)}"),
@@ -233,6 +279,7 @@ def bersihkan(teks: str, nomor_bab: int) -> str:
     # tidak dapat ditulis sebagai gambar Markdown; tanpa dibuang, Pandoc
     # menuliskan figure sebagai HTML mentah yang hilang di .docx.
     teks = re.sub(r"\\begin\{(figure|table)\}\[[^\]]*\]", r"\\begin{\1}", teks)
+    teks = _pindah_sumber(teks)
     teks = ganti_perintah(teks, "sumber", lambda isi: f"\n\nSumber: {isi}\n\n")
     teks = ganti_perintah(teks, "lampiran", lambda isi: f"\\chapter{{Lampiran: {isi}}}")
     teks = teks.replace("\\checkmark", "✓")

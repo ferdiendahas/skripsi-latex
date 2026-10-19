@@ -51,13 +51,22 @@ XGBoost, dan beberapa model \textit{deep learning} pada RV enam jam delapan
 aset kripto \cite{brauneis2026}. Pada sebagian besar aset kripto, model ML
 lebih baik, tetapi pada Bitcoin HAR justru signifikan lebih akurat daripada
 semua model ML menurut QLIKE. Pada RV S\&P~500, Kılıç menemukan XGBoost sebagai
-model ML terburuk, dengan penurunan kinerja paling parah pada krisis 2008
-\cite{kilic2025}. Pada RV saham Rusia, Pyrlik, Elizarov, dan Leonova menemukan
+model ML dengan kinerja terburuk \cite{kilic2025}.
+% CEK: klaim krisis 2008 dihapus karena rumus QLIKE Kılıç (pers. 23) tidak
+% konsisten dengan definisi RV-nya. Kembalikan hanya bila tabel MSPE juga
+% menunjukkan penurunan terparah pada 2008. Pada volatilitas saham Rusia, Pyrlik, Elizarov, dan Leonova menemukan
 bahwa Lasso dan HAR-RV paling baik, sedangkan \textit{gradient boosting}
 paling buruk, dan model terbaik berganti dari kuartal ke kuartal
 \cite{pyrlik2021}. Kedua penelitian terakhir melaporkan hasil per tahun atau
 per kuartal, tetapi perubahan kinerja relatif tersebut tidak diuji secara
-statistik.
+statistik. Istilah RV juga tidak dipakai secara seragam. Sebagian besar
+penelitian di atas memakai jumlah kuadrat \textit{return} intrahari (skala
+varians), tetapi Corsi memakai akarnya yang disetahunkan \cite{corsi2009},
+Chassot dan Audrino memakai logaritmanya \cite{chassot2026}, dan Brauneis dan
+Sahiner memakai interval enam jam \cite{brauneis2026}. Karena itu, hasil
+antarpenelitian tidak dapat dibandingkan secara langsung. Penelitian ini
+memakai satu definisi yang sama untuk semua model
+(Subbab~\ref{subsec:rv}).
 
 % [kartu E3]
 \textbf{(3) Uji instabilitas peramalan pada aset kripto.} Trucíos dan Taylor
@@ -222,8 +231,11 @@ sebelumnya. \textit{Realized variance} harian merupakan
   \label{eq:rv}
 \end{equation}
 Corsi mendefinisikan \textit{realized volatility} sebagai akar dari besaran
-tersebut \cite{corsi2009}. Penelitian ini menggunakan skala varians karena
-fungsi \textit{loss} QLIKE dihitung pada skala varians \cite{patton2011}.
+tersebut dan menyajikannya dalam bentuk tahunan \cite{corsi2009}. Penelitian
+ini menggunakan skala varians karena fungsi \textit{loss} QLIKE dihitung pada
+skala varians \cite{patton2011}. Model HAR-RV pada penelitian ini karenanya
+merupakan bentuk analog pada logaritma varians, yang menurut Corsi dapat
+ditulis dengan cara yang sama seperti bentuk aslinya \cite{corsi2009}.
 
 Pemilihan RV sebagai proksi didasarkan pada rantai argumen berikut. Proksi
 volatilitas yang berisik, seperti kuadrat \textit{return} harian, membuat model
@@ -396,8 +408,8 @@ untuk menggunakan ML non-\textit{deep learning}.
 Model berbasis pohon tidak selalu unggul pada kondisi ekstrem. Pada
 volatilitas tinggi, \textit{random forest} dan LSTM termasuk model yang paling
 tidak akurat, walaupun perbandingan tersebut hanya deskriptif
-\cite{dudek2024}, dan XGBoost mengalami penurunan kinerja paling parah pada
-krisis 2008 \cite{kilic2025}. Karena itu, kekalahan model berbasis pohon pada
+\cite{dudek2024}, dan XGBoost termasuk model ML dengan kinerja terburuk pada
+RV indeks saham \cite{kilic2025}. Karena itu, kekalahan model berbasis pohon pada
 hari lonjakan volatilitas merupakan kemungkinan yang perlu diantisipasi.
 
 \subsection{Fitur Berbasis Data Intraday}
