@@ -5,13 +5,27 @@
 % padahal tabelnya sendiri di tengah. Samakan dengan caption gambar.
 \captionsetup[table]{justification=centering,singlelinecheck=true}
 
+% Tata letak float. Nilai bawaan LaTeX memaksa tabel atau gambar besar pindah
+% ke halaman tersendiri, sehingga muncul celah kosong di halaman sebelumnya.
+% Ambang dilonggarkan agar float sebesar itu tetap berbagi halaman dengan teks.
+\renewcommand{\topfraction}{0.9}        % porsi halaman atas yang boleh diisi float
+\renewcommand{\bottomfraction}{0.9}     % porsi halaman bawah
+\renewcommand{\textfraction}{0.05}      % porsi teks minimum per halaman
+\renewcommand{\floatpagefraction}{0.85} % float baru menguasai halaman bila >= 85%
+% Bila halaman float tetap tak terhindarkan, float diletakkan di paling atas,
+% bukan ditengahkan secara vertikal.
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt plus 1fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
 \begin{document}
 \buatsampul
 
 \daftarisi
-\daftargambar
 \daftartabel
-\input{frontmatter/daftar-notasi}
+\daftargambar
 
 \bagianutama
 \input{chapters/bab1-pendahuluan}

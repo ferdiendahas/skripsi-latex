@@ -332,6 +332,15 @@ Ramalan akhir adalah
     \underline{F} \right\}.
   \label{eq:ramalan}
 \end{equation}
+\begin{keterangan}
+  \item[$F_{t+1}$] ramalan RV hari $t+1$ setelah koreksi bias dan batas bawah,
+  \item[$\hat{y}_{t+1}$] ramalan $\ln RV_{t+1}$ sebelum dikembalikan ke skala
+    level,
+  \item[$\hat{\sigma}^2$] varians residual untuk koreksi bias transformasi
+    logaritma,
+  \item[$\underline{F}$] batas bawah ramalan, yaitu persentil ke-1 target RV
+    pada \textit{window} latih.
+\end{keterangan}
 Sebagai uji sensitivitas, koreksi bias ditiadakan.
 
 \subsection{\textit{Tuning Hyperparameter}}
@@ -804,8 +813,13 @@ Tabel~\ref{tab:rq2var}.
   s_t = \sqrt{\max\{4\,(c_t - \bar{p}_t)(c_t - \bar{p}_{t+1}),\, 0\}},
   \label{eq:abdi}
 \end{equation}
-dengan $\bar{p}_t = (\ln P^H_t + \ln P^L_t)/2$ dan $c_t$ logaritma harga
-penutupan hari $t$. Nilai negatif di bawah akar dijadikan nol sebelum
+\begin{keterangan}
+  \item[$s_t$] \textit{spread} Abdi--Ranaldo harian,
+  \item[$c_t$] logaritma harga penutupan hari $t$,
+  \item[$\bar{p}_t$] rata-rata logaritma harga tertinggi dan terendah hari
+    $t$, yaitu $(\ln P^H_t + \ln P^L_t)/2$.
+\end{keterangan}
+Nilai negatif di bawah akar dijadikan nol sebelum
 dirata-rata. Estimator ini merupakan versi dua hari terkoreksi
 (\textit{two-day corrected}) yang kemudian dirata-ratakan per bulan
 \cite{abdi2017}. Perhitungan likuiditas memakai seluruh hari dalam bulan,
@@ -822,10 +836,20 @@ Regresi H2a dirumuskan sebagai
     + \delta\, \text{Era}_\tau + u_\tau,
   \label{eq:rq2}
 \end{equation}
-dengan $\overline{\Delta L}_\tau$ rata-rata $\Delta L_t$ bulan $\tau$,
-$z_{k,\tau}$ keempat variabel pada Tabel~\ref{tab:rq2var}, dan
-$\text{Era}_\tau$ variabel \textit{dummy} era \textit{institutional} yang
-selalu disertakan. Untuk menghindari regresi palsu, setiap regresor diuji
+\begin{keterangan}
+  \item[$\overline{\Delta L}_\tau$] rata-rata $\Delta L_t$ pada bulan $\tau$,
+  \item[$\tau$] indeks bulan uji,
+  \item[$\alpha$] konstanta regresi,
+  \item[$k$] indeks variabel karakteristik pasar, bernilai 1 sampai 4,
+  \item[$\gamma_k$] koefisien variabel karakteristik pasar ke-$k$,
+  \item[$z_{k,\tau}$] variabel karakteristik pasar ke-$k$ pada bulan $\tau$,
+    sesuai Tabel~\ref{tab:rq2var},
+  \item[$\delta$] koefisien variabel \textit{dummy} era,
+  \item[$\text{Era}_\tau$] variabel \textit{dummy} era
+    \textit{institutional} pada bulan $\tau$, selalu disertakan,
+  \item[$u_\tau$] galat regresi pada bulan $\tau$.
+\end{keterangan}
+Untuk menghindari regresi palsu, setiap regresor diuji
 dengan ADF \cite{dickey1979} dan KPSS \cite{kwiatkowski1992}; regresor
 di-\textit{differencing} bila ADF gagal menolak akar unit ($p > 0{,}05$)
 \textbf{dan} KPSS menolak stasioneritas ($p < 0{,}05$), yaitu kombinasi hasil

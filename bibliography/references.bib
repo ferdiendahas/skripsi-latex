@@ -1,23 +1,22 @@
-% references.bib -- dibangun dari Lampiran A narasi_draft_bab1_bab2.md
+% references.bib -- referensi skripsi v3.0 (prediksi harga BTC/IDR dengan
+% boosting). Dibangun dari `context/kartu_paper_v3.md` sesuai
+% `context/briefs/brief_agen_referensi_v3_v1.md`.
 %
-% Status verifikasi metadata (judul, penulis, volume, nomor, halaman):
+% Bagian AKTIF memuat 47 key v3.0 (Bagian 2.1-2.2 brief) + dua rujukan
+% institusional (pedoman2025, kbbi). Bagian ARSIP di bawah memuat entri v2.9
+% (HAR-RV) yang masih dikutip Bab I-III dan harus dihapus setelah Bab I-III
+% v3.0 selesai ditulis.
 %
-% SUDAH diverifikasi terhadap Crossref (api.crossref.org/works/<DOI>),
-% 6 Oktober 2026:
-%   agakishiev2025, akgun2025, andrews1991, chassot2026, christensen2023,
-%   do2026, dudek2024, feng2024ml, feng2024window, huang2024, mokni2024,
-%   oprea2026, qiu2025, trucios2023, wang2023, yi2023, zhang2024
+% Semua DOI pada bagian aktif dibuka lewat api.crossref.org pada 4 Nov 2026
+% dan judul serta penulisnya cocok dengan kartu, kecuali yang ditandai % CEK.
+% Kolom yang tidak bisa dipastikan dibiarkan kosong dan ditandai % CEK.
 %
-% BELUM diverifikasi; metadata masih berasal dari dokumen riset atau ingatan,
-% dan harus dicocokkan ke sumber asli sebelum draf diserahkan:
-%   amihud2002, andersen1998, bai1998, bai2003, barndorff2010, brauneis2021,
-%   cerqueira2020, chen2016, corsi2009, diebold1995, gama2014, giacomini2009,
-%   giacomini2010, grinsztajn2022, holm1979, ke2017, liu2015, martins2016,
-%   morenotorres2012, nakamoto2008, newey1987, parkinson1980, patton2011,
-%   patton2015, rabanser2019, rossi2013, suarez2023, tashman2000, zliobaite2015
+% Catatan format: file ini memakai `journal` (alias biblatex untuk
+% `journaltitle`) secara konsisten, termasuk pada entri lama.
 %
-% CEK: Pesaran & Timmermann dikutip melalui rossi2013; tidak perlu entri
-% tersendiri kecuali dibaca langsung.
+% Catatan entri dokumentasi: `year` pada entri @online dokumentasi adalah
+% tahun halaman berversi itu diakses, bukan tanggal rilis paketnya. Biblatex
+% mewajibkan salah satu dari `date`/`year` untuk tipe @online.
 
 % ---------------------------------------------------------------------------
 % Pedoman dan rujukan institusional
@@ -33,13 +32,618 @@
 @online{kbbi,
   author  = {{Badan Pengembangan dan Pembinaan Bahasa}},
   title   = {Kamus Besar Bahasa Indonesia (KBBI) Daring},
+  year    = {2024},
   url     = {https://kbbi.kemdikbud.go.id/},
-  urldate = {2026-09-13}
+  urldate = {2026-10-05}
 }
 
-% ---------------------------------------------------------------------------
-% Realized variance, HAR, dan estimator volatilitas
-% ---------------------------------------------------------------------------
+% ===========================================================================
+% A. Acuan utama
+% ===========================================================================
+@article{rodrigues2025,
+  author  = {Rodrigues, F{\'a}tima and Machado, Miguel},
+  title   = {High-Frequency Cryptocurrency Price Forecasting Using Machine Learning Models: A Comparative Study},
+  journal = {Information},
+  volume  = {16},
+  number  = {4},
+  pages   = {300},
+  year    = {2025},
+  doi     = {10.3390/info16040300}
+}
+
+@article{wei2023,
+  author  = {Wei, Mingzhe and Sermpinis, Georgios and Stasinakis, Charalampos},
+  title   = {Forecasting and trading {Bitcoin} with machine learning techniques and a hybrid volatility/sentiment leverage},
+  journal = {Journal of Forecasting},
+  volume  = {42},
+  number  = {4},
+  pages   = {852--871},
+  year    = {2023},
+  doi     = {10.1002/for.2922}
+}
+
+% ===========================================================================
+% B. Peramalan kripto dengan boosting dan machine learning
+% ===========================================================================
+@article{bouteska2024,
+  author  = {Bouteska, Ahmed and Abedin, Mohammad Zoynul and Hajek, Petr and Yuan, Kunpeng},
+  title   = {Cryptocurrency price forecasting -- A comparative analysis of ensemble learning and deep learning methods},
+  journal = {International Review of Financial Analysis},
+  volume  = {92},
+  pages   = {103055},
+  year    = {2024},
+  doi     = {10.1016/j.irfa.2023.103055}
+}
+
+@article{jaquart2021,
+  author  = {Jaquart, Patrick and Dann, David and Weinhardt, Christof},
+  title   = {Short-term bitcoin market prediction via machine learning},
+  journal = {The Journal of Finance and Data Science},
+  volume  = {7},
+  pages   = {45--66},
+  year    = {2021},
+  doi     = {10.1016/j.jfds.2021.03.001}
+}
+
+@article{akyildirim2023,
+  author  = {Akyildirim, Erdinc and Cepni, Oguzhan and Corbet, Shaen and Uddin, Gazi Salah},
+  title   = {Forecasting mid-price movement of {Bitcoin} futures using machine learning},
+  journal = {Annals of Operations Research},
+  volume  = {330},
+  number  = {1--2},
+  pages   = {553--584},
+  year    = {2023},
+  doi     = {10.1007/s10479-021-04205-x}
+}
+
+@article{akyildirim2021,
+  author  = {Akyildirim, Erdinc and Goncu, Ahmet and Sensoy, Ahmet},
+  title   = {Prediction of cryptocurrency returns using machine learning},
+  journal = {Annals of Operations Research},
+  volume  = {297},
+  number  = {1--2},
+  pages   = {3--36},
+  year    = {2021},
+  doi     = {10.1007/s10479-020-03575-y}
+}
+
+% Versi ACM (bukan arXiv) sesuai brief Bagian 1. Crossref memberi judul utuh
+% dan halaman 1--8 untuk prosiding AIMLSystems 2024.
+@inproceedings{puoti2024,
+  author    = {Puoti, Francesco and Pittorino, Fabrizio and Roveri, Manuel},
+  title     = {Quantifying Cryptocurrency Unpredictability: A Comprehensive Study of Complexity and Forecasting},
+  booktitle = {Proceedings of the 4th International Conference on AI-ML Systems},
+  publisher = {Association for Computing Machinery},
+  pages     = {1--8},
+  year      = {2024},
+  doi       = {10.1145/3703412.3703420}
+}
+
+% PREPRINT
+% CEK: versi TERBIT sudah ada dan diverifikasi di Crossref 4 Nov 2026 --
+% Expert Systems with Applications 301, 130404 (Mar 2026),
+% doi 10.1016/j.eswa.2025.130404, penulis Dudek, Kasprzyk, Pelka.
+% Aturan umum brief (Bagian 1) menyuruh mengutip versi terbit, tetapi
+% Bagian 2.2 secara khusus menetapkan B6 sebagai preprint dan kartu B6
+% mencatat versi arXiv yang dibaca. Entri dibiarkan preprint karena pindah ke
+% versi terbit mengubah tahun (2025 -> 2026) dan catatan "preprint" di Bab I,
+% dan brief ini melarang menyentuh chapters/. KEPUTUSAN FERDI.
+@online{dudek2025lgbm,
+  author     = {Dudek, Grzegorz and Kasprzyk, Mateusz and Pe{\l}ka, Pawe{\l}},
+  title      = {Multivariate Forecasting of {Bitcoin} Volatility with Gradient Boosting: Deterministic, Probabilistic, and Feature Importance Perspectives},
+  year       = {2025},
+  eprint     = {2511.20105},
+  eprinttype = {arxiv},
+  note       = {Preprint}
+}
+
+@article{nadarajah2025,
+  author  = {Nadarajah, Saralees and Mba, Jules Clement and Rakotomarolahy, Patrick and Ratolojanahary, Henri T. J. E.},
+  title   = {Ensemble Learning and an Adaptive Neuro-Fuzzy Inference System for Cryptocurrency Volatility Forecasting},
+  journal = {Journal of Risk and Financial Management},
+  volume  = {18},
+  number  = {2},
+  pages   = {52},
+  year    = {2025},
+  doi     = {10.3390/jrfm18020052}
+}
+
+% CEK: Crossref belum mencatat volume, nomor, dan halaman (terbit daring
+% 28 Mar 2026). Lengkapi setelah terbit di nomor cetak.
+@article{oprea2026,
+  author  = {Oprea, Simona-Vasilica and B{\^a}ra, Adela},
+  title   = {Regime-Aware Adaptive Forecasting Framework for {Bitcoin} Prices Using Probabilistic Generative Models},
+  journal = {Computational Economics},
+  year    = {2026},
+  note    = {Online first},
+  doi     = {10.1007/s10614-026-11338-3}
+}
+
+% ===========================================================================
+% C. Horizon waktu dan tipe trader
+% ===========================================================================
+@article{muller1997,
+  author  = {M{\"u}ller, Ulrich A. and Dacorogna, Michel M. and Dav{\'e}, Rakhal D. and Olsen, Richard B. and Pictet, Olivier V. and von Weizs{\"a}cker, Jacob E.},
+  title   = {Volatilities of different time resolutions --- Analyzing the dynamics of market components},
+  journal = {Journal of Empirical Finance},
+  volume  = {4},
+  number  = {2--3},
+  pages   = {213--239},
+  year    = {1997},
+  doi     = {10.1016/S0927-5398(97)00007-8}
+}
+
+% CEK: Crossref hanya mencatat inisial untuk Jost dan Ward; nama depan
+% Dacorogna dan Müller diambil dari rekaman Crossref muller1997. Lengkapi
+% nama depan Jost dan Ward dari PDF bila perlu.
+@article{dacorogna1995,
+  author  = {Dacorogna, Michel M. and M{\"u}ller, Ulrich A. and Jost, C. and Pictet, Olivier V. and Ward, J. R.},
+  title   = {Heterogeneous real-time trading strategies in the foreign exchange market},
+  journal = {The European Journal of Finance},
+  volume  = {1},
+  number  = {4},
+  pages   = {383--403},
+  year    = {1995},
+  doi     = {10.1080/13518479500000026}
+}
+
+@article{barberdt,
+  author  = {Barber, Brad M. and Lee, Yi-Tsung and Liu, Yu-Jane and Odean, Terrance},
+  title   = {The cross-section of speculator skill: Evidence from day trading},
+  journal = {Journal of Financial Markets},
+  volume  = {18},
+  pages   = {1--24},
+  year    = {2014},
+  doi     = {10.1016/j.finmar.2013.05.006}
+}
+
+% Judul resmi versi Journal of Finance (halaman CFTC memakai judul lain),
+% dicek lewat Crossref 4 Nov 2026. Nama penulis di Crossref ditulis kapital
+% seluruhnya dan dinormalkan di sini.
+@article{kirilenko2017,
+  author  = {Kirilenko, Andrei and Kyle, Albert S. and Samadi, Mehrdad and Tuzun, Tugkan},
+  title   = {The Flash Crash: High-Frequency Trading in an Electronic Market},
+  journal = {The Journal of Finance},
+  volume  = {72},
+  number  = {3},
+  pages   = {967--998},
+  year    = {2017},
+  doi     = {10.1111/jofi.12498}
+}
+
+@article{kakinaka2022,
+  author  = {Kakinaka, Shinji and Umeno, Ken},
+  title   = {Cryptocurrency market efficiency in short- and long-term horizons during {COVID-19}: An asymmetric multifractal analysis approach},
+  journal = {Finance Research Letters},
+  volume  = {46},
+  pages   = {102319},
+  year    = {2022},
+  doi     = {10.1016/j.frl.2021.102319}
+}
+
+% CEK: tahun 2023 = terbit daring (2 Agu 2023) sesuai kartu C6 dan key
+% `liu2023`. Crossref mencatat nomor cetak baru keluar 2 Sep 2026 pada vol
+% 32(13), hlm. 1668--1685. Putuskan dengan Ferdi apakah tahun diganti 2026.
+@article{liu2023,
+  author  = {Liu, Anqi and Jahanshahloo, Hossein and Chen, Jing and Eshraghi, Arman},
+  title   = {Trading patterns in the bitcoin market},
+  journal = {The European Journal of Finance},
+  volume  = {32},
+  number  = {13},
+  pages   = {1668--1685},
+  year    = {2023},
+  doi     = {10.1080/1351847X.2023.2241883}
+}
+
+% ===========================================================================
+% D. Pasar Bitcoin dan efisiensi
+% ===========================================================================
+% CEK: tanpa DOI, verifikasi manual
+@online{nakamoto2008,
+  author  = {Nakamoto, Satoshi},
+  title   = {{Bitcoin}: A Peer-to-Peer Electronic Cash System},
+  year    = {2008},
+  url     = {https://bitcoin.org/bitcoin.pdf},
+  urldate = {2026-10-05}
+}
+
+@article{do2026,
+  author  = {Do, Kim-Oanh},
+  title   = {Maturation of {Bitcoin} market microstructure: Evidence of institutional-grade liquidity and efficiency (2012--2025)},
+  journal = {Borsa Istanbul Review},
+  volume  = {26},
+  number  = {5},
+  pages   = {100869},
+  year    = {2026},
+  doi     = {10.1016/j.bir.2026.100869}
+}
+
+% Halaman 39 adalah nomor artikel (Financial Innovation 10:39); Crossref tidak
+% mencatat kolom halaman.
+@article{mokni2024,
+  author  = {Mokni, Khaled and El Montasser, Ghassen and Ajmi, Ahdi Noomen and Bouri, Elie},
+  title   = {On the efficiency and its drivers in the cryptocurrency market: the case of {Bitcoin} and {Ethereum}},
+  journal = {Financial Innovation},
+  volume  = {10},
+  number  = {1},
+  pages   = {39},
+  year    = {2024},
+  doi     = {10.1186/s40854-023-00566-3}
+}
+
+% Halaman 4789 adalah nomor artikel (Scientific Reports 13:4789).
+@article{yi2023,
+  author  = {Yi, Eojin and Yang, Biao and Jeong, Minhyuk and Sohn, Sungbin and Ahn, Kwangwon},
+  title   = {Market efficiency of cryptocurrency: evidence from the {Bitcoin} market},
+  journal = {Scientific Reports},
+  volume  = {13},
+  number  = {1},
+  pages   = {4789},
+  year    = {2023},
+  doi     = {10.1038/s41598-023-31618-4}
+}
+
+% ===========================================================================
+% E. Model boosting (sumber metode) dan data tabular
+% ===========================================================================
+@article{friedman2001,
+  author  = {Friedman, Jerome H.},
+  title   = {Greedy function approximation: A gradient boosting machine},
+  journal = {The Annals of Statistics},
+  volume  = {29},
+  number  = {5},
+  pages   = {1189--1232},
+  year    = {2001},
+  doi     = {10.1214/aos/1013203451}
+}
+
+@article{freund1997,
+  author  = {Freund, Yoav and Schapire, Robert E.},
+  title   = {A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting},
+  journal = {Journal of Computer and System Sciences},
+  volume  = {55},
+  number  = {1},
+  pages   = {119--139},
+  year    = {1997},
+  doi     = {10.1006/jcss.1997.1504}
+}
+
+% CEK: halaman prosiding belum dipastikan. Bibtex resmi NeurIPS vol. 31
+% mengosongkan kolom halaman; OpenAlex menyebut 6639--6649 (indeks sekunder,
+% belum dikonfirmasi ke prosiding cetak Curran).
+@inproceedings{prokhorenkova2018,
+  author    = {Prokhorenkova, Liudmila and Gusev, Gleb and Vorobev, Aleksandr and Dorogush, Anna Veronika and Gulin, Andrey},
+  title     = {{CatBoost}: unbiased boosting with categorical features},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {31},
+  publisher = {Curran Associates, Inc.},
+  year      = {2018}
+}
+
+% CEK: halaman 3146--3154 berasal dari .bib v2 dan belum dikonfirmasi; bibtex
+% resmi NeurIPS vol. 30 mengosongkan kolom halaman. Volume 30 sudah dicek.
+@inproceedings{ke2017,
+  author    = {Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
+  title     = {{LightGBM}: A Highly Efficient Gradient Boosting Decision Tree},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  publisher = {Curran Associates, Inc.},
+  pages     = {3146--3154},
+  year      = {2017}
+}
+
+% Crossref memotong judul menjadi "XGBoost" (subjudul disimpan terpisah);
+% judul utuh diambil dari kartu E5. Halaman dan DOI cocok.
+@inproceedings{chen2016,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {{XGBoost}: A Scalable Tree Boosting System},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  publisher = {Association for Computing Machinery},
+  pages     = {785--794},
+  year      = {2016},
+  doi       = {10.1145/2939672.2939785}
+}
+
+% Versi prosiding NeurIPS (bukan arXiv): halaman dan DOI dari bibtex resmi
+% NeurIPS vol. 35 (Datasets and Benchmarks Track), dicek 4 Nov 2026.
+@inproceedings{grinsztajn2022,
+  author    = {Grinsztajn, L{\'e}o and Oyallon, Edouard and Varoquaux, Ga{\"e}l},
+  title     = {Why do tree-based models still outperform deep learning on typical tabular data?},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {35},
+  publisher = {Curran Associates, Inc.},
+  pages     = {507--520},
+  year      = {2022},
+  doi       = {10.52202/068431-0037}
+}
+
+@article{makridakis2022,
+  author  = {Makridakis, Spyros and Spiliotis, Evangelos and Assimakopoulos, Vassilios},
+  title   = {{M5} accuracy competition: Results, findings, and conclusions},
+  journal = {International Journal of Forecasting},
+  volume  = {38},
+  number  = {4},
+  pages   = {1346--1364},
+  year    = {2022},
+  doi     = {10.1016/j.ijforecast.2021.11.013}
+}
+
+% CEK: halaman prosiding ICML 1997 belum dipastikan; PDF yang dibaca adalah
+% versi penulis tanpa header prosiding (kartu E9). OpenAlex menyebut 107--115
+% (indeks sekunder, bukan Crossref/doi.org), jadi kolom pages dibiarkan kosong.
+@inproceedings{drucker1997,
+  author    = {Drucker, Harris},
+  title     = {Improving Regressors using Boosting Techniques},
+  booktitle = {Proceedings of the Fourteenth International Conference on Machine Learning (ICML 1997)},
+  publisher = {Morgan Kaufmann},
+  year      = {1997}
+}
+
+% Versi 1.9 sesuai scikit-learn 1.9 yang terpasang di lingkungan eksperimen
+% (`context/hasil_eksperimen_v3.0.md`, bagian lingkungan). URL berversi dicek
+% 4 Nov 2026; isi halaman dibaca 1 Nov 2026 pada kartu E10.
+@online{sklearnadaboost,
+  author       = {{scikit-learn developers}},
+  title        = {{sklearn.ensemble.AdaBoostRegressor}},
+  organization = {scikit-learn 1.9 documentation},
+  url          = {https://scikit-learn.org/1.9/modules/generated/sklearn.ensemble.AdaBoostRegressor.html},
+  urldate      = {2026-11-01},
+  year         = {2026}
+}
+
+% CEK: isi halaman v4.7.0 belum dibandingkan dengan tangkapan 3 Nov 2026 yang
+% diambil dari kanal "latest" (build pengembangan 4.7.0.99). URL berversi
+% v4.7.0 dipilih karena lightgbm 4.7 yang terpasang; URL dicek 4 Nov 2026.
+@online{lightgbmfeatures,
+  author       = {{Microsoft Corporation}},
+  title        = {Features},
+  organization = {{LightGBM} 4.7.0 Documentation},
+  url          = {https://lightgbm.readthedocs.io/en/v4.7.0/Features.html},
+  urldate      = {2026-11-04},
+  year         = {2026}
+}
+
+% CEK: lihat catatan pada lightgbmfeatures.
+@online{lightgbmtuning,
+  author       = {{Microsoft Corporation}},
+  title        = {Parameters Tuning},
+  organization = {{LightGBM} 4.7.0 Documentation},
+  url          = {https://lightgbm.readthedocs.io/en/v4.7.0/Parameters-Tuning.html},
+  urldate      = {2026-11-04},
+  year         = {2026}
+}
+
+% ===========================================================================
+% F. Optimasi hiperparameter (sumber metode)
+% ===========================================================================
+% Nomor terbitan 10 dari halaman resmi JMLR (13(10):281--305), dicek
+% 4 Nov 2026. JMLR tidak memakai DOI.
+@article{bergstra2012,
+  author  = {Bergstra, James and Bengio, Yoshua},
+  title   = {Random Search for Hyper-Parameter Optimization},
+  journal = {Journal of Machine Learning Research},
+  volume  = {13},
+  number  = {10},
+  pages   = {281--305},
+  year    = {2012}
+}
+
+% Volume 24 dikonfirmasi dari halaman resmi NeurIPS 2011 (4 Nov 2026).
+% CEK: halaman 2546--2554 berasal dari kartu F2; bibtex resmi NeurIPS saat ini
+% mengosongkan kolom halaman.
+@inproceedings{bergstra2011,
+  author    = {Bergstra, James and Bardenet, R{\'e}mi and Bengio, Yoshua and K{\'e}gl, Bal{\'a}zs},
+  title     = {Algorithms for Hyper-Parameter Optimization},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {24},
+  publisher = {Curran Associates, Inc.},
+  pages     = {2546--2554},
+  year      = {2011}
+}
+
+% Crossref memotong judul menjadi "Optuna" (subjudul disimpan terpisah);
+% judul utuh diambil dari kartu F3. Halaman dan DOI cocok.
+@inproceedings{akiba2019,
+  author    = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and Ohta, Takeru and Koyama, Masanori},
+  title     = {{Optuna}: A Next-generation Hyperparameter Optimization Framework},
+  booktitle = {Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+  publisher = {Association for Computing Machinery},
+  pages     = {2623--2631},
+  year      = {2019},
+  doi       = {10.1145/3292500.3330701}
+}
+
+@article{hansen2001,
+  author  = {Hansen, Nikolaus and Ostermeier, Andreas},
+  title   = {Completely Derandomized Self-Adaptation in Evolution Strategies},
+  journal = {Evolutionary Computation},
+  volume  = {9},
+  number  = {2},
+  pages   = {159--195},
+  year    = {2001},
+  doi     = {10.1162/106365601750190398}
+}
+
+% CEK: Crossref hanya mencatat inisial nama depan (K. Deb, A. Pratap,
+% S. Agarwal, T. Meyarivan); kartu F5 juga hanya menulis nama belakang.
+% Lengkapi nama depan dari PDF bila perlu.
+@article{deb2002,
+  author  = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
+  title   = {A fast and elitist multiobjective genetic algorithm: {NSGA-II}},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {6},
+  number  = {2},
+  pages   = {182--197},
+  year    = {2002},
+  doi     = {10.1109/4235.996017}
+}
+
+% Nomor artikel 185 dari halaman resmi JMLR (18(185):1--52), dicek
+% 4 Nov 2026. JMLR tidak memakai DOI.
+@article{li2018,
+  author  = {Li, Lisha and Jamieson, Kevin and DeSalvo, Giulia and Rostamizadeh, Afshin and Talwalkar, Ameet},
+  title   = {{Hyperband}: A Novel Bandit-Based Approach to Hyperparameter Optimization},
+  journal = {Journal of Machine Learning Research},
+  volume  = {18},
+  number  = {185},
+  pages   = {1--52},
+  year    = {2018}
+}
+
+% Versi 5.0.0 sesuai optuna 5.0 yang terpasang di lingkungan eksperimen.
+% URL berversi dicek 4 Nov 2026; isi dibaca 30 Okt 2026 (kartu F7).
+% CEK: tabel kemampuan sampler pada kartu F7 diambil dari indeks versi
+% 5.1.0.dev, bukan dari URL ini.
+@online{optunadocs,
+  author       = {{Optuna Developers}},
+  title        = {{Optuna}: A hyperparameter optimization framework --- Samplers and Pruners},
+  organization = {{Optuna} 5.0.0 documentation},
+  url          = {https://optuna.readthedocs.io/en/v5.0.0/reference/samplers/index.html},
+  urldate      = {2026-10-30},
+  year         = {2026}
+}
+
+% Terbitan asli bahasa Rusia, seperti yang disitasi dokumentasi SciPy
+% (brief Bagian 2.2 F8). Tanpa DOI.
+% CEK: Crossref hanya memuat terjemahan bahasa Inggris, "USSR Computational
+% Mathematics and Mathematical Physics" 7(4), 86--112,
+% doi 10.1016/0041-5553(67)90144-9. Metadata terbitan asli berasal dari
+% catatan kaki hlm. 86 (kartu F8).
+@article{sobol1967,
+  author  = {Sobol', Il'ya M.},
+  title   = {The distribution of points in a cube and the approximate evaluation of integrals},
+  journal = {Zhurnal Vychislitel'noi Matematiki i Matematicheskoi Fiziki},
+  volume  = {7},
+  number  = {4},
+  pages   = {784--802},
+  year    = {1967},
+  langid  = {russian}
+}
+
+@article{roy2023qmc,
+  author  = {Roy, Pamphile T. and Owen, Art B. and Balandat, Maximilian and Haberland, Matt},
+  title   = {Quasi-{Monte} {Carlo} Methods in {Python}},
+  journal = {Journal of Open Source Software},
+  volume  = {8},
+  number  = {84},
+  pages   = {5309},
+  year    = {2023},
+  doi     = {10.21105/joss.05309}
+}
+
+% CEK: versi scipy yang terpasang tidak tercatat di
+% `context/hasil_eksperimen_v3.0.md` (requirements hanya menulis scipy>=1.10).
+% Entri ini memakai v1.18.0 sesuai kartu F10; cek `pip show scipy` dan
+% sesuaikan URL bila berbeda. URL berversi dicek 4 Nov 2026.
+@online{scipysobol,
+  author       = {{SciPy Developers}},
+  title        = {{scipy.stats.qmc.Sobol}},
+  organization = {{SciPy} v1.18.0 Manual},
+  url          = {https://docs.scipy.org/doc/scipy-1.18.0/reference/generated/scipy.stats.qmc.Sobol.html},
+  urldate      = {2026-11-01},
+  year         = {2026}
+}
+
+% ===========================================================================
+% G. Evaluasi dan uji statistik
+% ===========================================================================
+@article{harvey1997,
+  author  = {Harvey, David and Leybourne, Stephen and Newbold, Paul},
+  title   = {Testing the equality of prediction mean squared errors},
+  journal = {International Journal of Forecasting},
+  volume  = {13},
+  number  = {2},
+  pages   = {281--291},
+  year    = {1997},
+  doi     = {10.1016/S0169-2070(96)00719-4}
+}
+
+% Versi Journal of Business & Economic Statistics (bukan working paper NBER),
+% sesuai brief Bagian 1.
+@article{diebold1995,
+  author  = {Diebold, Francis X. and Mariano, Roberto S.},
+  title   = {Comparing Predictive Accuracy},
+  journal = {Journal of Business \& Economic Statistics},
+  volume  = {13},
+  number  = {3},
+  pages   = {253--263},
+  year    = {1995},
+  doi     = {10.1080/07350015.1995.10524599}
+}
+
+% CEK: tanpa DOI. DOI 10.2307/4615733 yang disebut OpenAlex tidak dapat
+% diresolusi di doi.org maupun Crossref (dicek 4 Nov 2026), jadi tidak dipakai.
+@article{holm1979,
+  author  = {Holm, Sture},
+  title   = {A Simple Sequentially Rejective Multiple Test Procedure},
+  journal = {Scandinavian Journal of Statistics},
+  volume  = {6},
+  number  = {2},
+  pages   = {65--70},
+  year    = {1979}
+}
+
+@article{cerqueira2020,
+  author  = {Cerqueira, Vitor and Torgo, Luis and Mozeti{\v{c}}, Igor},
+  title   = {Evaluating time series forecasting models: an empirical study on performance estimation methods},
+  journal = {Machine Learning},
+  volume  = {109},
+  number  = {11},
+  pages   = {1997--2028},
+  year    = {2020},
+  doi     = {10.1007/s10994-020-05910-7}
+}
+
+@article{tashman2000,
+  author  = {Tashman, Leonard J.},
+  title   = {Out-of-sample tests of forecasting accuracy: an analysis and review},
+  journal = {International Journal of Forecasting},
+  volume  = {16},
+  number  = {4},
+  pages   = {437--450},
+  year    = {2000},
+  doi     = {10.1016/S0169-2070(00)00065-0}
+}
+
+% ===========================================================================
+% H. Fitur
+% ===========================================================================
+% CEK: Crossref hanya mencatat halaman awal (61); rentang 61--65 dari kartu H1.
+@article{parkinson1980,
+  author  = {Parkinson, Michael},
+  title   = {The Extreme Value Method for Estimating the Variance of the Rate of Return},
+  journal = {The Journal of Business},
+  volume  = {53},
+  number  = {1},
+  pages   = {61--65},
+  year    = {1980},
+  doi     = {10.1086/296071}
+}
+
+
+% ===== ARSIP v2.9 --- hapus setelah Bab I--III v3.0 selesai ditulis =====
+%
+% Entri di bawah ini milik skripsi versi 2.9 (LightGBM vs HAR-RV, realized
+% variance). Bab I--III saat ini masih versi v2.9 dan masih mengutipnya, jadi
+% entri ini dipertahankan supaya `make` tidak gagal. Metadatanya TIDAK dicek
+% ulang dalam pembaruan v3.0; status verifikasi lamanya:
+%
+%   Sudah dicek ke Crossref 6 Okt 2026: agakishiev2025, akgun2025,
+%   andrews1991, chassot2026, christensen2023, dudek2024, feng2024ml,
+%   feng2024window, huang2024, qiu2025, trucios2023, wang2023, zhang2024
+%
+%   Belum dicek: amihud2002, andersen1998, bai1998, bai2003, barndorff2010,
+%   brauneis2021, corsi2009, gama2014, giacomini2009, giacomini2010, liu2015,
+%   martins2016, morenotorres2012, newey1987, patton2011, patton2015,
+%   rabanser2019, rossi2013, suarez2023, zliobaite2015
+%
+%   Punya % CEK sendiri: abdi2017, brauneis2026, corwin2012, kilic2025,
+%   pesaran2007, pyrlik2021
+%
+% Kolom `author` ganda pada beberapa entri (agakishiev2025, cerqueira2020,
+% dudek2024, gama2014, morenotorres2012, oprea2026, trucios2023, zliobaite2015)
+% sudah dirapikan: hanya versi terakhir --- yang dipakai biber --- disimpan.
+
 @article{andersen1998,
   author  = {Andersen, Torben G. and Bollerslev, Tim},
   title   = {Answering the Skeptics: Yes, Standard Volatility Models Do Provide Accurate Forecasts},
@@ -73,18 +677,6 @@
   doi     = {10.1016/j.jeconom.2015.02.008}
 }
 
-@article{parkinson1980,
-  author  = {Parkinson, Michael},
-  title   = {The Extreme Value Method for Estimating the Variance of the Rate of Return},
-  journal = {The Journal of Business},
-  volume  = {53},
-  number  = {1},
-  pages   = {61--65},
-  year    = {1980},
-  doi     = {10.1086/296071}
-}
-
-% CEK: tanpa DOI, verifikasi manual
 @incollection{barndorff2010,
   author    = {Barndorff-Nielsen, Ole E. and Kinnebrock, Silja and Shephard, Neil},
   title     = {Measuring Downside Risk: Realised Semivariance},
@@ -106,9 +698,6 @@
   doi     = {10.1162/REST_a_00503}
 }
 
-% ---------------------------------------------------------------------------
-% Likuiditas
-% ---------------------------------------------------------------------------
 @article{amihud2002,
   author  = {Amihud, Yakov},
   title   = {Illiquidity and Stock Returns: Cross-Section and Time-Series Effects},
@@ -130,42 +719,6 @@
   doi     = {10.1016/j.jbankfin.2020.106041}
 }
 
-% ---------------------------------------------------------------------------
-% Machine learning: model dan data tabular
-% ---------------------------------------------------------------------------
-% CEK: tanpa DOI, verifikasi manual
-@inproceedings{ke2017,
-  author    = {Ke, Guolin and Meng, Qi and Finley, Thomas and Wang, Taifeng and Chen, Wei and Ma, Weidong and Ye, Qiwei and Liu, Tie-Yan},
-  title     = {LightGBM: A Highly Efficient Gradient Boosting Decision Tree},
-  booktitle = {Advances in Neural Information Processing Systems},
-  volume    = {30},
-  pages     = {3146--3154},
-  year      = {2017}
-}
-
-@inproceedings{chen2016,
-  author    = {Chen, Tianqi and Guestrin, Carlos},
-  title     = {XGBoost: A Scalable Tree Boosting System},
-  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
-  pages     = {785--794},
-  year      = {2016},
-  doi       = {10.1145/2939672.2939785}
-}
-
-% CEK: tanpa DOI, verifikasi manual
-@inproceedings{grinsztajn2022,
-  author    = {Grinsztajn, L{\'e}o and Oyallon, Edouard and Varoquaux, Ga{\"e}l},
-  title     = {Why Do Tree-Based Models Still Outperform Deep Learning on Typical Tabular Data?},
-  booktitle = {Advances in Neural Information Processing Systems},
-  volume    = {35},
-  year      = {2022},
-  eprint    = {2207.08815},
-  eprinttype = {arXiv}
-}
-
-% ---------------------------------------------------------------------------
-% Fungsi loss dan uji perbandingan peramalan
-% ---------------------------------------------------------------------------
 @article{patton2011,
   author  = {Patton, Andrew J.},
   title   = {Volatility Forecast Comparison Using Imperfect Volatility Proxies},
@@ -175,17 +728,6 @@
   pages   = {246--256},
   year    = {2011},
   doi     = {10.1016/j.jeconom.2010.03.034}
-}
-
-@article{diebold1995,
-  author  = {Diebold, Francis X. and Mariano, Roberto S.},
-  title   = {Comparing Predictive Accuracy},
-  journal = {Journal of Business \& Economic Statistics},
-  volume  = {13},
-  number  = {3},
-  pages   = {253--263},
-  year    = {1995},
-  doi     = {10.1080/07350015.1995.10524599}
 }
 
 @article{newey1987,
@@ -199,9 +741,6 @@
   doi     = {10.2307/1913610}
 }
 
-% CEK: volume dan nomor andrews1991 cocok dengan Crossref. Rentang halaman
-% dipertahankan 817--858 karena Crossref hanya mencatat halaman awal (817);
-% pastikan rentang akhirnya dari sumber asli.
 @article{andrews1991,
   author  = {Andrews, Donald W. K.},
   title   = {Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation},
@@ -213,20 +752,6 @@
   doi     = {10.2307/2938229}
 }
 
-% CEK: tanpa DOI, verifikasi manual
-@article{holm1979,
-  author  = {Holm, Sture},
-  title   = {A Simple Sequentially Rejective Multiple Test Procedure},
-  journal = {Scandinavian Journal of Statistics},
-  volume  = {6},
-  number  = {2},
-  pages   = {65--70},
-  year    = {1979}
-}
-
-% ---------------------------------------------------------------------------
-% Instabilitas peramalan dan perubahan struktural
-% ---------------------------------------------------------------------------
 @article{giacomini2009,
   author  = {Giacomini, Raffaella and Rossi, Barbara},
   title   = {Detecting and Predicting Forecast Breakdowns},
@@ -293,31 +818,6 @@
   doi     = {10.1002/jae.659}
 }
 
-% ---------------------------------------------------------------------------
-% Evaluasi out-of-sample, concept drift, dan pergeseran data
-% ---------------------------------------------------------------------------
-@article{tashman2000,
-  author  = {Tashman, Leonard J.},
-  title   = {Out-of-Sample Tests of Forecasting Accuracy: An Analysis and Review},
-  journal = {International Journal of Forecasting},
-  volume  = {16},
-  number  = {4},
-  pages   = {437--450},
-  year    = {2000},
-  doi     = {10.1016/S0169-2070(00)00065-0}
-}
-
-@article{cerqueira2020,
-  author  = {Cerqueira, Vitor and Torgo, Lu{\'i}s and Mozeti{\v{c}}, Igor},
-  title   = {Evaluating Time Series Forecasting Models: An Empirical Study on Performance Estimation Methods},
-  journal = {Machine Learning},
-  volume  = {109},
-  pages   = {1997--2028},
-  year    = {2020},
-  doi     = {10.1007/s10994-020-05910-7},
-  author  = {Cerqueira, Vitor and Torgo, Luis and Mozetič, Igor},
-  number  = {11}}
-
 @article{gama2014,
   author  = {Gama, Jo{\~a}o and {\v{Z}}liobait{\.e}, Indr{\.e} and Bifet, Albert and Pechenizkiy, Mykola and Bouchachia, Abdelhamid},
   title   = {A Survey on Concept Drift Adaptation},
@@ -326,8 +826,8 @@
   number  = {4},
   pages   = {44:1--44:37},
   year    = {2014},
-  doi     = {10.1145/2523813},
-  author  = {Gama, João and Žliobaitė, Indrė and Bifet, Albert and Pechenizkiy, Mykola and Bouchachia, Abdelhamid}}
+  doi     = {10.1145/2523813}
+}
 
 @article{zliobaite2015,
   author  = {{\v{Z}}liobait{\.e}, Indr{\.e} and Budka, Marcin and Stahl, Frederic},
@@ -336,8 +836,8 @@
   volume  = {150},
   pages   = {240--249},
   year    = {2015},
-  doi     = {10.1016/j.neucom.2014.05.084},
-  author  = {Žliobaitė, Indrė and Budka, Marcin and Stahl, Frederic}}
+  doi     = {10.1016/j.neucom.2014.05.084}
+}
 
 @article{morenotorres2012,
   author  = {Moreno-Torres, Jose G. and Raeder, Troy and Alaiz-Rodr{\'i}guez, Roc{\'i}o and Chawla, Nitesh V. and Herrera, Francisco},
@@ -347,10 +847,9 @@
   number  = {1},
   pages   = {521--530},
   year    = {2012},
-  doi     = {10.1016/j.patcog.2011.06.019},
-  author  = {Moreno-Torres, Jose G. and Raeder, Troy and Alaiz-Rodríguez, Rocío and Chawla, Nitesh V. and Herrera, Francisco}}
+  doi     = {10.1016/j.patcog.2011.06.019}
+}
 
-% CEK: tanpa DOI, verifikasi manual
 @inproceedings{rabanser2019,
   author    = {Rabanser, Stephan and G{\"u}nnemann, Stephan and Lipton, Zachary C.},
   title     = {Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift},
@@ -368,52 +867,7 @@
   volume  = {213},
   pages   = {118934},
   year    = {2023},
-  doi     = {10.1016/j.eswa.2022.118934},
-  author  = {Suárez-Cetrulo, Andrés L. and Quintana, David and Cervantes, Alejandro}}
-
-% ---------------------------------------------------------------------------
-% Bitcoin: pasar, efisiensi, dan likuiditas
-% ---------------------------------------------------------------------------
-% CEK: tanpa DOI, verifikasi manual
-@online{nakamoto2008,
-  author  = {Nakamoto, Satoshi},
-  title   = {Bitcoin: A Peer-to-Peer Electronic Cash System},
-  year    = {2008},
-  url     = {https://bitcoin.org/bitcoin.pdf},
-  urldate = {2026-10-05}
-}
-
-@article{do2026,
-  author  = {Do, Kim-Oanh},
-  title   = {Maturation of Bitcoin market microstructure: Evidence of institutional-grade liquidity and efficiency (2012–2025)},
-  journal = {Borsa Istanbul Review},
-  volume  = {26},
-  pages   = {100869},
-  year    = {2026},
-  doi     = {10.1016/j.bir.2026.100869},
-  number  = {5}
-}
-
-@article{mokni2024,
-  author  = {Mokni, Khaled and El Montasser, Ghassen and Ajmi, Ahdi Noomen and Bouri, Elie},
-  title   = {On the efficiency and its drivers in the cryptocurrency market: the case of Bitcoin and Ethereum},
-  journal = {Financial Innovation},
-  volume  = {10},
-  pages   = {39},
-  year    = {2024},
-  doi     = {10.1186/s40854-023-00566-3},
-  number  = {1}
-}
-
-@article{yi2023,
-  author  = {Yi, Eojin and Yang, Biao and Jeong, Minhyuk and Sohn, Sungbin and Ahn, Kwangwon},
-  title   = {Market efficiency of cryptocurrency: evidence from the Bitcoin market},
-  journal = {Scientific Reports},
-  volume  = {13},
-  pages   = {4789},
-  year    = {2023},
-  doi     = {10.1038/s41598-023-31618-4},
-  number  = {1}
+  doi     = {10.1016/j.eswa.2022.118934}
 }
 
 @article{zhang2024,
@@ -428,20 +882,16 @@
 }
 
 @article{agakishiev2025,
-  author  = {Agakishiev, Ilgar and H{\"a}rdle, Wolfgang Karl and Becker, Milos and Zuo, Zhasmina},
+  author  = {Agakishiev, Ilyas and H{\"a}rdle, Wolfgang Karl and Becker, Denis and Zuo, Xiaorui},
   title   = {Regime switching forecasting for cryptocurrencies},
   journal = {Digital Finance},
   volume  = {7},
   pages   = {107--131},
   year    = {2025},
   doi     = {10.1007/s42521-024-00123-2},
-  author  = {Agakishiev, Ilyas and Härdle, Wolfgang Karl and Becker, Denis and Zuo, Xiaorui},
   number  = {1}
 }
 
-% ---------------------------------------------------------------------------
-% Peramalan volatilitas dan harga kripto dengan machine learning
-% ---------------------------------------------------------------------------
 @article{dudek2024,
   author  = {Dudek, Grzegorz and Fiszeder, Piotr and Kobus, Pawe{\l} and Orzeszko, Witold},
   title   = {Forecasting cryptocurrencies volatility using statistical and machine learning methods: A comparative study},
@@ -449,8 +899,7 @@
   volume  = {151},
   pages   = {111132},
   year    = {2024},
-  doi     = {10.1016/j.asoc.2023.111132},
-  author  = {Dudek, Grzegorz and Fiszeder, Piotr and Kobus, Paweł and Orzeszko, Witold}
+  doi     = {10.1016/j.asoc.2023.111132}
 }
 
 @article{huang2024,
@@ -512,8 +961,7 @@
   number  = {4},
   pages   = {989--1007},
   year    = {2023},
-  doi     = {10.1002/for.2929},
-  author  = {Trucíos, Carlos and Taylor, James W.}
+  doi     = {10.1002/for.2929}
 }
 
 @article{chassot2026,
@@ -527,19 +975,6 @@
   doi     = {10.1016/j.ijforecast.2025.06.003}
 }
 
-@article{oprea2026,
-  author  = {Oprea, Simona-Vasilica and B{\^a}ra, Adela},
-  title   = {Regime-Aware Adaptive Forecasting Framework for Bitcoin Prices Using Probabilistic Generative Models},
-  journal = {Computational Economics},
-  year    = {2026},
-  note    = {Online first},
-  doi     = {10.1007/s10614-026-11338-3},
-  author  = {Oprea, Simona-Vasilica and Bâra, Adela}
-}
-
-% ---------------------------------------------------------------------------
-% Panjang window data latih
-% ---------------------------------------------------------------------------
 @article{akgun2025,
   author  = {Akgun, Omer Burak and Gulay, Emrah},
   title   = {Dynamics in Realized Volatility Forecasting: Evaluating GARCH Models and Deep Learning Algorithms Across Parameter Variations},
@@ -561,12 +996,6 @@
   year    = {2024},
   doi     = {10.1002/for.3046}
 }
-
-% ---------------------------------------------------------------------------
-% Estimator spread dan uji akar unit (ditambahkan untuk Bab III)
-% ---------------------------------------------------------------------------
-% CEK: ditambahkan untuk Bab III; isi paper belum dibaca, klaim terbatas pada
-% definisi rumus/uji
 
 @article{abdi2017,
   author  = {Abdi, Farshid and Ranaldo, Angelo},
@@ -612,9 +1041,6 @@
   doi     = {10.1016/0304-4076(92)90104-Y}
 }
 
-% ---------------------------------------------------------------------------
-% Model pohon pembanding dan dokumentasi parameter (ditambahkan untuk Bab III)
-% ---------------------------------------------------------------------------
 @article{breiman2001,
   author  = {Breiman, Leo},
   title   = {Random Forests},
@@ -626,42 +1052,6 @@
   doi     = {10.1023/A:1010933404324}
 }
 
-% CEK: ganti /en/stable/ dengan versi persis lightgbm di .venv
-@online{lightgbmtuning,
-  author       = {{Microsoft Corporation}},
-  title        = {Parameters Tuning},
-  organization = {LightGBM Documentation},
-  url          = {https://lightgbm.readthedocs.io/en/stable/Parameters-Tuning.html},
-  urldate      = {2026-10-12}
-}
-
-@online{lightgbmfeatures,
-  author       = {{Microsoft Corporation}},
-  title        = {Features},
-  organization = {LightGBM Documentation},
-  url          = {https://lightgbm.readthedocs.io/en/v<versi>/Features.html},
-  urldate      = {2026-10-12}
-}
-
-% ---------------------------------------------------------------------------
-% LightGBM dan model pohon untuk volatilitas (ditambahkan untuk Bab I v3)
-% ---------------------------------------------------------------------------
-
-% CEK: brief menyebut preprint arXiv, tetapi Crossref menunjukkan versi terbit
-% di Expert Systems with Applications 301:130404 (2026) dengan penulis sama,
-% doi 10.1016/j.eswa.2025.130404. Pertimbangkan beralih ke versi terbit dan
-% menyesuaikan catatan "preprint" pada P7 Bab I.
-@misc{dudek2025lgbm,
-  author     = {Dudek, Grzegorz and Kasprzyk, Mateusz and Pe{\l}ka, Pawe{\l}},
-  title      = {Multivariate Forecasting of Bitcoin Volatility with Gradient Boosting: Deterministic, Probabilistic, and Feature Importance Perspectives},
-  year       = {2025},
-  eprint     = {2511.20105},
-  eprinttype = {arXiv},
-  note       = {Preprint}
-}
-
-% CEK: Crossref mencatat tahun terbit 2024 (kemungkinan online first);
-% volume 33(1) dan halaman 379--411 cocok dengan kartu.
 @article{brauneis2026,
   author  = {Brauneis, Alexander and Sahiner, Mehmet},
   title   = {Crypto Volatility Forecasting: Mounting a HAR, Sentiment, and Machine Learning Horserace},
@@ -673,8 +1063,6 @@
   doi     = {10.1007/s10690-024-09510-6}
 }
 
-% CEK: ada revisi 2025-061r1 (2026) berjudul berbeda, doi
-% 10.17016/feds.2025.061r1. Entri ini memakai versi asli sesuai kartu.
 @techreport{kilic2025,
   author      = {K{\i}l{\i}{\c c}, Rehim},
   title       = {Linear and nonlinear econometric models against machine learning models: realized volatility prediction},
@@ -685,8 +1073,6 @@
   doi         = {10.17016/feds.2025.061}
 }
 
-% CEK: Crossref hanya mencatat dua penulis (Pyrlik, Leonova); nama Elizarov
-% dari kartu dipertahankan karena lebih lengkap. Pastikan dari PDF.
 @techreport{pyrlik2021,
   author      = {Pyrlik, Vladimir and Elizarov, Pavel and Leonova, Aleksandra},
   title       = {Forecasting Realized Volatility Using Machine Learning and Mixed-Frequency Data (the Case of the Russian Stock Market)},
@@ -697,20 +1083,6 @@
   doi         = {10.2139/ssrn.3996169}
 }
 
-@article{makridakis2022,
-  author  = {Makridakis, Spyros and Spiliotis, Evangelos and Assimakopoulos, Vassilios},
-  title   = {M5 accuracy competition: Results, findings, and conclusions},
-  journal = {International Journal of Forecasting},
-  volume  = {38},
-  number  = {4},
-  pages   = {1346--1364},
-  year    = {2022},
-  doi     = {10.1016/j.ijforecast.2021.11.013}
-}
-
-% CEK: DOI belum diverifikasi lewat Crossref (akses Crossref gagal saat
-% entri dibuat 17 Okt 2026). Metadata jurnal dari kartu F3; judul dari
-% versi pra-terbit yang dibaca.
 @article{pesaran2007,
   author  = {Pesaran, M. Hashem and Timmermann, Allan},
   title   = {Selection of estimation window in the presence of breaks},

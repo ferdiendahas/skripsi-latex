@@ -1119,8 +1119,8 @@ def susun_seperti_pdf(docx: Path, sampul: Path | None) -> None:
     # (\\f g untuk gambar, \\f t untuk tabel). Sakelar \\t berbasis nama gaya
     # gagal di sebagian Word (nama gaya dan pemisah daftar bergantung pada
     # pengaturan regional), sehingga daftar menjadi kosong saat diperbarui.
-    for judul, gaya, kode in (("DAFTAR GAMBAR", "ImageCaption", "g"),
-                              ("DAFTAR TABEL", "TableCaption", "t")):
+    for judul, gaya, kode in (("DAFTAR TABEL", "TableCaption", "t"),
+                              ("DAFTAR GAMBAR", "ImageCaption", "g")):
         if f'w:val="{gaya}"' not in mentah:
             continue
         entri = baca_daftar("lof" if gaya == "ImageCaption" else "lot")
