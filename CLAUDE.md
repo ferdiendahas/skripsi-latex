@@ -1,43 +1,65 @@
-# Praskripsi Ferdi — LightGBM vs HAR-RV, Realized Variance Bitcoin
+# Praskripsi Ferdi — Prediksi Harga BTC/IDR dengan Model Boosting (v3.0)
 
 Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `upnjatim-skripsi.cls`. Penulis: Ferdi Endahas Ahmad. Komunikasi dengan Ferdi: bahasa Indonesia santai (gw/lu), langsung, ringkas.
 
+> **Topik lama (v2.x: LightGBM vs HAR-RV, realized variance, Binance BTC/USDT) sudah tidak dipakai.** Isinya hanya ada di `context/arsip/` dan `chapters/arsip-v2.9/`. Jangan dijadikan acuan.
+
 ## Status
-- **Praskripsi.** Bab I–III saja. Eksperimen sebenarnya sudah selesai, tetapi **hasil out-of-sample tidak boleh muncul di Bab I–III** (QLIKE rata-rata, ΔL, UDmax, p-value hipotesis, kurva window). Yang boleh: desain, deskripsi data, hasil di window awal (VIF, hyperparameter terkunci), dan perhitungan manual Subbab 3.3.
-- Uji konfirmatori sudah dijalankan, jadi **RQ, hipotesis, judul, dan uji konfirmatori tidak boleh diubah** mengikuti hasil (anti-HARKing).
+- **Praskripsi.** Bab I–III saja.
+- Eksperimen 14–20 Okt 2026 (satu minggu) hanya **uji coba awal**. Eksperimen final dijalankan Februari 2027 dengan data Oktober 2026 – Februari 2027.
+- **Hasil eksperimen tidak boleh muncul di Bab I–III**, termasuk angka MAE, persentase vs Naive, model/metode/*time frame* terbaik. Yang boleh: desain, deskripsi data, alasan pemilihan metode, literatur, dan angka dari paper orang lain yang tercatat di kartu.
 
-## Sumber konteks (`context/`)
-- `hasil_riset_bitcoin_v2.9.md` — rujukan desain utama (RQ, hipotesis, desain, Lampiran A revisi teks).
-- `kartu_paper.md` — **satu-satunya sumber klaim isi paper.** Klaim yang tidak ada di kartu dianggap belum terverifikasi; tulis `% CEK:`.
-- `perhitungan_manual.md` — angka Subbab 3.3.
+## Sumber konteks (`context/`) — selalu pakai nomor versi tertinggi
+- `kartu_paper_v3*.md` — **satu-satunya sumber klaim isi paper.** Ikuti baris "Boleh dikutip untuk" dan "Jangan". Tidak semua kartu wajib dipakai.
+- `hasil_riset_v3*.md` — posisi riset, penelitian terdahulu, research gap, desain ringkas.
+- `konteks_collector_data_v3*.md` — sistem pengumpulan data (API, cron, SQLite, candle/ticker).
+- `hasil_eksperimen_v3*.md` — desain terkunci, hasil uji coba awal (bukan hasil skripsi), dan source code `prediksi_btc`.
+- `konteks_skripsi_v3*.md` — arah penelitian dan aturan penulisan.
 - `briefs/` — instruksi kerja per tugas.
-- `arsip/` — dokumen lama (v2.5–v2.8, `hasil_eksperimen_bitcoin_v2_5.md`, `KOREKSI.md`).
+- `arsip/` — dokumen v2.x. **Jangan dipakai.**
 
-**Urutan otoritas:** brief terbaru > `kartu_paper.md` (isi paper) > `hasil_riset_bitcoin_v2.9.md` > source code di `arsip/hasil_eksperimen_bitcoin_v2_5.md` > dokumen lama.
+**Urutan otoritas:** brief terbaru > `kartu_paper_v3*` (isi paper) > `hasil_riset_v3*` > `konteks_collector_data_v3*` dan source code di `hasil_eksperimen_v3*` > `konteks_skripsi_v3*` > arsip.
 
 ## Aturan menulis
 - **Jangan mengarang** angka, metadata referensi, klaim isi paper, atau parameter. Bila tidak bisa dipastikan, tulis komentar `% CEK: <alasan>` dan biarkan.
 - Pertahankan semua `% CEK:` yang sudah ada kecuali brief menyuruh menghapus.
-- Klaim isi paper hanya boleh ditulis bila tercatat di `kartu_paper.md` (lihat baris "Boleh dikutip untuk" / "Jangan").
-- Notasi pasar: **BTC/USDT** = spot (yang dipakai). BTCUSDT tanpa garis miring = perpetual; hanya untuk nama berkas arsip Binance.
-- Istilah asing `\textit{}` pada kemunculan pertama per bab; nama model (LightGBM, HAR-RV) tidak miring.
-- Notasi wajib konsisten dengan `frontmatter/daftar-notasi.tex`. Simbol baru ditambahkan ke sana. Simbol yang sudah terpakai tidak boleh diberi makna kedua (mis. $m$ = jumlah titik patah; $D^{\text{KS}}$ vs $D_t$; $P^H_t, P^L_t$ untuk harga, $L$ untuk loss).
-- Sitasi IEEE via biblatex: `\cite{key}`. Rujuk persamaan/tabel/gambar dengan `\ref`/`\eqref`, jangan menyalin ulang.
-- Gambar data hanya dari keluaran pipeline `skripsi_rv`; diagram konsep dengan TikZ; jangan menempel gambar dari paper (gambar ulang + "diadaptasi dari").
+- Bahasa sederhana khas mahasiswa S1. Satu kalimat berisi satu gagasan. Tidak melebih-lebihkan klaim ("menunjukkan" atau "menemukan", bukan "membuktikan").
+- Definisi memakai "merupakan". Tidak memakai titik dua di tengah kalimat.
+- Sitasi IEEE via biblatex (`\cite{key}`), **tanpa nama penulis** di narasi. Hindari mengulang sitasi yang sama.
+- Istilah asing `\textit{}` pada kemunculan pertama per bab, termasuk *trader*, *scalper*, *time frame*, *candle*, *hyperparameter*. Nama model dan metode (XGBoost, LightGBM, Grid Search, TPE) ditulis tegak.
+- Singkatan ditulis kepanjangannya saat pertama kali muncul di setiap bab.
+- "Naive" (kapital) = pembanding di penelitian ini. "model naive" = model naive di penelitian orang lain.
+- Notasi pasar: **BTC/IDR** = spot Indodax (yang dipakai). Pasar spot selalu ditulis dengan garis miring.
+- *Time frame* = jarak waktu prediksi (berapa menit ke depan harga diprediksi), bukan resolusi *candle*.
+- Notasi: $P_t$ harga, $h$ *time frame*/horizon (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
+- Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
+- Diagram konsep memakai TikZ di `assets/tikz-v3/`. Gambar data hanya dari keluaran pipeline `prediksi_btc`. Jangan menempel gambar dari paper; gambar ulang dan tulis "diadaptasi dari".
 
 ## `references.bib`
-- Metadata diambil dari `https://api.crossref.org/works/<DOI>`. Jangan menimpa field yang sudah lebih lengkap (rentang halaman, nama depan, "The" di nama jurnal, tipe `@incollection`/`@inproceedings`). Entitas HTML (`&amp;`) dan karakter di luar Times New Roman (mis. U+2010) dinormalkan.
+- Metadata diambil dari `https://api.crossref.org/works/<DOI>` atau doi.org. Jangan menimpa field yang sudah lebih lengkap (rentang halaman, nama depan, "The" di nama jurnal, tipe `@incollection`/`@inproceedings`). Entitas HTML (`&amp;`) dan karakter di luar Times New Roman (mis. U+2010) dinormalkan.
+- Nomor artikel memakai `eid`, bukan `pages`.
+- Entri di bawah komentar `ARSIP v2.9` hanya dipertahankan sampai Bab I–III v3.0 selesai.
 - Judul yang berbeda substansi dari dokumen riset → laporkan ke Ferdi dan tandai kalimat pengutipnya dengan `% CEK:`; jangan menulis ulang kalimat sendiri.
 
 ## Build
 - `make` → `build/praskripsi.pdf` (XeLaTeX + Biber via latexmk). `make check` → validasi format pedoman.
+- Opsi `ketat` butuh font Times New Roman/Arial. Di mesin tanpa font itu, compile salinan dengan opsi `ketat` dihapus; jangan ubah `praskripsi.tex` asli.
 - Setiap tugas selesai: jalankan `make check` dan laporkan jumlah halaman, overfull box, rujukan menggantung, missing character.
 - Jangan commit/push kecuali Ferdi minta.
 
 ## Fakta kunci (ringkas)
-- Judul sementara: Analisis Stabilitas Kinerja Relatif LightGBM terhadap HAR-RV dalam Peramalan *Realized Variance* Bitcoin (final menunggu pembimbing).
-- Data: BTC/USDT spot Binance, 5 menit, 17 Agu 2017 – 30 Sep 2026. OOS mulai 1 Sep 2018. Batas era transition|institutional: 1 Jan 2021 (Do, 2026).
-- Desain 2×2: HAR, HAR-X, LGBM-HAR, LGBM-X (+ naive). HAR-X tanpa log Amihud (VIF).
-- Skema: S0 static, S1 expanding, S2 rolling (W 365/730; eksploratori 180/1095/tertunda). Retrain bulanan.
-- Loss utama QLIKE, pelengkap MSE. ΔL = L(ML) − L(HAR). Pasangan konfirmatori LGBM-X vs HAR, skema S2-365.
-- Uji konfirmatori per hipotesis: H1 UDmax (lalu DM); H2a uji-F HAC regresi ΔL bulanan; H2b dua uji-t HAC + Holm; H3 uji-t HAC dua sisi pada $D_t = \Delta L_t(\text{S2-365}) - \Delta L_t(\text{S1})$ di era institutional.
+- Judul final belum ditetapkan. Dosen pembimbing: Dr. Rizky Parlika, S.Kom, M.Kom.
+- **Rumusan masalah:**
+  1. Bagaimana membangun model XGBoost, LightGBM, CatBoost, dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai *time frame*?
+  2. Bagaimana pengaruh optimasi *hyperparameter* terhadap akurasi keempat model tersebut?
+  3. Model mana yang memiliki performa terbaik berdasarkan nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive?
+- **Data:** API publik Indodax; *collector* Python dijalankan cron tiap 1 menit di VPS (UTC) dan disimpan di SQLite. *Candle* 1 menit dari `tradingview/history_v2` (`tf=1`). **Indodax tidak menyediakan candle 5 menit**, jadi *candle* 5 menit dibentuk dari agregasi *candle* 1 menit. Snapshot ticker ikut disimpan, tetapi tidak dipakai dalam eksperimen.
+- **Desain:**
+  - *time frame* 1, 5, 15, 30, 60 menit (utama 5 menit; 1 menit hanya untuk *candle* 1 menit);
+  - harga *typical* (high+low+close)/3; target *log return*, dikonversi ke rupiah;
+  - fitur dari harga dan volume *candle* saja;
+  - model XGBoost, LightGBM, CatBoost, AdaBoost (AdaBoost.R2) + Naive;
+  - optimasi: default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 *trial*); teknik tambahan *early stopping*, top-15 fitur, *loss* L1, *pruner* median;
+  - validasi *walk-forward* 5 fold dengan jeda = *time frame*; *split* 80:20, 70:30, 60:40 berurutan waktu + *purging*;
+  - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda.
+- **Menunggu keputusan dosen:** tanggal pasti periode data, ada/tidaknya aplikasi web, dan aturan menentukan "model terbaik" (dikunci sebelum eksperimen final).

@@ -23,15 +23,18 @@ sering terjadi daripada yang biasanya diperkirakan.
 % P2 -- [kartu C1, C6]
 Pelaku pasar tidak bertransaksi pada rentang waktu yang sama. Ada
 \textit{dealer} yang bertransaksi dalam hitungan menit sampai jam, dan ada
-trader jangka menengah yang memegang posisi selama beberapa hari
-\cite{muller1997}. Pola serupa terlihat pada Bitcoin. Sebagian pengguna
-bertransaksi setiap hari, sedangkan sebagian lain memegang posisi sampai
-beberapa hari \cite{liu2023}. Penelitian ini mengasumsikan \textit{time frame}
-menit sesuai dengan kebutuhan scalper, sedangkan \textit{time frame} yang
-lebih panjang sesuai dengan kebutuhan swing trader.
-% CEK: butuh sumber definisi scalper/swing trader
-Karena itu, penelitian ini memakai \textit{time frame} utama 5 menit, lalu
-memvariasikannya untuk mencari hasil prediksi yang paling optimal.
+\textit{trader} jangka menengah yang memegang posisi selama beberapa hari
+\cite{muller1997}. Pola serupa terlihat pada data transaksi
+\textit{blockchain} Bitcoin. Sebagian pengguna bertransaksi setiap hari,
+sedangkan sebagian lain memegang posisi sampai beberapa hari \cite{liu2023}.
+Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
+\textit{scalper}. % CEK: butuh sumber definisi scalper
+% CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+% tambahkan hanya bila dosen meminta.
+Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
+berapa menit ke depan harga diprediksi. \textit{Time frame} utama yang dipakai
+adalah 5 menit, lalu divariasikan dari 1 sampai 60 menit untuk mencari hasil
+prediksi yang paling optimal.
 
 % P3 -- [kartu D4, B2, B5]
 Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
@@ -39,23 +42,23 @@ terjadi dengan memakai data yang sudah tersedia.
 % CEK: butuh sumber definisi forecasting (T1)
 Menduga harga jangka pendek bukan pekerjaan mudah. Menurut teori pasar efisien
 bentuk lemah, harga tidak dapat diprediksi dari riwayat harganya sendiri, dan
-pasar Bitcoin ditemukan mendekati kondisi tersebut \cite{yi2023}. Bukti
-empirisnya terlihat pada data per menit. Pada horizon 1 sampai 60 menit,
-akurasi menebak arah harga dengan \textit{gradient boosting} hanya sekitar
-51 sampai 56 persen \cite{jaquart2021}. Pada data harian, model naive bahkan
-lebih akurat daripada model \textit{machine learning}. Untuk Bitcoin, MAPE
+pasar Bitcoin ditemukan mendekati kondisi tersebut \cite{yi2023}. Pada data per menit, peluang prediksi juga kecil. Pada \textit{time frame} 1
+sampai 60 menit, akurasi menebak arah harga dengan \textit{gradient boosting}
+hanya sekitar 51 sampai 56 persen, sedikit di atas tebakan acak 50 persen
+\cite{jaquart2021}. Pada data harian, model naive bahkan
+lebih akurat daripada model \textit{machine learning}. Untuk Bitcoin, nilai \textit{Mean Absolute Percentage Error} (MAPE)
 model naive 1,296, sedangkan XGBoost 1,902 \cite{puoti2024}. Karena itu,
 prediksi model perlu dibandingkan dengan Naive, yaitu tebakan bahwa harga
 tidak berubah.
 
 % P4 -- [kartu B1, A1, F1]
-Salah satu kelompok model yang banyak dipakai untuk prediksi harga kripto
+Salah satu kelompok model yang dipakai untuk prediksi harga kripto
 adalah model boosting. Model boosting seperti LightGBM dan AdaBoost memberi
 hasil yang baik untuk \textit{return} Bitcoin harian \cite{bouteska2024}.
 Penelitian ini memakai empat model boosting, yaitu XGBoost, LightGBM,
-CatBoost, dan AdaBoost. Akurasi model boosting sangat bergantung pada
+CatBoost, dan AdaBoost. Akurasi model boosting bergantung pada
 pengaturan \textit{hyperparameter}, yaitu pengaturan model yang ditetapkan
-sebelum pelatihan. Meskipun begitu, pengaturan tersebut sering kurang
+sebelum pelatihan. Namun, pada sebagian penelitian, pengaturan tersebut kurang
 diperhatikan. Ada penelitian kripto yang memakai setelan bawaan tanpa
 \textit{tuning} \cite{rodrigues2025}, dan ada yang hanya memakai Grid Search
 \cite{bouteska2024,jaquart2021}. Padahal, Random Search ditemukan lebih
@@ -69,21 +72,24 @@ kebanyakan memprediksi arah pergerakan harga, bukan nilai harganya
 \cite{akyildirim2023,jaquart2021}. Hasil seperti itu belum menjawab berapa
 harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
 harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
-Model boosting pada penelitian tersebut tidak dituning, tidak memakai
-pembanding naive, tidak memakai uji Diebold-Mariano, dan hanya memakai satu
-pembagian data. Sejauh literatur yang diperiksa, belum ditemukan penelitian
+Penelitian tersebut tidak menuning model boosting, tidak memakai pembanding
+naive, tidak memakai uji Diebold-Mariano, dan hanya memakai satu pembagian
+data. Sejauh literatur yang diperiksa, belum ditemukan penelitian
 yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
 keempat model boosting yang semuanya dioptimasi.
 
 % P6 -- sumber data dari context/konteks_collector_data_v3.0.md (Bagian 3, 6)
-Penelitian ini memakai data harga BTC/IDR dari API publik Indodax dalam bentuk
+Penelitian ini memakai data harga BTC/IDR dari \textit{Application Programming Interface} (API) publik Indodax dalam bentuk
 \textit{candle} 1 menit. \textit{Candle} 5 menit dibentuk dari \textit{candle}
 1 menit, karena Indodax tidak menyediakan \textit{candle} 5 menit. Keempat
 model boosting dibangun pada beberapa \textit{time frame}, yaitu 1, 5, 15, 30,
 dan 60 menit. Model tersebut kemudian dioptimasi dengan beberapa metode, yaitu
-Grid Search, Random Search, TPE, CMA-ES, Genetic Algorithm, dan Quasi-Monte
-Carlo. Performa model diukur dengan MAE, RMSE, dan MAPE, lalu dibandingkan
-dengan Naive. Data dibagi dengan tiga rasio, yaitu 80:20, 70:30, dan 60:40.
+Grid Search, Random Search, \textit{Tree-structured Parzen Estimator} (TPE),
+\textit{Covariance Matrix Adaptation Evolution Strategy} (CMA-ES), Genetic
+Algorithm, dan Quasi-Monte Carlo. Performa model diukur dengan \textit{Mean Absolute Error} (MAE),
+\textit{Root Mean Square Error} (RMSE), dan MAPE, lalu dibandingkan dengan
+Naive. Perbedaan akurasi antara model dan Naive diuji dengan uji
+Diebold-Mariano. Data dibagi dengan tiga rasio, yaitu 80:20, 70:30, dan 60:40.
 Dari rancangan tersebut disusun rumusan masalah penelitian ini.
 
 \section{Rumusan Masalah}
@@ -119,7 +125,7 @@ Manfaat penelitian ini adalah sebagai berikut.
         perbandingan model boosting dan metode optimasi
         \textit{hyperparameter} untuk prediksi harga kripto pada data per
         menit, dengan Naive sebagai pembanding.
-  \item \textbf{Bagi trader.} Penelitian ini memberi gambaran seberapa akurat
+  \item \textbf{Bagi \textit{trader}.} Penelitian ini memberi gambaran seberapa akurat
         prediksi harga BTC/IDR jangka pendek dengan model boosting.
   \item \textbf{Bagi peneliti selanjutnya.} Penelitian ini menyediakan
         rancangan eksperimen yang dapat diulang, yaitu pembagian data
@@ -142,10 +148,11 @@ Batasan masalah penelitian ini adalah sebagai berikut.
         Random Search, TPE, CMA-ES, Genetic Algorithm (NSGA-II), dan
         Quasi-Monte Carlo.
   \item \textit{Time frame} prediksi terbatas pada 1, 5, 15, 30, dan 60 menit.
+      \textit{Time frame} 1 menit hanya dipakai pada \textit{candle} 1 menit.
   \item Fitur hanya berasal dari data harga dan volume \textit{candle}.
         Penelitian ini tidak memakai data sentimen, berita, \textit{on-chain},
         maupun \textit{order book}.
-  \item Penelitian ini tidak menguji strategi trading, biaya transaksi, atau
+  \item Penelitian ini tidak menguji strategi \textit{trading}, biaya transaksi, atau
         keuntungan.
   % CEK: apakah ada output aplikasi/dashboard? Menunggu keputusan dosen
 \end{enumerate}
