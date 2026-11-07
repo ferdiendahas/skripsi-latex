@@ -46,7 +46,7 @@
   journal = {Information},
   volume  = {16},
   number  = {4},
-  pages   = {300},
+  eid   = {300},
   year    = {2025},
   doi     = {10.3390/info16040300}
 }
@@ -70,7 +70,7 @@
   title   = {Cryptocurrency price forecasting -- A comparative analysis of ensemble learning and deep learning methods},
   journal = {International Review of Financial Analysis},
   volume  = {92},
-  pages   = {103055},
+  eid     = {103055},
   year    = {2024},
   doi     = {10.1016/j.irfa.2023.103055}
 }
@@ -143,7 +143,7 @@
   journal = {Journal of Risk and Financial Management},
   volume  = {18},
   number  = {2},
-  pages   = {52},
+  eid     = {52},
   year    = {2025},
   doi     = {10.3390/jrfm18020052}
 }
@@ -173,9 +173,10 @@
   doi     = {10.1016/S0927-5398(97)00007-8}
 }
 
-% CEK: Crossref hanya mencatat inisial untuk Jost dan Ward; nama depan
-% Dacorogna dan Müller diambil dari rekaman Crossref muller1997. Lengkapi
-% nama depan Jost dan Ward dari PDF bila perlu.
+% Crossref hanya mencatat inisial untuk Jost dan Ward; nama depan Dacorogna
+% dan Müller diambil dari rekaman Crossref muller1997. Tidak berdampak pada
+% keluaran: gaya biblatex-ieee menyetel `giveninits`, jadi nama depan selalu
+% dicetak sebagai inisial.
 @article{dacorogna1995,
   author  = {Dacorogna, Michel M. and M{\"u}ller, Ulrich A. and Jost, C. and Pictet, Olivier V. and Ward, J. R.},
   title   = {Heterogeneous real-time trading strategies in the foreign exchange market},
@@ -216,14 +217,13 @@
   title   = {Cryptocurrency market efficiency in short- and long-term horizons during {COVID-19}: An asymmetric multifractal analysis approach},
   journal = {Finance Research Letters},
   volume  = {46},
-  pages   = {102319},
+  eid     = {102319},
   year    = {2022},
   doi     = {10.1016/j.frl.2021.102319}
 }
 
-% CEK: tahun 2023 = terbit daring (2 Agu 2023) sesuai kartu C6 dan key
-% `liu2023`. Crossref mencatat nomor cetak baru keluar 2 Sep 2026 pada vol
-% 32(13), hlm. 1668--1685. Putuskan dengan Ferdi apakah tahun diganti 2026.
+% Tahun = nomor cetak (2 Sep 2026, vol. 32(13), hlm. 1668--1685); terbit
+% daring 2 Agu 2023. Key tetap `liu2023`. Dicek ulang ke Crossref 4 Nov 2026.
 @article{liu2023,
   author  = {Liu, Anqi and Jahanshahloo, Hossein and Chen, Jing and Eshraghi, Arman},
   title   = {Trading patterns in the bitcoin market},
@@ -231,7 +231,7 @@
   volume  = {32},
   number  = {13},
   pages   = {1668--1685},
-  year    = {2023},
+  year    = {2026},
   doi     = {10.1080/1351847X.2023.2241883}
 }
 
@@ -253,7 +253,7 @@
   journal = {Borsa Istanbul Review},
   volume  = {26},
   number  = {5},
-  pages   = {100869},
+  eid     = {100869},
   year    = {2026},
   doi     = {10.1016/j.bir.2026.100869}
 }
@@ -266,7 +266,7 @@
   journal = {Financial Innovation},
   volume  = {10},
   number  = {1},
-  pages   = {39},
+  eid     = {39},
   year    = {2024},
   doi     = {10.1186/s40854-023-00566-3}
 }
@@ -278,7 +278,7 @@
   journal = {Scientific Reports},
   volume  = {13},
   number  = {1},
-  pages   = {4789},
+  eid     = {4789},
   year    = {2023},
   doi     = {10.1038/s41598-023-31618-4}
 }
@@ -391,9 +391,13 @@
   year         = {2026}
 }
 
-% CEK: isi halaman v4.7.0 belum dibandingkan dengan tangkapan 3 Nov 2026 yang
-% diambil dari kanal "latest" (build pengembangan 4.7.0.99). URL berversi
-% v4.7.0 dipilih karena lightgbm 4.7 yang terpasang; URL dicek 4 Nov 2026.
+% Versi v4.7.0 sesuai `lightgbm==4.7.0` yang terpasang di venv eksperimen.
+% Isi halaman v4.7.0 dibuka dan dicocokkan dengan cetak "latest" (4.7.0.99)
+% tanggal 3 Nov 2026 pada 4 Nov 2026: semua klaim kartu E6 sama persis
+% ("choose the leaf with max delta loss"; "Holding #leaf fixed, leaf-wise
+% algorithms tend to achieve lower loss than level-wise algorithms";
+% "Leaf-wise may cause over-fitting when #data is small, so LightGBM includes
+% the max_depth parameter").
 @online{lightgbmfeatures,
   author       = {{Microsoft Corporation}},
   title        = {Features},
@@ -403,7 +407,11 @@
   year         = {2026}
 }
 
-% CEK: lihat catatan pada lightgbmfeatures.
+% Lihat catatan pada lightgbmfeatures. Klaim kartu E6 untuk halaman ini juga
+% cocok di v4.7.0: "the leaf-wise algorithm can converge much faster";
+% `num_leaves`, `min_data_in_leaf`, `max_depth`; "we should let it be smaller
+% than 2^(max_depth)"; contoh "when the max_depth=7 ... setting num_leaves to
+% 127 may cause over-fitting".
 @online{lightgbmtuning,
   author       = {{Microsoft Corporation}},
   title        = {Parameters Tuning},
@@ -464,9 +472,10 @@
   doi     = {10.1162/106365601750190398}
 }
 
-% CEK: Crossref hanya mencatat inisial nama depan (K. Deb, A. Pratap,
-% S. Agarwal, T. Meyarivan); kartu F5 juga hanya menulis nama belakang.
-% Lengkapi nama depan dari PDF bila perlu.
+% Crossref hanya mencatat inisial nama depan (K. Deb, A. Pratap, S. Agarwal,
+% T. Meyarivan) dan kartu F5 hanya menulis nama belakang. Tidak berdampak pada
+% keluaran: gaya biblatex-ieee menyetel `giveninits`, jadi nama depan selalu
+% dicetak sebagai inisial.
 @article{deb2002,
   author  = {Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
   title   = {A fast and elitist multiobjective genetic algorithm: {NSGA-II}},
@@ -490,34 +499,41 @@
   year    = {2018}
 }
 
-% Versi 5.0.0 sesuai optuna 5.0 yang terpasang di lingkungan eksperimen.
-% URL berversi dicek 4 Nov 2026; isi dibaca 30 Okt 2026 (kartu F7).
-% CEK: tabel kemampuan sampler pada kartu F7 diambil dari indeks versi
-% 5.1.0.dev, bukan dari URL ini.
+% Versi 5.0.0 sesuai `optuna==5.0.0` yang terpasang di venv eksperimen.
+% Judul = judul halaman sebenarnya (<h1> "optuna.samplers").
+% Halaman v5.0.0 yang dibuka dan dicocokkan dengan kartu F7 pada 4 Nov 2026:
+%   reference/samplers/index.html (tabel kemampuan sampler)
+%   reference/samplers/generated/optuna.samplers.{TPESampler, CmaEsSampler,
+%     NSGAIISampler, QMCSampler, GridSampler, RandomSampler}.html
+%   reference/generated/optuna.pruners.{MedianPruner, HyperbandPruner}.html
+% Semua klaim kartu F7 cocok di v5.0.0, termasuk tabel kemampuan sampler
+% (legenda: "\(\blacktriangle\) : Works, but inefficiently.") yang ternyata
+% SUDAH ada di v5.0.0, bukan hanya di 5.1.0.dev.
+% CEK: entri ini hanya memuat URL indeks sampler. Klaim MedianPruner dan
+% HyperbandPruner berasal dari halaman pruner (lihat daftar di atas); bila
+% Bab III mengutipnya, pertimbangkan key terpisah -- KEPUTUSAN FERDI.
 @online{optunadocs,
   author       = {{Optuna Developers}},
-  title        = {{Optuna}: A hyperparameter optimization framework --- Samplers and Pruners},
+  title        = {{optuna.samplers}},
   organization = {{Optuna} 5.0.0 documentation},
   url          = {https://optuna.readthedocs.io/en/v5.0.0/reference/samplers/index.html},
-  urldate      = {2026-10-30},
+  urldate      = {2026-11-04},
   year         = {2026}
 }
 
-% Terbitan asli bahasa Rusia, seperti yang disitasi dokumentasi SciPy
-% (brief Bagian 2.2 F8). Tanpa DOI.
-% CEK: Crossref hanya memuat terjemahan bahasa Inggris, "USSR Computational
-% Mathematics and Mathematical Physics" 7(4), 86--112,
-% doi 10.1016/0041-5553(67)90144-9. Metadata terbitan asli berasal dari
-% catatan kaki hlm. 86 (kartu F8).
+% Versi terjemahan Inggris -- ini yang benar-benar dibaca (kartu F8, hlm.
+% 86--112). Terjemahan dari Zh. Vychisl. Mat. Mat. Fiz. 7(4), 784--802 (1967).
+% Judul, penulis, volume, nomor, dan halaman dicocokkan ke Crossref
+% doi 10.1016/0041-5553(67)90144-9 pada 4 Nov 2026.
 @article{sobol1967,
-  author  = {Sobol', Il'ya M.},
-  title   = {The distribution of points in a cube and the approximate evaluation of integrals},
-  journal = {Zhurnal Vychislitel'noi Matematiki i Matematicheskoi Fiziki},
+  author  = {Sobol', I. M.},
+  title   = {On the distribution of points in a cube and the approximate evaluation of integrals},
+  journal = {USSR Computational Mathematics and Mathematical Physics},
   volume  = {7},
   number  = {4},
-  pages   = {784--802},
+  pages   = {86--112},
   year    = {1967},
-  langid  = {russian}
+  doi     = {10.1016/0041-5553(67)90144-9}
 }
 
 @article{roy2023qmc,
@@ -526,15 +542,20 @@
   journal = {Journal of Open Source Software},
   volume  = {8},
   number  = {84},
-  pages   = {5309},
+  eid     = {5309},
   year    = {2023},
   doi     = {10.21105/joss.05309}
 }
 
-% CEK: versi scipy yang terpasang tidak tercatat di
-% `context/hasil_eksperimen_v3.0.md` (requirements hanya menulis scipy>=1.10).
-% Entri ini memakai v1.18.0 sesuai kartu F10; cek `pip show scipy` dan
-% sesuaikan URL bila berbeda. URL berversi dicek 4 Nov 2026.
+% CEK: versi terpasang di venv eksperimen adalah scipy 1.18.1, tetapi
+% docs.scipy.org TIDAK menerbitkan build dokumentasi untuk 1.18.1 (URL
+% scipy-1.18.1/... mengembalikan 404; versi terbitan terakhir = 1.18.0).
+% Entri tetap memakai v1.18.0 -- rilis dokumentasi terdekat dan versi yang
+% dibaca di kartu F10. Isi halaman v1.18.0 dicocokkan 4 Nov 2026: semua klaim
+% kartu F10 sama ("Engine for generating (scrambled) Sobol' sequences";
+% `scramble=True` bawaan dengan "LMS+shift scrambling"; "Max dimensionality is
+% 21201"; rujukan Joe & Kuo (2008); peringatan "lose their balance properties
+% if one uses a sample size that is not a power of 2").
 @online{scipysobol,
   author       = {{SciPy Developers}},
   title        = {{scipy.stats.qmc.Sobol}},
@@ -573,6 +594,7 @@
 
 % CEK: tanpa DOI. DOI 10.2307/4615733 yang disebut OpenAlex tidak dapat
 % diresolusi di doi.org maupun Crossref (dicek 4 Nov 2026), jadi tidak dipakai.
+% URL stabil JSTOR dicek 4 Nov 2026 (HTTP 200).
 @article{holm1979,
   author  = {Holm, Sture},
   title   = {A Simple Sequentially Rejective Multiple Test Procedure},
@@ -580,7 +602,9 @@
   volume  = {6},
   number  = {2},
   pages   = {65--70},
-  year    = {1979}
+  year    = {1979},
+  url     = {https://www.jstor.org/stable/4615733},
+  urldate = {2026-11-04}
 }
 
 @article{cerqueira2020,
@@ -633,16 +657,20 @@
 %   feng2024window, huang2024, qiu2025, trucios2023, wang2023, zhang2024
 %
 %   Belum dicek: amihud2002, andersen1998, bai1998, bai2003, barndorff2010,
-%   brauneis2021, corsi2009, gama2014, giacomini2009, giacomini2010, liu2015,
-%   martins2016, morenotorres2012, newey1987, patton2011, patton2015,
-%   rabanser2019, rossi2013, suarez2023, zliobaite2015
+%   brauneis2021, breiman2001, corsi2009, dickey1979, gama2014, giacomini2009,
+%   giacomini2010, kwiatkowski1992, liu2015, martins2016, morenotorres2012,
+%   newey1987, patton2011, patton2015, rabanser2019, rossi2013, suarez2023,
+%   zliobaite2015
 %
-%   Punya % CEK sendiri: abdi2017, brauneis2026, corwin2012, kilic2025,
-%   pesaran2007, pyrlik2021
+%   Punya % CEK sendiri (bisa tumpang-tindih dengan dua daftar di atas):
+%   abdi2017, andrews1991, barndorff2010, brauneis2026, corwin2012,
+%   dickey1979, kilic2025, kwiatkowski1992, pyrlik2021, rabanser2019 ---
+%   komentarnya ada tepat di atas entri masing-masing.
+%   (pesaran2007 keluar dari daftar ini: DOI-nya sudah dilengkapi 4 Nov 2026.)
 %
-% Kolom `author` ganda pada beberapa entri (agakishiev2025, cerqueira2020,
-% dudek2024, gama2014, morenotorres2012, oprea2026, trucios2023, zliobaite2015)
-% sudah dirapikan: hanya versi terakhir --- yang dipakai biber --- disimpan.
+% Kolom `author` ganda pada beberapa entri (agakishiev2025, dudek2024,
+% gama2014, morenotorres2012, suarez2023, trucios2023, zliobaite2015) sudah
+% dirapikan: hanya versi terakhir --- yang dipakai biber --- disimpan.
 
 @article{andersen1998,
   author  = {Andersen, Torben G. and Bollerslev, Tim},
@@ -677,6 +705,7 @@
   doi     = {10.1016/j.jeconom.2015.02.008}
 }
 
+% CEK: tanpa DOI, verifikasi manual
 @incollection{barndorff2010,
   author    = {Barndorff-Nielsen, Ole E. and Kinnebrock, Silja and Shephard, Neil},
   title     = {Measuring Downside Risk: Realised Semivariance},
@@ -741,6 +770,9 @@
   doi     = {10.2307/1913610}
 }
 
+% CEK: volume dan nomor andrews1991 cocok dengan Crossref. Rentang halaman
+% dipertahankan 817--858 karena Crossref hanya mencatat halaman awal (817);
+% pastikan rentang akhirnya dari sumber asli.
 @article{andrews1991,
   author  = {Andrews, Donald W. K.},
   title   = {Heteroskedasticity and Autocorrelation Consistent Covariance Matrix Estimation},
@@ -850,6 +882,7 @@
   doi     = {10.1016/j.patcog.2011.06.019}
 }
 
+% CEK: tanpa DOI, verifikasi manual
 @inproceedings{rabanser2019,
   author    = {Rabanser, Stephan and G{\"u}nnemann, Stephan and Lipton, Zachary C.},
   title     = {Failing Loudly: An Empirical Study of Methods for Detecting Dataset Shift},
@@ -997,6 +1030,8 @@
   doi     = {10.1002/for.3046}
 }
 
+% CEK: ditambahkan untuk Bab III; isi paper belum dibaca, klaim terbatas pada
+% definisi rumus/uji (berlaku juga untuk corwin2012, dickey1979, kwiatkowski1992).
 @article{abdi2017,
   author  = {Abdi, Farshid and Ranaldo, Angelo},
   title   = {A Simple Estimation of Bid-Ask Spreads from Daily Close, High, and Low Prices},
@@ -1052,6 +1087,8 @@
   doi     = {10.1023/A:1010933404324}
 }
 
+% CEK: Crossref mencatat tahun terbit 2024 (kemungkinan online first);
+% volume 33(1) dan halaman 379--411 cocok dengan kartu.
 @article{brauneis2026,
   author  = {Brauneis, Alexander and Sahiner, Mehmet},
   title   = {Crypto Volatility Forecasting: Mounting a HAR, Sentiment, and Machine Learning Horserace},
@@ -1063,6 +1100,8 @@
   doi     = {10.1007/s10690-024-09510-6}
 }
 
+% CEK: ada revisi 2025-061r1 (2026) berjudul berbeda, doi
+% 10.17016/feds.2025.061r1. Entri ini memakai versi asli sesuai kartu.
 @techreport{kilic2025,
   author      = {K{\i}l{\i}{\c c}, Rehim},
   title       = {Linear and nonlinear econometric models against machine learning models: realized volatility prediction},
@@ -1073,6 +1112,8 @@
   doi         = {10.17016/feds.2025.061}
 }
 
+% CEK: Crossref hanya mencatat dua penulis (Pyrlik, Leonova); nama Elizarov
+% dari kartu dipertahankan karena lebih lengkap. Pastikan dari PDF.
 @techreport{pyrlik2021,
   author      = {Pyrlik, Vladimir and Elizarov, Pavel and Leonova, Aleksandra},
   title       = {Forecasting Realized Volatility Using Machine Learning and Mixed-Frequency Data (the Case of the Russian Stock Market)},
@@ -1083,6 +1124,8 @@
   doi         = {10.2139/ssrn.3996169}
 }
 
+% DOI ditemukan dan dicocokkan ke Crossref 4 Nov 2026: judul, penulis
+% (Pesaran, Timmermann), volume 137(1), dan halaman 134--161 semuanya cocok.
 @article{pesaran2007,
   author  = {Pesaran, M. Hashem and Timmermann, Allan},
   title   = {Selection of estimation window in the presence of breaks},
@@ -1090,5 +1133,96 @@
   volume  = {137},
   number  = {1},
   pages   = {134--161},
-  year    = {2007}
+  year    = {2007},
+  doi     = {10.1016/j.jeconom.2006.03.010}
+}
+
+% Halaman indeks pruner v5.0.0, dicetak dan dibaca 4 Nov 2026.
+@online{optunapruners,
+  author       = {{Optuna Developers}},
+  title        = {{optuna.pruners}},
+  organization = {{Optuna} 5.0.0 documentation},
+  url          = {https://optuna.readthedocs.io/en/v5.0.0/reference/pruners.html},
+  urldate      = {2026-11-04},
+  year         = {2026}
+}
+
+@article{chai2014,
+  author  = {Chai, T. and Draxler, R. R.},
+  title   = {Root mean square error ({RMSE}) or mean absolute error ({MAE})? -- Arguments against avoiding {RMSE} in the literature},
+  journal = {Geoscientific Model Development},
+  volume  = {7},
+  number  = {3},
+  pages   = {1247--1250},
+  year    = {2014},
+  doi     = {10.5194/gmd-7-1247-2014}
+}
+
+@article{hodson2022,
+  author  = {Hodson, Timothy O.},
+  title   = {Root-mean-square error ({RMSE}) or mean absolute error ({MAE}): when to use them or not},
+  journal = {Geoscientific Model Development},
+  volume  = {15},
+  number  = {14},
+  pages   = {5481--5487},
+  year    = {2022},
+  doi     = {10.5194/gmd-15-5481-2022}
+}
+
+@article{gneiting2011,
+  author  = {Gneiting, Tilmann},
+  title   = {Making and Evaluating Point Forecasts},
+  journal = {Journal of the American Statistical Association},
+  volume  = {106},
+  number  = {494},
+  pages   = {746--762},
+  year    = {2011},
+  doi     = {10.1198/jasa.2011.r10138}
+}
+
+% DOI tidak tercetak di PDF; dari halaman Inter-Research.
+@article{willmott2005,
+  author  = {Willmott, Cort J. and Matsuura, Kenji},
+  title   = {Advantages of the mean absolute error ({MAE}) over the root mean square error ({RMSE}) in assessing average model performance},
+  journal = {Climate Research},
+  volume  = {30},
+  number  = {1},
+  pages   = {79--82},
+  year    = {2005},
+  doi     = {10.3354/cr030079}
+}
+
+% CEK: nomor terbitan 4 dari RePEc (PDF hanya mencetak volume 22).
+@article{hyndman2006,
+  author  = {Hyndman, Rob J. and Koehler, Anne B.},
+  title   = {Another look at measures of forecast accuracy},
+  journal = {International Journal of Forecasting},
+  volume  = {22},
+  number  = {4},
+  pages   = {679--688},
+  year    = {2006},
+  doi     = {10.1016/j.ijforecast.2006.03.001}
+}
+
+% CEK: nomor terbitan 3 dari RePEc (PDF hanya mencetak volume 32).
+@article{kim2016,
+  author  = {Kim, Sungil and Kim, Heeyoung},
+  title   = {A new metric of absolute percentage error for intermittent demand forecasts},
+  journal = {International Journal of Forecasting},
+  volume  = {32},
+  number  = {3},
+  pages   = {669--679},
+  year    = {2016},
+  doi     = {10.1016/j.ijforecast.2015.12.003}
+}
+
+@article{zhang2005,
+  author  = {Zhang, Tong and Yu, Bin},
+  title   = {Boosting with early stopping: Convergence and consistency},
+  journal = {The Annals of Statistics},
+  volume  = {33},
+  number  = {4},
+  pages   = {1538--1579},
+  year    = {2005},
+  doi     = {10.1214/009053605000000255}
 }

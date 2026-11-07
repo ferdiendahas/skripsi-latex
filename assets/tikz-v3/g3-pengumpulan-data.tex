@@ -1,0 +1,64 @@
+% G3-2 Pengumpulan data.
+% Sumber: diolah penulis; seluruh rincian dari
+% context/konteks_collector_data_v3.0.md (Bagian 1, 3, 4, 6).
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    sumber/.style={draw,rectangle,rounded corners=2pt,text width=42mm,
+      align=center,inner sep=2.5pt,minimum height=13mm},
+    proses/.style={draw,rectangle,text width=28mm,align=center,
+      inner sep=2.5pt,minimum height=13mm},
+    tabel/.style={draw,rectangle,text width=34mm,align=center,
+      inner sep=2.5pt,minimum height=15mm},
+    takpakai/.style={tabel,dashed},
+    berkas/.style={draw,trapezium,trapezium left angle=72,
+      trapezium right angle=108,trapezium stretches body,
+      text width=28mm,align=center,inner sep=2.5pt,minimum height=13mm},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+
+  % ===== kolom 1: API Indodax, dua endpoint =====
+  \node[anchor=south,font=\small,align=center] at (24,-10)
+    {\textbf{API publik Indodax}};
+  \node[sumber] (ep1) at (24,4)
+    {\textit{endpoint} ticker\\\texttt{/api/btc\_idr/ticker}};
+  \node[sumber] (ep2) at (24,32)
+    {\textit{endpoint} candle\\\texttt{/tradingview/}\\\texttt{history\_v2}, \texttt{tf=1}};
+
+  % ===== kolom 2: collector =====
+  \node[proses] (col) at (66,18)
+    {\textit{Collector} (Python)\\di VPS\\\textit{cron} tiap 1 menit, UTC};
+  \draw[panah] (ep1.east) -- (48,4)  -- (48,18) -- (col.west);
+  \draw[panah] (ep2.east) -- (48,32) -- (48,18) -- (col.west);
+
+  % ===== kolom 3: dua tabel SQLite =====
+  \node[anchor=south,font=\small,align=center] at (108,-10)
+    {\textbf{Basis data SQLite}};
+  \node[takpakai] (tb1) at (108,2)
+    {\texttt{ticker\_snapshots}\\\textit{last}, \textit{bid}, \textit{ask},
+     data 24 jam};
+  \node[anchor=north,align=center,text width=40mm,font=\footnotesize]
+    at (108,12.5) {disimpan, tidak dipakai\\dalam eksperimen};
+  \node[tabel] (tb2) at (108,36)
+    {\texttt{ohlc\_1m}\\\textit{open}, \textit{high}, \textit{low},
+     \textit{close}, volume};
+  \draw[panah,dashed] (col.east) -- (88,18) -- (88,2)  -- (tb1.west);
+  \draw[panah]        (col.east) -- (88,18) -- (88,36) -- (tb2.west);
+
+  % ===== baris bawah: dua dataset eksperimen =====
+  \node[berkas] (ds1) at (20,74) {\textbf{dataset}\\candle 1 menit};
+  \node[proses,text width=38mm] (agg) at (66,74)
+    {\textbf{agregasi 5 menit}\\\textit{open} pertama, \textit{high} maks,
+     \textit{low} min, \textit{close} terakhir, volume dijumlah};
+  \node[berkas] (ds2) at (112,74) {\textbf{dataset}\\candle 5 menit};
+
+  % dari ohlc_1m turun ke baris dataset (garis di y=54, di atas kotak agregasi)
+  \draw (108,44) -- (108,56) -- (20,56);
+  \draw[panah] (20,56) -- (ds1.north);
+  \draw[panah] (ds1.east) -- (agg.west);
+  \draw[panah] (agg.east) -- (ds2.west);
+
+  % ===== catatan =====
+  \node[draw,anchor=north west,align=left,text width=118mm,inner sep=3pt]
+    at (0,90)
+    {Data dikumpulkan sendiri dari API publik Indodax. Indodax tidak
+     menyediakan candle 5 menit, sehingga candle 5 menit dibentuk dari
+     candle 1 menit.};
+\end{tikzpicture}

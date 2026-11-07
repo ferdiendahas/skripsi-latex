@@ -1,0 +1,68 @@
+% G3-3 Fitur dan target.
+% Sumber: diolah penulis.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    bar/.style={draw,minimum width=7mm,minimum height=6mm,inner sep=0pt},
+    barlalu/.style={bar,fill=black!10},
+    bartarget/.style={bar,fill=black!25},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+
+  % --- kurung jendela fitur, di atas deret bar ---
+  \draw[decorate,decoration={brace,amplitude=2mm}] (4.5,-5) -- (75.5,-5);
+  \node[anchor=south,align=center] at (40,-9)
+    {\textbf{jendela masa lalu} $\rightarrow$ fitur};
+
+  % --- deret bar masa lalu sampai t ---
+  \foreach \i in {0,...,7}{
+    \pgfmathsetmacro{\x}{8 + \i*8}
+    \node[barlalu] at (\x,0) {};
+  }
+  \node[bar,fill=black!35] at (72,0) {};
+  \node[font=\footnotesize] at (0,0) {$\cdots$};
+
+  % --- jeda horizon lalu bar target ---
+  \draw[dashed] (76,0) -- (104,0);
+  \node[bartarget] at (108,0) {};
+
+  % --- label waktu, tepat di bawah bar ---
+  \node[font=\small] at (72,6) {$t$};
+  \node[font=\small] at (108,6) {$t+h$};
+
+  % --- panah target, di bawah label waktu ---
+  \draw[panah] (72,12) .. controls (84,22) and (96,22) .. (107,13);
+  \node[anchor=north,align=center] at (90,23)
+    {\textbf{target}\quad $r_{t,h} = \ln(P_{t+h}/P_t)$};
+
+  % --- daftar kelompok fitur (jenis candle; lihat btcpred/data.py) ---
+  \node[anchor=north west,align=left,text width=118mm] at (0,36)
+    {\textbf{Kelompok fitur}
+     \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\topsep}{1pt}
+       \item \textit{lag} return 1--12 bar (1 bar = 1 menit atau 5 menit,
+             sesuai dataset);
+       \item statistik bergulir 5, 15, 30, 60, dan 240 menit: jumlah return,
+             simpangan baku return, dan proporsi return nol;
+       \item candle: \textit{range} relatif, posisi harga \textit{close}
+             di dalam bar, volume (log), rata-rata \textit{range} bergulir,
+             dan rasio volume terhadap rata-ratanya;
+       \item jam dalam sehari, dikodekan sebagai sin dan cos.
+     \end{itemize}};
+  \node[anchor=north west,align=left,text width=118mm] at (0,84)
+    {Pada candle 5 menit, jendela 5 menit menjadi 10 menit karena jendela
+     minimum 2 bar.};
+
+  % --- legenda ---
+  \node[barlalu] at (6,101) {};
+  \node[anchor=west] at (11,101) {bar masa lalu, dipakai sebagai fitur};
+  \node[bar,fill=black!35] at (6,109) {};
+  \node[anchor=west] at (11,109)
+    {bar sekarang ($t$), ikut dipakai sebagai fitur};
+  \node[bartarget] at (6,117) {};
+  \node[anchor=west] at (11,117) {bar target};
+
+  % --- catatan ---
+  \node[draw,anchor=north west,align=left,text width=112mm,inner sep=3pt]
+    at (0,125)
+    {\textbf{Catatan.} Semua fitur hanya memakai data sampai waktu $t$.
+     Tidak ada fitur yang memakai bar sesudah $t$, sehingga tidak terjadi
+     kebocoran informasi masa depan.};
+
+\end{tikzpicture}

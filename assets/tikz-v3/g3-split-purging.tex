@@ -1,0 +1,52 @@
+% G3-4 Pembagian data berurutan waktu dan purging.
+% Sumber: diolah penulis; dasar pemakaian beberapa rasio split -> tashman2000.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    latih/.style={draw,minimum height=8mm,inner sep=0pt,anchor=west},
+    buang/.style={draw,pattern=north east lines,minimum height=8mm,
+      inner sep=0pt,anchor=west},
+    uji/.style={draw,fill=black!18,minimum height=8mm,inner sep=0pt,
+      anchor=west},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+
+  % --- arah waktu ---
+  \draw[panah] (14,-8) -- (124,-8);
+  \node[anchor=south,font=\footnotesize] at (69,-8)
+    {arah waktu (tidak ada pengacakan)};
+
+  % ===== 80:20 =====
+  \node[anchor=east,font=\small] at (12,4) {80:20};
+  \node[latih,minimum width=82mm] (a1) at (14,4) {data latih};
+  \node[buang,minimum width=6mm]  (a2) at (96,4) {};
+  \node[uji,minimum width=22mm]   (a3) at (102,4) {data uji};
+
+  % ===== 70:30 =====
+  \node[anchor=east,font=\small] at (12,22) {70:30};
+  \node[latih,minimum width=71mm] (b1) at (14,22) {data latih};
+  \node[buang,minimum width=6mm]  (b2) at (85,22) {};
+  \node[uji,minimum width=33mm]   (b3) at (91,22) {data uji};
+
+  % ===== 60:40 =====
+  \node[anchor=east,font=\small] at (12,40) {60:40};
+  \node[latih,minimum width=60mm] (c1) at (14,40) {data latih};
+  \node[buang,minimum width=6mm]  (c2) at (74,40) {};
+  \node[uji,minimum width=44mm]   (c3) at (80,40) {data uji};
+
+  % --- label purging, menunjuk ke potongan yang diarsir ---
+  \draw[panah] (60,62) -- (c2.south);
+  \node[anchor=north,align=center] at (60,62) {$h$ bar};
+
+  % --- legenda ---
+  \node[latih,minimum width=6mm] at (14,78) {};
+  \node[anchor=west] at (21,78) {data latih};
+  \node[buang,minimum width=6mm] at (50,78) {};
+  \node[anchor=west] at (57,78) {dibuang (\textit{purging})};
+  \node[uji,minimum width=6mm] at (100,78) {};
+  \node[anchor=west] at (107,78) {data uji};
+
+  % --- catatan ---
+  \node[anchor=north west,align=left,text width=118mm,draw,inner sep=3pt]
+    at (0,88)
+    {\textbf{Alasan \textit{purging}.} Target pada $h$ bar terakhir data latih
+     memakai harga di periode uji. Potongan itu dibuang supaya informasi
+     periode uji tidak masuk ke data latih.};
+\end{tikzpicture}

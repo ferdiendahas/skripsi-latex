@@ -1,0 +1,36 @@
+% Pratinjau gambar TikZ skripsi v3.0 -- satu gambar per halaman.
+% Kelas dan preambul sama dengan praskripsi.tex. Opsi `ketat` DIHAPUS di sini
+% supaya pratinjau tetap bisa dikompilasi tanpa font Times New Roman/Arial.
+\documentclass[jenis=praskripsi]{upnjatim-skripsi}
+\input{metadata}
+
+% Library TikZ tambahan yang belum dimuat di upnjatim-skripsi.cls.
+% Keduanya perlu dipindahkan ke .cls sebelum gambar dimasukkan ke chapters/.
+\usetikzlibrary{patterns}                  % arsir untuk purging dan jeda
+\usetikzlibrary{decorations.pathreplacing} % kurung kurawal jendela fitur
+
+\begin{document}
+\pagestyle{empty}
+
+\newcommand{\pratinjau}[2]{%
+  \begin{center}
+    \textbf{#1}\par\medskip
+    \input{#2}
+  \end{center}
+  \clearpage}
+
+\pratinjau{G2-1 \quad \texttt{g2-horizon-naive}}{g2-horizon-naive}
+\pratinjau{G2-2 \quad \texttt{g2-gradient-boosting}}{g2-gradient-boosting}
+\pratinjau{G2-3 \quad \texttt{g2-leafwise-levelwise}}{g2-leafwise-levelwise}
+\pratinjau{G2-4 \quad \texttt{g2-pohon-simetris}}{g2-pohon-simetris}
+\pratinjau{G2-5 \quad \texttt{g2-adaboost-r2}}{g2-adaboost-r2}
+\pratinjau{G2-6 \quad \texttt{g2-grid-random}}{g2-grid-random}
+\pratinjau{G2-7 \quad \texttt{g2-kerangka-pemikiran}}{g2-kerangka-pemikiran}
+\pratinjau{G3-1 \quad \texttt{g3-alur-penelitian}}{g3-alur-penelitian}
+\pratinjau{G3-2 \quad \texttt{g3-pengumpulan-data}}{g3-pengumpulan-data}
+\pratinjau{G3-3 \quad \texttt{g3-fitur-target}}{g3-fitur-target}
+\pratinjau{G3-4 \quad \texttt{g3-split-purging}}{g3-split-purging}
+\pratinjau{G3-5 \quad \texttt{g3-walk-forward}}{g3-walk-forward}
+\pratinjau{G3-6 \quad \texttt{g3-tahapan-eksperimen}}{g3-tahapan-eksperimen}
+
+\end{document}

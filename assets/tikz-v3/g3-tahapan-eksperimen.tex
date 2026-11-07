@@ -1,0 +1,54 @@
+% G3-6 Tahapan eksperimen.
+% Sumber: diolah penulis.
+% Tidak memuat hasil pemilihan tahap mana pun.
+% Opsi panah (b): alur lurus dipertahankan, keterkaitan antartahap dijelaskan
+% di kotak Catatan.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    tahap/.style={draw,rectangle,text width=98mm,align=left,
+      inner sep=3.5pt,minimum height=25mm},
+    label/.style={draw,rectangle,fill=black!10,text width=17mm,
+      align=center,inner sep=3pt,minimum height=25mm,font=\small},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+
+  % Tinggi kotak 25mm dan jarak antarbaris 31mm, seragam untuk semua tahap.
+  % ===== Tahap 1 =====
+  \node[label] (l1) at (10,0) {Tahap 1\\\textit{time frame}};
+  \node[tahap] (t1) at (71,0)
+    {2 dataset (candle 1 menit, candle 5 menit) $\times$ horizon
+     $\{1, 5, 15, 30, 60\}$ menit $\times$ 4 model, memakai TPE dan rasio
+     \textit{split} 80:20. Horizon 1 menit hanya untuk candle 1 menit.\\[2pt]
+     \textbf{Menentukan:} pasangan (dataset, horizon) untuk tahap berikutnya.};
+
+  % ===== Tahap 2 =====
+  \node[label] (l2) at (10,31) {Tahap 2\\metode optimasi};
+  \node[tahap] (t2) at (71,31)
+    {\textit{Default} (tanpa \textit{tuning}), Grid Search (27 kombinasi),
+     serta Random Search, TPE, CMA-ES, GA (NSGA-II), dan QMC
+     (masing-masing 30 \textit{trial}) $\times$ 4 model.\\[2pt]
+     \textbf{Menentukan:} metode optimasi untuk tahap berikutnya.};
+
+  % ===== Tahap 3 =====
+  \node[label] (l3) at (10,62) {Tahap 3\\rasio \textit{split}};
+  \node[tahap] (t3) at (71,62)
+    {Rasio \textit{split} 80:20, 70:30, dan 60:40 $\times$ 4 model.\\[2pt]
+     \textbf{Tanpa pemilihan}; semua hasil dilaporkan.};
+
+  % ===== Tahap 4 =====
+  \node[label] (l4) at (10,93) {Tahap 4\\teknik tambahan};
+  \node[tahap] (t4) at (71,93)
+    {\textit{Early stopping}, seleksi 15 fitur terpenting, \textit{loss} L1,
+     dan \textit{pruner} median $\times$ 4 model.\\[2pt]
+     \textbf{Tanpa pemilihan}; semua hasil dilaporkan.};
+
+  \foreach \a/\b in {1/2,2/3,3/4}{
+    \draw[panah] (t\a.south) -- (t\b.north);
+  }
+
+  % --- catatan ---
+  \node[draw,anchor=north west,align=left,text width=118mm,inner sep=3.5pt]
+    at (0,112)
+    {\textbf{Catatan.} Aturan pemilihan dikunci sebelum Tahap 1 dijalankan,
+     sehingga pilihan pada Tahap 1 dan 2 tidak dapat disusun ulang mengikuti
+     hasil. Tahap 3 dan 4 memakai dataset, horizon, dan metode optimasi yang
+     ditentukan pada Tahap 1--2; Tahap 4 memakai \textit{split} 80:20.};
+\end{tikzpicture}

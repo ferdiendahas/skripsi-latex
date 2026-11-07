@@ -1,0 +1,66 @@
+% G2-5 Alur satu iterasi AdaBoost.R2.
+% Sumber: diadaptasi dari drucker1997 (hlm. PDF 2--3); batas jumlah pohon T
+% (`n_estimators`) dari sklearnadaboost.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    langkah/.style={draw,rectangle,text width=34mm,align=center,
+      inner sep=2.5pt,minimum height=11mm},
+    kep/.style={draw,diamond,aspect=2.6,inner sep=0pt,text width=24mm,
+      align=center},
+    hasil/.style={draw,rounded rectangle,text width=48mm,align=center,
+      inner sep=2.5pt,minimum height=12mm},
+    panah/.style={-{Stealth[length=2mm]}}]
+
+  % --- rantai utama, kolom kiri, arah ke bawah ---
+  \node[langkah] (s1) at (28,0)   {(1) bobot sampel $w_i$\\$\rightarrow$ probabilitas $p_i = w_i / \sum_j w_j$};
+  \node[langkah] (s2) at (28,22)  {(2) ambil sampel ulang dengan pengembalian menurut $p_i$};
+  \node[langkah] (s3) at (28,44)  {(3) latih pohon regresi ke-$t$};
+  \node[langkah] (s4) at (28,66)  {(4) hitung \textit{loss} $L_i$ (linear, \textit{square}, atau \textit{exponential})};
+  \node[langkah] (s5) at (28,88)  {(5) $\bar{L} = \sum_i L_i\,p_i$};
+  \node[kep]     (d1) at (28,110) {$\bar{L} \ge 0{,}5$?};
+
+  \draw[panah] (s1) -- (s2);
+  \draw[panah] (s2) -- (s3);
+  \draw[panah] (s3) -- (s4);
+  \draw[panah] (s4) -- (s5);
+  \draw[panah] (s5) -- (d1);
+
+  % --- cabang "tidak": hitung beta, perbarui bobot, lalu cek batas pohon ---
+  \node[langkah] (s6) at (96,88)
+    {$\beta_t = \bar{L}/(1-\bar{L})$};
+  \node[langkah] (s7) at (96,62)
+    {(6) perbarui bobot\\$w_i \leftarrow w_i\,\beta_t^{\,1-L_i}$};
+  \node[kep]     (d2) at (96,36) {$t = T$?};
+
+  \draw[panah] (d1.east) -- (96,110) -- (s6.south);
+  \node[anchor=south west] at (58,110) {tidak};
+  \draw[panah] (s6.north) -- (s7.south);
+  \draw[panah] (s7.north) -- (d2.south);
+
+  % --- "tidak" pada batas pohon: naik di sisi kanan, kembali ke (1) ---
+  \draw[panah] (d2.east) -- (124,36) -- (124,0) -- (s1.east);
+  \node[anchor=south west] at (112,34) {tidak};
+  \node[anchor=south,align=center] at (86,-1) {$t \leftarrow t+1$};
+
+  % --- dua jalur berhenti digabung di satu titik sebelum masuk keluaran ---
+  \node[hasil] (fin) at (62,146)
+    {\textbf{keluaran akhir}\\median berbobot prediksi $h_t(x)$\\dengan bobot $\log(1/\beta_t)$};
+  % jalur A: Lbar >= 0,5 (pohon ke-t tidak dipakai)
+  \draw (28,118) -- (28,132);
+  \node[anchor=west,align=left] at (31,124) {ya; pohon ke-$t$ tidak dipakai};
+  % jalur B: t = T
+  \draw[panah] (d2.west) -- (62,36);
+  \node[anchor=south east] at (74,34) {ya};
+  \draw (62,36) -- (62,132);
+  % titik gabung lalu satu panah masuk kotak
+  \draw (28,132) -- (62,132);
+  \fill (62,132) circle (0.8mm);
+  \draw[panah] (62,132) -- (fin.north);
+
+  % --- catatan ---
+  \node[draw,anchor=north west,align=left,text width=118mm,inner sep=3pt]
+    at (0,160)
+    {\textbf{Catatan.} $t$ = indeks pohon, $T$ = batas jumlah pohon
+     (\texttt{n\_estimators}). \textit{Loss} $L_i$ dinormalkan dengan galat
+     absolut terbesar $D$ pada iterasi itu, sehingga $0 \le L_i \le 1$.
+     Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ atau bila batas $T$ tercapai.};
+\end{tikzpicture}

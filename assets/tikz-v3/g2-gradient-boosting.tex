@@ -1,0 +1,48 @@
+% G2-2 Gradient boosting: penambahan pohon secara bertahap.
+% Sumber: diadaptasi dari friedman2001 (pers. 36, hlm. 1203).
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    kotak/.style={draw,minimum width=17mm,minimum height=11mm,inner sep=1pt,
+      align=center},
+    awal/.style={kotak,fill=black!10},
+    res/.style={draw,dashed,minimum width=17mm,minimum height=11mm,
+      inner sep=1pt,align=center},
+    panah/.style={-{Stealth[length=2mm]}}]
+
+  % --- rantai: model awal, residual, dan pohon (jarak antar pusat 19mm) ---
+  \node[awal]  (f0) at (11,0)  {model awal\\$F_0(x)$};
+  \node[res]   (r0) at (30,0)  {residual\\$r^{(0)}$};
+  \node[kotak] (t1) at (49,0)  {pohon 1\\$h_1(x)$};
+  \node[res]   (r1) at (68,0)  {residual\\$r^{(1)}$};
+  \node[kotak] (t2) at (87,0)  {pohon 2\\$h_2(x)$};
+  \node        (dd) at (102,0) {$\cdots$};
+  \node[kotak] (tm) at (117,0) {pohon $M$\\$h_M(x)$};
+
+  \draw[panah] (f0) -- (r0);
+  \draw[panah] (r0) -- (t1);
+  \draw[panah] (t1) -- (r1);
+  \draw[panah] (r1) -- (t2);
+  \draw[panah] (t2) -- (dd);
+  \draw[panah] (dd) -- (tm);
+
+  % --- penggabungan: semua komponen turun ke satu garis, lalu ke model akhir ---
+  \draw (11,6) -- (11,22);
+  \draw (49,6) -- (49,22);
+  \draw (87,6) -- (87,22);
+  \draw (117,6) -- (117,22);
+  \draw (11,22) -- (117,22);
+  \draw[panah] (64,22) -- (64,30);
+
+  \node[kotak,minimum width=104mm,minimum height=13mm] (fm) at (64,37)
+    {\textbf{model akhir}\\[1pt]
+     $F_M(x) = F_0(x) + \sum_{m=1}^{M} \nu\,\rho_m\,h_m(x)$};
+
+  % --- aturan pembaruan dan keterangan simbol ---
+  \node[anchor=north,align=center,text width=120mm] at (64,48)
+    {Pembaruan tiap iterasi:\quad
+     $F_m(x) = F_{m-1}(x) + \nu \cdot \rho_m h_m(x)$,\qquad $0 < \nu \le 1$};
+  \node[draw,anchor=north,align=left,text width=116mm,inner sep=3pt] at (64,58)
+    {$r^{(m)} = -\partial L / \partial F_m$ = residual, yaitu arah penurunan
+     \textit{loss} yang dicocokkan oleh pohon berikutnya.\quad
+     $\nu$ = \textit{learning rate} (\textit{shrinkage}).\quad
+     $\rho_m$ = bobot optimal pohon ke-$m$.};
+\end{tikzpicture}

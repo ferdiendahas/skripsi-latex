@@ -1,0 +1,42 @@
+% G2-7 Kerangka pemikiran.
+% Sumber: diolah penulis.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    tahap/.style={draw,rectangle,text width=100mm,align=left,
+      inner sep=3pt,minimum height=21mm},
+    judul/.style={draw,rectangle,fill=black!10,text width=20mm,align=center,
+      inner sep=3pt,minimum height=21mm,font=\small},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+
+  % Tinggi kotak dan jarak antarbaris dibuat seragam: 21mm dan 27mm.
+  \node[judul] (j1) at (12,0)   {Masalah};
+  \node[tahap] (k1) at (76,0)
+    {Harga BTC/IDR jangka pendek sulit diprediksi; pembanding Naive
+     (harga tidak berubah) sulit dikalahkan.};
+
+  \node[judul] (j2) at (12,27)  {Celah};
+  \node[tahap] (k2) at (76,27)
+    {Studi pada data menit umumnya memprediksi \textbf{arah}, bukan nilai
+     harga; model boosting sering dipakai dengan setelan bawaan; jarang
+     memakai pembanding naive dan uji Diebold-Mariano.};
+
+  \node[judul] (j3) at (12,54)  {Pendekatan};
+  \node[tahap] (k3) at (76,54)
+    {Data candle 1 menit dan 5 menit BTC/IDR dari API Indodax; empat model
+     boosting (XGBoost, LightGBM, CatBoost, AdaBoost.R2) $\times$ beberapa
+     metode optimasi \textit{hyperparameter} $\times$ beberapa
+     \textit{time frame} $\times$ tiga rasio \textit{split}
+     (80:20, 70:30, 60:40).};
+
+  \node[judul] (j4) at (12,81)  {Evaluasi};
+  \node[tahap] (k4) at (76,81)
+    {MAE, RMSE, MAPE, dan akurasi arah; uji Diebold-Mariano dengan koreksi
+     HLN terhadap Naive.};
+
+  \node[judul] (j5) at (12,108) {Keluaran};
+  \node[tahap] (k5) at (76,108)
+    {Jawaban atas RM1--RM3.};
+
+  \foreach \a/\b in {1/2,2/3,3/4,4/5}{
+    \draw[panah] (k\a.south) -- (k\b.north);
+  }
+\end{tikzpicture}
