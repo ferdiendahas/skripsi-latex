@@ -11,11 +11,11 @@
   % --- rantai: model awal, residual, dan pohon (jarak antar pusat 19mm) ---
   \node[awal]  (f0) at (11,0)  {model awal\\$F_0(x)$};
   \node[res]   (r0) at (30,0)  {residual\\$r^{(0)}$};
-  \node[kotak] (t1) at (49,0)  {pohon 1\\$h_1(x)$};
+  \node[kotak] (t1) at (49,0)  {pohon 1\\$f_1(x)$};
   \node[res]   (r1) at (68,0)  {residual\\$r^{(1)}$};
-  \node[kotak] (t2) at (87,0)  {pohon 2\\$h_2(x)$};
+  \node[kotak] (t2) at (87,0)  {pohon 2\\$f_2(x)$};
   \node        (dd) at (102,0) {$\cdots$};
-  \node[kotak] (tm) at (117,0) {pohon $M$\\$h_M(x)$};
+  \node[kotak] (tm) at (117,0) {pohon $M$\\$f_M(x)$};
 
   \draw[panah] (f0) -- (r0);
   \draw[panah] (r0) -- (t1);
@@ -34,12 +34,12 @@
 
   \node[kotak,minimum width=104mm,minimum height=13mm] (fm) at (64,37)
     {\textbf{model akhir}\\[1pt]
-     $F_M(x) = F_0(x) + \sum_{m=1}^{M} \nu\,\rho_m\,h_m(x)$};
+     $F_M(x) = F_0(x) + \sum_{m=1}^{M} \nu\,\rho_m\,f_m(x)$};
 
   % --- aturan pembaruan dan keterangan simbol ---
   \node[anchor=north,align=center,text width=120mm] at (64,48)
     {Pembaruan tiap iterasi:\quad
-     $F_m(x) = F_{m-1}(x) + \nu \cdot \rho_m h_m(x)$,\qquad $0 < \nu \le 1$};
+     $F_m(x) = F_{m-1}(x) + \nu \cdot \rho_m f_m(x)$,\qquad $0 < \nu \le 1$};
   \node[draw,anchor=north,align=left,text width=116mm,inner sep=3pt] at (64,58)
     {$r^{(m)} = -\partial L / \partial F_m$ = residual, yaitu arah penurunan
      \textit{loss} yang dicocokkan oleh pohon berikutnya.\quad

@@ -32,8 +32,8 @@ Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
 % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
 % tambahkan hanya bila dosen meminta.
 Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
-berapa menit ke depan harga diprediksi. \textit{Time frame} utama yang dipakai
-adalah 5 menit, lalu divariasikan dari 1 sampai 60 menit untuk mencari hasil
+berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari \textit{time frame} 5 menit, lalu
+memvariasikannya dari 1 sampai 60 menit untuk mencari hasil
 prediksi yang paling optimal.
 
 % P3 -- [kartu D4, B2, B5]
@@ -72,7 +72,7 @@ kebanyakan memprediksi arah pergerakan harga, bukan nilai harganya
 \cite{akyildirim2023,jaquart2021}. Hasil seperti itu belum menjawab berapa
 harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
 harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
-Penelitian tersebut tidak menuning model boosting, tidak memakai pembanding
+Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak memakai pembanding
 naive, tidak memakai uji Diebold-Mariano, dan hanya memakai satu pembagian
 data. Sejauh literatur yang diperiksa, belum ditemukan penelitian
 yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
@@ -84,8 +84,8 @@ Penelitian ini memakai data harga BTC/IDR dari \textit{Application Programming I
 1 menit, karena Indodax tidak menyediakan \textit{candle} 5 menit. Keempat
 model boosting dibangun pada beberapa \textit{time frame}, yaitu 1, 5, 15, 30,
 dan 60 menit. Model tersebut kemudian dioptimasi dengan beberapa metode, yaitu
-Grid Search, Random Search, \textit{Tree-structured Parzen Estimator} (TPE),
-\textit{Covariance Matrix Adaptation Evolution Strategy} (CMA-ES), Genetic
+Grid Search, Random Search, Tree-structured Parzen Estimator (TPE), Covariance Matrix Adaptation
+Evolution Strategy (CMA-ES), Genetic
 Algorithm, dan Quasi-Monte Carlo. Performa model diukur dengan \textit{Mean Absolute Error} (MAE),
 \textit{Root Mean Square Error} (RMSE), dan MAPE, lalu dibandingkan dengan
 Naive. Perbedaan akurasi antara model dan Naive diuji dengan uji

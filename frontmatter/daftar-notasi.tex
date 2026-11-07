@@ -1,108 +1,51 @@
 \chapter*{Daftar Notasi}
 \phantomsection
 \addcontentsline{toc}{chapter}{DAFTAR NOTASI}
-% Arti tiap simbol diambil dari blok "keterangan" di bawah persamaan Bab II;
-% urutannya mengikuti kemunculan pertama di naskah. Memakai longtable agar
-% daftar ini boleh berlanjut ke halaman berikutnya.
+% Notasi v3.0, urut menurut kemunculan pertama di Bab II.
 \begingroup
 \setstretch{1.2}
 \begin{longtable}{@{}p{3cm}@{}p{0.6cm}@{}p{\dimexpr\textwidth-3.6cm\relax}@{}}
-  $r_{t,i}$ & : & \textit{Return} logaritmik intraday pada bar ke-$i$ hari $t$ \\
-  $C_{t,i}$ & : & Harga penutupan bar 5 menit ke-$i$ pada hari $t$; untuk
-    $i = 1$, $C_{t,0}$ adalah harga penutupan bar terakhir hari $t-1$ \\
-  $i$ & : & Nomor urut bar 5 menit dalam satu hari, bernilai 1 sampai 288 \\
-  $RV_t$ & : & \textit{Realized variance} harian pada hari $t$, yaitu
-    komponen harian \\
-  $RV_t^{(w)}$ & : & Rata-rata RV tujuh hari terakhir hingga hari $t$, yaitu
-    komponen mingguan \\
-  $RV_t^{(m)}$ & : & Rata-rata RV tiga puluh hari terakhir hingga hari $t$,
-    yaitu komponen bulanan \\
-  $j$ & : & Indeks pergeseran hari ke belakang dari hari $t$ \\
-  $RV_{t+1}$ & : & RV hari berikutnya, yaitu target peramalan \\
-  $\beta_0$ & : & Konstanta regresi HAR-RV \\
-  $\beta_d$ & : & Koefisien komponen harian \\
-  $\beta_w$ & : & Koefisien komponen mingguan \\
-  $\beta_m$ & : & Koefisien komponen bulanan \\
-  $\varepsilon_{t+1}$ & : & Galat regresi HAR-RV yang diasumsikan
-    berrata-rata nol \\
-  $F_b(\mathbf{x})$ & : & Model GBDT gabungan setelah $b$ iterasi \\
-  $h_b(\mathbf{x})$ & : & Pohon ke-$b$, dilatih pada gradien fungsi
-    \textit{loss} \\
-  $\eta$ & : & Laju pembelajaran \\
-  $RS_t^-$ & : & \textit{Realized semivariance} negatif pada hari $t$ \\
-  $\mathbf{1}(\cdot)$ & : & Fungsi indikator, bernilai 1 bila syarat di
-    dalamnya terpenuhi dan 0 bila tidak \\
-  $\sigma^2_{P,t}$ & : & Estimator varians \textit{range} Parkinson pada
-    hari $t$ \\
-  $P^{H}_t$ & : & Harga tertinggi pada hari $t$ \\
-  $P^{L}_t$ & : & Harga terendah pada hari $t$ \\
-  $\text{Amihud}_t$ & : & Ukuran \textit{illiquidity} pada hari $t$ \\
-  $QV_{t,i}$ & : & Volume dalam dolar (USDT) pada bar ke-$i$ \\
-  $N_t$ & : & Jumlah bar bervolume positif pada hari $t$ \\
-  $10^6$ & : & Faktor penskalaan ukuran Amihud agar besarannya mudah dibaca \\
-  $F_t$ & : & Ramalan RV untuk hari $t$ \\
-  $L^{\text{QLIKE}}_t$ & : & Nilai \textit{loss} QLIKE pada hari $t$ \\
-  $L^{\text{MSE}}_t$ & : & Nilai \textit{loss} MSE pada hari $t$ \\
-  $\Delta L_t$ & : & Selisih \textit{loss} harian antara model
-    \textit{machine learning} dan HAR-RV \\
-  $L_t(\text{ML})$ & : & \textit{Loss} model \textit{machine learning} pada
-    hari $t$ \\
-  $L_t(\text{HAR})$ & : & \textit{Loss} model HAR-RV pada hari $t$ \\
-  $DM$ & : & Statistik uji Diebold--Mariano \\
-  $\overline{\Delta L}$ & : & Rata-rata selisih \textit{loss} selama periode
-    uji \\
-  $\widehat{V}_{\text{HAC}}$ & : & Estimator varians jangka panjang yang
-    konsisten terhadap heteroskedastisitas dan autokorelasi \\
-  $n$ & : & Jumlah observasi pada periode uji \\
-  $\text{UDmax}$ & : & Statistik uji perubahan struktural maksimum \\
-  $\sup F_T(m)$ & : & Statistik $F$ terbesar atas semua kemungkinan
-    penempatan $m$ titik patah \\
-  $m$ & : & Jumlah titik patah pada uji Bai--Perron \\
-  $M$ & : & Jumlah maksimum titik patah yang diuji \\
-  $\varepsilon$ & : & Proporsi \textit{trimming}, yaitu panjang minimum tiap
-    segmen pada uji Bai--Perron \\
-  $\mu$ & : & Fraksi ukuran jendela bergulir pada \textit{Fluctuation test},
-    dengan $n_F = \mu n$ \\
-  $n_F$ & : & Ukuran jendela bergulir pada \textit{Fluctuation test} \\
-  $D^{\text{KS}}$ & : & Statistik Kolmogorov--Smirnov dua sampel \\
-  $\hat{F}_{\text{latih}}(x)$ & : & Fungsi distribusi kumulatif empiris data
-    latih \\
-  $\hat{F}_{\text{uji}}(x)$ & : & Fungsi distribusi kumulatif empiris bulan
-    uji \\
-  $\sup_x$ & : & Nilai terbesar atas seluruh $x$ \\
-  $D_t$ & : & Selisih $\Delta L_t$ antara strategi pembaruan S2-365 dan S1 \\
-  $W$ & : & Panjang jendela data latih \textit{rolling}, dalam hari \\
-  $C_t$ & : & Harga penutupan bar terakhir hari $t$ \\
-  $t^*$ & : & Hari contoh pada perhitungan manual (30 Agustus 2018) \\
-  $\hat{y}_{t+1}$ & : & Ramalan $\ln RV_{t+1}$ sebelum dikembalikan ke skala
-    level \\
-  $\hat{\sigma}^2$ & : & Varians residual untuk koreksi bias transformasi
-    logaritma \\
-  $\underline{F}$ & : & Batas bawah ramalan, persentil ke-1 target $RV$ pada
-    \textit{window} latih \\
-  $F_{t+1}$ & : & Ramalan RV hari $t+1$ setelah koreksi bias dan batas bawah \\
-  $\bar{p}_t$ & : & Rata-rata logaritma harga tertinggi dan terendah hari
-    $t$ pada estimator Abdi--Ranaldo \\
-  $c_t$ & : & Logaritma harga penutupan hari $t$ \\
-  $s_t$ & : & \textit{Spread} Abdi--Ranaldo harian \\
-  $\tau$ & : & Indeks bulan uji pada regresi karakteristik pasar \\
-  $\overline{\Delta L}_\tau$ & : & Rata-rata $\Delta L_t$ pada bulan $\tau$ \\
-  $z_{k,\tau}$ & : & Variabel karakteristik pasar ke-$k$ pada bulan $\tau$ \\
-  $k$ & : & Indeks variabel karakteristik pasar, bernilai 1 sampai 4 \\
-  $\gamma_k$ & : & Koefisien variabel karakteristik pasar ke-$k$ \\
-  $\alpha$ & : & Konstanta regresi karakteristik pasar dan regresi era \\
-  $\delta$ & : & Koefisien variabel \textit{dummy} era \\
-  $\text{Era}_\tau$ & : & Variabel \textit{dummy} era \textit{institutional}
-    pada bulan $\tau$ \\
-  $\text{Era}_t$ & : & Variabel \textit{dummy} era \textit{institutional}
-    pada hari $t$ \\
-  $u_\tau$ & : & Galat regresi karakteristik pasar bulan $\tau$ \\
-  $e_t$ & : & Galat regresi era pada hari $t$ \\
-  $\ell$ & : & Jumlah titik patah pada uji perubahan berurutan
-    $\sup F(\ell+1 \mid \ell)$ \\
-  $R$ & : & Jumlah replikasi simulasi Monte Carlo \\
-  $R^{+}$ & : & Jumlah statistik simulasi yang tidak lebih kecil daripada
-    statistik amatan \\
+  $r_{t,h}$ & : & \textit{Return} logaritmik dari waktu $t$ sampai $t+h$ \\
+  $P_t$ & : & Harga pada waktu $t$ \\
+  $P_{t+h}$ & : & Harga sebenarnya pada waktu $t+h$ \\
+  $h$ & : & \textit{Time frame} atau horizon prediksi, dalam menit \\
+  $\hat{P}_{t+h}$ & : & Harga hasil ramalan model pada waktu $t+h$ \\
+  $\hat{r}_{t,h}$ & : & \textit{Return} logaritmik hasil ramalan \\
+  $\hat{P}_{t+h}^{\text{Naive}}$ & : & Harga ramalan Naive pada waktu $t+h$ \\
+  $x$ & : & Vektor fitur masukan model \\
+  $F_m(x)$ & : & Model \textit{gradient boosting} gabungan setelah $m$ pohon \\
+  $f_m(x)$ & : & Pohon regresi ke-$m$ \\
+  $\rho_m$ & : & Bobot optimal untuk pohon ke-$m$ \\
+  $\nu$ & : & \textit{Learning rate} \\
+  $m$ & : & Indeks pohon atau iterasi boosting \\
+  $M$ & : & Jumlah pohon maksimum \\
+  $\Omega(f)$ & : & Suku regularisasi XGBoost untuk pohon $f$ \\
+  $T$ & : & Jumlah daun pada satu pohon \\
+  $\mathbf{w}$ & : & Vektor bobot daun pada XGBoost \\
+  $\gamma$ & : & Penalti jumlah daun pada XGBoost \\
+  $\lambda$ & : & Penalti L2 bobot daun pada XGBoost \\
+  $w_i$ & : & Bobot sampel ke-$i$ pada AdaBoost.R2 \\
+  $p_i$ & : & Probabilitas sampel ke-$i$ pada AdaBoost.R2 \\
+  $y_i$ & : & Nilai sebenarnya contoh ke-$i$ \\
+  $\hat{y}_i$ & : & Nilai ramalan contoh ke-$i$ \\
+  $L_i$ & : & \textit{Loss} contoh ke-$i$ pada AdaBoost.R2 \\
+  $D$ & : & Galat absolut terbesar pada satu iterasi AdaBoost.R2 \\
+  $\bar{L}$ & : & Rata-rata \textit{loss} berbobot pada satu iterasi \\
+  $\beta_m$ & : & Rasio pembaruan bobot pada pohon ke-$m$ \\
+  $\theta$ & : & Satu konfigurasi \textit{hyperparameter} \\
+  $\ell(\theta)$ & : & Kerapatan konfigurasi dengan \textit{loss} di bawah
+    kuantil $\gamma_{\text{TPE}}$ \\
+  $g(\theta)$ & : & Kerapatan konfigurasi dengan \textit{loss} sisanya \\
+  $\gamma_{\text{TPE}}$ & : & Kuantil pemisah pada TPE \\
+  $e_t$ & : & Galat ramalan pada data uji ke-$t$ \\
+  $n$ & : & Banyaknya data uji \\
+  $c_t$ & : & Penanda arah, bernilai 1 bila arah tertebak benar dan 0 bila
+    tidak \\
+  $d_t$ & : & Selisih \textit{loss} dua ramalan pada data uji ke-$t$ \\
+  $\mathcal{L}(\cdot)$ & : & Fungsi \textit{loss} pada uji Diebold-Mariano \\
+  $e_{1t}, e_{2t}$ & : & Galat ramalan pertama dan kedua \\
+  $H_0$ & : & Hipotesis nol \\
+  $h_b$ & : & \textit{Time frame} dalam satuan bar \\
 \end{longtable}
 \endgroup
 \clearpage
