@@ -18,12 +18,11 @@
 
 
 \section{Penelitian Terdahulu}
-Prediksi harga aset kripto dengan \textit{machine learning} sudah banyak
-diteliti dalam lima tahun terakhir. Penelitian-penelitian tersebut berbeda
-dalam empat hal pokok, yaitu resolusi data yang dipakai, bentuk target yang
-diramal, ada atau tidaknya penyetelan \textit{hyperparameter}, serta
-pembanding dan uji statistik yang dipakai untuk menilai hasilnya. Perbedaan
-keempat hal itu menyulitkan pembandingan hasil antarpenelitian secara
+Penelitian tentang prediksi harga kripto dengan \textit{machine learning}
+sudah cukup banyak. Namun, penelitian-penelitian tersebut berbeda dalam
+beberapa hal, yaitu jenis data, target yang diprediksi, ada tidaknya
+\textit{tuning hyperparameter}, serta pembanding dan uji statistik yang
+dipakai. Karena perbedaan itu, hasil antarpenelitian sulit dibandingkan secara
 langsung.
 
 Tabel~\ref{tab:terdahulu} merangkum penelitian terdahulu yang paling dekat
@@ -83,80 +82,73 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
 \end{table}
 
 % [kartu A2, B1, B5, B8]
-Kelompok pertama merupakan penelitian yang memakai data harian. XGBoost
-dilaporkan unggul dalam menggabungkan beberapa ramalan harian Bitcoin, dengan
-pengendalian \textit{data snooping} memakai \textit{model confidence set} dan
-uji \textit{superior predictive ability} \cite{wei2023}. LightGBM dan AdaBoost
-dilaporkan kompetitif untuk meramal return Bitcoin harian \cite{bouteska2024}.
-Penelitian tersebut memakai pembanding \textit{random walk} yang dihitung pada
-return, sehingga pembandingnya bukan metode naive pada harga. Model adaptif
-berbasis rezim pasar juga sudah diterapkan pada harga Bitcoin harian
-\cite{oprea2026}. Pada peramalan harga kripto univariat, model naive
-dilaporkan sulit dikalahkan \cite{puoti2024}. Keempat penelitian itu memakai
-data harian, sehingga temuannya belum tentu berlaku pada data per menit.
+Kelompok pertama memakai data harian. XGBoost dilaporkan paling baik dalam
+menggabungkan beberapa ramalan harian Bitcoin \cite{wei2023}. Penelitian
+tersebut juga memeriksa apakah hasil baiknya hanya muncul karena kebetulan,
+yaitu dengan \textit{model confidence set} dan uji \textit{superior predictive
+ability}. LightGBM dan AdaBoost dilaporkan memberi hasil yang baik untuk
+meramal \textit{return} Bitcoin harian \cite{bouteska2024}. Namun, pembanding
+\textit{random walk} pada penelitian tersebut dihitung pada \textit{return},
+bukan pada harga. Model yang menyesuaikan diri dengan kondisi pasar juga sudah
+dipakai untuk meramal harga Bitcoin harian \cite{oprea2026}. Pada data harga
+kripto harian, model naive dilaporkan sulit dikalahkan \cite{puoti2024}.
+Karena semuanya memakai data harian, hasilnya belum tentu berlaku pada data
+per menit.
 
 % [kartu B2, B3]
-Kelompok kedua merupakan penelitian pada data per menit yang memprediksi arah
-pergerakan harga, bukan nilai harganya. Keterdugaan Bitcoin jangka pendek
-dilaporkan kecil tetapi masih di atas tebakan acak, dan keuntungan sebelum
-biaya transaksi dapat berubah menjadi kerugian setelah biaya diperhitungkan
+Kelompok kedua memakai data per menit, tetapi memprediksi arah harga, bukan
+nilai harganya. Harga Bitcoin jangka pendek dilaporkan sulit ditebak, tetapi
+hasil tebakannya masih sedikit di atas tebakan acak. Keuntungan sebelum biaya
+transaksi juga dapat berubah menjadi kerugian setelah biaya dihitung
 \cite{jaquart2021}. Pada data \textit{futures} Bitcoin, XGBoost dipakai untuk
-meramal arah pergerakan \textit{mid-price} dengan tiga rasio pembagian data,
-dan \textit{random forest} dilaporkan mengalami \textit{overfitting}
-\cite{akyildirim2023}. Karena targetnya berupa arah, hasil kedua penelitian
-tersebut tidak dapat langsung dibandingkan dengan penelitian yang meramal
-nilai harga.
+menebak arah harga tengah (\textit{mid-price}) dengan tiga rasio pembagian
+data \cite{akyildirim2023}. Karena targetnya berupa arah, hasil kedua
+penelitian ini tidak dapat langsung dibandingkan dengan penelitian yang
+memprediksi nilai harga.
 
 % [kartu A1]
-Kelompok ketiga merupakan penelitian yang meramal nilai harga pada data per
-menit. Penelitian yang paling dekat dengan penelitian ini membandingkan
-beberapa model \textit{machine learning} pada data kripto per menit selama
-30 hari, dan melaporkan bahwa model terbaiknya tetap stabil sampai horizon 240 menit,
-tetapi memburuk tajam pada horizon 1.440 menit \cite{rodrigues2025}. Model boosting pada penelitian tersebut
-dijalankan dengan setelan bawaan, sehingga perbandingannya dengan model
-jaringan saraf belum setara. Penelitian tersebut juga tidak memakai pembanding
-naive pada harga.
+Kelompok ketiga memprediksi nilai harga pada data per menit. Penelitian yang
+paling dekat dengan penelitian ini membandingkan beberapa model
+\textit{machine learning} pada data kripto per menit selama 30 hari
+\cite{rodrigues2025}. Model terbaiknya tetap stabil sampai horizon 240 menit,
+tetapi memburuk tajam pada horizon 1.440 menit. Model boosting pada penelitian
+tersebut memakai setelan bawaan, sedangkan model jaringan sarafnya dituning.
+Akibatnya, perbandingan keduanya belum setara. Penelitian tersebut juga tidak
+memakai pembanding naive.
 
 
 \section{Bitcoin}
-
-\subsection{Pengertian Bitcoin}
 % [kartu D1]
 Bitcoin merupakan sistem uang elektronik \textit{peer-to-peer}
-\cite{nakamoto2008}. Transaksi Bitcoin dicatat pada \textit{blockchain}, yaitu
-rantai blok data yang disusun berurutan dan dapat diperiksa oleh siapa saja.
+\cite{nakamoto2008}. Setiap transaksi Bitcoin dicatat pada
+\textit{blockchain}, yaitu rantai blok data yang tersusun berurutan dan dapat
+diperiksa oleh siapa saja.
 % CEK: butuh sumber blockchain. Kartu D1 belum diisi dari PDF, sehingga isi
 % spesifik white paper Nakamoto belum boleh dikutip.
-Bitcoin diperdagangkan sepanjang hari tanpa jam buka dan jam tutup. Pada
-Indodax, Bitcoin diperdagangkan terhadap rupiah dalam pasangan BTC/IDR.
+Bitcoin diperdagangkan setiap hari tanpa jam buka dan jam tutup. Di Indodax,
+Bitcoin diperdagangkan dengan rupiah dalam pasangan BTC/IDR.
 % CEK: butuh sumber (perdagangan 24 jam; pasangan BTC/IDR di Indodax)
 
-\subsection{Efisiensi Pasar Bitcoin}
 % [kartu D4]
-Efisiensi pasar bentuk lemah berarti harga suatu aset tidak dapat diprediksi
-dari riwayat harga dan return masa lalunya. Pengujian pada pasar Bitcoin
-menunjukkan bahwa pasar tersebut mendekati efisien dalam bentuk lemah
-\cite{yi2023}. Akibatnya, riwayat harga hanya sedikit membantu model peramalan.
+Harga Bitcoin sulit ditebak. Menurut teori pasar efisien bentuk lemah, harga
+tidak dapat diprediksi dari riwayat harganya sendiri. Pasar Bitcoin ditemukan
+mendekati kondisi tersebut \cite{yi2023}. Artinya, riwayat harga hanya sedikit
+membantu model dalam menebak harga.
 
-% [kartu D3]
-Tingkat efisiensi pasar Bitcoin tidak tetap sepanjang waktu. Efisiensi pasar
-kripto dilaporkan berubah-ubah menurut waktu, dan likuiditas serta tekanan
-keuangan ikut memengaruhinya \cite{mokni2024}. Karena itu, hasil peramalan
-pada satu periode uji belum tentu sama dengan hasil pada periode uji lain.
+% [kartu D3, D2]
+Kondisi pasar Bitcoin juga tidak selalu sama. Tingkat efisiensinya berubah
+dari waktu ke waktu, antara lain karena pengaruh likuiditas dan tekanan
+keuangan \cite{mokni2024}. Dalam jangka panjang, pasar Bitcoin berkembang
+melalui beberapa era. Pada era terbaru, volatilitasnya menurun, likuiditasnya
+meningkat, dan pergerakan harganya mendekati \textit{random walk}
+\cite{do2026}. Data penelitian tersebut digabung dari dua bursa dengan mata
+uang yang berbeda, sehingga hasilnya perlu dibaca dengan hati-hati.
 
-% [kartu D2]
-Karakteristik pasar Bitcoin juga berubah antarperiode yang lebih panjang.
-Pasar Bitcoin dilaporkan berkembang melalui beberapa era, dengan
-volatilitas yang menurun dan likuiditas yang meningkat, serta
-respons \textit{illiquidity} terhadap guncangan volatilitas yang melemah pada
-era terakhir \cite{do2026}. Nilai eksponen Hurst pada era tersebut mendekati
-0,5, yang menunjukkan perilaku mendekati \textit{random walk}. Penelitian
-tersebut menyambung data dari dua bursa dengan mata uang kutipan berbeda,
-sehingga hasilnya perlu dibaca dengan catatan itu.
-
-Ketiga temuan tersebut mengarah pada satu konsekuensi praktis. Bila harga
-Bitcoin mendekati \textit{random walk}, maka tebakan bahwa harga tidak berubah
-merupakan pembanding yang kuat. Karena itu, Naive dipakai sebagai pembanding utama dalam penelitian ini.
+Ada dua hal yang dapat diambil dari temuan tersebut. Pertama, hasil prediksi
+pada satu periode belum tentu sama dengan hasil pada periode lain. Kedua,
+karena harga Bitcoin mendekati \textit{random walk}, tebakan bahwa harga tidak
+berubah merupakan pembanding yang kuat. Karena itu, penelitian ini memakai
+Naive sebagai pembanding utama.
 
 
 \section{\textit{Time Frame} dan Tipe \textit{Trader}}
@@ -287,8 +279,7 @@ terakhir yang diketahui,
 % CEK: butuh sumber (M7) untuk definisi buku teks; kartu I5 memuat definisi
 % naive sebagai observasi terakhir dan dipakai di sini.
 Metode naive didefinisikan sebagai ramalan yang sama dengan observasi terakhir
-\cite{hyndman2006}. Gambar~\ref{fig:horizon-naive} membandingkan ramalan
-metode naive dengan ramalan model pada horizon $h$.
+\cite{hyndman2006}. Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model pada horizon $h$.
 
 \begin{figure}[htbp]
   \centering
@@ -310,12 +301,10 @@ Diebold-Mariano \cite{diebold1995}.
 
 \section{Gradient Boosting}
 % [kartu E1]
-\textit{Gradient boosting} merupakan metode yang memandang pendugaan fungsi
-sebagai optimasi numerik di ruang fungsi, bukan di ruang parameter
-\cite{friedman2001}. Model dibangun secara bertahap. Setiap pohon baru dilatih
-untuk memperbaiki galat model gabungan sebelumnya, yaitu dengan mencocokkan
-arah penurunan \textit{loss} atau residual. Pembaruan model pada iterasi ke-$m$
-merupakan
+\textit{Gradient boosting} merupakan metode yang membangun model secara
+bertahap \cite{friedman2001}. Setiap pohon baru dilatih untuk memperbaiki
+kesalahan model sebelumnya. Hasil semua pohon kemudian digabung menjadi satu
+model. Pembaruan model pada pohon ke-$m$ dapat ditulis sebagai
 \begin{equation}
   F_m(x) = F_{m-1}(x) + \nu \cdot \rho_m f_m(x), \qquad 0 < \nu \le 1 .
   \label{eq:boosting}
@@ -328,10 +317,11 @@ merupakan
   \item[$\nu$] \textit{learning rate}, yaitu faktor pengecil langkah
     pembaruan.
 \end{keterangan}
-Nilai $\nu$ dan jumlah pohon $M$ berperan sebagai parameter regularisasi
-\cite{friedman2001}. Nilai $\nu$ yang kecil membuat setiap pohon memberi
-kontribusi kecil, sehingga model membutuhkan lebih banyak pohon, tetapi
-memberi hasil yang lebih baik daripada membatasi jumlah pohon. Gambar~\ref{fig:gradient-boosting} menggambarkan
+Nilai $\nu$ dan jumlah pohon $M$ berfungsi untuk mencegah model terlalu
+menyesuaikan diri dengan data latih \cite{friedman2001}. Nilai $\nu$ yang
+kecil membuat setiap pohon hanya memberi sumbangan kecil. Model jadi
+membutuhkan lebih banyak pohon, tetapi hasilnya lebih baik daripada sekadar
+membatasi jumlah pohon. Gambar~\ref{fig:gradient-boosting} menggambarkan
 proses penambahan pohon tersebut.
 
 \begin{figure}[htbp]
@@ -369,7 +359,8 @@ regularisasi untuk satu pohon merupakan
   \item[$\lambda$] parameter penalti L2 untuk bobot daun.
 \end{keterangan}
 Selain regularisasi tersebut, XGBoost memakai \textit{shrinkage} dan
-\textit{column subsampling} untuk mengurangi \textit{overfitting}. Pada kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
+\textit{column subsampling} untuk mengurangi \textit{overfitting}. Pada
+kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
 yang dipublikasikan memakai XGBoost \cite{chen2016}.
 
 \subsection{LightGBM}
@@ -407,18 +398,17 @@ bernilai lebih kecil daripada $2^{\texttt{max\_depth}}$ \cite{lightgbmtuning}.
 
 \subsection{CatBoost}
 % [kartu E3]
-CatBoost merupakan implementasi \textit{gradient boosting} yang dirancang untuk
-mengatasi \textit{prediction shift}, yaitu sejenis kebocoran target pada
-proses pelatihan \cite{prokhorenkova2018}. Masalah tersebut dilaporkan terjadi pada semua
-implementasi \textit{gradient boosting}.
+CatBoost merupakan implementasi \textit{gradient boosting} yang dirancang
+untuk mengatasi \textit{prediction shift} \cite{prokhorenkova2018}.
+\textit{Prediction shift} merupakan sejenis kebocoran target yang dapat
+terjadi pada semua implementasi \textit{gradient boosting}.
 
-Dua teknik utama dipakai untuk mengatasinya. Pertama, \textit{ordered boosting}
-memakai permutasi data sehingga model untuk satu contoh hanya dilatih dari
-contoh-contoh yang berada sebelumnya dalam urutan permutasi. Kedua, \textit{ordered target statistics} dipakai
-untuk mengolah fitur kategorikal dengan prinsip yang sama
-\cite{prokhorenkova2018}. Perlu dicatat bahwa permutasi pada penelitian
-tersebut bersifat acak, sehingga penerapannya pada data deret waktu perlu
-menjaga urutan waktu.
+CatBoost mengatasi masalah tersebut dengan dua cara. Pertama,
+\textit{ordered boosting} mengacak urutan data, lalu melatih model untuk
+setiap contoh hanya dari contoh-contoh yang berada sebelumnya dalam urutan
+itu. Kedua, \textit{ordered target statistics} memakai cara yang sama untuk
+mengolah fitur kategorikal. Urutan pada penelitian tersebut dibuat secara
+acak, sehingga pada data deret waktu urutannya perlu mengikuti urutan waktu.
 
 Pohon dasar CatBoost berupa pohon simetris atau \textit{oblivious}, yaitu
 seluruh simpul pada satu kedalaman memakai kondisi pemecahan yang sama
@@ -472,25 +462,25 @@ bentuk berikut,
   \item[$D$] galat absolut terbesar pada iterasi tersebut, dipakai sebagai
     penormal sehingga $0 \le L_i \le 1$.
 \end{keterangan}
-Rata-rata \textit{loss} berbobot dan rasio $\beta$ dihitung dengan
+Rata-rata \textit{loss} berbobot dan rasio $\beta_m$ dihitung dengan
 \begin{equation}
-  \bar{L} = \sum_i L_i p_i, \qquad \beta = \frac{\bar{L}}{1 - \bar{L}} .
+  \bar{L} = \sum_i L_i p_i, \qquad \beta_m = \frac{\bar{L}}{1 - \bar{L}} .
   \label{eq:adabeta}
 \end{equation}
 \begin{keterangan}
   \item[$\bar{L}$] rata-rata \textit{loss} berbobot pada satu iterasi,
   \item[$p_i$] probabilitas sampel ke-$i$,
-  \item[$\beta$] rasio yang dipakai untuk memperbarui bobot dan menentukan
+  \item[$\beta_m$] rasio pada pohon ke-$m$ yang dipakai untuk memperbarui bobot dan menentukan
     bobot ramalan.
 \end{keterangan}
 Bobot sampel kemudian diperbarui dengan
 \begin{equation}
-  w_i \leftarrow w_i\, \beta^{\,1 - L_i} .
+  w_i \leftarrow w_i\, \beta_m^{\,1 - L_i} .
   \label{eq:adabobot}
 \end{equation}
 \begin{keterangan}
   \item[$w_i$] bobot sampel ke-$i$,
-  \item[$\beta$] rasio pada Persamaan~\ref{eq:adabeta},
+  \item[$\beta_m$] rasio pada Persamaan~\ref{eq:adabeta},
   \item[$L_i$] \textit{loss} contoh ke-$i$ pada Persamaan~\ref{eq:adaloss}.
 \end{keterangan}
 Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ \cite{drucker1997} atau bila
@@ -552,17 +542,17 @@ diuji, tidak diandaikan.
 
 \subsection{Bayesian Optimization dengan TPE}
 % [kartu F2]
-\textit{Sequential model-based optimization} merupakan kerangka pencarian yang
-membangun model pengganti atas hubungan antara \textit{hyperparameter} dan
-nilai \textit{loss}, lalu memakai kriteria \textit{expected improvement} untuk
-memilih kandidat berikutnya \cite{bergstra2011}.
+Bayesian Optimization mencari \textit{hyperparameter} secara bertahap.
+Hasil percobaan sebelumnya dipakai untuk memilih percobaan berikutnya
+\cite{bergstra2011}.
 
-Tree-structured Parzen Estimator atau TPE merupakan salah satu pendekatan
-dalam kerangka tersebut. TPE memodelkan dua kerapatan, yaitu $\ell(\theta)$
-untuk konfigurasi dengan \textit{loss} di bawah kuantil
-$\gamma_{\text{TPE}}$ dan $g(\theta)$ untuk konfigurasi sisanya
-\cite{bergstra2011}. Kandidat berikutnya dipilih dari konfigurasi yang
-memiliki rasio berikut paling kecil,
+Tree-structured Parzen Estimator atau TPE merupakan salah satu cara dalam
+Bayesian Optimization. TPE membagi percobaan sebelumnya menjadi dua
+kelompok, yaitu kelompok dengan \textit{loss} kecil dan kelompok sisanya.
+Batas kedua kelompok ditentukan oleh kuantil $\gamma_{\text{TPE}}$. Sebaran
+nilai \textit{hyperparameter} pada kedua kelompok itu masing-masing disebut
+$\ell(\theta)$ dan $g(\theta)$. Percobaan berikutnya dipilih dari
+konfigurasi yang rasionya paling kecil,
 \begin{equation}
   \frac{g(\theta)}{\ell(\theta)} .
   \label{eq:tpe}
@@ -585,18 +575,16 @@ rumusan aslinya.
 
 \subsection{CMA-ES}
 % [kartu F4]
-Covariance Matrix Adaptation Evolution Strategy atau CMA-ES merupakan
-metode optimasi yang mengadaptasi matriks kovarians dari distribusi normal yang
-dipakai untuk membangkitkan kandidat baru \cite{hansen2001}. Adaptasi tersebut
-memakai informasi arah perbaikan dari beberapa generasi sebelumnya, yang
-disebut \textit{cumulation}, sehingga pencarian dapat menyesuaikan diri dengan
-bentuk permukaan \textit{loss}.
+Covariance Matrix Adaptation Evolution Strategy atau CMA-ES merupakan metode
+optimasi yang membangkitkan kandidat baru dari distribusi normal
+\cite{hansen2001}. Bentuk distribusi tersebut terus disesuaikan berdasarkan
+arah perbaikan pada beberapa generasi sebelumnya, sehingga pencarian makin
+terarah.
 
 % [kartu F7]
-Implementasi CMA-ES pada Optuna tidak mendukung parameter kategorikal
-\cite{optunadocs}. Parameter yang berada di luar ruang pencarian relatif
-diambil oleh \textit{independent sampler}, yang secara bawaan berupa
-\textit{random sampler} \cite{optunadocs}.
+CMA-ES pada Optuna tidak dapat menangani parameter kategorikal
+\cite{optunadocs}. Parameter seperti itu dipilih secara acak oleh
+\textit{random sampler}.
 
 \subsection{Genetic Algorithm dengan NSGA-II}
 % [kartu F5]
@@ -606,50 +594,42 @@ yaitu \textit{fast nondominated sorting} untuk mengurutkan solusi,
 elitisme yang menggabungkan populasi induk dengan populasi anak
 \cite{deb2002}.
 
-NSGA-II dirancang untuk masalah dengan banyak objektif. Dalam penelitian ini,
-pencarian hanya memakai satu objektif. Pada satu objektif,
-\textit{nondominated sorting} menjadi sama dengan mengurutkan nilai objektif,
-sehingga algoritmenya praktis bekerja sebagai algoritme genetika elitis biasa.
-Dokumentasi Optuna tidak menyebut pemakaian \textit{sampler} tersebut untuk
-satu objektif \cite{optunadocs}.
+NSGA-II sebenarnya dirancang untuk masalah dengan banyak tujuan (objektif).
+Penelitian ini hanya memakai satu tujuan, yaitu nilai kesalahan pada data
+validasi. Dengan satu tujuan, cara NSGA-II mengurutkan solusi sama saja dengan
+mengurutkan nilai kesalahan tersebut. Akibatnya, NSGA-II bekerja seperti
+algoritme genetika biasa yang selalu menyimpan solusi terbaik. Pemakaian untuk
+satu tujuan ini merupakan pilihan penelitian ini, bukan anjuran dokumentasi
+Optuna \cite{optunadocs}.
 
 \subsection{Quasi-Monte Carlo dengan Barisan Sobol}
 % [kartu F8, F9, F10]
-Barisan Sobol merupakan barisan titik yang dirancang agar tersebar seragam di
-dalam kubus satuan \cite{sobol1967}. Metode \textit{quasi-Monte Carlo}
-mengganti bilangan acak semu dengan barisan deterministik semacam itu, sehingga
-titik-titiknya tidak membentuk celah dan gerombolan seperti pada bilangan acak
-semu \cite{roy2023qmc}. Optuna memakai implementasi \textit{quasi-Monte Carlo}
-dari pustaka SciPy \cite{roy2023qmc}.
+Quasi-Monte Carlo (QMC) memilih titik percobaan dengan barisan Sobol. Barisan
+Sobol dirancang agar titik-titiknya tersebar rata \cite{sobol1967}. Berbeda
+dengan bilangan acak, barisan ini tidak meninggalkan celah kosong atau titik
+yang menumpuk. Optuna memakai QMC dari pustaka SciPy \cite{roy2023qmc}.
 
-Barisan Sobol kehilangan sifat keseimbangannya bila ukuran sampel yang diambil
-bukan merupakan pangkat dua \cite{scipysobol}. Sifat itu perlu diperhatikan
-ketika jumlah percobaan ditetapkan.
+Sebaran yang rata tersebut hanya terjamin bila jumlah percobaan merupakan
+pangkat dua, misalnya 16, 32, atau 64 \cite{scipysobol}. Hal ini perlu
+diperhatikan ketika jumlah percobaan ditetapkan.
 
 \subsection{Optuna}
 % [kartu F3]
-Optuna merupakan kerangka kerja optimasi \textit{hyperparameter} yang memakai
-pendekatan \textit{define-by-run}, yaitu ruang pencarian dibangun saat program
-dijalankan, bukan dideklarasikan lebih dulu \cite{akiba2019}. Pendekatan
-tersebut memudahkan pembentukan ruang pencarian yang bersyarat.
-
-Optuna membedakan \textit{sampler} independen, yang mengambil tiap parameter
-secara terpisah, dan \textit{sampler} relasional, yang memperhitungkan
-hubungan antarparameter \cite{akiba2019}. Optuna juga menyediakan mekanisme
-\textit{pruning} untuk menghentikan percobaan yang tidak menjanjikan
-\cite{akiba2019}.
+Optuna merupakan pustaka untuk optimasi \textit{hyperparameter}
+\cite{akiba2019}. Ruang pencarian pada Optuna ditulis langsung di dalam
+program, sehingga mudah diatur. Optuna menyediakan beberapa metode pencarian,
+yang disebut \textit{sampler}, serta fitur \textit{pruning} untuk menghentikan
+percobaan yang hasilnya buruk.
 
 \subsection{Teknik Optimasi Tambahan}
 % [kartu F6, F7]
-\textit{Pruning} bekerja dengan menghentikan percobaan yang hasil sementaranya
-buruk, sehingga anggaran komputasi dapat dialihkan ke percobaan yang lebih
-menjanjikan. Prinsip tersebut mengikuti \textit{successive halving}, yaitu
-menjalankan banyak konfigurasi dengan anggaran kecil, membuang sebagian yang
-terburuk, lalu mengulanginya \cite{li2018}. Penelitian ini memakai
-\textit{median pruner}, yang menghentikan percobaan bila hasil sementaranya
-lebih buruk daripada median hasil percobaan sebelumnya pada langkah yang sama
-\cite{optunadocs}. Dokumentasi Optuna tidak mencantumkan rujukan paper untuk
-\textit{pruner} tersebut \cite{optunadocs}.
+\textit{Pruning} menghentikan percobaan yang hasil sementaranya buruk,
+sehingga waktu komputasi dapat dipakai untuk percobaan lain. Cara ini
+berasal dari prinsip \textit{successive halving}, yaitu mencoba banyak
+konfigurasi dengan sedikit sumber daya, membuang yang terburuk, lalu
+mengulanginya \cite{li2018}. Penelitian ini memakai \textit{median pruner}.
+Percobaan dihentikan bila hasil sementaranya lebih buruk daripada median
+percobaan sebelumnya pada tahap yang sama \cite{optunadocs}.
 
 % [kartu E1, I3]
 Teknik kedua berupa penggantian fungsi \textit{loss} pelatihan menjadi
@@ -661,14 +641,12 @@ merupakan median dari distribusi prediktif \cite{gneiting2011}. Kaitannya
 dengan MAE dibahas pada Subbab~\ref{subsec:mae}.
 
 % [kartu J1]
-Teknik ketiga berupa \textit{early stopping}. Boosting yang dijalankan terlalu
-lama dapat mengalami \textit{overfitting}, sehingga pelatihan perlu dihentikan
-lebih awal berdasarkan hasil validasi silang atau data uji \cite{zhang2005}.
+Teknik ketiga berupa \textit{early stopping}. Boosting yang dijalankan
+terlalu lama dapat mengalami \textit{overfitting}, sehingga pelatihan perlu
+dihentikan lebih awal \cite{zhang2005}. Hasil teori tersebut berlaku untuk
+data yang saling bebas, sedangkan data penelitian ini berupa deret waktu.
 Pada penelitian ini, \textit{early stopping} memakai data validasi di dalam
 data latih, bukan data uji.
-Analisis tersebut mengandaikan data yang bersifat \textit{independent and
-identically distributed}, sedangkan data penelitian ini merupakan deret waktu,
-sehingga jaminan teoretisnya tidak dapat diklaim di sini.
 
 Teknik keempat berupa seleksi fitur, yaitu melatih ulang model hanya dengan
 sebagian fitur yang dinilai paling penting. Tujuannya mengurangi derau dari
@@ -679,13 +657,12 @@ fitur yang kurang informatif.
 
 \section{Validasi Deret Waktu dan Kebocoran Data}
 % [kartu G4]
-Validasi silang acak tidak cocok dipakai pada data deret waktu, karena
-pengacakan memutus urutan waktu dan membuat data masa depan dapat masuk ke
-dalam data latih \cite{cerqueira2020}. Skema yang sesuai merupakan
-\textit{prequential in blocks} dengan \textit{window} data latih yang terus
-bertambah, yaitu model dilatih pada blok awal lalu diuji pada blok berikutnya
-secara berurutan \cite{cerqueira2020}. Penelitian ini menyebut skema tersebut
-sebagai validasi \textit{walk-forward}.
+Validasi silang biasa mengacak data, sehingga urutan waktunya rusak
+\cite{cerqueira2020}. Pada data deret waktu, data latih dan data validasi
+harus tetap berurutan. Salah satu caranya merupakan \textit{prequential in
+blocks}, yaitu model dilatih pada data awal, lalu diuji pada blok data
+berikutnya. Data latihnya terus bertambah pada setiap putaran. Penelitian ini
+menyebut cara tersebut validasi \textit{walk-forward}.
 
 % [kartu G5]
 Evaluasi yang hanya memakai satu titik awal atau satu periode uji rentan
