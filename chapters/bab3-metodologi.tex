@@ -1,21 +1,733 @@
 \chapter{Metodologi}
-% Bab III v3.0 -- BELUM DITULIS.
-%
-% Versi v2.9 (HAR-RV, realized variance) diarsipkan di
-% chapters/arsip-v2.9/bab3-metodologi.tex dan TIDAK di-input.
-% Isi bab ini akan ditulis ulang untuk skripsi v3.0 (prediksi harga BTC/IDR
-% dengan model boosting) lewat brief tersendiri.
-%
-% Gambar TikZ untuk bab ini sudah tersedia dan tinggal di-input:
-%   assets/tikz-v3/g3-alur-penelitian.tex
-%   assets/tikz-v3/g3-pengumpulan-data.tex
-%   assets/tikz-v3/g3-fitur-target.tex
-%   assets/tikz-v3/g3-split-purging.tex
-%   assets/tikz-v3/g3-walk-forward.tex
-%   assets/tikz-v3/g3-tahapan-eksperimen.tex
-% Dua di antaranya butuh library TikZ yang belum dimuat di
-% upnjatim-skripsi.cls, yaitu `patterns` (g3-split-purging, g3-walk-forward)
-% dan `decorations.pathreplacing` (g3-fitur-target).
-%
-% Lingkungan `keterangan` didefinisikan di chapters/bab2-tinjauan-pustaka.tex
-% dan dapat langsung dipakai di sini.
+% Bab III v3.0 -- rancangan penelitian prediksi harga BTC/IDR dengan boosting.
+% Angka desain diambil dari source code di context/hasil_eksperimen_v3.0.md
+% (Lampiran B) dan context/konteks_collector_data_v3.0.md.
+% Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab3-metodologi.tex.
+% CEK: subbab desain aplikasi ditambahkan bila dosen meminta.
+
+% Library TikZ tambahan untuk gambar G3-3, G3-4, dan G3-5. Dimuat di sini
+% karena upnjatim-skripsi.cls baru memuat arrows.meta, positioning,
+% shapes.geometric, shapes.misc, dan calc.
+\usetikzlibrary{patterns,decorations.pathreplacing}
+
+\section{Deskripsi Studi Kasus}
+Objek penelitian ini merupakan harga Bitcoin terhadap rupiah, yaitu pasangan
+BTC/IDR, di pasar spot Indodax. Indodax merupakan salah satu bursa aset kripto
+yang beroperasi di Indonesia.
+
+Pasangan BTC/IDR dipilih karena dua alasan. Pertama, harga dalam rupiah lebih
+langsung terasa bagi \textit{trader} di Indonesia daripada harga dalam dolar.
+Kedua, datanya dapat dikumpulkan sendiri melalui API publik Indodax, sehingga
+penelitian ini tidak bergantung pada arsip data pihak ketiga. Latar belakang
+pemilihan topik ini sudah dibahas pada Subbab~1.1 dan tidak
+diulang di sini.
+
+\section{Tahapan Penelitian}
+Penelitian ini dijalankan dalam tujuh langkah.
+Gambar~\ref{fig:alur} menampilkan alur ketujuh langkah tersebut.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-alur-penelitian}
+  \caption{Alur Penelitian}
+  \label{fig:alur}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
+publik Indodax oleh program \textit{collector} yang berjalan otomatis di
+server, lalu disimpan ke basis data. Rinciannya dibahas pada
+Subbab~\ref{sec:kumpul}.
+
+Langkah kedua merupakan praproses. \textit{Candle} 5 menit dibentuk dari
+\textit{candle} 1 menit, lalu harga yang dipakai ditetapkan dan bar yang
+hilang ditangani. Rinciannya dibahas pada Subbab~\ref{sec:praproses}.
+
+Langkah ketiga merupakan pembentukan fitur dan target. Fitur dihitung hanya
+dari data sampai waktu $t$, sedangkan targetnya merupakan \textit{return}
+logaritmik pada \textit{time frame} $h$. Rinciannya dibahas pada
+Subbab~\ref{sec:fitur}.
+
+Langkah keempat merupakan pembagian data. Data dibagi berurutan menurut waktu
+menjadi data latih dan data uji, lalu sebagian baris di batasnya dibuang.
+Rinciannya dibahas pada Subbab~\ref{sec:bagi}.
+
+Langkah kelima merupakan optimasi \textit{hyperparameter}. Pencarian dilakukan
+hanya di dalam data latih dengan validasi \textit{walk-forward}. Rinciannya
+dibahas pada Subbab~\ref{sec:model}.
+
+Langkah keenam merupakan pelatihan model akhir dan prediksi. Model dilatih
+ulang pada seluruh data latih, lalu dipakai untuk memprediksi data uji, dan
+hasilnya dikonversi ke rupiah. Rinciannya dibahas pada
+Subbab~\ref{sec:model}.
+
+Langkah ketujuh merupakan evaluasi. Ramalan model dibandingkan dengan ramalan
+Naive memakai beberapa metrik dan uji statistik. Rinciannya dibahas pada
+Subbab~\ref{sec:evaluasi}.
+
+\section{Studi Literatur}
+Studi literatur dilakukan untuk menemukan celah penelitian dan landasan
+metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
+isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
+celah penelitian dibatasi lima tahun terakhir, sedangkan paper sumber metode
+boleh berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
+memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
+mulai dari penelitian terdahulu pada Subbab~2.1 sampai celah
+penelitian pada Subbab~2.10.
+
+\section{Pengumpulan Data}
+\label{sec:kumpul}
+Data penelitian ini merupakan data primer yang dikumpulkan sendiri.
+Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-pengumpulan-data}
+  \caption{Skema Pengumpulan Data}
+  \label{fig:kumpul}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Data diambil dari API publik Indodax tanpa memakai API \textit{key}. Sebuah
+program \textit{collector} yang ditulis dengan Python dijalankan oleh
+\textit{cron} setiap 1 menit pada sebuah \textit{virtual private server} (VPS)
+berzona waktu UTC. Setiap kali berjalan, program tersebut menyimpan data ke
+basis data SQLite.
+
+\textit{Candle} 1 menit diambil dari \textit{endpoint}
+\texttt{tradingview/history\_v2} dengan parameter \texttt{tf=1}, lalu disimpan
+pada tabel \texttt{ohlc\_1m}. Indodax hanya menyediakan \textit{time frame
+candle} 1, 15, 30, 60, dan 240 menit, serta harian dan mingguan. Karena itu,
+\textit{candle} 1 menit dipakai sebagai resolusi terkecil yang tersedia.
+
+Program \textit{collector} mengambil ulang data 5 menit terakhir setiap kali
+berjalan. Dengan cara itu, \textit{candle} yang belum selesai terbentuk saat
+diambil akan terkoreksi pada menit berikutnya. Menit yang terlewat juga dapat
+ditambal sampai 6 jam ke belakang. Setiap permintaan ke API dicoba ulang
+sampai tiga kali bila gagal.
+
+Selain \textit{candle}, program tersebut juga menyimpan \textit{snapshot}
+ticker pada tabel \texttt{ticker\_snapshots}. Data ticker tidak dipakai dalam
+penelitian ini, karena fitur penelitian ini dibatasi pada data harga dan
+volume \textit{candle}.
+
+Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
+
+\begin{table}[htbp]
+  \caption{Deskripsi Data Penelitian}
+  \label{tab:data}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.14\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.09\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.17\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.24\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.12\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.10\textwidth}|}
+    \hline
+    \textbf{Dataset} & \textbf{Resolusi} & \textbf{Sumber} &
+    \textbf{Kolom data} & \textbf{Periode} & \textbf{Jumlah baris} \\
+    \hline
+    \textit{Candle} 1 menit & 1 menit & API publik Indodax &
+    waktu, \textit{open}, \textit{high}, \textit{low}, \textit{close}, volume &
+    [periode] & [jumlah] \\
+    \hline
+    \textit{Candle} 5 menit & 5 menit & Agregasi \textit{candle} 1 menit &
+    waktu, \textit{open}, \textit{high}, \textit{low}, \textit{close}, volume &
+    [periode] & [jumlah] \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+% CEK: diisi setelah data final Februari 2027
+
+Perlu dicatat bahwa menit tanpa transaksi tidak menghasilkan \textit{candle}.
+Karena itu, celah pada data tidak selalu berarti program \textit{collector}
+gagal mengambil data.
+
+\section{Praproses Data}
+\label{sec:praproses}
+
+\subsection{Pembentukan \textit{Candle} 5 Menit}
+Karena Indodax tidak menyediakan \textit{candle} 5 menit, dataset kedua
+dibentuk dengan menggabungkan lima \textit{candle} 1 menit yang berurutan.
+Misalkan $\tau$ menyatakan nomor bar 5 menit dan $j$ menyatakan nomor menit di
+dalam bar tersebut. Nilai bar 5 menit ke-$\tau$ dihitung dengan
+\begin{equation}
+  \begin{aligned}
+    P^{O}_\tau &= P^{O}_{j_1}, &\qquad
+    P^{H}_\tau &= \max_{j \in \tau} P^{H}_j, &\qquad
+    P^{L}_\tau &= \min_{j \in \tau} P^{L}_j, \\
+    P^{C}_\tau &= P^{C}_{j_5}, &\qquad
+    V_\tau &= \sum_{j \in \tau} V_j . & &
+  \end{aligned}
+  \label{eq:agregasi}
+\end{equation}
+\begin{keterangan}
+  \item[$P^{O}_\tau$] harga pembukaan bar 5 menit ke-$\tau$,
+  \item[$P^{H}_\tau$] harga tertinggi bar 5 menit ke-$\tau$,
+  \item[$P^{L}_\tau$] harga terendah bar 5 menit ke-$\tau$,
+  \item[$P^{C}_\tau$] harga penutupan bar 5 menit ke-$\tau$,
+  \item[$V_\tau$] volume bar 5 menit ke-$\tau$,
+  \item[$j$] nomor menit di dalam bar ke-$\tau$, dengan $j_1$ menit pertama
+    dan $j_5$ menit terakhir,
+  \item[$P^{O}_j$, $P^{H}_j$, $P^{L}_j$, $P^{C}_j$, $V_j$] nilai
+    \textit{candle} 1 menit pada menit ke-$j$.
+\end{keterangan}
+Bila ada menit yang kosong di dalam satu bar 5 menit, bar tersebut tetap
+dibentuk dari menit yang tersedia. Bila kelima menitnya kosong, bar tersebut
+dianggap hilang.
+% CEK: sesuaikan dengan kode agregasi final (belum ada di prediksi_btc)
+
+\subsection{Definisi Harga}
+Satu \textit{candle} memuat empat harga sekaligus. Penelitian ini memakai
+harga \textit{typical} pada kedua dataset, yaitu
+\begin{equation}
+  P_t = \frac{P^{H}_t + P^{L}_t + P^{C}_t}{3} .
+  \label{eq:typical}
+\end{equation}
+\begin{keterangan}
+  \item[$P_t$] harga yang dipakai pada waktu $t$,
+  \item[$P^{H}_t$] harga tertinggi pada bar ke-$t$,
+  \item[$P^{L}_t$] harga terendah pada bar ke-$t$,
+  \item[$P^{C}_t$] harga penutupan pada bar ke-$t$.
+\end{keterangan}
+Harga penutupan pada data 1 menit dapat meloncat-loncat antara harga beli dan
+harga jual terbaik. Loncatan itu membuat \textit{return} antarbar tampak
+berubah arah terus-menerus, padahal harga pasarnya tidak banyak bergerak.
+Harga \textit{typical} merupakan rata-rata dari tiga harga sekaligus, sehingga
+pengaruh loncatan tersebut berkurang.
+% CEK: hitung ulang autokorelasi return close vs typical pada data final
+% sebelum dijadikan bukti.
+
+\subsection{Penanganan Data Hilang}
+Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
+yaitu setiap 1 menit untuk dataset pertama dan setiap 5 menit untuk dataset
+kedua. Bar yang tidak ada datanya dibiarkan kosong dan tidak diisi dengan nilai
+dugaan. Fitur maupun target yang perhitungannya melewati bar kosong otomatis
+ikut terbuang pada tahap berikutnya. Cara ini dipilih supaya tidak ada nilai
+buatan yang masuk ke dalam data latih maupun data uji.
+
+\subsection{Normalisasi}
+Penelitian ini tidak memakai normalisasi maupun penskalaan fitur. Keempat
+model yang dibandingkan merupakan model berbasis pohon, dan model seperti itu
+memecah data berdasarkan urutan nilai fitur, bukan berdasarkan besarnya.
+% CEK: butuh sumber (model pohon tidak sensitif terhadap skala fitur)
+Pilihan ini sekaligus menghindari salah satu bentuk kebocoran data yang
+dibahas pada Subbab~2.7, yaitu penskala yang dipasang sebelum data dibagi.
+
+\section{Pembentukan Fitur dan Target}
+\label{sec:fitur}
+Prinsip utama pada tahap ini adalah semua fitur pada waktu $t$ hanya boleh
+memakai data sampai waktu $t$. Gambar~\ref{fig:fitur} menggambarkan hubungan
+antara jendela fitur dan target.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-fitur-target}
+  \caption{Pembentukan Fitur dan Target}
+  \label{fig:fitur}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
+
+\begin{table}[htbp]
+  \caption{Daftar Fitur}
+  \label{tab:fitur}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.16\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.20\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.37\textwidth}%
+                  |>{\centering\arraybackslash}p{0.10\textwidth}|}
+    \hline
+    \textbf{Kelompok} & \textbf{Nama fitur} & \textbf{Penjelasan} &
+    \textbf{Jumlah} \\
+    \hline
+    \textit{Lag return} & \texttt{ret\_lag1} s.d.\ \texttt{ret\_lag12} &
+    \textit{return} logaritmik satu bar, mulai dari bar terakhir sampai
+    waktu $t$ hingga 11 bar sebelumnya & 12 \\
+    \hline
+    Statistik bergulir & \texttt{ret\_sum\_w}, \texttt{ret\_std\_w},
+    \texttt{nol\_w} & jumlah \textit{return}, simpangan baku \textit{return},
+    dan proporsi \textit{return} bernilai nol dalam jendela $w$ & 15 \\
+    \hline
+    \textit{Candle} & \texttt{range\_rel} &
+    $(P^{H}_t - P^{L}_t)/P^{C}_t$ & 1 \\
+    \hline
+    \textit{Candle} & \texttt{posisi\_bar} &
+    $(P^{C}_t - P^{L}_t)/(P^{H}_t - P^{L}_t)$, bernilai 0,5 bila
+    $P^{H}_t = P^{L}_t$ & 1 \\
+    \hline
+    \textit{Candle} & \texttt{log\_vol} & $\ln(1 + V_t)$ & 1 \\
+    \hline
+    \textit{Candle} bergulir & \texttt{range\_mean\_w},
+    \texttt{vol\_rasio\_w} & rata-rata \texttt{range\_rel} dan selisih
+    \texttt{log\_vol} terhadap rata-ratanya dalam jendela $w$ & 10 \\
+    \hline
+    Waktu & \texttt{jam\_sin}, \texttt{jam\_cos} &
+    jam dalam sehari dikodekan dengan sinus dan kosinus & 2 \\
+    \hline
+    \multicolumn{3}{|r|}{\textbf{Total}} & \textbf{42} \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Jendela bergulir $w$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
+\textit{candle} 1 menit. Pada dataset \textit{candle} 5 menit, jendela
+terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
+240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua bar.
+
+Target yang diramal merupakan \textit{return} logaritmik $r_{t,h}$ pada
+Persamaan~\eqref{eq:return}. Hasil ramalan dikembalikan ke satuan rupiah
+dengan Persamaan~\eqref{eq:konversi}. Alasan memakai \textit{return}, bukan
+harga secara langsung, sudah dibahas pada Subbab~2.4.2.
+
+\textit{Time frame} yang diuji bernilai 1, 5, 15, 30, dan 60 menit.
+\textit{Time frame} 1 menit hanya dipakai pada dataset \textit{candle} 1
+menit. \textit{Time frame} yang bukan kelipatan resolusi datanya otomatis
+dilewati. \textit{Time frame} dalam satuan bar dihitung dengan
+$h_b = h / \Delta$, dengan $\Delta$ menyatakan resolusi \textit{candle}, yaitu
+1 atau 5 menit.
+
+\section{Pembagian Data}
+\label{sec:bagi}
+Data dibagi berurutan menurut waktu, tanpa pengacakan. Gambar~\ref{fig:bagi}
+menggambarkan pembagian tersebut.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-split-purging}
+  \caption{Pembagian Data dan \textit{Purging}}
+  \label{fig:bagi}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Tiga rasio data latih terhadap data uji diuji, yaitu 80:20, 70:30, dan 60:40.
+Alasan memakai lebih dari satu rasio sudah dibahas pada Subbab~2.7, yaitu
+hasil pada satu periode uji dapat berbeda dari hasil pada periode uji lain.
+
+Selain itu, $h_b$ bar terakhir pada data latih dibuang. Langkah tersebut
+disebut \textit{purging} dan sudah dijelaskan pada Subbab~2.7. Alasannya,
+target pada $h_b$ bar terakhir dihitung dari harga yang sudah berada di dalam
+periode uji. Indeks kedua bagian data merupakan
+\begin{equation}
+  \text{data latih} = 1, \dots, \lfloor \rho N \rfloor - h_b,
+  \qquad
+  \text{data uji} = \lfloor \rho N \rfloor + 1, \dots, N .
+  \label{eq:split}
+\end{equation}
+\begin{keterangan}
+  \item[$\rho$] porsi data latih, bernilai 0,8, 0,7, atau 0,6,
+  \item[$N$] jumlah baris data setelah fitur dan target dibentuk,
+  \item[$h_b$] \textit{time frame} dalam satuan bar,
+  \item[$\lfloor \cdot \rfloor$] pembulatan ke bawah.
+\end{keterangan}
+
+\section{Pembangunan Model dan Optimasi \textit{Hyperparameter}}
+\label{sec:model}
+
+\subsection{Model yang Dibandingkan}
+Empat model boosting dibandingkan dalam penelitian ini, yaitu XGBoost dengan
+kelas \texttt{XGBRegressor}, LightGBM dengan kelas \texttt{LGBMRegressor},
+CatBoost dengan kelas \texttt{CatBoostRegressor}, dan AdaBoost.R2 dengan kelas
+\texttt{AdaBoostRegressor} yang memakai \texttt{DecisionTreeRegressor} sebagai
+pohon dasar. Pembandingnya merupakan Naive pada
+Persamaan~\eqref{eq:naive}.
+
+Seluruh model memakai \textit{seed} acak 42, sehingga hasilnya dapat diulang.
+Pengaturan \textit{default} memakai nilai bawaan dari masing-masing pustaka.
+Satu-satunya pengecualian adalah AdaBoost, yang memakai pohon dasar dengan
+kedalaman 3.
+
+\subsection{Ruang Pencarian \textit{Hyperparameter}}
+Tabel~\ref{tab:ruang} dan Tabel~\ref{tab:ruang2} merinci ruang pencarian
+untuk metode Random Search, TPE, CMA-ES, Genetic Algorithm, dan Quasi-Monte
+Carlo. Keterangan ``log'' berarti nilainya diambil pada skala logaritmik.
+
+\begin{table}[htbp]
+  \caption{Ruang Pencarian \textit{Hyperparameter} XGBoost dan LightGBM}
+  \label{tab:ruang}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.16\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.32\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.36\textwidth}|}
+    \hline
+    \textbf{Model} & \textbf{\textit{Hyperparameter}} & \textbf{Rentang} \\
+    \hline
+    XGBoost & \texttt{n\_estimators} & 10--1000 (log) \\
+    \cline{2-3} & \texttt{max\_depth} & 1--8 \\
+    \cline{2-3} & \texttt{learning\_rate} & 0,001--0,3 (log) \\
+    \cline{2-3} & \texttt{min\_child\_weight} & 1--100 (log) \\
+    \cline{2-3} & \texttt{subsample} & 0,5--1,0 \\
+    \cline{2-3} & \texttt{colsample\_bytree} & 0,3--1,0 \\
+    \cline{2-3} & \texttt{reg\_lambda} & 0,001--100 (log) \\
+    \cline{2-3} & \texttt{reg\_alpha} & 0,001--10 (log) \\
+    \hline
+    LightGBM & \texttt{n\_estimators} & 10--1000 (log) \\
+    \cline{2-3} & \texttt{num\_leaves} & 2--63 (log) \\
+    \cline{2-3} & \texttt{max\_depth} & 1--8 \\
+    \cline{2-3} & \texttt{learning\_rate} & 0,001--0,3 (log) \\
+    \cline{2-3} & \texttt{min\_child\_samples} & 5--300 (log) \\
+    \cline{2-3} & \texttt{subsample} & 0,5--1,0 (\texttt{subsample\_freq} = 1) \\
+    \cline{2-3} & \texttt{colsample\_bytree} & 0,3--1,0 \\
+    \cline{2-3} & \texttt{reg\_lambda} & 0,001--100 (log) \\
+    \cline{2-3} & \texttt{reg\_alpha} & 0,001--10 (log) \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{Ruang Pencarian \textit{Hyperparameter} CatBoost dan AdaBoost}
+  \label{tab:ruang2}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.16\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.32\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.36\textwidth}|}
+    \hline
+    \textbf{Model} & \textbf{\textit{Hyperparameter}} & \textbf{Rentang} \\
+    \hline
+    CatBoost & \texttt{iterations} & 10--1000 (log) \\
+    \cline{2-3} & \texttt{depth} & 1--8 \\
+    \cline{2-3} & \texttt{learning\_rate} & 0,001--0,3 (log) \\
+    \cline{2-3} & \texttt{l2\_leaf\_reg} & 0,1--100 (log) \\
+    \cline{2-3} & \texttt{random\_strength} & 0,001--10 (log) \\
+    \cline{2-3} & \texttt{bagging\_temperature} & 0--1 \\
+    \hline
+    AdaBoost & \texttt{n\_estimators} & 10--500 (log) \\
+    \cline{2-3} & \texttt{learning\_rate} & 0,001--1,0 (log) \\
+    \cline{2-3} & \texttt{loss} & linear, square, exponential \\
+    \cline{2-3} & \texttt{max\_depth} (pohon dasar) & 1--6 \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Grid Search memakai daftar nilai tetap yang berbeda dari ruang pencarian
+tersebut. Tabel~\ref{tab:grid} merinci ketiga parameter yang dipakai, sehingga
+jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
+
+\begin{table}[htbp]
+  \caption{Nilai Parameter Grid Search}
+  \label{tab:grid}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.25\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.22\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.26\textwidth}|}
+    \hline
+    \textbf{Model} & \textbf{Parameter 1} & \textbf{Parameter 2} &
+    \textbf{Parameter 3} \\
+    \hline
+    XGBoost & \texttt{n\_estimators} \{50, 200, 500\} &
+    \texttt{max\_depth} \{2, 4, 6\} &
+    \texttt{learning\_rate} \{0,001; 0,01; 0,1\} \\
+    \hline
+    LightGBM & \texttt{n\_estimators} \{50, 200, 500\} &
+    \texttt{num\_leaves} \{4, 15, 31\} &
+    \texttt{learning\_rate} \{0,001; 0,01; 0,1\} \\
+    \hline
+    CatBoost & \texttt{iterations} \{50, 200, 500\} &
+    \texttt{depth} \{2, 4, 6\} &
+    \texttt{learning\_rate} \{0,001; 0,01; 0,1\} \\
+    \hline
+    AdaBoost & \texttt{n\_estimators} \{50, 150, 300\} &
+    \texttt{max\_depth} \{2, 3, 5\} &
+    \texttt{learning\_rate} \{0,01; 0,1; 1,0\} \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+\subsection{Metode Optimasi}
+Tujuh pengaturan optimasi dibandingkan, yaitu satu pengaturan tanpa
+\textit{tuning} dan enam metode pencarian. Seluruh metode dijalankan dengan
+pustaka Optuna. Teori setiap metode sudah dibahas pada Subbab~2.6.
+Tabel~\ref{tab:optimasi} merangkum pengaturannya.
+
+\begin{table}[htbp]
+  \caption{Metode Optimasi \textit{Hyperparameter}}
+  \label{tab:optimasi}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.22\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.38\textwidth}|}
+    \hline
+    \textbf{Metode} & \textbf{Implementasi Optuna} & \textbf{Pengaturan} \\
+    \hline
+    \textit{Default} & --- & tanpa \textit{tuning} \\
+    \hline
+    Grid Search & \texttt{GridSampler} & 27 kombinasi \\
+    \hline
+    Random Search & \texttt{RandomSampler} & 30 \textit{trial}, \textit{seed} 42 \\
+    \hline
+    TPE & \texttt{TPESampler} & 30 \textit{trial}, 10 \textit{trial} awal acak,
+    \textit{seed} 42 \\
+    \hline
+    CMA-ES & \texttt{CmaEsSampler} & 30 \textit{trial}, 5 \textit{trial} awal
+    acak, \textit{seed} 42 \\
+    \hline
+    Genetic Algorithm & \texttt{NSGAIISampler} & 30 \textit{trial}, populasi
+    10, \textit{seed} 42 \\
+    \hline
+    Quasi-Monte Carlo & \texttt{QMCSampler} & 30 \textit{trial}, barisan Sobol
+    teracak, \textit{seed} 42 \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Ada tiga catatan desain yang perlu disebut. Pertama, CMA-ES tidak dapat
+menangani parameter kategorikal, sehingga parameter \texttt{loss} pada
+AdaBoost dipilih secara acak oleh \textit{random sampler}. Kedua, NSGA-II
+dipakai untuk satu tujuan saja, yaitu nilai kesalahan pada data validasi.
+Ketiga, jumlah 30 \textit{trial} pada Quasi-Monte Carlo bukan merupakan
+pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata.
+% CEK: pertimbangkan 32 trial untuk eksperimen final, atau tulis sebagai
+% keterbatasan.
+
+Selain itu, metode yang memakai unsur acak dijalankan dengan \textit{seed}
+yang sama. Karena itu, beberapa \textit{trial} awalnya dapat menghasilkan
+konfigurasi yang identik.
+
+\subsection{Validasi \textit{Walk-Forward}}
+Pencarian \textit{hyperparameter} hanya memakai data latih. Data uji tidak
+disentuh sama sekali pada tahap ini. Gambar~\ref{fig:walk} menggambarkan
+skema validasinya.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-walk-forward}
+  \caption{Validasi \textit{Walk-Forward} untuk Optimasi
+    \textit{Hyperparameter}}
+  \label{fig:walk}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
+Jendela latih bertambah pada setiap \textit{fold}, dan blok validasinya selalu
+berada sesudah jendela latih. Di antara keduanya diberi jeda sebesar $h_b$
+bar, sehingga target pada data latih tidak melewati blok validasi.
+
+Nilai yang dioptimasi merupakan rata-rata MAE \textit{return} pada kelima
+\textit{fold}, yaitu
+\begin{equation}
+  \mathrm{Skor}(\theta) = \frac{1}{K}\sum_{k=1}^{K}
+  \frac{1}{n_k}\sum_{t \in \mathcal{V}_k}
+  \left\lvert r_{t,h} - \hat{r}_{t,h} \right\rvert .
+  \label{eq:objektif}
+\end{equation}
+\begin{keterangan}
+  \item[$\mathrm{Skor}(\theta)$] nilai objektif untuk konfigurasi
+    \textit{hyperparameter} $\theta$,
+  \item[$K$] jumlah \textit{fold}, bernilai 5,
+  \item[$k$] nomor \textit{fold},
+  \item[$\mathcal{V}_k$] himpunan indeks bar pada blok validasi
+    \textit{fold} ke-$k$,
+  \item[$n_k$] banyaknya bar pada blok validasi \textit{fold} ke-$k$,
+  \item[$r_{t,h}$] \textit{return} sebenarnya pada Persamaan~\eqref{eq:return},
+  \item[$\hat{r}_{t,h}$] \textit{return} hasil ramalan.
+\end{keterangan}
+Konfigurasi dengan nilai $\mathrm{Skor}(\theta)$ terkecil dipilih sebagai
+konfigurasi terbaik. Setelah itu, model dilatih ulang pada seluruh data latih
+dengan konfigurasi tersebut, lalu dipakai untuk memprediksi data uji.
+
+\subsection{Teknik Optimasi Tambahan}
+Empat teknik tambahan diuji secara terpisah. Teorinya sudah dibahas pada
+Subbab~2.6.7.
+
+Teknik pertama merupakan \textit{early stopping}, yang dipakai pada XGBoost,
+LightGBM, dan CatBoost. Jumlah pohon maksimum ditetapkan 2.000, dan pelatihan
+dihentikan bila tidak ada perbaikan selama 50 iterasi berturut-turut pada
+blok validasi di setiap \textit{fold}. Jumlah pohon pada model akhir
+ditetapkan sebagai rata-rata jumlah pohon terbaik dari kelima \textit{fold}.
+Teknik ini tidak berlaku untuk AdaBoost.
+
+Teknik kedua merupakan seleksi 15 fitur teratas. Model dengan pengaturan
+\textit{default} dilatih pada data latih, lalu 15 fitur dengan nilai
+\textit{feature importance} tertinggi dipilih. Seleksi ini hanya memakai data
+latih, sehingga tidak terjadi kebocoran dari data uji.
+
+Teknik ketiga merupakan penggantian fungsi \textit{loss} pelatihan menjadi
+\textit{loss} absolut. XGBoost memakai \texttt{reg:absoluteerror}, LightGBM
+memakai \texttt{l1}, dan CatBoost memakai \texttt{MAE}. AdaBoost tidak
+terpengaruh, karena model tersebut memiliki parameter \texttt{loss} sendiri.
+
+Teknik keempat merupakan \textit{median pruner}. Pemangkasan mulai bekerja
+setelah 5 \textit{trial} selesai dan setelah satu langkah pemanasan. Hasil
+sementara dilaporkan setiap kali satu \textit{fold} selesai dihitung.
+
+\section{Evaluasi Model}
+\label{sec:evaluasi}
+Ramalan dievaluasi pada data uji dalam satuan rupiah. Harga ramalan diperoleh
+dengan mengembalikan \textit{return} hasil ramalan ke rupiah memakai
+Persamaan~\eqref{eq:konversi}.
+
+Metrik utama penelitian ini merupakan MAE pada Persamaan~\eqref{eq:mae},
+karena satuannya sama dengan harga dan mudah ditafsirkan. Karena nilai MAE
+bergantung pada tingkat harga, hasilnya juga dinyatakan secara relatif
+terhadap Naive dengan Persamaan~\eqref{eq:maenaive}. Metrik pendukungnya
+merupakan RMSE pada Persamaan~\eqref{eq:rmse}, MAPE pada
+Persamaan~\eqref{eq:mape}, dan akurasi arah pada Persamaan~\eqref{eq:arah}.
+Khusus akurasi arah, bar yang harga sebenarnya tidak berubah, yaitu
+$r_{t,h} = 0$, tidak ikut dihitung karena arahnya tidak terdefinisi.
+
+Selisih akurasi antara ramalan model dan ramalan Naive diuji dengan uji
+Diebold-Mariano pada Persamaan~\eqref{eq:dmstat}. Uji tersebut dijalankan dua
+kali, yaitu dengan \textit{loss} absolut sebagai pasangan MAE dan dengan
+\textit{loss} kuadrat sebagai pasangan RMSE. Varians rata-rata selisih
+\textit{loss} dihitung memakai autokovarians sampai lag $h_b - 1$, lalu
+dikalikan faktor koreksi HLN pada Persamaan~\eqref{eq:hln}. Nilai kritisnya
+diambil dari distribusi $t$ berderajat bebas $n - 1$.
+
+Sebuah ramalan model disebut lebih baik secara signifikan daripada Naive bila
+memenuhi tiga syarat sekaligus, yaitu nilai MAE vs Naive kurang dari nol,
+statistik DM kurang dari nol, dan nilai $p$ kurang dari 0,05. Sebaliknya,
+sebuah ramalan disebut lebih buruk secara signifikan bila statistik DM lebih
+besar dari nol dan nilai $p$ kurang dari 0,05.
+
+Karena setiap kombinasi dataset, \textit{time frame}, model, metode optimasi,
+dan rasio pembagian data diuji terhadap Naive, jumlah ujinya menjadi banyak.
+Koreksi Holm yang dibahas pada Subbab~2.9 dipakai untuk mengendalikan
+kemungkinan munculnya hasil signifikan karena kebetulan.
+% CEK: koreksi Holm belum ada di kode prediksi_btc; tambahkan sebelum
+% eksperimen final.
+
+Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan trading,
+sesuai batasan masalah pada Subbab~1.5.
+
+\section{Skenario Pengujian}
+\label{sec:skenario}
+Eksperimen dijalankan dalam empat tahap yang berurutan.
+Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
+
+\begin{figure}[htbp]
+  \centering
+  \input{assets/tikz-v3/g3-tahapan-eksperimen}
+  \caption{Tahapan Eksperimen}
+  \label{fig:tahap}
+  \sumber{Diolah penulis}
+\end{figure}
+
+Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi yang
+dijalankan merupakan 2 dataset dikali jumlah \textit{time frame} dikali
+4 model, dengan metode TPE dan rasio \textit{split} 80:20. Pasangan yang
+dipilih merupakan pasangan dengan nilai MAE vs Naive terkecil di antara
+keempat model. Pasangan yang memiliki model lebih baik secara signifikan
+daripada Naive diutamakan. Bila hasilnya seri, dipilih \textit{time frame}
+yang lebih pendek, lalu dataset \textit{candle} 1 menit.
+
+Tahap kedua mencari metode optimasi. Dataset dan \textit{time frame} yang
+dipakai merupakan hasil Tahap pertama, dengan rasio \textit{split} 80:20.
+Kombinasinya merupakan 7 metode dikali 4 model. Metode yang dipilih merupakan
+metode dengan rata-rata MAE vs Naive keempat model terkecil. Pengaturan
+\textit{default} tidak boleh dipilih. Bila hasilnya seri, dipilih metode
+dengan waktu \textit{tuning} terpendek.
+
+Tahap ketiga menguji rasio pembagian data. Konfigurasi dari Tahap pertama dan
+kedua dijalankan pada 3 rasio dikali 4 model. Tidak ada pemilihan pada tahap
+ini, dan seluruh hasilnya dilaporkan.
+
+Tahap keempat menguji teknik optimasi tambahan. Konfigurasi dari Tahap pertama
+dan kedua dijalankan pada rasio \textit{split} 80:20, dengan 4 teknik dikali
+4 model. Tahap ini juga tidak memilih apa pun.
+
+Seluruh aturan pemilihan tersebut dikunci sebelum Tahap pertama dijalankan.
+Pengurutan ini penting supaya pemilihan dataset, \textit{time frame}, dan
+metode optimasi tidak disusun ulang mengikuti hasil yang sudah terlihat.
+% CEK: aturan dikunci ulang untuk eksperimen final (dataset candle 1 dan
+% 5 menit); aturan penentuan "model terbaik" untuk RM3 belum dikunci,
+% menunggu dosen.
+% CEK: hitung ulang rencana jumlah run setelah candle 5 menit masuk.
+
+Tabel~\ref{tab:petaRM} memetakan keempat tahap tersebut ke rumusan masalah
+pada Subbab~\ref{sec:rumusan}.
+
+\begin{table}[htbp]
+  \caption{Pemetaan Tahap Eksperimen ke Rumusan Masalah}
+  \label{tab:petaRM}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.31\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.44\textwidth}|}
+    \hline
+    \textbf{Rumusan} & \textbf{Tahap} & \textbf{Keterangan} \\
+    \hline
+    RM1 & Tahap pertama, ditambah Subbab~\ref{sec:fitur} sampai
+    Subbab~\ref{sec:model} &
+    Cara membangun keempat model pada berbagai \textit{time frame} \\
+    \hline
+    RM2 & Tahap kedua dan Tahap keempat &
+    Pengaruh metode optimasi dan teknik tambahan terhadap akurasi \\
+    \hline
+    RM3 & Evaluasi pada seluruh tahap &
+    Perbandingan performa keempat model terhadap Naive \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Tahap ketiga tidak dipetakan ke satu rumusan masalah tertentu. Tahap tersebut
+dipakai untuk melihat apakah hasilnya tetap serupa ketika rasio pembagian
+datanya diubah.
+
+\section{Lingkungan Penelitian}
+\label{sec:lingkungan}
+Tabel~\ref{tab:lingkungan} merinci perangkat dan pustaka yang dipakai.
+
+\begin{table}[htbp]
+  \caption{Lingkungan Penelitian}
+  \label{tab:lingkungan}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.26\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.64\textwidth}|}
+    \hline
+    \textbf{Komponen} & \textbf{Keterangan} \\
+    \hline
+    Bahasa pemrograman & Python 3.14.8 \\
+    \hline
+    Pustaka pengolahan data & pandas 3.1, numpy 2.5, scipy 1.18.1 \\
+    \hline
+    Pustaka model & scikit-learn 1.9, xgboost 3.4, lightgbm 4.7,
+    catboost 1.2.10 \\
+    \hline
+    Pustaka optimasi & optuna 5.0, cmaes 0.13 \\
+    \hline
+    Perangkat pemrosesan & Apple M5, 10 \textit{core}, RAM 16 GB,
+    macOS 26.2 \\
+    \hline
+    Perangkat pengumpulan data & VPS Ubuntu dengan \textit{cron}, Python, dan
+    SQLite \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+% CEK: perbarui versi bila berubah sebelum eksperimen final.
