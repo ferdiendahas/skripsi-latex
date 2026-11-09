@@ -8,10 +8,14 @@
 % pertama keterangan, bukan menjorok lebih dalam.
 % CATATAN: lingkungan ini juga dipakai di chapters/bab3-metodologi.tex,
 % jadi definisinya tidak boleh dihapus dari berkas ini.
+% Label notasi dicetak sebagai "simbol  :" supaya seragam dengan
+% frontmatter/daftar-notasi.tex yang juga memakai titik dua.
+\newcommand{\keteranganlabel}[1]{\normalfont #1\hfill:}
 \newenvironment{keterangan}{%
   \par\vspace{3pt}\noindent dengan:\par\nobreak
   \begin{description}[leftmargin=2.8cm,labelwidth=2.4cm,labelsep=0.4cm,
-    align=left,font=\normalfont,topsep=2pt,itemsep=0pt,parsep=0pt]%
+    align=left,font=\normalfont,topsep=2pt,itemsep=0pt,parsep=0pt,
+    before=\let\makelabel\keteranganlabel]%
 }{%
   \end{description}\par\vspace{3pt}%
 }
