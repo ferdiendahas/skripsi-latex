@@ -14,12 +14,13 @@
 Objek penelitian ini merupakan harga Bitcoin terhadap rupiah, yaitu pasangan
 BTC/IDR, di pasar spot Indodax. Indodax merupakan salah satu bursa aset kripto
 yang beroperasi di Indonesia.
+% CEK: butuh sumber (Indodax sebagai bursa aset kripto di Indonesia).
 
 Pasangan BTC/IDR dipilih karena dua alasan. Pertama, harga dalam rupiah lebih
 langsung terasa bagi \textit{trader} di Indonesia daripada harga dalam dolar.
 Kedua, datanya dapat dikumpulkan sendiri melalui API publik Indodax, sehingga
 penelitian ini tidak bergantung pada arsip data pihak ketiga. Latar belakang
-pemilihan topik ini sudah dibahas pada Subbab~1.1 dan tidak
+pemilihan topik ini sudah dibahas pada Subbab~\ref{sec:latar} dan tidak
 diulang di sini.
 
 \section{Tahapan Penelitian}
@@ -72,8 +73,8 @@ isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
 celah penelitian dibatasi lima tahun terakhir, sedangkan paper sumber metode
 boleh berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
 memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
-mulai dari penelitian terdahulu pada Subbab~2.1 sampai celah
-penelitian pada Subbab~2.10.
+mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
+penelitian pada Subbab~\ref{sec:gap}.
 
 \section{Pengumpulan Data}
 \label{sec:kumpul}
@@ -150,6 +151,11 @@ gagal mengambil data.
 
 \section{Praproses Data}
 \label{sec:praproses}
+Data mentah hasil \textit{collector} belum dapat langsung dipakai oleh model.
+Tahap praproses menyiapkan data tersebut melalui empat langkah, yaitu
+pembentukan \textit{candle} 5 menit, penentuan harga yang dipakai, penanganan
+data hilang, dan keputusan tentang normalisasi. Keempat langkah tersebut
+dijelaskan pada subbab berikut.
 
 \subsection{Pembentukan \textit{Candle} 5 Menit}
 Karena Indodax tidak menyediakan \textit{candle} 5 menit, dataset kedua
@@ -173,7 +179,7 @@ dalam bar tersebut. Nilai bar 5 menit ke-$\tau$ dihitung dengan
   \item[$P^{C}_\tau$] harga penutupan bar 5 menit ke-$\tau$,
   \item[$V_\tau$] volume bar 5 menit ke-$\tau$,
   \item[$j$] nomor menit di dalam bar ke-$\tau$, dengan $j_1$ menit pertama
-    dan $j_5$ menit terakhir,
+    yang tersedia dan $j_5$ menit terakhir yang tersedia,
   \item[$P^{O}_j$, $P^{H}_j$, $P^{L}_j$, $P^{C}_j$, $V_j$] nilai
     \textit{candle} 1 menit pada menit ke-$j$.
 \end{keterangan}
@@ -217,7 +223,7 @@ model yang dibandingkan merupakan model berbasis pohon, dan model seperti itu
 memecah data berdasarkan urutan nilai fitur, bukan berdasarkan besarnya.
 % CEK: butuh sumber (model pohon tidak sensitif terhadap skala fitur)
 Pilihan ini sekaligus menghindari salah satu bentuk kebocoran data yang
-dibahas pada Subbab~2.7, yaitu penskala yang dipasang sebelum data dibagi.
+dibahas pada Subbab~\ref{sec:validasi}, yaitu penskala yang dipasang sebelum data dibagi.
 
 \section{Pembentukan Fitur dan Target}
 \label{sec:fitur}
@@ -289,7 +295,7 @@ terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
 Target yang diramal merupakan \textit{return} logaritmik $r_{t,h}$ pada
 Persamaan~\eqref{eq:return}. Hasil ramalan dikembalikan ke satuan rupiah
 dengan Persamaan~\eqref{eq:konversi}. Alasan memakai \textit{return}, bukan
-harga secara langsung, sudah dibahas pada Subbab~2.4.2.
+harga secara langsung, sudah dibahas pada Subbab~\ref{subsec:return}.
 
 \textit{Time frame} yang diuji bernilai 1, 5, 15, 30, dan 60 menit.
 \textit{Time frame} 1 menit hanya dipakai pada dataset \textit{candle} 1
@@ -312,11 +318,11 @@ menggambarkan pembagian tersebut.
 \end{figure}
 
 Tiga rasio data latih terhadap data uji diuji, yaitu 80:20, 70:30, dan 60:40.
-Alasan memakai lebih dari satu rasio sudah dibahas pada Subbab~2.7, yaitu
+Alasan memakai lebih dari satu rasio sudah dibahas pada Subbab~\ref{sec:validasi}, yaitu
 hasil pada satu periode uji dapat berbeda dari hasil pada periode uji lain.
 
 Selain itu, $h_b$ bar terakhir pada data latih dibuang. Langkah tersebut
-disebut \textit{purging} dan sudah dijelaskan pada Subbab~2.7. Alasannya,
+disebut \textit{purging} dan sudah dijelaskan pada Subbab~\ref{sec:validasi}. Alasannya,
 target pada $h_b$ bar terakhir dihitung dari harga yang sudah berada di dalam
 periode uji. Indeks kedua bagian data merupakan
 \begin{equation}
@@ -334,6 +340,12 @@ periode uji. Indeks kedua bagian data merupakan
 
 \section{Pembangunan Model dan Optimasi \textit{Hyperparameter}}
 \label{sec:model}
+Subbab ini menjelaskan cara keempat model dibangun dan dioptimasi. Pembahasan
+dimulai dari model yang dibandingkan, lalu ruang pencarian
+\textit{hyperparameter} dan metode optimasi yang dipakai untuk menjelajahinya.
+Setelah itu dijelaskan validasi \textit{walk-forward} yang dipakai untuk menilai
+setiap kandidat \textit{hyperparameter}. Bagian terakhir membahas teknik
+optimasi tambahan.
 
 \subsection{Model yang Dibandingkan}
 Empat model boosting dibandingkan dalam penelitian ini, yaitu XGBoost dengan
@@ -461,7 +473,7 @@ jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
 \subsection{Metode Optimasi}
 Tujuh pengaturan optimasi dibandingkan, yaitu satu pengaturan tanpa
 \textit{tuning} dan enam metode pencarian. Seluruh metode dijalankan dengan
-pustaka Optuna. Teori setiap metode sudah dibahas pada Subbab~2.6.
+pustaka Optuna. Teori setiap metode sudah dibahas pada Subbab~\ref{sec:optimasi}.
 Tabel~\ref{tab:optimasi} merangkum pengaturannya.
 
 \begin{table}[htbp]
@@ -556,7 +568,7 @@ dengan konfigurasi tersebut, lalu dipakai untuk memprediksi data uji.
 
 \subsection{Teknik Optimasi Tambahan}
 Empat teknik tambahan diuji secara terpisah. Teorinya sudah dibahas pada
-Subbab~2.6.7.
+Subbab~\ref{subsec:teknik}.
 
 Teknik pertama merupakan \textit{early stopping}, yang dipakai pada XGBoost,
 LightGBM, dan CatBoost. Jumlah pohon maksimum ditetapkan 2.000, dan pelatihan
@@ -592,7 +604,9 @@ terhadap Naive dengan Persamaan~\eqref{eq:maenaive}. Metrik pendukungnya
 merupakan RMSE pada Persamaan~\eqref{eq:rmse}, MAPE pada
 Persamaan~\eqref{eq:mape}, dan akurasi arah pada Persamaan~\eqref{eq:arah}.
 Khusus akurasi arah, bar yang harga sebenarnya tidak berubah, yaitu
-$r_{t,h} = 0$, tidak ikut dihitung karena arahnya tidak terdefinisi.
+$r_{t,h} = 0$, tidak ikut dihitung karena arahnya tidak terdefinisi. Karena
+itu, $n$ pada Persamaan~\eqref{eq:arah} merupakan banyaknya data uji dengan
+$r_{t,h} \neq 0$.
 
 Selisih akurasi antara ramalan model dan ramalan Naive diuji dengan uji
 Diebold-Mariano pada Persamaan~\eqref{eq:dmstat}. Uji tersebut dijalankan dua
@@ -610,13 +624,13 @@ besar dari nol dan nilai $p$ kurang dari 0,05.
 
 Karena setiap kombinasi dataset, \textit{time frame}, model, metode optimasi,
 dan rasio pembagian data diuji terhadap Naive, jumlah ujinya menjadi banyak.
-Koreksi Holm yang dibahas pada Subbab~2.9 dipakai untuk mengendalikan
+Koreksi Holm yang dibahas pada Subbab~\ref{sec:dm} dipakai untuk mengendalikan
 kemungkinan munculnya hasil signifikan karena kebetulan.
 % CEK: koreksi Holm belum ada di kode prediksi_btc; tambahkan sebelum
 % eksperimen final.
 
-Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan trading,
-sesuai batasan masalah pada Subbab~1.5.
+Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
+sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
 
 \section{Skenario Pengujian}
 \label{sec:skenario}

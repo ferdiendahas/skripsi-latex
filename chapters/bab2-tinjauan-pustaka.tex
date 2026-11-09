@@ -18,6 +18,7 @@
 
 
 \section{Penelitian Terdahulu}
+\label{sec:terdahulu}
 Penelitian tentang prediksi harga kripto dengan \textit{machine learning}
 sudah cukup banyak. Namun, penelitian-penelitian tersebut berbeda dalam
 beberapa hal, yaitu jenis data, target yang diprediksi, ada tidaknya
@@ -210,6 +211,10 @@ yaitu berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari
 
 
 \section{\textit{Forecasting} dan \textit{Time Series}}
+Subbab ini membahas dasar peramalan pada data deret waktu yang dipakai dalam
+penelitian ini. Pembahasan dimulai dari bentuk data deret waktu dan
+\textit{candle}, lalu \textit{return} logaritmik sebagai target prediksi.
+Bagian terakhir membahas horizon prediksi dan metode Naive sebagai pembanding.
 
 \subsection{Data Deret Waktu dan \textit{Candle}}
 Deret waktu merupakan rangkaian pengamatan yang dicatat berurutan menurut
@@ -230,6 +235,7 @@ Data OHLCV per menit sudah dipakai untuk meramal harga kripto jangka pendek
 \cite{rodrigues2025}.
 
 \subsection{Return Logaritmik}
+\label{subsec:return}
 Penelitian ini tidak meramal harga secara langsung, melainkan meramal
 \textit{return} logaritmik pada horizon $h$. Pilihan tersebut diambil karena
 model berbasis pohon tidak dapat memprediksi nilai di luar rentang data
@@ -505,6 +511,7 @@ scikit-learn \cite{sklearnadaboost}, bukan bagian dari algoritme asli.
 
 
 \section{Optimasi \textit{Hyperparameter}}
+\label{sec:optimasi}
 \textit{Hyperparameter} merupakan pengaturan model yang ditetapkan sebelum
 pelatihan dimulai dan tidak dipelajari dari data. Contohnya meliputi jumlah
 pohon, kedalaman pohon, dan \textit{learning rate}. Nilai
@@ -622,6 +629,7 @@ yang disebut \textit{sampler}, serta fitur \textit{pruning} untuk menghentikan
 percobaan yang hasilnya buruk.
 
 \subsection{Teknik Optimasi Tambahan}
+\label{subsec:teknik}
 % [kartu F6, F7]
 \textit{Pruning} menghentikan percobaan yang hasil sementaranya buruk,
 sehingga waktu komputasi dapat dipakai untuk percobaan lain. Cara ini
@@ -656,6 +664,7 @@ fitur yang kurang informatif.
 
 
 \section{Validasi Deret Waktu dan Kebocoran Data}
+\label{sec:validasi}
 % [kartu G4]
 Validasi silang biasa mengacak data, sehingga urutan waktunya rusak
 \cite{cerqueira2020}. Pada data deret waktu, data latih dan data validasi
@@ -795,6 +804,7 @@ lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
 
 
 \section{Uji Diebold-Mariano}
+\label{sec:dm}
 % [kartu G2]
 Selisih akurasi antara dua ramalan belum tentu bermakna secara statistik. Uji
 Diebold-Mariano dipakai untuk menguji apakah dua ramalan berbeda akurasinya
@@ -844,6 +854,7 @@ Bitcoin jangka pendek \cite{jaquart2021}.
 
 
 \section{Research Gap Penelitian}
+\label{sec:gap}
 Tabel~\ref{tab:gap} merangkum apa yang sudah dan belum dilakukan oleh
 penelitian terdahulu yang paling dekat dengan penelitian ini.
 
