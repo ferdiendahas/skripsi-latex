@@ -209,6 +209,15 @@ pengaruh loncatan tersebut berkurang.
 % CEK: hitung ulang autokorelasi return close vs typical pada data final
 % sebelum dijadikan bukti.
 
+Namun, harga yang dirata-ratakan dalam satu bar dapat memunculkan
+autokorelasi semu pada \textit{return}. Autokorelasi semu tersebut dapat
+membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
+benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
+hasil dibahas.
+% CEK: butuh sumber (efek perataan harga terhadap autokorelasi return,
+% mis. Working 1960, Econometrica). Pertimbangkan melaporkan juga hasil
+% dengan harga close sebagai pembanding.
+
 \subsection{Penanganan Data Hilang}
 Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
 yaitu setiap 1 menit untuk dataset pertama dan setiap 5 menit untuk dataset
@@ -291,6 +300,8 @@ Jendela bergulir $s$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
 \textit{candle} 1 menit. Pada dataset \textit{candle} 5 menit, jendela
 terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
 240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua bar.
+Akibatnya, perbandingan kedua dataset pada Tahap pertama juga ikut
+membandingkan jendela fitur yang sedikit berbeda.
 
 Target yang diramal merupakan \textit{return} logaritmik $r_{t,h}$ pada
 Persamaan~\eqref{eq:return}. Hasil ramalan dikembalikan ke satuan rupiah
@@ -317,8 +328,10 @@ menggambarkan pembagian tersebut.
 \end{figure}
 
 Tiga rasio data latih terhadap data uji diuji, yaitu 80:20, 70:30, dan 60:40.
-Alasan memakai lebih dari satu rasio sudah dibahas pada Subbab~\ref{sec:validasi}, yaitu
-hasil pada satu periode uji dapat berbeda dari hasil pada periode uji lain.
+Alasan memakai lebih dari satu rasio sudah dibahas pada
+Subbab~\ref{sec:validasi}, yaitu hasil pada satu periode uji dapat berbeda dari
+hasil pada periode uji lain. Karena periode ujinya berbeda, hasil antarrasio
+dibandingkan memakai MAE vs Naive, bukan MAE dalam rupiah.
 
 Selain itu, $h_b$ bar terakhir pada data latih dibuang. Langkah tersebut
 disebut \textit{purging} dan sudah dijelaskan pada Subbab~\ref{sec:validasi}. Alasannya,
@@ -519,6 +532,11 @@ pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata.
 % CEK: pertimbangkan 32 trial untuk eksperimen final, atau tulis sebagai
 % keterbatasan.
 
+Jumlah percobaan setiap metode juga tidak sama persis. Grid Search
+menjalankan 27 kombinasi, metode lain menjalankan 30 \textit{trial}, dan
+pengaturan \textit{default} tidak menjalankan pencarian. Selisih tersebut
+kecil, tetapi tetap dicatat ketika metode-metode tersebut dibandingkan.
+
 Selain itu, metode yang memakai unsur acak dijalankan dengan \textit{seed}
 yang sama. Karena itu, beberapa \textit{trial} awalnya dapat menghasilkan
 konfigurasi yang identik.
@@ -599,13 +617,29 @@ Persamaan~\eqref{eq:konversi}.
 Metrik utama penelitian ini merupakan MAE pada Persamaan~\eqref{eq:mae},
 karena satuannya sama dengan harga dan mudah ditafsirkan. Karena nilai MAE
 bergantung pada tingkat harga, hasilnya juga dinyatakan secara relatif
-terhadap Naive dengan Persamaan~\eqref{eq:maenaive}. Metrik pendukungnya
+terhadap Naive dengan Persamaan~\eqref{eq:maenaive}.
+Nilai MAE dalam rupiah tidak dibandingkan langsung antar-\textit{time frame},
+karena kesalahan pada \textit{time frame} yang lebih panjang wajar lebih
+besar. Perbandingan antar-\textit{time frame} dan antardataset memakai
+MAE vs Naive. Metrik pendukungnya
 merupakan RMSE pada Persamaan~\eqref{eq:rmse}, MAPE pada
 Persamaan~\eqref{eq:mape}, dan akurasi arah pada Persamaan~\eqref{eq:arah}.
 Khusus akurasi arah, bar yang harga sebenarnya tidak berubah, yaitu
 $r_{t,h} = 0$, tidak ikut dihitung karena arahnya tidak terdefinisi. Karena
 itu, $n$ pada Persamaan~\eqref{eq:arah} merupakan banyaknya data uji dengan
 $r_{t,h} \neq 0$.
+Akurasi arah hanya dilaporkan untuk keempat model. Naive selalu meramalkan
+harga tetap, sehingga arah ramalannya tidak pernah terdefinisi. Bila model
+meramalkan \textit{return} tepat nol, ramalan tersebut dihitung sebagai arah
+yang salah.
+% CEK: cocokkan aturan ramalan nol dengan kode (fungsi akurasi arah).
+
+Model terbaik pada rumusan masalah ketiga ditentukan dari nilai MAE vs Naive
+terkecil. RMSE dan MAPE dipakai sebagai pendukung untuk melihat apakah urutan
+model tetap sama. Sebuah model baru disebut lebih baik daripada Naive bila
+selisihnya signifikan menurut uji Diebold-Mariano setelah koreksi Holm.
+% CEK: usulan aturan model terbaik, konfirmasi ke dosen sebelum eksperimen
+% final.
 
 Selisih akurasi antara ramalan model dan ramalan Naive diuji dengan uji
 Diebold-Mariano pada Persamaan~\eqref{eq:dmstat}. Uji tersebut dijalankan dua
@@ -649,8 +683,8 @@ Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi yang d
 1 menit dan 4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap
 pasangan dijalankan pada 4 model dengan metode TPE dan rasio \textit{split}
 80:20, sehingga jumlahnya 36 \textit{run}.
-% CEK: tulis alasan TPE dipakai pada Tahap 1 (diisi Ferdi). Pasangan yang
-dipilih merupakan pasangan dengan nilai MAE vs Naive terkecil di antara
+% CEK: tulis alasan TPE dipakai pada Tahap 1 (diisi Ferdi).
+Pasangan yang dipilih merupakan pasangan dengan nilai MAE vs Naive terkecil di antara
 keempat model. Pasangan yang memiliki model lebih baik secara signifikan
 daripada Naive diutamakan. Bila hasilnya seri, dipilih \textit{time frame}
 yang lebih pendek, lalu dataset \textit{candle} 1 menit.
@@ -674,9 +708,17 @@ Seluruh aturan pemilihan tersebut dikunci sebelum Tahap pertama dijalankan.
 Pengurutan ini penting supaya pemilihan dataset, \textit{time frame}, dan
 metode optimasi tidak disusun ulang mengikuti hasil yang sudah terlihat.
 % CEK: aturan dikunci ulang untuk eksperimen final (dataset candle 1 dan
-% 5 menit); aturan penentuan "model terbaik" untuk RM3 belum dikunci,
-% menunggu dosen.
+% 5 menit). Aturan model terbaik ada di Subbab Evaluasi Model.
 % CEK: hitung ulang rencana jumlah run setelah candle 5 menit masuk.
+
+Pemilihan pada Tahap pertama dan kedua memakai hasil pada data uji, dan data
+uji yang sama dipakai lagi pada tahap berikutnya. Karena itu, hasil pada
+Tahap ketiga dan keempat dapat sedikit lebih baik daripada hasil pada data
+yang benar-benar baru. Aturan pemilihan yang dikunci sejak awal dipakai untuk
+membatasi pengaruh tersebut.
+% CEK: bahas dengan dosen. Alternatifnya, pemilihan Tahap 1 dan 2 memakai
+% Skor(theta) walk-forward pada data latih, sehingga data uji hanya dipakai
+% untuk pelaporan. Bila alternatif dipilih, paragraf ini dan kode diubah.
 
 Tabel~\ref{tab:petaRM} memetakan keempat tahap tersebut ke rumusan masalah
 pada Subbab~\ref{sec:rumusan}.

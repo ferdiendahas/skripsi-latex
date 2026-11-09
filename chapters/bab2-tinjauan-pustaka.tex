@@ -319,7 +319,15 @@ berdekatan, padahal angkanya berjauhan.
 % CEK: butuh sumber (pengodean waktu siklik dengan sinus dan kosinus)
 
 
-\section{Gradient Boosting}
+\section{Model Boosting}
+\textit{Boosting} merupakan pendekatan yang menggabungkan banyak model
+sederhana, umumnya pohon keputusan, yang dilatih secara bertahap. Penelitian
+ini memakai dua keluarga \textit{boosting}. Keluarga pertama merupakan
+\textit{gradient boosting} \cite{friedman2001}, yang diwakili oleh XGBoost,
+LightGBM, dan CatBoost. Keluarga kedua merupakan \textit{adaptive boosting}
+\cite{freund1997}, yang diwakili oleh AdaBoost. Subbab ini membahas
+\textit{gradient boosting} terlebih dahulu, lalu keempat model satu per satu.
+
 % [kartu E1]
 \textit{Gradient boosting} merupakan metode yang membangun model secara
 bertahap \cite{friedman2001}. Setiap pohon baru dilatih untuk memperbaiki
@@ -451,8 +459,9 @@ otomatis berlaku pada penelitian ini.
 
 \subsection{AdaBoost}
 % [kartu E2]
-AdaBoost merupakan algoritme boosting yang menaikkan bobot contoh yang salah
-diprediksi, sehingga pembelajar berikutnya lebih fokus pada contoh yang sulit
+AdaBoost berbeda dari ketiga model sebelumnya karena tidak memakai gradien.
+AdaBoost merupakan algoritme \textit{boosting} yang menaikkan bobot contoh
+yang salah diprediksi, sehingga pembelajar berikutnya lebih fokus pada contoh yang sulit
 \cite{freund1997}. Algoritme aslinya dirancang untuk masalah klasifikasi.
 
 % [kartu E9, E10]
