@@ -97,8 +97,8 @@ basis data SQLite.
 
 \textit{Candle} 1 menit diambil dari \textit{endpoint}
 \texttt{tradingview/history\_v2} dengan parameter \texttt{tf=1}, lalu disimpan
-pada tabel \texttt{ohlc\_1m}. Indodax hanya menyediakan \textit{time frame
-candle} 1, 15, 30, 60, dan 240 menit, serta harian dan mingguan. Karena itu,
+pada tabel \texttt{ohlc\_1m}. Indodax hanya menyediakan \textit{candle} dengan resolusi 1, 15, 30, 60, dan
+240 menit, serta harian dan mingguan. Karena itu,
 \textit{candle} 1 menit dipakai sebagai resolusi terkecil yang tersedia.
 
 Program \textit{collector} mengambil ulang data 5 menit terakhir setiap kali
@@ -228,7 +228,8 @@ dibahas pada Subbab~\ref{sec:validasi}, yaitu penskala yang dipasang sebelum dat
 \section{Pembentukan Fitur dan Target}
 \label{sec:fitur}
 Prinsip utama pada tahap ini adalah semua fitur pada waktu $t$ hanya boleh
-memakai data sampai waktu $t$. Gambar~\ref{fig:fitur} menggambarkan hubungan
+memakai data sampai waktu $t$. Jenis fitur yang dipakai sudah dibahas pada
+Subbab~\ref{subsec:teorifitur}. Gambar~\ref{fig:fitur} menggambarkan hubungan
 antara jendela fitur dan target.
 
 \begin{figure}[htbp]
@@ -257,12 +258,11 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
     \textbf{Jumlah} \\
     \hline
     \textit{Lag return} & \texttt{ret\_lag1} s.d.\ \texttt{ret\_lag12} &
-    \textit{return} logaritmik satu bar, mulai dari bar terakhir sampai
-    waktu $t$ hingga 11 bar sebelumnya & 12 \\
+    \textit{return} logaritmik 1 bar pada 12 bar terakhir sampai waktu $t$ & 12 \\
     \hline
     Statistik bergulir & \texttt{ret\_sum\_w}, \texttt{ret\_std\_w},
     \texttt{nol\_w} & jumlah \textit{return}, simpangan baku \textit{return},
-    dan proporsi \textit{return} bernilai nol dalam jendela $w$ & 15 \\
+    dan proporsi \textit{return} bernilai nol dalam jendela $s$ & 15 \\
     \hline
     \textit{Candle} & \texttt{range\_rel} &
     $(P^{H}_t - P^{L}_t)/P^{C}_t$ & 1 \\
@@ -275,7 +275,7 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
     \hline
     \textit{Candle} bergulir & \texttt{range\_mean\_w},
     \texttt{vol\_rasio\_w} & rata-rata \texttt{range\_rel} dan selisih
-    \texttt{log\_vol} terhadap rata-ratanya dalam jendela $w$ & 10 \\
+    \texttt{log\_vol} terhadap rata-ratanya dalam jendela $s$ & 10 \\
     \hline
     Waktu & \texttt{jam\_sin}, \texttt{jam\_cos} &
     jam dalam sehari dikodekan dengan sinus dan kosinus & 2 \\
@@ -287,7 +287,7 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
   \sumber{Diolah penulis}
 \end{table}
 
-Jendela bergulir $w$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
+Jendela bergulir $s$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
 \textit{candle} 1 menit. Pada dataset \textit{candle} 5 menit, jendela
 terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
 240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua bar.
@@ -299,8 +299,7 @@ harga secara langsung, sudah dibahas pada Subbab~\ref{subsec:return}.
 
 \textit{Time frame} yang diuji bernilai 1, 5, 15, 30, dan 60 menit.
 \textit{Time frame} 1 menit hanya dipakai pada dataset \textit{candle} 1
-menit. \textit{Time frame} yang bukan kelipatan resolusi datanya otomatis
-dilewati. \textit{Time frame} dalam satuan bar dihitung dengan
+menit. \textit{Time frame} dalam satuan bar dihitung dengan
 $h_b = h / \Delta$, dengan $\Delta$ menyatakan resolusi \textit{candle}, yaitu
 1 atau 5 menit.
 
@@ -326,13 +325,13 @@ disebut \textit{purging} dan sudah dijelaskan pada Subbab~\ref{sec:validasi}. Al
 target pada $h_b$ bar terakhir dihitung dari harga yang sudah berada di dalam
 periode uji. Indeks kedua bagian data merupakan
 \begin{equation}
-  \text{data latih} = 1, \dots, \lfloor \rho N \rfloor - h_b,
+  \text{data latih} = 1, \dots, \lfloor q N \rfloor - h_b,
   \qquad
-  \text{data uji} = \lfloor \rho N \rfloor + 1, \dots, N .
+  \text{data uji} = \lfloor q N \rfloor + 1, \dots, N .
   \label{eq:split}
 \end{equation}
 \begin{keterangan}
-  \item[$\rho$] porsi data latih, bernilai 0,8, 0,7, atau 0,6,
+  \item[$q$] porsi data latih, bernilai 0,8, 0,7, atau 0,6,
   \item[$N$] jumlah baris data setelah fitur dan target dibentuk,
   \item[$h_b$] \textit{time frame} dalam satuan bar,
   \item[$\lfloor \cdot \rfloor$] pembulatan ke bawah.
@@ -645,9 +644,12 @@ Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
   \sumber{Diolah penulis}
 \end{figure}
 
-Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi yang
-dijalankan merupakan 2 dataset dikali jumlah \textit{time frame} dikali
-4 model, dengan metode TPE dan rasio \textit{split} 80:20. Pasangan yang
+Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi yang dijalankan terdiri atas 9 pasangan dataset dan
+\textit{time frame}, yaitu 5 \textit{time frame} pada dataset \textit{candle}
+1 menit dan 4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap
+pasangan dijalankan pada 4 model dengan metode TPE dan rasio \textit{split}
+80:20, sehingga jumlahnya 36 \textit{run}.
+% CEK: tulis alasan TPE dipakai pada Tahap 1 (diisi Ferdi). Pasangan yang
 dipilih merupakan pasangan dengan nilai MAE vs Naive terkecil di antara
 keempat model. Pasangan yang memiliki model lebih baik secara signifikan
 daripada Naive diutamakan. Bila hasilnya seri, dipilih \textit{time frame}

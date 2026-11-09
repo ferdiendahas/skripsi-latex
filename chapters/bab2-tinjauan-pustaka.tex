@@ -82,6 +82,9 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
   \sumber{Diolah penulis}
 \end{table}
 
+Penelitian terdahulu tersebut dapat dibagi menjadi tiga kelompok menurut
+jenis data dan target yang diprediksi.
+
 % [kartu A2, B1, B5, B8]
 Kelompok pertama memakai data harian. XGBoost dilaporkan paling baik dalam
 menggabungkan beberapa ramalan harian Bitcoin \cite{wei2023}. Penelitian
@@ -161,23 +164,17 @@ penelitian ini.
 Pasar dapat dipandang terdiri atas beberapa komponen dengan horizon waktu
 yang berbeda \cite{muller1997}. Komponen pertama memiliki horizon 7 sampai
 80 menit dan dikaitkan dengan \textit{dealer intraday} jangka pendek serta
-\textit{market maker}. Komponen kedua memiliki horizon 16 menit sampai
-3,5 jam dan dikaitkan dengan \textit{dealer intraday}. Komponen kelima
-memiliki horizon 1 sampai 3,5 hari dan dikaitkan dengan \textit{trader}
-jangka menengah. Penulis penelitian tersebut menyebut pembagian itu
-bersifat sementara. Datanya juga berasal dari pasar valuta asing, bukan
-pasar kripto.
+\textit{market maker}. Komponen kelima memiliki horizon 1 sampai 3,5 hari dan
+dikaitkan dengan \textit{trader} jangka menengah. Pembagian tersebut masih
+bersifat sementara, dan datanya berasal dari pasar valuta asing, bukan pasar
+kripto.
 
-% [kartu C2]
-Strategi perdagangan dengan horizon dan frekuensi transaksi yang berbeda
-menghasilkan profil risiko yang berbeda pula \cite{dacorogna1995}. Temuan ini
-memperkuat gagasan bahwa pelaku pasar bersifat heterogen.
-
-% [kartu C5]
-Pada pasar kripto, perilaku harga berbeda antara horizon pendek dan horizon
-panjang \cite{kakinaka2022}. Istilah pendek pada penelitian tersebut berarti
-di bawah sekitar 10 hari, bukan dalam hitungan menit, sehingga temuannya tidak
-dapat dipakai untuk membenarkan pemilihan horizon menit secara langsung.
+% [kartu C2, C5]
+Strategi dengan horizon dan frekuensi transaksi yang berbeda menghasilkan
+profil risiko yang berbeda pula \cite{dacorogna1995}. Pada pasar kripto,
+perilaku harga juga berbeda antara horizon pendek dan horizon panjang
+\cite{kakinaka2022}. Namun, horizon pendek pada penelitian tersebut berarti di
+bawah sekitar 10 hari, bukan hitungan menit.
 
 % [kartu C6]
 Pengguna Bitcoin juga dapat dikelompokkan menjadi beberapa tipe menurut lama
@@ -214,7 +211,8 @@ yaitu berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari
 Subbab ini membahas dasar peramalan pada data deret waktu yang dipakai dalam
 penelitian ini. Pembahasan dimulai dari bentuk data deret waktu dan
 \textit{candle}, lalu \textit{return} logaritmik sebagai target prediksi.
-Bagian terakhir membahas horizon prediksi dan metode Naive sebagai pembanding.
+Setelah itu dibahas horizon prediksi dan metode Naive sebagai pembanding.
+Bagian terakhir membahas fitur yang dapat dibentuk dari data deret waktu.
 
 \subsection{Data Deret Waktu dan \textit{Candle}}
 Deret waktu merupakan rangkaian pengamatan yang dicatat berurutan menurut
@@ -268,11 +266,10 @@ Hasil ramalan \textit{return} dikembalikan ke satuan rupiah dengan
 aset kripto \cite{bouteska2024}.
 
 \subsection{Horizon Prediksi dan Metode Naive}
-Horizon prediksi $h$ menyatakan seberapa jauh ke depan ramalan dibuat,
-dihitung dalam satuan menit. Horizon prediksi inilah yang dalam penelitian
-ini disebut \textit{time frame}. Metode naive merupakan metode peramalan paling
-sederhana, yaitu menebak bahwa harga pada waktu $t+h$ sama dengan harga
-terakhir yang diketahui,
+Horizon prediksi $h$ menyatakan seberapa jauh ke depan ramalan dibuat. Horizon
+inilah yang dalam penelitian ini disebut \textit{time frame}. Metode naive
+merupakan metode peramalan paling sederhana, yaitu menebak bahwa harga pada
+waktu $t+h$ sama dengan observasi terakhir \cite{hyndman2006},
 \begin{equation}
   \hat{P}_{t+h}^{\text{Naive}} = P_t .
   \label{eq:naive}
@@ -282,10 +279,7 @@ terakhir yang diketahui,
     waktu $t+h$,
   \item[$P_t$] harga pada waktu $t$.
 \end{keterangan}
-% CEK: butuh sumber (M7) untuk definisi buku teks; kartu I5 memuat definisi
-% naive sebagai observasi terakhir dan dipakai di sini.
-Metode naive didefinisikan sebagai ramalan yang sama dengan observasi terakhir
-\cite{hyndman2006}. Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model pada horizon $h$.
+Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model pada horizon $h$.
 
 \begin{figure}[htbp]
   \centering
@@ -303,6 +297,22 @@ Contoh klasiknya berasal dari pasar valuta asing. Ramalan tanpa perubahan
 ternyata memiliki rata-rata galat absolut yang lebih kecil daripada ramalan
 \textit{forward rate}, meskipun selisihnya tidak signifikan menurut uji
 Diebold-Mariano \cite{diebold1995}.
+
+\subsection{Fitur pada Data Deret Waktu}
+\label{subsec:teorifitur}
+Model boosting tidak membaca urutan waktu secara langsung. Karena itu,
+informasi dari masa lalu perlu diubah menjadi fitur pada setiap baris data.
+Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa bar
+sebelumnya. Fitur statistik bergulir merupakan ringkasan, misalnya jumlah
+atau simpangan baku, dari nilai di dalam jendela waktu yang bergeser
+mengikuti waktu. Kedua jenis fitur tersebut hanya memakai data sampai waktu
+$t$, sehingga tidak memuat informasi dari masa depan.
+% CEK: butuh sumber (fitur lag dan statistik bergulir pada deret waktu)
+
+Fitur waktu yang berulang, seperti jam dalam sehari, dapat dikodekan dengan
+fungsi sinus dan kosinus. Dengan cara itu, jam 23 dan jam 0 bernilai
+berdekatan, padahal angkanya berjauhan.
+% CEK: butuh sumber (pengodean waktu siklik dengan sinus dan kosinus)
 
 
 \section{Gradient Boosting}
@@ -350,9 +360,10 @@ deret sekaligus beserta data eksogen.
 
 \subsection{XGBoost}
 % [kartu E5]
-XGBoost merupakan implementasi \textit{gradient boosting} berbasis pohon yang
-menambahkan suku regularisasi pada fungsi objektifnya \cite{chen2016}. Suku
-regularisasi untuk satu pohon merupakan
+XGBoost merupakan implementasi \textit{gradient boosting} yang menambahkan
+penalti pada fungsi objektifnya agar pohon tidak terlalu rumit
+\cite{chen2016}. Penalti tersebut disebut suku regularisasi. Untuk satu pohon,
+suku regularisasinya merupakan
 \begin{equation}
   \Omega(f) = \gamma T + \tfrac{1}{2}\lambda \lVert \mathbf{w} \rVert^2 .
   \label{eq:xgbreg}
@@ -364,27 +375,25 @@ regularisasi untuk satu pohon merupakan
   \item[$\gamma$] parameter penalti untuk jumlah daun,
   \item[$\lambda$] parameter penalti L2 untuk bobot daun.
 \end{keterangan}
-Selain regularisasi tersebut, XGBoost memakai \textit{shrinkage} dan
-\textit{column subsampling} untuk mengurangi \textit{overfitting}. Pada
-kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
+Pada kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
 yang dipublikasikan memakai XGBoost \cite{chen2016}.
 
 \subsection{LightGBM}
 % [kartu E4]
-LightGBM merupakan \textit{gradient boosting decision tree} berbasis histogram
-yang menambahkan dua teknik, yaitu \textit{gradient-based one-side sampling}
-dan \textit{exclusive feature bundling} \cite{ke2017}. Kedua teknik tersebut
-mengurangi jumlah data dan jumlah fitur yang perlu diperiksa saat mencari titik
-pemecahan. Hasilnya, pelatihan menjadi jauh lebih cepat dengan akurasi yang
-hampir sama.
+LightGBM merupakan implementasi \textit{gradient boosting} yang dirancang agar
+pelatihan lebih cepat \cite{ke2017}. LightGBM menambahkan dua teknik, yaitu
+\textit{gradient-based one-side sampling} dan \textit{exclusive feature
+bundling}. Kedua teknik tersebut mengurangi jumlah data dan jumlah fitur yang
+perlu diperiksa saat mencari titik pemecahan. Hasilnya, pelatihan menjadi jauh
+lebih cepat dengan akurasi yang hampir sama.
 
 % [kartu E6]
 LightGBM menumbuhkan pohon secara \textit{leaf-wise}, yaitu memecah daun yang
-memberi penurunan \textit{loss} terbesar. Pada jumlah daun yang sama,
-pertumbuhan \textit{leaf-wise} umumnya mencapai \textit{loss} yang lebih rendah
-daripada pertumbuhan \textit{level-wise}, tetapi dapat menyebabkan
-\textit{overfitting} pada data berukuran kecil, sehingga tersedia parameter
-\texttt{max\_depth} untuk membatasi kedalaman pohon \cite{lightgbmfeatures}.
+memberi penurunan \textit{loss} terbesar. Pada jumlah daun yang sama, cara ini
+umumnya menghasilkan \textit{loss} yang lebih rendah daripada pertumbuhan
+\textit{level-wise}. Kelemahannya, pohon dapat mengalami \textit{overfitting}
+pada data berukuran kecil. Karena itu, tersedia parameter \texttt{max\_depth}
+untuk membatasi kedalaman pohon \cite{lightgbmfeatures}.
 Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
 
 \begin{figure}[htbp]
@@ -409,12 +418,13 @@ untuk mengatasi \textit{prediction shift} \cite{prokhorenkova2018}.
 \textit{Prediction shift} merupakan sejenis kebocoran target yang dapat
 terjadi pada semua implementasi \textit{gradient boosting}.
 
-CatBoost mengatasi masalah tersebut dengan dua cara. Pertama,
-\textit{ordered boosting} mengacak urutan data, lalu melatih model untuk
-setiap contoh hanya dari contoh-contoh yang berada sebelumnya dalam urutan
-itu. Kedua, \textit{ordered target statistics} memakai cara yang sama untuk
-mengolah fitur kategorikal. Urutan pada penelitian tersebut dibuat secara
-acak, sehingga pada data deret waktu urutannya perlu mengikuti urutan waktu.
+CatBoost mengatasi masalah tersebut dengan \textit{ordered boosting}. Data
+diurutkan secara acak, lalu model untuk setiap contoh dilatih hanya dari
+contoh yang berada sebelumnya dalam urutan itu \cite{prokhorenkova2018}.
+% CEK: kode prediksi_btc belum memasang has_time=True pada CatBoost. Bila
+% ditambahkan sebelum eksperimen final, tambahkan kalimat "Pada penelitian ini,
+% urutan tersebut mengikuti urutan waktu data." di sini dan sebut has_time di
+% Subbab Model yang Dibandingkan (Bab III).
 
 Pohon dasar CatBoost berupa pohon simetris atau \textit{oblivious}, yaitu
 seluruh simpul pada satu kedalaman memakai kondisi pemecahan yang sama
@@ -430,9 +440,8 @@ biasa dengan pohon simetris.
 \end{figure}
 
 Mode \textit{ordered} dilaporkan paling bermanfaat pada kumpulan data
-berukuran kecil. Pada \textit{benchmark} yang
-dilaporkan, CatBoost mengungguli XGBoost dan LightGBM menurut \textit{logloss}
-dan \textit{zero-one loss} \cite{prokhorenkova2018}. Kumpulan data pada
+berukuran kecil. Pada \textit{benchmark} yang dilaporkan, CatBoost mengungguli
+XGBoost dan LightGBM \cite{prokhorenkova2018}. Kumpulan data pada
 \textit{benchmark} tersebut bukan data deret waktu, sehingga hasilnya tidak
 otomatis berlaku pada penelitian ini.
 
@@ -486,8 +495,8 @@ Bobot sampel kemudian diperbarui dengan
 \end{equation}
 \begin{keterangan}
   \item[$w_i$] bobot sampel ke-$i$,
-  \item[$\beta_m$] rasio pada Persamaan~\ref{eq:adabeta},
-  \item[$L_i$] \textit{loss} contoh ke-$i$ pada Persamaan~\ref{eq:adaloss}.
+  \item[$\beta_m$] rasio pada Persamaan~\eqref{eq:adabeta},
+  \item[$L_i$] \textit{loss} contoh ke-$i$ pada Persamaan~\eqref{eq:adaloss}.
 \end{keterangan}
 Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ \cite{drucker1997} atau bila
 jumlah pohon mencapai batas $M$ (\texttt{n\_estimators}) \cite{sklearnadaboost}.
@@ -517,22 +526,31 @@ pelatihan dimulai dan tidak dipelajari dari data. Contohnya meliputi jumlah
 pohon, kedalaman pohon, dan \textit{learning rate}. Nilai
 \textit{hyperparameter} yang baik dicari dengan mencoba beberapa kombinasi
 lalu menilainya memakai validasi pada data latih.
+Subbab ini membahas pustaka Optuna, metode-metode pencarian yang dipakai, dan
+teknik optimasi tambahan.
+
+\subsection{Optuna}
+% [kartu F3]
+Optuna merupakan pustaka untuk optimasi \textit{hyperparameter}
+\cite{akiba2019}. Ruang pencarian pada Optuna ditulis langsung di dalam
+program, sehingga mudah diatur. Optuna menyediakan beberapa metode pencarian,
+yang disebut \textit{sampler}, serta fitur \textit{pruning} untuk menghentikan
+percobaan yang hasilnya buruk.
 
 \subsection{Grid Search dan Random Search}
 % [kartu F1]
 Grid Search mencoba seluruh kombinasi dari daftar nilai yang sudah ditentukan
-untuk tiap parameter. Metode ini terkena kutukan dimensi, karena jumlah
-percobaannya merupakan hasil kali banyaknya nilai pada tiap parameter
-\cite{bergstra2012}. Grid Search tetap dinilai andal pada ruang pencarian
-berdimensi satu atau dua \cite{bergstra2012}.
+untuk tiap parameter. Jumlah percobaannya merupakan hasil kali banyaknya nilai
+pada tiap parameter, sehingga cepat membengkak ketika jumlah parameter
+bertambah \cite{bergstra2012}. Grid Search tetap dinilai andal bila parameter
+yang dicari hanya satu atau dua.
 
 Random Search mencoba kombinasi yang diambil secara acak dari ruang pencarian.
 Dengan anggaran percobaan yang sama, Random Search dilaporkan menemukan model
 yang sama baik atau lebih baik daripada Grid Search dengan waktu komputasi
-lebih sedikit \cite{bergstra2012}. Alasannya, fungsi respons
-\textit{hyperparameter} sering berdimensi efektif rendah, yaitu hanya sedikit
-parameter yang benar-benar berpengaruh, dan parameter yang berpengaruh itu
-berbeda antarkumpulan data \cite{bergstra2012}.
+lebih sedikit \cite{bergstra2012}. Alasannya, biasanya hanya sedikit \textit{hyperparameter} yang benar-benar
+berpengaruh, dan \textit{hyperparameter} yang berpengaruh itu berbeda
+antarkumpulan data.
 Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
 
 \begin{figure}[htbp]
@@ -576,9 +594,6 @@ Pada penelitian yang sama, TPE dilaporkan lebih baik daripada Random
 Search pada tugas-tugas yang sulit. Bukti tersebut juga berasal dari
 percobaan pada jaringan saraf, bukan pada model boosting.
 
-TPE yang tersedia pada Optuna bersifat multivariat untuk masalah dengan satu
-objektif \cite{optunadocs}. Bentuk tersebut berbeda dengan TPE independen pada
-rumusan aslinya.
 
 \subsection{CMA-ES}
 % [kartu F4]
@@ -620,47 +635,41 @@ Sebaran yang rata tersebut hanya terjamin bila jumlah percobaan merupakan
 pangkat dua, misalnya 16, 32, atau 64 \cite{scipysobol}. Hal ini perlu
 diperhatikan ketika jumlah percobaan ditetapkan.
 
-\subsection{Optuna}
-% [kartu F3]
-Optuna merupakan pustaka untuk optimasi \textit{hyperparameter}
-\cite{akiba2019}. Ruang pencarian pada Optuna ditulis langsung di dalam
-program, sehingga mudah diatur. Optuna menyediakan beberapa metode pencarian,
-yang disebut \textit{sampler}, serta fitur \textit{pruning} untuk menghentikan
-percobaan yang hasilnya buruk.
-
 \subsection{Teknik Optimasi Tambahan}
 \label{subsec:teknik}
-% [kartu F6, F7]
-\textit{Pruning} menghentikan percobaan yang hasil sementaranya buruk,
-sehingga waktu komputasi dapat dipakai untuk percobaan lain. Cara ini
-berasal dari prinsip \textit{successive halving}, yaitu mencoba banyak
-konfigurasi dengan sedikit sumber daya, membuang yang terburuk, lalu
-mengulanginya \cite{li2018}. Penelitian ini memakai \textit{median pruner}.
-Percobaan dihentikan bila hasil sementaranya lebih buruk daripada median
-percobaan sebelumnya pada tahap yang sama \cite{optunadocs}.
-
-% [kartu E1, I3]
-Teknik kedua berupa penggantian fungsi \textit{loss} pelatihan menjadi
-\textit{loss} absolut atau L1. Varian \textit{gradient boosting} dengan
-\textit{loss} absolut sudah dirumuskan sebagai LAD\_TreeBoost
-\cite{friedman2001}. Pemilihan tersebut selaras dengan metrik evaluasi
-penelitian ini, karena ramalan yang meminimalkan \textit{loss} absolut
-merupakan median dari distribusi prediktif \cite{gneiting2011}. Kaitannya
-dengan MAE dibahas pada Subbab~\ref{subsec:mae}.
+Penelitian ini menguji empat teknik tambahan, yaitu \textit{early stopping},
+seleksi fitur, \textit{loss} L1, dan \textit{pruning}.
 
 % [kartu J1]
-Teknik ketiga berupa \textit{early stopping}. Boosting yang dijalankan
+Teknik pertama berupa \textit{early stopping}. Boosting yang dijalankan
 terlalu lama dapat mengalami \textit{overfitting}, sehingga pelatihan perlu
 dihentikan lebih awal \cite{zhang2005}. Hasil teori tersebut berlaku untuk
 data yang saling bebas, sedangkan data penelitian ini berupa deret waktu.
 Pada penelitian ini, \textit{early stopping} memakai data validasi di dalam
 data latih, bukan data uji.
 
-Teknik keempat berupa seleksi fitur, yaitu melatih ulang model hanya dengan
+Teknik kedua berupa seleksi fitur, yaitu melatih ulang model hanya dengan
 sebagian fitur yang dinilai paling penting. Tujuannya mengurangi derau dari
 fitur yang kurang informatif.
 % CEK: butuh sumber (T6). Kartu E1 hanya memuat definisi ukuran kepentingan
 % fitur, belum memuat prosedur seleksi top-k.
+
+% [kartu E1, I3]
+Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi
+\textit{loss} absolut atau L1. Varian \textit{gradient boosting} dengan
+\textit{loss} absolut sudah dirumuskan sebagai LAD\_TreeBoost
+\cite{friedman2001}. Pilihan tersebut selaras dengan MAE sebagai metrik utama,
+seperti dibahas pada Subbab~\ref{subsec:mae}.
+
+% [kartu F6, F7]
+Teknik keempat berupa \textit{pruning}, yaitu menghentikan percobaan yang
+hasil sementaranya buruk, sehingga waktu komputasi dapat dipakai untuk
+percobaan lain. Cara ini berasal dari prinsip \textit{successive halving},
+yaitu mencoba banyak konfigurasi dengan sedikit sumber daya, membuang yang
+terburuk, lalu mengulanginya \cite{li2018}. Penelitian ini memakai
+\textit{median pruner}. Percobaan dihentikan bila hasil sementaranya lebih
+buruk daripada median percobaan sebelumnya pada tahap yang sama
+\cite{optunadocs}.
 
 
 \section{Validasi Deret Waktu dan Kebocoran Data}
@@ -738,11 +747,11 @@ sedangkan nilai positif berarti sebaliknya. Istilah MAE vs Naive merupakan
 penyebutan dalam penelitian ini, bukan istilah baku dari sumber rujukan.
 
 % [kartu I3, E1]
-Pemilihan MAE sebagai metrik utama memiliki kaitan dengan pemilihan
-\textit{loss} pelatihan. Ramalan titik yang meminimalkan \textit{loss} absolut
-merupakan median dari distribusi prediktif, sedangkan yang meminimalkan
-\textit{loss} kuadrat merupakan rata-ratanya \cite{gneiting2011}. Karena itu,
-pelatihan dengan \textit{loss} L1 selaras dengan evaluasi memakai MAE.
+MAE dipilih sebagai metrik utama juga karena kaitannya dengan \textit{loss}
+pelatihan. Ramalan yang meminimalkan \textit{loss} absolut merupakan median,
+sedangkan yang meminimalkan \textit{loss} kuadrat merupakan rata-rata
+\cite{gneiting2011}. Karena itu, pelatihan dengan \textit{loss} L1 sejalan
+dengan evaluasi memakai MAE.
 
 \subsection{Root Mean Square Error}
 % [kartu I5, I1, I4]
@@ -793,7 +802,8 @@ benar,
   \item[$c_t$] penanda arah pada data uji ke-$t$, bernilai 1 bila tanda
     $\hat{P}_{t+h} - P_t$ sama dengan tanda $P_{t+h} - P_t$, dan bernilai 0
     bila berbeda,
-  \item[$n$] banyaknya data uji.
+  \item[$n$] banyaknya data uji yang harganya berubah, yaitu
+    $P_{t+h} \neq P_t$.
 \end{keterangan}
 % CEK: butuh sumber (M6). Status klaim Bab II menandai M6 belum punya sumber;
 % rujukan yang disarankan Pesaran & Timmermann (1992).
@@ -808,7 +818,8 @@ lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
 % [kartu G2]
 Selisih akurasi antara dua ramalan belum tentu bermakna secara statistik. Uji
 Diebold-Mariano dipakai untuk menguji apakah dua ramalan berbeda akurasinya
-\cite{diebold1995}. Uji tersebut bekerja pada selisih \textit{loss}
+\cite{diebold1995}. Uji ini sudah dipakai pada penelitian prediksi Bitcoin
+jangka pendek \cite{jaquart2021}. Uji tersebut bekerja pada selisih \textit{loss}
 \begin{equation}
   d_t = \mathcal{L}(e_{1t}) - \mathcal{L}(e_{2t}),
   \qquad H_0 : E[d_t] = 0 .
@@ -822,11 +833,10 @@ Diebold-Mariano dipakai untuk menguji apakah dua ramalan berbeda akurasinya
   \item[$H_0$] hipotesis nol, yaitu kedua ramalan sama akuratnya.
 \end{keterangan}
 Fungsi \textit{loss} pada uji tersebut tidak harus berbentuk kuadratik dan
-tidak harus simetris \cite{diebold1995}. Untuk ramalan dengan horizon $h$
-langkah ke depan, selisih \textit{loss} bersifat berkorelasi serial, sehingga
-varians rata-rata $d_t$ dihitung memakai autokovarians sampai lag $h_b-1$,
-dengan $h_b$ menyatakan \textit{time frame} dalam satuan bar
-\cite{diebold1995}.
+tidak harus simetris \cite{diebold1995}. Pada ramalan beberapa langkah ke depan, selisih \textit{loss} pada bar yang
+berdekatan saling berkaitan. Karena itu, varians rata-rata $d_t$ dihitung
+memakai autokovarians sampai lag $h_b-1$, dengan $h_b$ menyatakan
+\textit{time frame} dalam satuan bar \cite{diebold1995}.
 
 % [kartu G1]
 Pada sampel berukuran kecil, statistik uji tersebut cenderung menolak
@@ -849,8 +859,7 @@ model, \textit{time frame}, metode optimasi, dan rasio pembagian data diuji
 terhadap Naive.
 Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
 karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
-\cite{holm1979}. Uji Diebold-Mariano sudah dipakai pada penelitian prediksi
-Bitcoin jangka pendek \cite{jaquart2021}.
+\cite{holm1979}.
 
 
 \section{Research Gap Penelitian}
@@ -878,11 +887,11 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
     \hline
     Wei dkk. \cite{wei2023} &
     XGBoost dan LightGBM untuk Bitcoin, uji MDM, MCS, dan SPA &
-    Data intraday, pembanding naive harga, peramalan langsung \\
+    Data \textit{intraday}, pembanding naive harga, target nilai harga \\
     \hline
     Bouteska dkk. \cite{bouteska2024} &
     AdaBoost dan LightGBM untuk Bitcoin, Grid Search &
-    Data intraday, pembanding naive harga, uji Diebold-Mariano, XGBoost dan
+    Data \textit{intraday}, pembanding naive harga, uji Diebold-Mariano, XGBoost dan
     CatBoost \\
     \hline
     Jaquart dkk. \cite{jaquart2021} &
@@ -890,13 +899,13 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
     Target nilai harga, empat model boosting, banyak metode optimasi \\
     \hline
     Akyildirim dkk. \cite{akyildirim2023} &
-    Data intraday, tiga rasio \textit{split} &
+    Data \textit{intraday}, tiga rasio \textit{split} &
     Target nilai harga, pasar spot, pembanding naive harga, uji
     Diebold-Mariano \\
     \hline
     Puoti dkk. \cite{puoti2024} &
     Pembanding naive untuk harga kripto &
-    Data intraday, \textit{tuning}, uji Diebold-Mariano yang jelas \\
+    Data \textit{intraday}, \textit{tuning}, uji Diebold-Mariano yang jelas \\
     \hline
   \end{tabular}
   \endgroup
