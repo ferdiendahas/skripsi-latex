@@ -89,7 +89,8 @@ Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
   \sumber{Diolah penulis}
 \end{figure}
 
-Data diambil dari API publik Indodax tanpa memakai API \textit{key}. Sebuah
+Data diambil dari API publik Indodax tanpa memakai API \textit{key}
+\cite{indodaxapi}. Sebuah
 program \textit{collector} yang ditulis dengan Python dijalankan oleh
 \textit{cron} setiap 1 menit pada sebuah \textit{virtual private server} (VPS)
 berzona waktu UTC. Setiap kali berjalan, program tersebut menyimpan data ke
@@ -209,14 +210,14 @@ pengaruh loncatan tersebut berkurang.
 % CEK: hitung ulang autokorelasi return close vs typical pada data final
 % sebelum dijadikan bukti.
 
-Namun, harga yang dirata-ratakan dalam satu bar dapat memunculkan
-autokorelasi semu pada \textit{return}. Autokorelasi semu tersebut dapat
+Namun, harga yang dirata-ratakan dapat memunculkan autokorelasi semu pada
+selisihnya \cite{working1960}. Autokorelasi semu tersebut dapat
 membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
 benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
 hasil dibahas.
-% CEK: butuh sumber (efek perataan harga terhadap autokorelasi return,
-% mis. Working 1960, Econometrica). Pertimbangkan melaporkan juga hasil
-% dengan harga close sebagai pembanding.
+% CEK: keputusan Ferdi, laporkan juga hasil dengan harga close sebagai
+% pembanding atau cukup sebagai keterbatasan. Jangan pakai angka +0,25 dari
+% Working untuk harga typical.
 
 \subsection{Penanganan Data Hilang}
 Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
@@ -230,7 +231,8 @@ buatan yang masuk ke dalam data latih maupun data uji.
 Penelitian ini tidak memakai normalisasi maupun penskalaan fitur. Keempat
 model yang dibandingkan merupakan model berbasis pohon, dan model seperti itu
 memecah data berdasarkan urutan nilai fitur, bukan berdasarkan besarnya.
-% CEK: butuh sumber (model pohon tidak sensitif terhadap skala fitur)
+Model berbasis pohon tidak terpengaruh oleh transformasi monoton pada fitur,
+sehingga penskalaan tidak diperlukan \cite{hastie2009}.
 Pilihan ini sekaligus menghindari salah satu bentuk kebocoran data yang
 dibahas pada Subbab~\ref{sec:validasi}, yaitu penskala yang dipasang sebelum data dibagi.
 
@@ -624,6 +626,9 @@ besar. Perbandingan antar-\textit{time frame} dan antardataset memakai
 MAE vs Naive. Metrik pendukungnya
 merupakan RMSE pada Persamaan~\eqref{eq:rmse}, MAPE pada
 Persamaan~\eqref{eq:mape}, dan akurasi arah pada Persamaan~\eqref{eq:arah}.
+Harga BTC/IDR di Indodax bergerak dalam kelipatan Rp1.000
+\cite{indodaxapi}, sehingga perubahan yang lebih kecil dari itu tidak
+tercatat.
 Khusus akurasi arah, bar yang harga sebenarnya tidak berubah, yaitu
 $r_{t,h} = 0$, tidak ikut dihitung karena arahnya tidak terdefinisi. Karena
 itu, $n$ pada Persamaan~\eqref{eq:arah} merupakan banyaknya data uji dengan
@@ -632,7 +637,6 @@ Akurasi arah hanya dilaporkan untuk keempat model. Naive selalu meramalkan
 harga tetap, sehingga arah ramalannya tidak pernah terdefinisi. Bila model
 meramalkan \textit{return} tepat nol, ramalan tersebut dihitung sebagai arah
 yang salah.
-% CEK: cocokkan aturan ramalan nol dengan kode (fungsi akurasi arah).
 
 Model terbaik pada rumusan masalah ketiga ditentukan dari nilai MAE vs Naive
 terkecil. RMSE dan MAPE dipakai sebagai pendukung untuk melihat apakah urutan
@@ -709,7 +713,12 @@ Pengurutan ini penting supaya pemilihan dataset, \textit{time frame}, dan
 metode optimasi tidak disusun ulang mengikuti hasil yang sudah terlihat.
 % CEK: aturan dikunci ulang untuk eksperimen final (dataset candle 1 dan
 % 5 menit). Aturan model terbaik ada di Subbab Evaluasi Model.
-% CEK: hitung ulang rencana jumlah run setelah candle 5 menit masuk.
+
+Secara keseluruhan, keempat tahap memuat 92 \textit{run} model, yaitu 36 pada
+Tahap pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 16 pada Tahap
+keempat. Sebagian \textit{run} sama persis antartahap, misalnya konfigurasi
+TPE dengan rasio 80:20, sehingga hasilnya dipakai ulang tanpa dijalankan
+kembali.
 
 Pemilihan pada Tahap pertama dan kedua memakai hasil pada data uji, dan data
 uji yang sama dipakai lagi pada tahap berikutnya. Karena itu, hasil pada

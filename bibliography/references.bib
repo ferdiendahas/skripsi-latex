@@ -230,6 +230,30 @@
   doi     = {10.1038/s41598-023-31618-4}
 }
 
+% Metadata dicek ke Crossref 10 Nov 2026: volume, nomor, halaman, dan penulis
+% cocok seluruhnya.
+@article{baur2021,
+  author  = {Baur, Dirk G. and Dimpfl, Thomas},
+  title   = {The volatility of {Bitcoin} and its role as a medium of exchange and a store of value},
+  journal = {Empirical Economics},
+  volume  = {61},
+  number  = {5},
+  pages   = {2663--2683},
+  year    = {2021},
+  doi     = {10.1007/s00181-020-01990-5}
+}
+
+% Branch `master` dicek 10 Nov 2026 lewat API GitHub (default_branch = master)
+% dan berkas mentahnya terbaca; branch `main` tidak ada.
+@online{indodaxapi,
+  author       = {{Indodax}},
+  title        = {Public {REST} {API}},
+  organization = {btcid/indodax-official-api-docs},
+  url          = {https://github.com/btcid/indodax-official-api-docs/blob/master/Public-RestAPI.md},
+  urldate      = {2026-11-10},
+  year         = {2026}
+}
+
 % ===========================================================================
 % E. Model boosting (sumber metode) dan data tabular
 % ===========================================================================
@@ -366,6 +390,20 @@
   url          = {https://lightgbm.readthedocs.io/en/v4.7.0/Parameters-Tuning.html},
   urldate      = {2026-11-04},
   year         = {2026}
+}
+
+% Crossref mencatat judul tanpa subjudul ("The Elements of Statistical
+% Learning") dan tanpa nomor edisi. Subjudul dan edisi 2 dipertahankan karena
+% lebih lengkap, sesuai aturan di CLAUDE.md.
+@book{hastie2009,
+  author    = {Hastie, Trevor and Tibshirani, Robert and Friedman, Jerome},
+  title     = {The Elements of Statistical Learning: Data Mining, Inference, and Prediction},
+  edition   = {2},
+  series    = {Springer Series in Statistics},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2009},
+  doi       = {10.1007/978-0-387-84858-7}
 }
 
 % ===========================================================================
@@ -576,6 +614,42 @@
   doi     = {10.1016/S0169-2070(00)00065-0}
 }
 
+% DOI diturunkan dari JSTOR stable 1907574 dan dicek ke Crossref 10 Nov 2026:
+% judul, jurnal, volume, nomor, dan penulis cocok. Crossref hanya mencatat
+% halaman awal (916); rentang 916--918 dipertahankan karena lebih lengkap.
+@article{working1960,
+  author  = {Working, Holbrook},
+  title   = {Note on the Correlation of First Differences of Averages in a Random Chain},
+  journal = {Econometrica},
+  volume  = {28},
+  number  = {4},
+  pages   = {916--918},
+  year    = {1960},
+  doi     = {10.2307/1907574}
+}
+
+% DOI ditemukan lewat pencarian judul di Crossref 10 Nov 2026; jurnal, volume,
+% nomor, halaman, dan penulis cocok seluruhnya.
+@article{pesaran1992,
+  author  = {Pesaran, M. Hashem and Timmermann, Allan},
+  title   = {A Simple Nonparametric Test of Predictive Performance},
+  journal = {Journal of Business \& Economic Statistics},
+  volume  = {10},
+  number  = {4},
+  pages   = {461--465},
+  year    = {1992},
+  doi     = {10.1080/07350015.1992.10509922}
+}
+
+@book{lopezdeprado2018,
+  author    = {L{\'o}pez de Prado, Marcos},
+  title     = {Advances in Financial Machine Learning},
+  publisher = {Wiley},
+  address   = {Hoboken, NJ},
+  year      = {2018},
+  isbn      = {978-1-119-48208-6}
+}
+
 % ---------------------------------------------------------------------------
 % Metrik evaluasi dan teori pendukung (kartu I dan J)
 % ---------------------------------------------------------------------------
@@ -658,4 +732,14 @@
   pages   = {1538--1579},
   year    = {2005},
   doi     = {10.1214/009053605000000255}
+}
+
+% CEK: cocokkan url hyndman2014fpp dengan alamat PDF yang diunduh Ferdi.
+@misc{hyndman2014fpp,
+  author       = {Hyndman, Rob J.},
+  title        = {Forecasting: Principles \& Practice},
+  howpublished = {Catatan workshop, University of Western Australia, 23--25 September 2014},
+  year         = {2014},
+  url          = {https://robjhyndman.com/uwa/},
+  urldate      = {2026-11-10}
 }

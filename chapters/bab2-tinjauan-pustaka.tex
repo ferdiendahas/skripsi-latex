@@ -127,15 +127,15 @@ memakai pembanding naive.
 
 \section{Bitcoin}
 % [kartu D1]
-Bitcoin merupakan sistem uang elektronik \textit{peer-to-peer}
-\cite{nakamoto2008}. Setiap transaksi Bitcoin dicatat pada
-\textit{blockchain}, yaitu rantai blok data yang tersusun berurutan dan dapat
-diperiksa oleh siapa saja.
-% CEK: butuh sumber blockchain. Kartu D1 belum diisi dari PDF, sehingga isi
-% spesifik white paper Nakamoto belum boleh dikutip.
-Bitcoin diperdagangkan setiap hari tanpa jam buka dan jam tutup. Di Indodax,
-Bitcoin diperdagangkan dengan rupiah dalam pasangan BTC/IDR.
-% CEK: butuh sumber (perdagangan 24 jam; pasangan BTC/IDR di Indodax)
+Bitcoin merupakan sistem uang elektronik \textit{peer-to-peer} yang
+memungkinkan pembayaran daring dikirim langsung tanpa melalui lembaga
+keuangan. Transaksi dicatat berurutan dalam rantai blok yang diamankan dengan
+\textit{proof-of-work}, dan rantai terpanjang menjadi bukti urutan transaksi
+\cite{nakamoto2008}.
+Bitcoin diperdagangkan setiap hari tanpa jam buka dan jam tutup.
+% CEK: butuh sumber (perdagangan 24 jam). Kartu H3 tidak memuatnya.
+Di Indodax, Bitcoin diperdagangkan dengan rupiah dalam pasangan BTC/IDR
+\cite{indodaxapi}.
 
 % [kartu D4]
 Harga Bitcoin sulit ditebak. Menurut teori pasar efisien bentuk lemah, harga
@@ -220,19 +220,16 @@ Bagian terakhir membahas fitur yang dapat dibentuk dari data deret waktu.
 
 \subsection{Data Deret Waktu dan \textit{Candle}}
 Deret waktu merupakan rangkaian pengamatan yang dicatat berurutan menurut
-waktu. Peramalan merupakan upaya menduga nilai pengamatan pada waktu yang
-belum terjadi dengan memakai informasi yang tersedia sampai saat ini.
-% CEK: butuh sumber (T1). Status klaim Bab II menandai T1 belum punya sumber;
-% rujukan yang disarankan Hyndman & Athanasopoulos (FPP3) bab 1.
+waktu. Peramalan merupakan upaya menduga nilai pengamatan pada waktu yang belum
+terjadi dengan memakai informasi yang tersedia sampai saat ini
+\cite{hyndman2014fpp}.
 
 Harga aset kripto umumnya disajikan dalam bentuk \textit{candle}, yaitu
 ringkasan pergerakan harga pada satu selang waktu. Satu \textit{candle}
 memuat lima nilai, yaitu harga pembukaan (\textit{open}), harga tertinggi
 (\textit{high}), harga terendah (\textit{low}), harga penutupan
 (\textit{close}), dan volume perdagangan. Kelima nilai tersebut biasa disingkat
-OHLCV.
-% CEK: butuh sumber (T3). Kartu hanya memuat contoh pemakaian OHLCV, belum
-% memuat definisi formalnya.
+OHLCV \cite{indodaxapi}.
 Data OHLCV per menit sudah dipakai untuk meramal harga kripto jangka pendek
 \cite{rodrigues2025}.
 
@@ -240,9 +237,9 @@ Data OHLCV per menit sudah dipakai untuk meramal harga kripto jangka pendek
 \label{subsec:return}
 Penelitian ini tidak meramal harga secara langsung, melainkan meramal
 \textit{return} logaritmik pada horizon $h$. Pilihan tersebut diambil karena
-model berbasis pohon tidak dapat memprediksi nilai di luar rentang data
-latihnya.
-% CEK: butuh sumber (keterbatasan ekstrapolasi model pohon)
+ramalan pohon regresi pada setiap daerah merupakan rata-rata target data latih
+di daerah tersebut \cite{hastie2009}. Akibatnya, model berbasis pohon tidak
+dapat memprediksi nilai di luar rentang target data latihnya.
 \textit{Return} logaritmik pada horizon $h$ merupakan
 \begin{equation}
   r_{t,h} = \ln\!\left(\frac{P_{t+h}}{P_t}\right).
@@ -264,8 +261,9 @@ Hasil ramalan \textit{return} dikembalikan ke satuan rupiah dengan
   \item[$\hat{r}_{t,h}$] \textit{return} logaritmik hasil ramalan,
   \item[$P_t$] harga pada waktu $t$, yaitu harga terakhir yang diketahui.
 \end{keterangan}
-% CEK: butuh sumber (T2). Status klaim Bab II menandai T2 belum punya sumber;
-% rujukan yang disarankan Tsay (2010) bab 1.
+Selisih nilai logaritma menyatakan perubahan relatif terhadap nilai
+sebelumnya \cite{hyndman2014fpp}.
+% CEK: definisi formal return logaritmik belum ada sumber (Tsay tidak didapat).
 \textit{Return} logaritmik sudah lazim dipakai sebagai target pada peramalan
 aset kripto \cite{bouteska2024}.
 
@@ -307,16 +305,15 @@ Diebold-Mariano \cite{diebold1995}.
 Model boosting tidak membaca urutan waktu secara langsung. Karena itu,
 informasi dari masa lalu perlu diubah menjadi fitur pada setiap baris data.
 Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa bar
-sebelumnya. Fitur statistik bergulir merupakan ringkasan, misalnya jumlah
+sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya jumlah
 atau simpangan baku, dari nilai di dalam jendela waktu yang bergeser
 mengikuti waktu. Kedua jenis fitur tersebut hanya memakai data sampai waktu
 $t$, sehingga tidak memuat informasi dari masa depan.
-% CEK: butuh sumber (fitur lag dan statistik bergulir pada deret waktu)
+% CEK: butuh sumber (fitur statistik bergulir). Kartu J2 hanya memuat lag.
 
 Fitur waktu yang berulang, seperti jam dalam sehari, dapat dikodekan dengan
-fungsi sinus dan kosinus. Dengan cara itu, jam 23 dan jam 0 bernilai
-berdekatan, padahal angkanya berjauhan.
-% CEK: butuh sumber (pengodean waktu siklik dengan sinus dan kosinus)
+fungsi sinus dan kosinus \cite{hyndman2014fpp}. Dengan cara itu, jam 23 dan
+jam 0 bernilai berdekatan, padahal angkanya berjauhan.
 
 
 \section{Model Boosting}
@@ -656,16 +653,20 @@ seleksi fitur, \textit{loss} L1, dan \textit{pruning}.
 % [kartu J1]
 Teknik pertama berupa \textit{early stopping}. Boosting yang dijalankan
 terlalu lama dapat mengalami \textit{overfitting}, sehingga pelatihan perlu
-dihentikan lebih awal \cite{zhang2005}. Hasil teori tersebut berlaku untuk
+dihentikan lebih awal \cite{zhang2005}.
+Jumlah pohon terbaik dapat diperkirakan dengan memantau kesalahan pada data
+validasi \cite{hastie2009}. Hasil teori tersebut berlaku untuk
 data yang saling bebas, sedangkan data penelitian ini berupa deret waktu.
 Pada penelitian ini, \textit{early stopping} memakai data validasi di dalam
 data latih, bukan data uji.
 
 Teknik kedua berupa seleksi fitur, yaitu melatih ulang model hanya dengan
-sebagian fitur yang dinilai paling penting. Tujuannya mengurangi derau dari
-fitur yang kurang informatif.
-% CEK: butuh sumber (T6). Kartu E1 hanya memuat definisi ukuran kepentingan
-% fitur, belum memuat prosedur seleksi top-k.
+sebagian fitur yang dinilai paling penting. Kepentingan fitur pada model
+boosting dapat diukur dari sumbangan setiap fitur dalam menurunkan kesalahan
+pada pohon-pohonnya, dan biasanya hanya sedikit fitur yang berpengaruh besar
+\cite{hastie2009}. Tujuan seleksi fitur adalah mengurangi derau dari fitur
+yang kurang informatif.
+% CEK: butuh sumber prosedur seleksi top-k (mis. Guyon & Elisseeff 2003).
 
 % [kartu E1, I3]
 Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi
@@ -711,9 +712,7 @@ Bentuk kebocoran lain terjadi pada batas antara data latih dan data uji. Target
 pada horizon $h$ dihitung dari harga $h$ menit ke depan, sehingga target bagi
 $h$ bar terakhir data latih memakai harga yang sudah berada di dalam periode
 uji. Potongan tersebut perlu dibuang sebelum pelatihan. Tindakan itu disebut
-\textit{purging}.
-% CEK: butuh sumber (T5). Status klaim Bab II menandai T5 belum punya sumber;
-% rujukan yang disarankan Lopez de Prado (2018) bab 7.
+\textit{purging} \cite{lopezdeprado2018}.
 
 
 \section{Pengukuran Nilai Error}
@@ -818,8 +817,8 @@ benar,
   \item[$n$] banyaknya data uji yang harganya berubah, yaitu
     $P_{t+h} \neq P_t$.
 \end{keterangan}
-% CEK: butuh sumber (M6). Status klaim Bab II menandai M6 belum punya sumber;
-% rujukan yang disarankan Pesaran & Timmermann (1992).
+Ukuran ini mengikuti definisi akurasi arah sebagai proporsi arah perubahan
+yang tertebak benar \cite{pesaran1992}.
 Ukuran ini dipakai sebagai metrik pendukung saja, karena ramalan dapat menebak
 arah dengan benar tetapi tetap meleset jauh dalam besaran. Akurasi arah sudah
 lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
