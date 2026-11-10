@@ -653,12 +653,11 @@ seleksi fitur, \textit{loss} L1, dan \textit{pruning}.
 % [kartu J1]
 Teknik pertama berupa \textit{early stopping}. Boosting yang dijalankan
 terlalu lama dapat mengalami \textit{overfitting}, sehingga pelatihan perlu
-dihentikan lebih awal \cite{zhang2005}.
-Jumlah pohon terbaik dapat diperkirakan dengan memantau kesalahan pada data
-validasi \cite{hastie2009}. Hasil teori tersebut berlaku untuk
+dihentikan lebih awal \cite{zhang2005}. Hasil teori tersebut berlaku untuk
 data yang saling bebas, sedangkan data penelitian ini berupa deret waktu.
-Pada penelitian ini, \textit{early stopping} memakai data validasi di dalam
-data latih, bukan data uji.
+Jumlah pohon terbaik dapat diperkirakan dengan memantau kesalahan pada data
+validasi \cite{hastie2009}. Pada penelitian ini, \textit{early stopping}
+memakai data validasi di dalam data latih, bukan data uji.
 
 Teknik kedua berupa seleksi fitur, yaitu melatih ulang model hanya dengan
 sebagian fitur yang dinilai paling penting. Kepentingan fitur pada model
