@@ -13,7 +13,7 @@
   % --- penanda: semuanya di dalam data latih ---
   \node[draw,anchor=west,align=center,inner sep=2.5pt,minimum height=7mm,
         minimum width=96mm,fill=black!6] at (16,-12)
-    {\textbf{data latih} (data uji tidak disentuh pada tahap ini)};
+    {\textbf{data latih}};
 
   \draw[panah] (16,-1) -- (112,-1);
   \node[anchor=south,font=\footnotesize] at (64,-1) {arah waktu};
@@ -36,21 +36,14 @@
   % --- label jeda, menunjuk ke blok jeda pada fold 5 ---
   \draw[panah] (84,76) -- (94,66);
   \node[anchor=north east,align=right] at (83,72)
-    {\textbf{jeda = horizon} $h$};
+    {jeda $h_b$ bar};
 
   % --- legenda ---
   \node[sublatih,minimum width=6mm] at (16,90) {};
   \node[anchor=west] at (23,90) {jendela latih};
   \node[jeda,minimum width=6mm] at (56,90) {};
-  \node[anchor=west] at (63,90) {jeda sepanjang $h$};
+  \node[anchor=west] at (63,90) {jeda};
   \node[valid,minimum width=6mm] at (98,90) {};
   \node[anchor=west] at (105,90) {blok validasi};
 
-  % --- catatan skor ---
-  \node[anchor=north west,align=left,text width=118mm,draw,inner sep=3pt]
-    at (0,100)
-    {\textbf{Skor \textit{tuning}} = rata-rata MAE return dari 5
-     \textit{fold}. Jendela latih bertambah pada setiap \textit{fold}, blok
-     validasi selalu berada sesudah jendela latih, dan jeda sepanjang horizon
-     memisahkan keduanya supaya target latih tidak melewati blok validasi.};
 \end{tikzpicture}

@@ -3,48 +3,45 @@
 % context/konteks_collector_data_v3.0.md.
 \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
     tahap/.style={draw,rectangle,text width=96mm,align=left,
-      inner sep=3pt,minimum height=17mm},
+      inner sep=3pt,minimum height=11mm},
     nomor/.style={draw,circle,inner sep=0pt,minimum size=7mm,font=\small},
     panah/.style={-{Stealth[length=2.2mm]}}]
 
-  % Tinggi kotak 17mm dan jarak antarbaris 23mm, seragam untuk semua langkah.
+  % Tinggi kotak 11mm dan jarak antarbaris 17mm, seragam untuk semua langkah.
   \node[nomor] at (6,0) {1};
   \node[tahap] (t1) at (62,0)
-    {\textbf{Pengumpulan data.} Candle 1 menit BTC/IDR dari API publik
-     Indodax, diambil otomatis setiap menit oleh \textit{collector} di VPS
-     dan disimpan di basis data SQLite.};
+    {\textbf{Pengumpulan data.}\\
+     \textit{Candle} 1 menit BTC/IDR dari API publik Indodax.};
 
-  \node[nomor] at (6,23) {2};
-  \node[tahap] (t2) at (62,23)
-    {\textbf{Praproses.} Candle 5 menit dibentuk dari agregasi candle
-     1 menit. Harga \textit{typical}
-     $(\text{high}+\text{low}+\text{close})/3$ dipakai untuk kedua dataset.
-     Bar yang hilang dibiarkan kosong, tidak diisi.};
+  \node[nomor] at (6,17) {2};
+  \node[tahap] (t2) at (62,17)
+    {\textbf{Praproses.}\\
+     \textit{Candle} 5 menit dibentuk dari agregasi \textit{candle} 1 menit.};
 
-  \node[nomor] at (6,46) {3};
-  \node[tahap] (t3) at (62,46)
-    {\textbf{Pembentukan fitur dan target.} Fitur hanya dari data sampai
-     waktu $t$; target $r_{t,h} = \ln(P_{t+h}/P_t)$.};
+  \node[nomor] at (6,34) {3};
+  \node[tahap] (t3) at (62,34)
+    {\textbf{Pembentukan fitur dan target.}\\
+     Fitur dari data sampai waktu $t$, target $r_{t,h} = \ln(P_{t+h}/P_t)$.};
 
-  \node[nomor] at (6,69) {4};
-  \node[tahap] (t4) at (62,69)
-    {\textbf{Pembagian data} berurutan waktu, dengan \textit{purging}
-     $h$ bar terakhir pada data latih.};
+  \node[nomor] at (6,51) {4};
+  \node[tahap] (t4) at (62,51)
+    {\textbf{Pembagian data.}\\
+     Berurutan waktu dengan \textit{purging} $h_b$ bar pada data latih.};
 
-  \node[nomor] at (6,92) {5};
-  \node[tahap] (t5) at (62,92)
-    {\textbf{Optimasi \textit{hyperparameter}} dengan validasi
-     \textit{walk-forward} di dalam data latih.};
+  \node[nomor] at (6,68) {5};
+  \node[tahap] (t5) at (62,68)
+    {\textbf{Optimasi \textit{hyperparameter}.}\\
+     Validasi \textit{walk-forward} di dalam data latih.};
 
-  \node[nomor] at (6,115) {6};
-  \node[tahap] (t6) at (62,115)
-    {\textbf{Pelatihan model akhir dan prediksi.} Return yang diramal
-     dikonversi ke rupiah: $\hat{P}_{t+h} = P_t\exp(\hat{r}_{t,h})$.};
+  \node[nomor] at (6,85) {6};
+  \node[tahap] (t6) at (62,85)
+    {\textbf{Pelatihan model akhir dan prediksi.}\\
+     Return yang diramal dikonversi ke rupiah.};
 
-  \node[nomor] at (6,138) {7};
-  \node[tahap] (t7) at (62,138)
-    {\textbf{Evaluasi terhadap Naive.} Metrik MAE, RMSE, MAPE, akurasi arah,
-     dan uji Diebold-Mariano dengan koreksi HLN.};
+  \node[nomor] at (6,102) {7};
+  \node[tahap] (t7) at (62,102)
+    {\textbf{Evaluasi terhadap Naive.}\\
+     MAE, RMSE, MAPE, akurasi arah, dan uji Diebold-Mariano.};
 
   \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7}{
     \draw[panah] (t\a.south) -- (t\b.north);

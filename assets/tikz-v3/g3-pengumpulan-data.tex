@@ -20,7 +20,7 @@
   \node[sumber] (ep1) at (24,4)
     {\textit{endpoint} ticker\\\texttt{/api/btc\_idr/ticker}};
   \node[sumber] (ep2) at (24,32)
-    {\textit{endpoint} candle\\\texttt{/tradingview/}\\\texttt{history\_v2}, \texttt{tf=1}};
+    {\textit{endpoint candle}\\\texttt{/tradingview/}\\\texttt{history\_v2}, \texttt{tf=1}};
 
   % ===== kolom 2: collector =====
   \node[proses] (col) at (66,18)
@@ -43,11 +43,11 @@
   \draw[panah]        (col.east) -- (88,18) -- (88,36) -- (tb2.west);
 
   % ===== baris bawah: dua dataset eksperimen =====
-  \node[berkas] (ds1) at (20,74) {\textbf{dataset}\\candle 1 menit};
+  \node[berkas] (ds1) at (20,74) {\textbf{dataset}\\\textit{candle} 1 menit};
   \node[proses,text width=38mm] (agg) at (66,74)
     {\textbf{agregasi 5 menit}\\\textit{open} pertama, \textit{high} maks,
      \textit{low} min, \textit{close} terakhir, volume dijumlah};
-  \node[berkas] (ds2) at (112,74) {\textbf{dataset}\\candle 5 menit};
+  \node[berkas] (ds2) at (112,74) {\textbf{dataset}\\\textit{candle} 5 menit};
 
   % dari ohlc_1m turun ke baris dataset (garis di y=54, di atas kotak agregasi)
   \draw (108,44) -- (108,56) -- (20,56);
@@ -55,10 +55,4 @@
   \draw[panah] (ds1.east) -- (agg.west);
   \draw[panah] (agg.east) -- (ds2.west);
 
-  % ===== catatan =====
-  \node[draw,anchor=north west,align=left,text width=118mm,inner sep=3pt]
-    at (0,90)
-    {Data dikumpulkan sendiri dari API publik Indodax. Indodax tidak
-     menyediakan candle 5 menit, sehingga candle 5 menit dibentuk dari
-     candle 1 menit.};
 \end{tikzpicture}

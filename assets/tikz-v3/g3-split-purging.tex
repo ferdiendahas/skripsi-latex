@@ -33,7 +33,7 @@
 
   % --- label purging, menunjuk ke potongan yang diarsir ---
   \draw[panah] (60,62) -- (c2.south);
-  \node[anchor=north,align=center] at (60,62) {$h$ bar};
+  \node[anchor=north,align=center] at (60,62) {\textit{purging} $h_b$ bar};
 
   % --- legenda ---
   \node[latih,minimum width=6mm] at (14,78) {};
@@ -43,10 +43,4 @@
   \node[uji,minimum width=6mm] at (100,78) {};
   \node[anchor=west] at (107,78) {data uji};
 
-  % --- catatan ---
-  \node[anchor=north west,align=left,text width=118mm,draw,inner sep=3pt]
-    at (0,88)
-    {\textbf{Alasan \textit{purging}.} Target pada $h$ bar terakhir data latih
-     memakai harga di periode uji. Potongan itu dibuang supaya informasi
-     periode uji tidak masuk ke data latih.};
 \end{tikzpicture}

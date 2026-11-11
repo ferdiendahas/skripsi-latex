@@ -40,12 +40,9 @@
   \node[below=2mm] at (82,0) {$t+h$};
   \node[fill=white,inner sep=0.6mm] at (3,0) {$\cdots$};
 
-  % --- keterangan dan legenda ---
-  \node[anchor=north west,align=left] at (0,12)
-    {Horizon yang diuji: $h \in \{1,\;5,\;15,\;30,\;60\}$ menit;
-     $h = 1$ menit hanya untuk candle 1 menit.};
-  \draw[thick] (2,24) -- (14,24);
-  \node[anchor=west] at (16,24) {prediksi Naive};
-  \draw[thick,dotted] (58,24) -- (70,24);
-  \node[anchor=west] at (72,24) {prediksi model};
+  % --- legenda, satu baris ---
+  \draw[thick] (2,13) -- (14,13);
+  \node[anchor=west] at (16,13) {prediksi Naive};
+  \draw[thick,dotted] (58,13) -- (70,13);
+  \node[anchor=west] at (72,13) {prediksi model};
 \end{tikzpicture}

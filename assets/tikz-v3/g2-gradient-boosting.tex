@@ -36,13 +36,4 @@
     {\textbf{model akhir}\\[1pt]
      $F_M(x) = F_0(x) + \sum_{m=1}^{M} \nu\,\rho_m\,f_m(x)$};
 
-  % --- aturan pembaruan dan keterangan simbol ---
-  \node[anchor=north,align=center,text width=120mm] at (64,48)
-    {Pembaruan tiap iterasi:\quad
-     $F_m(x) = F_{m-1}(x) + \nu \cdot \rho_m f_m(x)$,\qquad $0 < \nu \le 1$};
-  \node[draw,anchor=north,align=left,text width=116mm,inner sep=3pt] at (64,58)
-    {$r^{(m)} = -\partial L / \partial F_m$ = residual, yaitu arah penurunan
-     \textit{loss} yang dicocokkan oleh pohon berikutnya.\quad
-     $\nu$ = \textit{learning rate} (\textit{shrinkage}).\quad
-     $\rho_m$ = bobot optimal pohon ke-$m$.};
 \end{tikzpicture}
