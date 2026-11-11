@@ -11,7 +11,9 @@
 \usetikzlibrary{patterns,decorations.pathreplacing}
 
 \section{Tahapan Penelitian}
-Penelitian ini dijalankan dalam tujuh langkah.
+Penelitian ini diawali dengan studi literatur untuk menemukan celah penelitian
+dan landasan metode, seperti dijelaskan pada Subbab~\ref{sec:literatur}.
+Setelah itu, penelitian dijalankan dalam tujuh langkah.
 Gambar~\ref{fig:alur} menampilkan alur ketujuh langkah tersebut.
 
 \begin{figure}[htbp]
@@ -54,6 +56,7 @@ Naive memakai beberapa metrik dan uji statistik. Rinciannya dibahas pada
 Subbab~\ref{sec:evaluasi}.
 
 \section{Studi Literatur}
+\label{sec:literatur}
 Studi literatur dilakukan untuk menemukan celah penelitian dan landasan
 metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
 isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
@@ -704,9 +707,9 @@ metode optimasi tidak disusun ulang mengikuti hasil yang sudah terlihat.
 
 Secara keseluruhan, keempat tahap memuat 92 \textit{run} model, yaitu 36 pada
 Tahap pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 16 pada Tahap
-keempat. Sebagian \textit{run} sama persis antartahap, misalnya konfigurasi
-TPE dengan rasio 80:20, sehingga hasilnya dipakai ulang tanpa dijalankan
-kembali.
+keempat. Sebagian \textit{run} memakai konfigurasi yang sama antartahap,
+misalnya TPE dengan rasio 80:20. \textit{Run} tersebut dijalankan ulang dan
+memberi hasil yang identik.
 
 Pemilihan pada Tahap pertama dan kedua memakai hasil pada data uji, dan data
 uji yang sama dipakai lagi pada tahap berikutnya. Karena itu, hasil pada

@@ -65,7 +65,7 @@
 \RequirePackage{xurl}
 \RequirePackage{xkeyval}
 \RequirePackage[backend=biber,style=ieee,language=english,autolang=none,
-  isbn=false,doi=true,url=true,dashed=false]{biblatex}
+  isbn=false,doi=true,url=true,dashed=false,urldate=iso]{biblatex}
 \DeclareLanguageMapping{indonesian}{english}
 \RequirePackage{hyperref}
 \urlstyle{same}
