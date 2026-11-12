@@ -3,32 +3,32 @@
 % Tidak memuat hasil pemilihan tahap mana pun; rincian setiap tahap ada di
 % narasi Subbab Skenario Pengujian.
 \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
-    tahap/.style={draw,rectangle,text width=88mm,align=left,
+    tahap/.style={draw,rectangle,text width=84mm,align=left,
       inner sep=3pt,minimum height=11mm},
-    label/.style={draw,rectangle,fill=black!10,text width=26mm,
+    label/.style={draw,rectangle,fill=black!10,text width=32mm,
       align=center,inner sep=3pt,minimum height=11mm,font=\small},
     panah/.style={-{Stealth[length=2.2mm]}}]
 
   % Tinggi kotak 11mm dan jarak antarbaris 17mm, seragam untuk semua tahap.
-  \node[label] (l1) at (14,0) {Tahap 1\\\textit{time frame}};
-  \node[tahap] (t1) at (74,0)
-    {9 pasangan \textit{dataset} dan horizon $\times$ 4 model.\\
-     Hasil: \textit{dataset} dan horizon untuk tahap berikutnya.};
+  \node[label] (l1) at (17,0) {Tahap 1\\\textit{time frame}};
+  \node[tahap] (t1) at (77,0)
+    {9 pasangan \textit{dataset} dan horizon $\times$ 4 model;\\
+     dipilih dari skor validasi.};
 
-  \node[label] (l2) at (14,17) {Tahap 2\\metode optimasi};
-  \node[tahap] (t2) at (74,17)
-    {7 metode optimasi $\times$ 4 model.\\
-     Hasil: metode optimasi untuk tahap berikutnya.};
+  \node[label] (l2) at (17,17) {Tahap 2\\strategi \textit{tuning}};
+  \node[tahap] (t2) at (77,17)
+    {7 strategi $\times$ 4 model;\\
+     dipilih dari skor validasi.};
 
-  \node[label] (l3) at (14,34) {Tahap 3\\rasio \textit{split}};
-  \node[tahap] (t3) at (74,34)
-    {3 rasio \textit{split} $\times$ 4 model.\\
-     Tanpa pemilihan; semua hasil dilaporkan.};
+  \node[label] (l3) at (17,34) {Tahap 3\\panjang data latih};
+  \node[tahap] (t3) at (77,34)
+    {3 panjang data latih $\times$ 4 model;\\
+     tanpa pemilihan.};
 
-  \node[label] (l4) at (14,51) {Tahap 4\\teknik tambahan};
-  \node[tahap] (t4) at (74,51)
-    {4 teknik tambahan $\times$ 4 model.\\
-     Tanpa pemilihan; semua hasil dilaporkan.};
+  \node[label] (l4) at (17,51) {Tahap 4\\teknik tambahan};
+  \node[tahap] (t4) at (77,51)
+    {Teknik yang berlaku $\times$ 4 model;\\
+     tanpa pemilihan.};
 
   \foreach \a/\b in {1/2,2/3,3/4}{
     \draw[panah] (t\a.south) -- (t\b.north);

@@ -89,7 +89,8 @@ Evolution Strategy (CMA-ES), Genetic
 Algorithm, dan Quasi-Monte Carlo. Performa model diukur dengan \textit{Mean Absolute Error} (MAE),
 \textit{Root Mean Square Error} (RMSE), dan MAPE, lalu dibandingkan dengan
 Naive. Perbedaan akurasi antara model dan Naive diuji dengan uji
-Diebold-Mariano. Data dibagi dengan tiga rasio, yaitu 80:20, 70:30, dan 60:40.
+Diebold-Mariano. Data dibagi berurutan menurut waktu menjadi periode
+pengembangan dan blok uji final.
 Dari rancangan tersebut disusun rumusan masalah penelitian ini.
 
 \section{Rumusan Masalah}
@@ -152,7 +153,8 @@ Batasan masalah penelitian ini adalah sebagai berikut:
         Quasi-Monte Carlo.
   \item \textit{Time frame} prediksi terbatas pada 1, 5, 15, 30, dan 60 menit.
       \textit{Time frame} 1 menit hanya dipakai pada \textit{candle} 1 menit.
-  \item Fitur hanya berasal dari data harga dan volume \textit{candle}.
+  \item Fitur hanya berasal dari data OHLCV dan waktu (\textit{timestamp})
+        \textit{candle}.
         Penelitian ini tidak memakai data sentimen, berita, \textit{on-chain},
         maupun \textit{order book}.
   \item Penelitian ini tidak menguji strategi \textit{trading}, biaya transaksi, atau

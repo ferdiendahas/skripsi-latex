@@ -1,5 +1,5 @@
 % G3-4 Pembagian data berurutan waktu dan purging.
-% Sumber: diolah penulis; dasar pemakaian beberapa rasio split -> tashman2000.
+% Sumber: diolah penulis.
 \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
     latih/.style={draw,minimum height=8mm,inner sep=0pt,anchor=west},
     buang/.style={draw,pattern=north east lines,minimum height=8mm,
@@ -9,38 +9,46 @@
     panah/.style={-{Stealth[length=2.2mm]}}]
 
   % --- arah waktu ---
-  \draw[panah] (14,-8) -- (124,-8);
-  \node[anchor=south,font=\footnotesize] at (69,-8)
+  \draw[panah] (14,-16) -- (124,-16);
+  \node[anchor=south,font=\footnotesize] at (69,-16)
     {arah waktu (tidak ada pengacakan)};
 
-  % ===== 80:20 =====
-  \node[anchor=east,font=\small] at (12,4) {80:20};
-  \node[latih,minimum width=82mm] (a1) at (14,4) {data latih};
-  \node[buang,minimum width=6mm]  (a2) at (96,4) {};
-  \node[uji,minimum width=22mm]   (a3) at (102,4) {data uji};
+  % ===== (a) pembagian utama =====
+  % Batas periode pengembangan ada di x = 88 untuk semua baris.
+  \node[anchor=south west] at (14,-6) {\textbf{(a)} pembagian utama};
+  \node[latih,minimum width=74mm] (a1) at (14,6) {periode pengembangan (80\%)};
+  \node[buang,minimum width=6mm]  (a2) at (88,6) {};
+  \node[uji,minimum width=30mm]   (a3) at (94,6) {blok uji final (20\%)};
 
-  % ===== 70:30 =====
-  \node[anchor=east,font=\small] at (12,22) {70:30};
-  \node[latih,minimum width=71mm] (b1) at (14,22) {data latih};
-  \node[buang,minimum width=6mm]  (b2) at (85,22) {};
-  \node[uji,minimum width=33mm]   (b3) at (91,22) {data uji};
+  % ===== (b) panjang data latih pada Tahap ketiga =====
+  \node[anchor=south west] at (14,22)
+    {\textbf{(b)} panjang data latih pada Tahap ketiga};
 
-  % ===== 60:40 =====
-  \node[anchor=east,font=\small] at (12,40) {60:40};
-  \node[latih,minimum width=60mm] (c1) at (14,40) {data latih};
-  \node[buang,minimum width=6mm]  (c2) at (74,40) {};
-  \node[uji,minimum width=44mm]   (c3) at (80,40) {data uji};
+  \node[anchor=east,font=\small] at (12,30) {100\%};
+  \node[latih,minimum width=74mm] (b1) at (14,30) {data latih};
+  \node[buang,minimum width=6mm]       at (88,30) {};
+  \node[uji,minimum width=30mm]        at (94,30) {blok uji final};
+
+  \node[anchor=east,font=\small] at (12,44) {75\%};
+  \node[latih,minimum width=55.5mm] (c1) at (32.5,44) {data latih};
+  \node[buang,minimum width=6mm]         at (88,44)   {};
+  \node[uji,minimum width=30mm]          at (94,44)   {blok uji final};
+
+  \node[anchor=east,font=\small] at (12,58) {50\%};
+  \node[latih,minimum width=37mm] (d1) at (51,58) {data latih};
+  \node[buang,minimum width=6mm]  (d2) at (88,58) {};
+  \node[uji,minimum width=30mm]        at (94,58) {blok uji final};
 
   % --- label purging, menunjuk ke potongan yang diarsir ---
-  \draw[panah] (60,62) -- (c2.south);
-  \node[anchor=north,align=center] at (60,62) {\textit{purging} $h_b$ bar};
+  \draw[panah] (72,76) -- (d2.south);
+  \node[anchor=north east,align=right] at (71,74) {\textit{purging}};
 
   % --- legenda ---
-  \node[latih,minimum width=6mm] at (14,78) {};
-  \node[anchor=west] at (21,78) {data latih};
-  \node[buang,minimum width=6mm] at (50,78) {};
-  \node[anchor=west] at (57,78) {dibuang (\textit{purging})};
-  \node[uji,minimum width=6mm] at (100,78) {};
-  \node[anchor=west] at (107,78) {data uji};
+  \node[latih,minimum width=6mm] at (14,88) {};
+  \node[anchor=west] at (21,88) {periode pengembangan};
+  \node[buang,minimum width=6mm] at (58,88) {};
+  \node[anchor=west] at (65,88) {dibuang (\textit{purging})};
+  \node[uji,minimum width=6mm] at (100,88) {};
+  \node[anchor=west] at (107,88) {blok uji final};
 
 \end{tikzpicture}

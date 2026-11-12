@@ -699,8 +699,8 @@ menyebut cara tersebut validasi \textit{walk-forward}.
 Evaluasi yang hanya memakai satu titik awal atau satu periode uji rentan
 terhadap kejadian unik pada periode tersebut \cite{tashman2000}. Akurasi
 relatif antarmetode juga dapat berubah ketika periode ujinya diganti
-\cite{tashman2000}. Temuan itu menjadi dasar pemakaian beberapa rasio
-pembagian data pada penelitian ini.
+\cite{tashman2000}. Temuan tersebut menjadi dasar penggunaan validasi
+\textit{walk-forward} dengan beberapa \textit{fold} pada penelitian ini.
 
 Kebocoran data merupakan masuknya informasi dari data uji ke dalam proses
 pelatihan. Salah satu bentuknya terjadi ketika penskala dipasang pada seluruh
@@ -866,8 +866,8 @@ dengan nilai kritis diambil dari distribusi $t$ berderajat bebas $n-1$
 
 % [kartu G3]
 Penelitian ini menjalankan banyak uji sekaligus, karena setiap kombinasi
-model, \textit{time frame}, metode optimasi, dan rasio pembagian data diuji
-terhadap Naive.
+model, \textit{time frame}, strategi \textit{tuning}, dan panjang data latih
+diuji terhadap Naive.
 Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
 karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
 \cite{holm1979}.
@@ -894,7 +894,7 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
     Rodrigues \& Machado \cite{rodrigues2025} &
     Harga per menit, XGBoost dan LightGBM, horizon pendek &
     \textit{Tuning} boosting, CatBoost dan AdaBoost, pembanding naive, uji
-    Diebold-Mariano, beberapa rasio \textit{split} \\
+    Diebold-Mariano, blok uji final terpisah \\
     \hline
     Wei dkk. \cite{wei2023} &
     XGBoost dan LightGBM untuk Bitcoin, uji MDM, MCS, dan SPA &
