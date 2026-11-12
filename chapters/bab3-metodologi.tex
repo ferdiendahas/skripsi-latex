@@ -187,7 +187,6 @@ Bila ada menit yang kosong di dalam satu bar 5 menit, bar tersebut tetap
 dibentuk dari menit yang tersedia dan dicatat sebagai bar parsial. Bila
 kelima menitnya kosong, bar tersebut dianggap hilang. Jumlah bar parsial
 dilaporkan bersama deskripsi data.
-% CEK: sesuaikan dengan kode agregasi final (brief kode, bagian K1).
 
 \subsection{Definisi Harga}
 Satu \textit{candle} memuat empat harga sekaligus. Penelitian ini memakai
@@ -330,11 +329,16 @@ $h_b = h / \Delta$, dengan $\Delta$ menyatakan resolusi \textit{candle}, yaitu
 \section{Pembagian Data}
 \label{sec:bagi}
 Data dibagi berurutan menurut waktu, tanpa pengacakan, menjadi dua bagian.
-Bagian pertama merupakan periode pengembangan, yaitu 80\% data awal. Seluruh
+Bagian pertama merupakan periode pengembangan, yaitu sekitar 80\% data awal.
+Jumlahnya sedikit kurang dari 80\% karena baris di ujungnya dibuang, seperti
+dijelaskan di bawah. Seluruh
 pencarian \textit{hyperparameter} dan pemilihan konfigurasi pada
 Tahap pertama sampai keempat dilakukan di bagian ini. Bagian kedua merupakan
 blok uji final, yaitu 20\% data akhir. Blok ini tidak dipakai untuk memilih
-apa pun dan baru dipakai setelah seluruh pilihan dikunci.
+apa pun dan baru dipakai setelah seluruh pilihan dikunci. Blok uji final
+hanya mencakup satu periode, sehingga hasilnya dapat dipengaruhi kondisi
+pasar pada periode tersebut \cite{tashman2000}. Hal ini dicatat sebagai
+keterbatasan ketika hasil dibahas.
 Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
 
 \begin{figure}[htbp]
@@ -707,8 +711,9 @@ distribusi $t$ berderajat bebas $n - 1$.
 
 Koreksi Holm yang dibahas pada Subbab~\ref{sec:dm} diterapkan pada nilai $p$
 uji utama. Satu keluarga uji berisi seluruh perbandingan model terhadap Naive
-dalam satu tahap. Konfigurasi yang sama persis dan muncul di lebih dari satu
-tahap dihitung satu kali. Sebuah ramalan model disebut lebih baik secara
+dalam satu tahap. Keempat teknik pada Tahap keempat digabung menjadi satu
+keluarga. Konfigurasi yang sama persis di dalam satu keluarga dihitung satu
+kali. Sebuah ramalan model disebut lebih baik secara
 signifikan daripada Naive bila nilai MAE vs Naive kurang dari nol, statistik
 DM \textit{loss} absolut kurang dari nol, dan nilai $p$ terkoreksi Holm kurang
 dari 0,05. Sebaliknya, ramalan disebut lebih buruk secara signifikan bila
@@ -716,8 +721,6 @@ statistik DM \textit{loss} absolut lebih besar dari nol dan nilai $p$
 terkoreksi Holm kurang dari 0,05. Bila uji \textit{loss} kuadrat memberi arah
 yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
 \textit{loss} absolut.
-% CEK: koreksi Holm belum ada di kode prediksi_btc; tambahkan sebelum
-% eksperimen final.
 
 Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
 sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
@@ -764,7 +767,7 @@ Tahap keempat menguji teknik optimasi tambahan. Konfigurasi dari Tahap pertama
 dan kedua dijalankan dengan teknik yang berlaku pada setiap model. Tahap ini
 juga tidak memilih apa pun.
 
-Seluruh pemilihan pada keempat tahap hanya memakai skor validasi di periode
+Pemilihan pada Tahap pertama dan kedua hanya memakai skor validasi di periode
 pengembangan. Aturan pemilihan dikunci sebelum Tahap pertama dijalankan,
 dan pilihan dari setiap tahap dicatat sebelum blok uji final dibuka.
 Pengurutan ini penting supaya pemilihan dataset, \textit{time frame}, dan
@@ -773,7 +776,7 @@ strategi \textit{tuning} tidak dipengaruhi oleh hasil pada blok uji final.
 % 5 menit). Aturan model terbaik ada di Subbab Evaluasi Model.
 
 Secara keseluruhan, rencana skenario memuat 36 \textit{run} pada Tahap
-pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan paling banyak 16 pada
+pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 14 pada
 Tahap keempat. Sebagian skenario memakai konfigurasi yang sama antartahap,
 misalnya TPE dengan seluruh data latih. Karena itu, laporan hasil memisahkan
 jumlah skenario dari jumlah konfigurasi unik. Kombinasi teknik yang tidak
