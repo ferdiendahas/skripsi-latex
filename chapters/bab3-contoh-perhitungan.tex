@@ -35,7 +35,6 @@ dalam UTC, harga dalam rupiah, dan volume dalam BTC.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Harga \textit{open} bar 5 menit diambil dari menit pertama, \textit{high}
@@ -100,7 +99,6 @@ menit ke-$1$ merupakan
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Pada baris ke-$j$, fitur \texttt{ret\_lag1} merupakan \textit{return} menit
@@ -123,7 +121,7 @@ dari rata-rata target data latih, yaitu $F_0 = 0{,}2576$~bp. Karena
 Tabel~\ref{tab:man-gq} memuat nilai tersebut.
 
 \begin{table}[htbp]
-  \caption{Gradien dan \textit{Hessian} Data Latih}
+  \caption{Turunan Pertama dan Kedua \textit{Loss} pada Data Latih}
   \label{tab:man-gq}
   \centering
   \begingroup
@@ -155,7 +153,6 @@ Tabel~\ref{tab:man-gq} memuat nilai tersebut.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Setiap nilai tengah antara dua nilai $x$ berurutan diuji sebagai titik
@@ -194,7 +191,6 @@ dimuat pada Tabel~\ref{tab:man-gain}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 \textit{Gain} terbesar diperoleh pada titik $x < 1{,}3946$~bp, yaitu
@@ -265,7 +261,6 @@ Tabel~\ref{tab:man-ada}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Rata-rata \textit{loss} dan rasio $\beta$ menurut
@@ -311,7 +306,6 @@ Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
@@ -338,8 +332,11 @@ Diebold-Mariano.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
+
+Nilai $d_t$ yang bertanda positif berarti galat model lebih besar daripada
+galat Naive pada baris tersebut, sedangkan nilai bertanda negatif berarti
+sebaliknya.
 
 \subsection{Perhitungan Metrik Evaluasi}
 MAE Naive menurut Persamaan~\eqref{eq:mae} merupakan
@@ -376,8 +373,11 @@ Tabel~\ref{tab:man-metrik} merangkum seluruh metrik.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
+
+MAE dan RMSE pada tabel tersebut dinyatakan dalam rupiah, sedangkan MAPE,
+MAE vs Naive, dan akurasi arah dinyatakan dalam persen. Seluruh metrik
+dihitung dari 5 baris uji yang sama.
 
 \subsection{Uji Diebold-Mariano dan Koreksi Holm}
 Uji dihitung dengan \textit{loss} absolut. Dari nilai $d_t$ XGBoost pada
@@ -408,9 +408,8 @@ Tabel~\ref{tab:man-dm} memuat hasil kedua model.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Koreksi Holm diterapkan pada kedua nilai $p$ dengan
-Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$; lalu $p_{(2)} = 0{,}7977$ (XGBoost) dibandingkan dengan $0{,}05/1 = 0{,}0500$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga tidak ada hipotesis yang ditolak dan pengujian berhenti. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
+Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga pengujian berhenti pada hipotesis pertama. Hipotesis sesudahnya tidak ditolak tanpa diuji lagi. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
 tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.

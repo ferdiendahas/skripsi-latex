@@ -274,7 +274,7 @@ def tabel(caption, label, kolom, header, baris, sep=4):
     for b in baris:
         out.append("    " + " & ".join(b) + r" \\")
     out += [r"    \hline", r"  \end{tabular}", r"  \endgroup",
-            r"  \sumber{Diolah penulis}", r"\end{table}", ""]
+            r"\end{table}", ""]
     return "\n".join(out)
 
 
@@ -367,7 +367,7 @@ Tabel~\ref{tab:man-gq} memuat nilai tersebut.
     for k, jj in enumerate(lat):
         rows.append([str(jj), m(x[jj - 1], 4), m(y[jj - 1], 4), m(X["g"][k], 4), m(1, 0)])
     rows.append([r"\textbf{Jumlah}", "", "", m(X["G"], 4), m(X["Q"], 0)])
-    T.append(tabel(r"Gradien dan \textit{Hessian} Data Latih", "tab:man-gq",
+    T.append(tabel(r"Turunan Pertama dan Kedua \textit{Loss} pada Data Latih", "tab:man-gq",
                    "|c|r|r|r|r|", ["$j$", r"$x$ (bp)", r"$y$ (bp)", "$g_i$", "$q_i$"], rows))
     T.append(r"""Setiap nilai tengah antara dua nilai $x$ berurutan diuji sebagai titik
 pemecahan. Data dengan $x$ lebih kecil dari titik pemecahan masuk ke daun kiri.
@@ -478,6 +478,10 @@ Diebold-Mariano.
                    "|c|r|r|r|r|r|",
                    ["$j$", r"$e$ Naive", r"$e$ XGBoost", r"$e$ AdaBoost.R2",
                     r"$d_t$ XGBoost", r"$d_t$ AdaBoost.R2"], rows))
+    T.append(r"""Nilai $d_t$ yang bertanda positif berarti galat model lebih besar daripada
+galat Naive pada baris tersebut, sedangkan nilai bertanda negatif berarti
+sebaliknya.
+""")
     nN = H["Naive"]
     ab = [f(abs(v)) for v in nN["e"]]
     absN = " + ".join(ab[:3]) + r" \\ &\qquad + " + " + ".join(ab[3:])
@@ -511,6 +515,10 @@ Tabel~\ref{tab:man-metrik} merangkum seluruh metrik.
     ]
     T.append(tabel("Rangkuman Metrik pada Contoh", "tab:man-metrik", "|l|r|r|r|",
                    ["Metrik", "Naive", "XGBoost", "AdaBoost.R2"], rows))
+    T.append(r"""MAE dan RMSE pada tabel tersebut dinyatakan dalam rupiah, sedangkan MAPE,
+MAE vs Naive, dan akurasi arah dinyatakan dalam persen. Seluruh metrik
+dihitung dari """ + str(len(uji)) + r""" baris uji yang sama.
+""")
     hx = H["XGBoost"]
     T.append(r"""\subsection{Uji Diebold-Mariano dan Koreksi Holm}
 Uji dihitung dengan \textit{loss} absolut. Dari nilai $d_t$ XGBoost pada
@@ -535,19 +543,30 @@ Tabel~\ref{tab:man-dm} memuat hasil kedua model.
     T.append(tabel("Uji Diebold-Mariano pada Contoh", "tab:man-dm", "|l|r|r|r|r|r|",
                    ["Model", r"$\bar{d}$", r"$\hat{\phi}_0$", "DM", r"DM$^{*}$", "$p$"], rows))
     hl = R["holm"]
+    n_tolak = sum(e["tolak"] for e in hl)
+    # Prosedur Holm berhenti pada hipotesis pertama yang gagal ditolak, sehingga
+    # hanya perbandingan sampai titik berhenti yang ditulis.
+    n_tulis = len(hl) if n_tolak == len(hl) else n_tolak + 1
+    sisa = len(hl) - n_tulis
     kal = []
-    for e in hl:
+    for e in hl[:n_tulis]:
         kal.append(rf"$p_{{({e['i']})}} = {f(e['p'], 4)}$ ({e['nama']}) dibandingkan dengan "
                    rf"$0{{,}}05/{len(hl) - e['i'] + 1} = {f(e['amb'], 4)}$")
-    n_tolak = sum(e["tolak"] for e in hl)
     if n_tolak == 0:
-        simpul = (r"Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga tidak ada "
-                  r"hipotesis yang ditolak dan pengujian berhenti. Kedua model dinyatakan "
-                  r"tidak berbeda secara signifikan dari Naive.")
+        simpul = (r"Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga "
+                  r"pengujian berhenti pada hipotesis pertama.")
+    elif n_tolak < len(hl):
+        simpul = (rf"Sebanyak {n_tolak} hipotesis ditolak, lalu pengujian berhenti pada "
+                  r"hipotesis berikutnya yang gagal ditolak.")
     else:
-        simpul = (rf"Sebanyak {n_tolak} hipotesis ditolak. Status setiap model lalu ditentukan "
-                  r"dari tanda MAE vs Naive dan statistik DM sesuai aturan pada "
-                  r"Subbab~\ref{sec:evaluasi}.")
+        simpul = r"Seluruh hipotesis ditolak."
+    if sisa:
+        simpul += (r" Hipotesis sesudahnya tidak ditolak tanpa diuji lagi.")
+    if n_tolak == 0:
+        simpul += (r" Kedua model dinyatakan tidak berbeda secara signifikan dari Naive.")
+    else:
+        simpul += (r" Status setiap model lalu ditentukan dari tanda MAE vs Naive dan "
+                   r"statistik DM sesuai aturan pada Subbab~\ref{sec:evaluasi}.")
     T.append(r"""Koreksi Holm diterapkan pada kedua nilai $p$ dengan
 Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
              + simpul + r""" Dengan hanya """ + str(len(uji)) + r""" data uji, hasil ini wajar dan

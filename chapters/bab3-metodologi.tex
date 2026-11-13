@@ -21,7 +21,6 @@ Gambar~\ref{fig:alur} menampilkan alur ketujuh langkah tersebut.
   \input{assets/tikz-v3/g3-alur-penelitian}
   \caption{Alur Penelitian}
   \label{fig:alur}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
@@ -79,7 +78,6 @@ Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
   \input{assets/tikz-v3/g3-pengumpulan-data}
   \caption{Skema Pengumpulan Data}
   \label{fig:kumpul}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Data diambil dari API publik Indodax tanpa memakai API \textit{key}
@@ -139,7 +137,6 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 % CEK: diisi setelah data final Februari 2027
 
@@ -253,7 +250,6 @@ antara jendela fitur dan target.
   \input{assets/tikz-v3/g3-fitur-target}
   \caption{Pembentukan Fitur dan Target}
   \label{fig:fitur}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
@@ -301,7 +297,6 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Jendela bergulir $s$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
@@ -349,7 +344,6 @@ Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
   \input{assets/tikz-v3/g3-split-purging}
   \caption{Pembagian Data dan \textit{Purging}}
   \label{fig:bagi}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Baris latih yang targetnya berada di dalam blok uji final dibuang. Langkah
@@ -437,7 +431,6 @@ Carlo. Keterangan ``log'' berarti nilainya diambil pada skala logaritmik.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 \begin{table}[htbp]
@@ -466,7 +459,6 @@ Carlo. Keterangan ``log'' berarti nilainya diambil pada skala logaritmik.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Grid Search memakai daftar nilai tetap yang berbeda dari ruang pencarian
@@ -506,8 +498,12 @@ jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
+
+Ketiga parameter tersebut sama untuk keempat model, yaitu jumlah pohon,
+ukuran pohon, dan \textit{learning rate}. Parameter lain dibiarkan pada nilai
+bawaannya. Nilai yang dipakai AdaBoost berbeda dari ketiga model lain karena
+rentang \textit{learning rate} bawaannya juga berbeda.
 
 \subsection{Metode Optimasi}
 Tujuh strategi \textit{tuning} dibandingkan, yaitu satu pengaturan tanpa
@@ -549,7 +545,6 @@ pengaturannya.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Ada tiga catatan desain yang perlu disebut. Pertama, CMA-ES tidak dapat
@@ -586,7 +581,6 @@ skema validasinya.
   \caption{Validasi \textit{Walk-Forward} untuk Optimasi
     \textit{Hyperparameter}}
   \label{fig:walk}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
@@ -740,7 +734,6 @@ Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
   \input{assets/tikz-v3/g3-tahapan-eksperimen}
   \caption{Tahapan Eksperimen}
   \label{fig:tahap}
-  \sumber{Diolah penulis}
 \end{figure}
 
 Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi
@@ -819,7 +812,6 @@ pada Subbab~\ref{sec:rumusan}.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
 
 Tahap ketiga tidak dipetakan ke satu rumusan masalah tertentu. Tahap tersebut
@@ -858,8 +850,12 @@ Tabel~\ref{tab:lingkungan} merinci perangkat dan pustaka yang dipakai.
     \hline
   \end{tabular}
   \endgroup
-  \sumber{Diolah penulis}
 \end{table}
+
+Seluruh eksperimen dijalankan pada satu perangkat yang sama, sehingga waktu
+\textit{tuning} antarstrategi dapat dibandingkan. Pengumpulan data berjalan
+terpisah di VPS, sehingga proses pengumpulan tetap berjalan ketika eksperimen
+dijalankan.
 % CEK: perbarui versi bila berubah sebelum eksperimen final.
 % CEK: isi versi pustaka dari berkas hasil/lingkungan.txt yang dibuat pada
 % eksperimen final (brief kode, bagian K9).
