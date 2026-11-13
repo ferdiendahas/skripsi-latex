@@ -205,9 +205,10 @@ berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
 % tambahkan hanya bila dosen meminta.
 
 Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi,
-yaitu berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari
-\textit{time frame} 5 menit, lalu memvariasikannya pada 1, 5, 15, 30, dan
-60 menit untuk mencari hasil prediksi yang paling optimal.
+yaitu berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak
+disebut \textit{time frame}, melainkan resolusi \textit{candle}.
+\textit{Time frame} divariasikan pada 1, 5, 15, 30, dan 60 menit untuk mencari
+hasil prediksi yang paling optimal.
 
 
 \section{\textit{Forecasting} dan \textit{Time Series}}
@@ -350,8 +351,8 @@ proses penambahan pohon tersebut.
 \begin{figure}[htbp]
   \centering
   \input{assets/tikz-v3/g2-gradient-boosting}
-  \caption[Skema \textit{Gradient Boosting}]{Skema \textit{Gradient Boosting},
-    digambar ulang, diadaptasi dari \cite{friedman2001}}
+  \caption[Skema \textit{Gradient Boosting}]{Skema \textit{Gradient Boosting}
+    \cite{friedman2001}}
   \label{fig:gradient-boosting}
 \end{figure}
 
@@ -445,8 +446,7 @@ Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
   \input{assets/tikz-v3/g2-leafwise-levelwise}
   \caption[Pertumbuhan Pohon \textit{Level-wise} dan
     \textit{Leaf-wise}]{Pertumbuhan Pohon \textit{Level-wise} dan
-    \textit{Leaf-wise}, digambar ulang, diadaptasi dari dokumentasi LightGBM
-    \cite{lightgbmfeatures}}
+    \textit{Leaf-wise} \cite{lightgbmfeatures}}
   \label{fig:leafwise}
 \end{figure}
 
@@ -480,8 +480,7 @@ biasa dengan pohon simetris.
   \centering
   \input{assets/tikz-v3/g2-pohon-simetris}
   \caption[Pohon Biasa dan Pohon Simetris (\textit{Oblivious})]{Pohon Biasa dan
-    Pohon Simetris (\textit{Oblivious}), digambar ulang, diadaptasi dari
-    \cite{prokhorenkova2018}}
+    Pohon Simetris (\textit{Oblivious}) \cite{prokhorenkova2018}}
   \label{fig:pohon-simetris}
 \end{figure}
 
@@ -554,8 +553,8 @@ tersebut.
 \begin{figure}[htbp]
   \centering
   \input{assets/tikz-v3/g2-adaboost-r2}
-  \caption[Alur Satu Iterasi AdaBoost.R2]{Alur Satu Iterasi AdaBoost.R2,
-    digambar ulang, diadaptasi dari \cite{drucker1997}}
+  \caption[Alur Satu Iterasi AdaBoost.R2]{Alur Satu Iterasi AdaBoost.R2
+    \cite{drucker1997}}
   \label{fig:adaboost}
 \end{figure}
 
@@ -604,7 +603,7 @@ Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
   \centering
   \input{assets/tikz-v3/g2-grid-random}
   \caption[Perbandingan Grid Search dan Random Search]{Perbandingan Grid Search
-    dan Random Search, digambar ulang, diadaptasi dari \cite{bergstra2012}}
+    dan Random Search \cite{bergstra2012}}
   \label{fig:grid-random}
 \end{figure}
 
@@ -957,7 +956,7 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
     Rodrigues \& Machado \cite{rodrigues2025} &
     Harga per menit, XGBoost dan LightGBM, horizon pendek &
     \textit{Tuning} boosting, CatBoost dan AdaBoost, pembanding naive, uji
-    Diebold-Mariano, blok uji final terpisah \\
+    Diebold-Mariano, penskala dipasang setelah data dibagi \\
     \hline
     Wei dkk. \cite{wei2023} &
     XGBoost dan LightGBM untuk Bitcoin, uji MDM, MCS, dan SPA &

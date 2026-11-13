@@ -1,0 +1,220 @@
+--- a/chapters/bab1-pendahuluan.tex	2026-11-13 01:30:31.148199494 +0700
++++ b/chapters/bab1-pendahuluan.tex	2026-11-13 14:58:18.842736770 +0700
+@@ -8,13 +8,15 @@
+ % P1 -- [kartu D1, D3]
+ Kemajuan teknologi telah mengubah banyak hal dalam kehidupan masyarakat,
+ termasuk dalam bidang keuangan. Salah satu hasil dari kemajuan ini adalah
+-munculnya mata uang kripto. % CEK: kalimat umum, tanpa sumber
++munculnya mata uang kripto.
++% CEK: kalimat umum, tanpa sumber
+ Contohnya adalah Bitcoin. Bitcoin merupakan sistem uang elektronik
+ \textit{peer-to-peer} \cite{nakamoto2008}. Dengan sistem ini, pengguna dapat
+ mengirim uang langsung ke pengguna lain secara daring tanpa pihak perantara
+ seperti bank.
+ Seiring waktu, Bitcoin tidak hanya dipakai untuk membayar, tetapi juga
+-diperdagangkan sebagai aset investasi. % CEK: kalimat umum, tanpa sumber
++diperdagangkan sebagai aset investasi.
++% CEK: kalimat umum, tanpa sumber
+ Namun, harga Bitcoin sangat mudah berubah. Volatilitasnya hampir 10 kali
+ lebih tinggi daripada volatilitas kurs mata uang utama \cite{baur2021}.
+ Perubahan harga mata uang kripto juga tidak mengikuti pola distribusi normal
+@@ -29,13 +31,15 @@
+ \textit{blockchain} Bitcoin. Sebagian pengguna bertransaksi setiap hari,
+ sedangkan sebagian lain memegang posisi sampai beberapa hari \cite{liu2023}.
+ Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
+-\textit{scalper}. % CEK: butuh sumber definisi scalper
++\textit{scalper}.
++% CEK: butuh sumber definisi scalper
+ % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+ % tambahkan hanya bila dosen meminta.
+ Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
+-berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari \textit{time frame} 5 menit, lalu
+-memvariasikannya dari 1 sampai 60 menit untuk mencari hasil
+-prediksi yang paling optimal.
++berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak disebut
++\textit{time frame}, melainkan resolusi \textit{candle}. \textit{Time frame}
++divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling
++optimal.
+ 
+ % P3 -- [kartu D4, B2, B5]
+ Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
+@@ -73,8 +77,8 @@
+ harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
+ harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
+ Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak memakai pembanding
+-naive, tidak memakai uji Diebold-Mariano, dan hanya memakai satu pembagian
+-data. Sejauh literatur yang diperiksa, belum ditemukan penelitian
++naive, tidak memakai uji Diebold-Mariano, dan memasang penskala sebelum data
++dibagi, sehingga statistik data uji ikut terpakai. Sejauh literatur yang diperiksa, belum ditemukan penelitian
+ yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
+ keempat model boosting yang semuanya dioptimasi.
+ 
+--- a/chapters/bab2-tinjauan-pustaka.tex	2026-11-13 11:39:51.637103967 +0700
++++ b/chapters/bab2-tinjauan-pustaka.tex	2026-11-13 14:58:18.842077113 +0700
+@@ -205,9 +205,10 @@
+ % tambahkan hanya bila dosen meminta.
+ 
+ Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi,
+-yaitu berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari
+-\textit{time frame} 5 menit, lalu memvariasikannya pada 1, 5, 15, 30, dan
+-60 menit untuk mencari hasil prediksi yang paling optimal.
++yaitu berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak
++disebut \textit{time frame}, melainkan resolusi \textit{candle}.
++\textit{Time frame} divariasikan pada 1, 5, 15, 30, dan 60 menit untuk mencari
++hasil prediksi yang paling optimal.
+ 
+ 
+ \section{\textit{Forecasting} dan \textit{Time Series}}
+@@ -957,7 +958,7 @@
+     Rodrigues \& Machado \cite{rodrigues2025} &
+     Harga per menit, XGBoost dan LightGBM, horizon pendek &
+     \textit{Tuning} boosting, CatBoost dan AdaBoost, pembanding naive, uji
+-    Diebold-Mariano, blok uji final terpisah \\
++    Diebold-Mariano, penskala dipasang setelah data dibagi \\
+     \hline
+     Wei dkk. \cite{wei2023} &
+     XGBoost dan LightGBM untuk Bitcoin, uji MDM, MCS, dan SPA &
+--- a/chapters/bab3-metodologi.tex	2026-11-13 11:39:51.637103967 +0700
++++ b/chapters/bab3-metodologi.tex	2026-11-13 14:58:18.844844438 +0700
+@@ -104,9 +104,10 @@
+ sampai tiga kali bila gagal.
+ 
+ Selain \textit{candle}, program tersebut juga menyimpan \textit{snapshot}
+-ticker pada tabel \texttt{ticker\_snapshots}. Data ticker tidak dipakai dalam
+-penelitian ini, karena fitur penelitian ini dibatasi pada data harga dan
+-volume \textit{candle}.
++ticker pada tabel \texttt{ticker\_snapshots}. Data ticker tidak dipakai sebagai
++fitur, karena fitur penelitian ini dibatasi pada data harga dan volume
++\textit{candle}. Data tersebut hanya dipakai untuk menghitung selisih harga
++jual dan harga beli terbaik pada deskripsi data.
+ 
+ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
+ 
+@@ -140,9 +141,14 @@
+ \end{table}
+ % CEK: diisi setelah data final Februari 2027
+ 
+-Perlu dicatat bahwa menit tanpa transaksi tidak menghasilkan \textit{candle}.
+-Karena itu, celah pada data tidak selalu berarti program \textit{collector}
+-gagal mengambil data.
++Menit tanpa transaksi tetap muncul sebagai \textit{candle} dengan volume nol
++dan harga yang sama dengan harga penutupan menit sebelumnya. Pada data
++9 Oktober sampai 13 November 2026, \textit{candle} seperti itu mencakup 6,5\%
++dari seluruh menit, dan tidak ada menit yang hilang. Karena itu, celah pada
++data berarti program \textit{collector} gagal mengambil data, bukan menit tanpa
++transaksi.
++% CEK: perbarui persentase candle bervolume nol dan jumlah menit hilang
++% dengan data final.
+ 
+ \section{Praproses Data}
+ \label{sec:praproses}
+@@ -198,16 +204,26 @@
+   \item[$P^{L}_t$] harga terendah pada bar ke-$t$,
+   \item[$P^{C}_t$] harga penutupan pada bar ke-$t$.
+ \end{keterangan}
+-Harga penutupan pada data 1 menit dapat meloncat-loncat antara harga beli dan
+-harga jual terbaik. Loncatan itu membuat \textit{return} antarbar tampak
+-berubah arah terus-menerus, padahal harga pasarnya tidak banyak bergerak.
+-Harga \textit{typical} merupakan rata-rata dari tiga harga sekaligus, sehingga
+-pengaruh loncatan tersebut berkurang.
+-% CEK: hitung ulang autokorelasi return close vs typical pada data final
+-% sebelum dijadikan bukti.
++Harga penutupan pada data 1 menit dapat berpindah-pindah antara harga beli
++dan harga jual terbaik. Pada data \textit{snapshot} ticker 9 Oktober sampai
++13 November 2026, median selisih harga jual dan harga beli terbaik merupakan
++Rp396.000, atau sekitar 0,028\% dari harga. Sebanyak 29,5\% \textit{candle}
++1 menit hanya memuat satu harga, yaitu \textit{high}, \textit{low}, dan
++\textit{close} bernilai sama. Proporsinya mencapai 69\% pada pukul 20.00 UTC
++dan sekitar 12\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
++\textit{return} penutupan antarmenit berautokorelasi negatif, yaitu $-0{,}35$
++pada lag 1. Harga \textit{typical} merupakan rata-rata dari tiga harga,
++sehingga autokorelasinya berkurang menjadi $-0{,}25$. Pada \textit{candle} yang
++hanya memuat satu harga, harga \textit{typical} sama dengan harga penutupan,
++sehingga perpindahan tersebut tidak hilang sepenuhnya.
++% CEK: perbarui angka selisih harga jual-beli, proporsi candle satu harga, dan
++% autokorelasi dengan data final.
+ 
+ Namun, harga yang dirata-ratakan dapat memunculkan autokorelasi semu pada
+-selisihnya \cite{working1960}. Autokorelasi semu tersebut dapat
++selisihnya \cite{working1960}. Pada \textit{candle} 5 menit, autokorelasi
++lag 1 \textit{return} harga \textit{typical} justru bernilai positif, yaitu
++$0{,}13$, sedangkan \textit{return} harga penutupan bernilai $-0{,}25$.
++Autokorelasi semu tersebut dapat
+ membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
+ benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
+ hasil dibahas.
+@@ -225,8 +241,8 @@
+ dugaan. Fitur maupun target yang perhitungannya melewati bar kosong otomatis
+ ikut terbuang pada tahap berikutnya. Cara ini dipilih supaya tidak ada nilai
+ buatan yang masuk ke dalam data latih maupun data uji. Menit tanpa transaksi
+-tidak dapat dibedakan secara langsung dari menit yang gagal diambil. Karena
+-itu, jumlah dan lokasi celah dilaporkan, dan celah yang lebih panjang dari
++tidak termasuk celah, karena tetap tercatat sebagai \textit{candle} bervolume
++nol. Jumlah dan lokasi celah dilaporkan, dan celah yang lebih panjang dari
+ 6 jam diperiksa terhadap catatan \textit{collector}.
+ 
+ \subsection{Normalisasi}
+@@ -390,8 +406,8 @@
+ 
+ Seluruh model memakai \textit{seed} acak 42, sehingga hasilnya dapat diulang.
+ Pengaturan \textit{default} memakai nilai bawaan dari masing-masing pustaka.
+-Satu-satunya pengecualian adalah AdaBoost, yang memakai pohon dasar dengan
+-kedalaman 3.
++Pada AdaBoost, pohon dasar bawaannya merupakan pohon regresi dengan kedalaman
++3 \cite{sklearnadaboost}.
+ 
+ \subsection{Ruang Pencarian \textit{Hyperparameter}}
+ Tabel~\ref{tab:ruang} dan Tabel~\ref{tab:ruang2} merinci ruang pencarian
+@@ -719,6 +735,14 @@
+ yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
+ \textit{loss} absolut.
+ 
++Untuk rumusan masalah kedua, ramalan dengan strategi terpilih pada Tahap kedua
++juga dibandingkan dengan ramalan pengaturan \textit{default} pada blok uji
++final, untuk setiap model. Perbandingan tersebut memakai uji Diebold-Mariano
++\textit{loss} absolut yang sama, dengan ramalan \textit{default} sebagai
++pembanding. Keempat uji tersebut membentuk satu keluarga Holm tersendiri. Bila
++strategi terpilih merupakan \textit{default}, uji ini tidak dijalankan.
++Selisih antarstrategi lainnya dilaporkan secara deskriptif dari skor validasi.
++
+ Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
+ sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
+ 
+@@ -747,9 +771,12 @@
+ pengaturan bawaan. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
+ pada tugas yang sulit memberi hasil lebih baik daripada Random Search
+ \cite{bergstra2011}. Pemilihan strategi \textit{tuning} sendiri baru
+-dilakukan pada Tahap kedua.
+-Pasangan yang dipilih merupakan pasangan dengan nilai MAE validasi vs Naive
+-terkecil di antara keempat model. Bila hasilnya seri, dipilih
++dilakukan pada Tahap kedua. Karena pasangan pada Tahap pertama dipilih dari
++hasil TPE, TPE dapat lebih diuntungkan pada Tahap kedua. Hal ini dicatat
++sebagai keterbatasan ketika hasil dibahas.
++Skor setiap pasangan merupakan rata-rata MAE validasi vs Naive keempat model,
++sama seperti aturan pada Tahap kedua. Pasangan dengan skor terkecil dipilih.
++Bila hasilnya seri, dipilih
+ \textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
+ 
+ Tahap kedua mencari strategi \textit{tuning}. Dataset dan \textit{time frame}
+--- a/assets/tikz-v3/g2-kerangka-pemikiran.tex	2026-11-13 01:20:27.750899698 +0700
++++ b/assets/tikz-v3/g2-kerangka-pemikiran.tex	2026-11-13 14:58:18.844946757 +0700
+@@ -26,7 +26,7 @@
+   \node[judul] (j4) at (12,54)  {Evaluasi};
+   \node[tahap] (k4) at (76,54)
+     {MAE, RMSE, MAPE, dan akurasi arah, serta uji Diebold-Mariano dengan
+-     koreksi HLN terhadap Naive.};
++     koreksi HLN dan Holm terhadap Naive.};
+ 
+   \node[judul] (j5) at (12,72)  {Keluaran};
+   \node[tahap] (k5) at (76,72)
+--- a/assets/tikz-v3/g3-alur-penelitian.tex	2026-11-13 01:20:27.750899698 +0700
++++ b/assets/tikz-v3/g3-alur-penelitian.tex	2026-11-13 14:59:25.076603176 +0700
+@@ -42,7 +42,7 @@
+   \node[nomor] at (6,102) {7};
+   \node[tahap] (t7) at (62,102)
+     {\textbf{Evaluasi terhadap Naive.}\\
+-     MAE, RMSE, MAPE, akurasi arah, dan uji Diebold-Mariano.};
++     MAE, RMSE, MAPE, akurasi arah, uji DM, dan koreksi Holm.};
+ 
+   \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7}{
+     \draw[panah] (t\a.south) -- (t\b.north);

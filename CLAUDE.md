@@ -55,11 +55,12 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
   3. Model mana yang memiliki performa terbaik berdasarkan nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive?
 - **Data:** API publik Indodax; *collector* Python dijalankan cron tiap 1 menit di VPS (UTC) dan disimpan di SQLite. *Candle* 1 menit dari `tradingview/history_v2` (`tf=1`). **Indodax tidak menyediakan candle 5 menit**, jadi *candle* 5 menit dibentuk dari agregasi *candle* 1 menit. Snapshot ticker ikut disimpan, tetapi tidak dipakai dalam eksperimen.
 - **Desain:**
-  - *time frame* 1, 5, 15, 30, 60 menit (utama 5 menit; 1 menit hanya untuk *candle* 1 menit);
+  - *time frame* 1, 5, 15, 30, 60 menit (1 menit hanya untuk *candle* 1 menit); lama satu candle disebut resolusi candle;
   - harga *typical* (high+low+close)/3; target *log return*, dikonversi ke rupiah;
   - fitur dari harga dan volume *candle* saja;
   - model XGBoost, LightGBM, CatBoost, AdaBoost (AdaBoost.R2) + Naive;
   - optimasi: default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 *trial*); teknik tambahan *early stopping*, top-15 fitur, *loss* L1, *pruner* median;
-  - validasi *walk-forward* 5 fold dengan jeda = *time frame*; *split* 80:20, 70:30, 60:40 berurutan waktu + *purging*;
-  - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda.
+  - periode pengembangan ±80% + blok uji final 20% (*purging* berbasis waktu); validasi *walk-forward* 5 fold dengan *purging* berbasis waktu; Tahap 3 = panjang data latih 100/75/50%;
+  - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda;
+  - Tahap 1 dan 2 memilih dari rata-rata MAE validasi vs Naive 4 model; RM2 diuji dengan DM strategi terpilih vs default (keluarga Holm sendiri).
 - **Menunggu keputusan dosen:** tanggal pasti periode data, ada/tidaknya aplikasi web, dan aturan menentukan "model terbaik" (dikunci sebelum eksperimen final).

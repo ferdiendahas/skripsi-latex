@@ -8,13 +8,15 @@
 % P1 -- [kartu D1, D3]
 Kemajuan teknologi telah mengubah banyak hal dalam kehidupan masyarakat,
 termasuk dalam bidang keuangan. Salah satu hasil dari kemajuan ini adalah
-munculnya mata uang kripto. % CEK: kalimat umum, tanpa sumber
+munculnya mata uang kripto.
+% CEK: kalimat umum, tanpa sumber
 Contohnya adalah Bitcoin. Bitcoin merupakan sistem uang elektronik
 \textit{peer-to-peer} \cite{nakamoto2008}. Dengan sistem ini, pengguna dapat
 mengirim uang langsung ke pengguna lain secara daring tanpa pihak perantara
 seperti bank.
 Seiring waktu, Bitcoin tidak hanya dipakai untuk membayar, tetapi juga
-diperdagangkan sebagai aset investasi. % CEK: kalimat umum, tanpa sumber
+diperdagangkan sebagai aset investasi.
+% CEK: kalimat umum, tanpa sumber
 Namun, harga Bitcoin sangat mudah berubah. Volatilitasnya hampir 10 kali
 lebih tinggi daripada volatilitas kurs mata uang utama \cite{baur2021}.
 Perubahan harga mata uang kripto juga tidak mengikuti pola distribusi normal
@@ -29,13 +31,15 @@ Pelaku pasar tidak bertransaksi pada rentang waktu yang sama. Ada
 \textit{blockchain} Bitcoin. Sebagian pengguna bertransaksi setiap hari,
 sedangkan sebagian lain memegang posisi sampai beberapa hari \cite{liu2023}.
 Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
-\textit{scalper}. % CEK: butuh sumber definisi scalper
+\textit{scalper}.
+% CEK: butuh sumber definisi scalper
 % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
 % tambahkan hanya bila dosen meminta.
 Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
-berapa menit ke depan harga diprediksi. Penelitian ini berangkat dari \textit{time frame} 5 menit, lalu
-memvariasikannya dari 1 sampai 60 menit untuk mencari hasil
-prediksi yang paling optimal.
+berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak disebut
+\textit{time frame}, melainkan resolusi \textit{candle}. \textit{Time frame}
+divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling
+optimal.
 
 % P3 -- [kartu D4, B2, B5]
 Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
@@ -73,8 +77,8 @@ kebanyakan memprediksi arah pergerakan harga, bukan nilai harganya
 harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
 harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
 Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak memakai pembanding
-naive, tidak memakai uji Diebold-Mariano, dan hanya memakai satu pembagian
-data. Sejauh literatur yang diperiksa, belum ditemukan penelitian
+naive, tidak memakai uji Diebold-Mariano, dan memasang penskala sebelum data
+dibagi, sehingga statistik data uji ikut terpakai. Sejauh literatur yang diperiksa, belum ditemukan penelitian
 yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
 keempat model boosting yang semuanya dioptimasi.
 
