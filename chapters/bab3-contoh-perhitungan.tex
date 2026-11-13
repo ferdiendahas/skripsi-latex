@@ -1,0 +1,416 @@
+% Dibuat otomatis oleh contoh_manual.py. Jangan disunting manual;
+% jalankan ulang skrip bila data berubah.
+\section{Contoh Perhitungan Manual}
+\label{sec:manual}
+Subbab ini memberi contoh perhitungan untuk setiap tahap pada
+Subbab~\ref{sec:fitur} sampai Subbab~\ref{sec:evaluasi}. Contoh memakai
+26 \textit{candle} 1 menit BTC/IDR yang dikumpulkan pada 14 Oktober 2026 pukul
+03.00--03.25 UTC. Supaya dapat diikuti dengan tangan, contoh
+memakai \textit{time frame} 1 menit, satu fitur, yaitu \texttt{ret\_lag1}, dan satu
+pohon dengan kedalaman 1. Angka pada subbab ini hanya menunjukkan cara
+menghitung dan bukan hasil penelitian.
+
+\subsection{Agregasi \textit{Candle} 5 Menit dan Harga \textit{Typical}}
+Tabel~\ref{tab:man-agregasi} memuat lima \textit{candle} 1 menit pertama dan
+bar 5 menit yang dibentuk dengan Persamaan~\eqref{eq:agregasi}. Waktu ditulis
+dalam UTC, harga dalam rupiah, dan volume dalam BTC.
+
+\begin{table}[htbp]
+  \caption{Contoh Agregasi \textit{Candle} 1 Menit menjadi 5 Menit}
+  \label{tab:man-agregasi}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{2pt}
+  \begin{tabular}{|l|r|r|r|r|r|}
+    \hline
+    Waktu & Open & High & Low & Close & Volume \\
+    \hline
+    03.00 & $1.492.447.000$ & $1.492.447.000$ & $1.490.706.000$ & $1.490.706.000$ & $0{,}001091$ \\
+    03.01 & $1.492.446.000$ & $1.492.446.000$ & $1.490.706.000$ & $1.492.446.000$ & $0{,}001362$ \\
+    03.02 & $1.492.446.000$ & $1.492.446.000$ & $1.490.757.000$ & $1.491.156.000$ & $0{,}000893$ \\
+    03.03 & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000$ & $0{,}000746$ \\
+    03.04 & $1.491.157.000$ & $1.492.446.000$ & $1.491.157.000$ & $1.491.955.000$ & $0{,}000199$ \\
+    \textbf{Bar 5 menit} & $1.492.447.000$ & $1.492.447.000$ & $1.490.706.000$ & $1.491.955.000$ & $0{,}004291$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Harga \textit{open} bar 5 menit diambil dari menit pertama, \textit{high}
+merupakan nilai terbesar, \textit{low} nilai terkecil, \textit{close} diambil dari
+menit terakhir, dan volume merupakan jumlah kelima menit. Harga \textit{typical}
+bar tersebut menurut Persamaan~\eqref{eq:typical} merupakan
+\begin{equation*}
+  P = \frac{1.492.447.000 + 1.490.706.000 + 1.491.955.000}{3}
+    = 1.491.702.666{,}67 .
+\end{equation*}
+Contoh selanjutnya memakai dataset \textit{candle} 1 menit. Harga
+\textit{typical} setiap menit dihitung dengan cara yang sama dan dimuat pada
+Tabel~\ref{tab:man-harga}.
+
+\subsection{\textit{Return}, Fitur, dan Target}
+\textit{Return} satu bar dihitung dengan Persamaan~\eqref{eq:return} untuk
+$h = 1$. Supaya angkanya mudah dibaca, \textit{return} ditulis dalam basis poin
+(bp), dengan 1~bp $= 10^{-4}$. Sebagai contoh, \textit{return} pada
+menit ke-$1$ merupakan
+\begin{equation*}
+  r = \ln\!\left(\frac{1.491.866.000{,}00}{1.491.286.333{,}33}\right) \times 10^{4}
+    = 3{,}8863~\text{bp}.
+\end{equation*}
+
+\begin{table}[htbp]
+  \caption{Harga \textit{Typical} dan \textit{Return} 1 Menit}
+  \label{tab:man-harga}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{|c|r|r|r|r|r|}
+    \hline
+    $i$ & High & Low & Close & $P$ & $r$ (bp) \\
+    \hline
+    0 & $1.492.447.000$ & $1.490.706.000$ & $1.490.706.000$ & $1.491.286.333{,}33$ & -- \\
+    1 & $1.492.446.000$ & $1.490.706.000$ & $1.492.446.000$ & $1.491.866.000{,}00$ & $3{,}8863$ \\
+    2 & $1.492.446.000$ & $1.490.757.000$ & $1.491.156.000$ & $1.491.453.000{,}00$ & $-2{,}7687$ \\
+    3 & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000{,}00$ & $-1{,}9848$ \\
+    4 & $1.492.446.000$ & $1.491.157.000$ & $1.491.955.000$ & $1.491.852.666{,}67$ & $4{,}6642$ \\
+    5 & $1.492.446.000$ & $1.491.799.000$ & $1.492.445.000$ & $1.492.230.000{,}00$ & $2{,}5290$ \\
+    6 & $1.492.446.000$ & $1.491.159.000$ & $1.492.446.000$ & $1.492.017.000{,}00$ & $-1{,}4275$ \\
+    7 & $1.493.576.000$ & $1.491.161.000$ & $1.491.547.000$ & $1.492.094.666{,}67$ & $0{,}5205$ \\
+    8 & $1.493.115.000$ & $1.491.547.000$ & $1.493.115.000$ & $1.492.592.333{,}33$ & $3{,}3348$ \\
+    9 & $1.493.115.000$ & $1.491.159.000$ & $1.491.159.000$ & $1.491.811.000{,}00$ & $-5{,}2361$ \\
+    10 & $1.493.577.000$ & $1.491.159.000$ & $1.491.159.000$ & $1.491.965.000{,}00$ & $1{,}0322$ \\
+    11 & $1.493.115.000$ & $1.491.159.000$ & $1.492.962.000$ & $1.492.412.000{,}00$ & $2{,}9956$ \\
+    12 & $1.492.961.000$ & $1.491.160.000$ & $1.491.160.000$ & $1.491.760.333{,}33$ & $-4{,}3675$ \\
+    13 & $1.491.160.000$ & $1.491.159.000$ & $1.491.159.000$ & $1.491.159.333{,}33$ & $-4{,}0296$ \\
+    14 & $1.493.083.000$ & $1.493.083.000$ & $1.493.083.000$ & $1.493.083.000{,}00$ & $12{,}8922$ \\
+    15 & $1.491.162.000$ & $1.491.161.000$ & $1.491.161.000$ & $1.491.161.333{,}33$ & $-12{,}8788$ \\
+    16 & $1.493.082.000$ & $1.492.291.000$ & $1.492.291.000$ & $1.492.554.666{,}67$ & $9{,}3396$ \\
+    17 & $1.493.083.000$ & $1.492.293.000$ & $1.493.083.000$ & $1.492.819.666{,}67$ & $1{,}7753$ \\
+    18 & $1.493.082.000$ & $1.493.082.000$ & $1.493.082.000$ & $1.493.082.000{,}00$ & $1{,}7571$ \\
+    19 & $1.493.082.000$ & $1.492.296.000$ & $1.492.296.000$ & $1.492.558.000{,}00$ & $-3{,}5101$ \\
+    20 & $1.493.082.000$ & $1.492.296.000$ & $1.493.080.000$ & $1.492.819.333{,}33$ & $1{,}7508$ \\
+    21 & $1.493.080.000$ & $1.492.297.000$ & $1.493.080.000$ & $1.492.819.000{,}00$ & $-0{,}0022$ \\
+    22 & $1.493.080.000$ & $1.492.297.000$ & $1.492.297.000$ & $1.492.558.000{,}00$ & $-1{,}7485$ \\
+    23 & $1.493.080.000$ & $1.492.297.000$ & $1.493.080.000$ & $1.492.819.000{,}00$ & $1{,}7485$ \\
+    24 & $1.493.080.000$ & $1.493.080.000$ & $1.493.080.000$ & $1.493.080.000{,}00$ & $1{,}7482$ \\
+    25 & $1.493.080.000$ & $1.492.801.000$ & $1.493.080.000$ & $1.492.987.000{,}00$ & $-0{,}6229$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Pada baris ke-$j$, fitur \texttt{ret\_lag1} merupakan \textit{return} menit
+ke-$j$, sedangkan targetnya merupakan \textit{return} menit ke-$(j+1)$. Fitur
+hanya memakai harga sampai menit ke-$j$, sedangkan target memakai harga satu
+menit sesudahnya. Dengan 26 menit, terbentuk $N = 24$ baris, yaitu
+$j = 1, \ldots, 24$.
+
+\subsection{Pembagian Data dan \textit{Purging}}
+Menurut Persamaan~\eqref{eq:split}, blok uji final dimulai pada baris ke-$(\lfloor
+0{,}8 \times 24 \rfloor + 1) = 20$, sehingga
+blok uji berisi baris 20--24 (5 baris). Baris 19 memiliki target pada menit ke-20, yaitu tepat pada awal
+blok uji, sehingga baris tersebut dibuang. Data latih berisi baris
+1--18 (18 baris).
+
+\subsection{Satu Iterasi XGBoost}
+Contoh ini memakai $\lambda = 1$, $\gamma = 0$, dan $\nu = 0{,}3$. Nilai awal $F_0$ diambil
+dari rata-rata target data latih, yaitu $F_0 = 0{,}2576$~bp. Karena
+\textit{loss} kuadrat, $g_i = F_0 - y_i$ dan $q_i = 1$.
+Tabel~\ref{tab:man-gq} memuat nilai tersebut.
+
+\begin{table}[htbp]
+  \caption{Gradien dan \textit{Hessian} Data Latih}
+  \label{tab:man-gq}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|c|r|r|r|r|}
+    \hline
+    $j$ & $x$ (bp) & $y$ (bp) & $g_i$ & $q_i$ \\
+    \hline
+    1 & $3{,}8863$ & $-2{,}7687$ & $3{,}0263$ & $1$ \\
+    2 & $-2{,}7687$ & $-1{,}9848$ & $2{,}2424$ & $1$ \\
+    3 & $-1{,}9848$ & $4{,}6642$ & $-4{,}4066$ & $1$ \\
+    4 & $4{,}6642$ & $2{,}5290$ & $-2{,}2714$ & $1$ \\
+    5 & $2{,}5290$ & $-1{,}4275$ & $1{,}6851$ & $1$ \\
+    6 & $-1{,}4275$ & $0{,}5205$ & $-0{,}2629$ & $1$ \\
+    7 & $0{,}5205$ & $3{,}3348$ & $-3{,}0772$ & $1$ \\
+    8 & $3{,}3348$ & $-5{,}2361$ & $5{,}4937$ & $1$ \\
+    9 & $-5{,}2361$ & $1{,}0322$ & $-0{,}7746$ & $1$ \\
+    10 & $1{,}0322$ & $2{,}9956$ & $-2{,}7380$ & $1$ \\
+    11 & $2{,}9956$ & $-4{,}3675$ & $4{,}6251$ & $1$ \\
+    12 & $-4{,}3675$ & $-4{,}0296$ & $4{,}2872$ & $1$ \\
+    13 & $-4{,}0296$ & $12{,}8922$ & $-12{,}6346$ & $1$ \\
+    14 & $12{,}8922$ & $-12{,}8788$ & $13{,}1364$ & $1$ \\
+    15 & $-12{,}8788$ & $9{,}3396$ & $-9{,}0820$ & $1$ \\
+    16 & $9{,}3396$ & $1{,}7753$ & $-1{,}5177$ & $1$ \\
+    17 & $1{,}7753$ & $1{,}7571$ & $-1{,}4995$ & $1$ \\
+    18 & $1{,}7571$ & $-3{,}5101$ & $3{,}7677$ & $1$ \\
+    \textbf{Jumlah} &  &  & $0{,}0000$ & $18$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Setiap nilai tengah antara dua nilai $x$ berurutan diuji sebagai titik
+pemecahan. Data dengan $x$ lebih kecil dari titik pemecahan masuk ke daun kiri.
+\textit{Gain} setiap titik dihitung dengan Persamaan~\eqref{eq:xgbgain} dan
+dimuat pada Tabel~\ref{tab:man-gain}.
+
+\begin{table}[htbp]
+  \caption{\textit{Gain} Setiap Titik Pemecahan}
+  \label{tab:man-gain}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|r|c|r|r|r|r|r|}
+    \hline
+    Titik (bp) & $n_{\text{kiri}}$ & $G_{\text{kiri}}$ & $Q_{\text{kiri}}$ & $G_{\text{kanan}}$ & $Q_{\text{kanan}}$ & \textit{Gain} \\
+    \hline
+    $-9{,}0574$ & 1 & $-9{,}0820$ & $1$ & $9{,}0820$ & $17$ & $22{,}9117$ \\
+    $-4{,}8018$ & 2 & $-9{,}8565$ & $2$ & $9{,}8565$ & $16$ & $19{,}0493$ \\
+    $-4{,}1986$ & 3 & $-5{,}5693$ & $3$ & $5{,}5693$ & $15$ & $4{,}8464$ \\
+    $-3{,}3992$ & 4 & $-18{,}2039$ & $4$ & $18{,}2039$ & $14$ & $44{,}1841$ \\
+    $-2{,}3767$ & 5 & $-15{,}9614$ & $5$ & $15{,}9614$ & $13$ & $30{,}3294$ \\
+    $-1{,}7062$ & 6 & $-20{,}3680$ & $6$ & $20{,}3680$ & $12$ & $45{,}5885$ \\
+    $-0{,}4535$ & 7 & $-20{,}6309$ & $7$ & $20{,}6309$ & $11$ & $44{,}3367$ \\
+    $0{,}7763$ & 8 & $-23{,}7080$ & $8$ & $23{,}7080$ & $10$ & $56{,}7748$ \\
+    $1{,}3946$ & 9 & $-26{,}4460$ & $9$ & $26{,}4460$ & $9$ & \textbf{$69{,}9391$} \\
+    $1{,}7662$ & 10 & $-22{,}6783$ & $10$ & $22{,}6783$ & $8$ & $51{,}9499$ \\
+    $2{,}1521$ & 11 & $-24{,}1777$ & $11$ & $24{,}1777$ & $7$ & $60{,}8920$ \\
+    $2{,}7623$ & 12 & $-22{,}4926$ & $12$ & $22{,}4926$ & $6$ & $55{,}5953$ \\
+    $3{,}1652$ & 13 & $-17{,}8675$ & $13$ & $17{,}8675$ & $5$ & $38{,}0055$ \\
+    $3{,}6105$ & 14 & $-12{,}3737$ & $14$ & $12{,}3737$ & $4$ & $20{,}4146$ \\
+    $4{,}2752$ & 15 & $-9{,}3474$ & $15$ & $9{,}3474$ & $3$ & $13{,}6522$ \\
+    $7{,}0019$ & 16 & $-11{,}6188$ & $16$ & $11{,}6188$ & $2$ & $26{,}4698$ \\
+    $11{,}1159$ & 17 & $-13{,}1364$ & $17$ & $13{,}1364$ & $1$ & $47{,}9350$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+\textit{Gain} terbesar diperoleh pada titik $x < 1{,}3946$~bp, yaitu
+\begin{equation*}
+  \textit{Gain} = \frac{1}{2}\left[
+    \frac{(-26{,}4460)^2}{9 + 1}
+  + \frac{(26{,}4460)^2}{9 + 1}
+  - \frac{(0{,}0000)^2}{18 + 1}
+  \right] - 0 = 69{,}9391 .
+\end{equation*}
+Bobot kedua daun menurut Persamaan~\eqref{eq:xgbbobot} merupakan
+\begin{equation*}
+  w^{*}_{\text{kiri}} = -\frac{-26{,}4460}{9 + 1} = 2{,}6446, \qquad
+  w^{*}_{\text{kanan}} = -\frac{26{,}4460}{9 + 1} = -2{,}6446 .
+\end{equation*}
+Ramalan setelah satu pohon dihitung dengan Persamaan~\eqref{eq:boosting},
+\begin{equation*}
+  F_1 = 0{,}2576 + 0{,}3 \times w^{*} =
+  \begin{cases}
+    1{,}0510~\text{bp}, & x < 1{,}3946~\text{bp},\\
+    -0{,}5357~\text{bp}, & \text{lainnya}.
+  \end{cases}
+\end{equation*}
+LightGBM dan CatBoost juga menambahkan pohon secara bertahap seperti
+Persamaan~\eqref{eq:boosting}. Perbedaannya terletak pada cara pohon
+ditumbuhkan (Gambar~\ref{fig:leafwise}) dan bentuk pohonnya
+(Gambar~\ref{fig:pohon-simetris}), yang baru tampak pada pohon dengan
+kedalaman lebih dari 1.
+
+\subsection{Satu Iterasi AdaBoost.R2}
+Pohon AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
+diikuti, contoh ini memakai seluruh data latih tanpa pengambilan sampel ulang,
+sehingga $p_i = 1/18$. Titik pemecahan terbaik merupakan
+$x < 11{,}1159$~bp, dengan ramalan $1{,}0304$~bp di daun kiri dan $-12{,}8788$~bp di daun kanan.
+Galat absolut terbesar merupakan $D = 11{,}8618$~bp. \textit{Loss}
+linear tiap contoh dihitung dengan Persamaan~\eqref{eq:adaloss} dan dimuat pada
+Tabel~\ref{tab:man-ada}.
+
+\begin{table}[htbp]
+  \caption{Satu Iterasi AdaBoost.R2}
+  \label{tab:man-ada}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|c|r|r|r|r|r|}
+    \hline
+    $j$ & $y$ (bp) & $\hat{y}$ (bp) & $|\hat{y}-y|$ & $L_i$ & $w_i$ baru \\
+    \hline
+    1 & $-2{,}7687$ & $1{,}0304$ & $3{,}7991$ & $0{,}3203$ & $0{,}5456$ \\
+    2 & $-1{,}9848$ & $1{,}0304$ & $3{,}0152$ & $0{,}2542$ & $0{,}5144$ \\
+    3 & $4{,}6642$ & $1{,}0304$ & $3{,}6338$ & $0{,}3063$ & $0{,}5388$ \\
+    4 & $2{,}5290$ & $1{,}0304$ & $1{,}4986$ & $0{,}1263$ & $0{,}4590$ \\
+    5 & $-1{,}4275$ & $1{,}0304$ & $2{,}4579$ & $0{,}2072$ & $0{,}4933$ \\
+    6 & $0{,}5205$ & $1{,}0304$ & $0{,}5099$ & $0{,}0430$ & $0{,}4261$ \\
+    7 & $3{,}3348$ & $1{,}0304$ & $2{,}3044$ & $0{,}1943$ & $0{,}4876$ \\
+    8 & $-5{,}2361$ & $1{,}0304$ & $6{,}2665$ & $0{,}5283$ & $0{,}6567$ \\
+    9 & $1{,}0322$ & $1{,}0304$ & $0{,}0018$ & $0{,}0002$ & $0{,}4101$ \\
+    10 & $2{,}9956$ & $1{,}0304$ & $1{,}9652$ & $0{,}1657$ & $0{,}4753$ \\
+    11 & $-4{,}3675$ & $1{,}0304$ & $5{,}3979$ & $0{,}4551$ & $0{,}6152$ \\
+    12 & $-4{,}0296$ & $1{,}0304$ & $5{,}0600$ & $0{,}4266$ & $0{,}5998$ \\
+    13 & $12{,}8922$ & $1{,}0304$ & $11{,}8618$ & $1{,}0000$ & $1{,}0000$ \\
+    14 & $-12{,}8788$ & $-12{,}8788$ & $0{,}0000$ & $0{,}0000$ & $0{,}4101$ \\
+    15 & $9{,}3396$ & $1{,}0304$ & $8{,}3092$ & $0{,}7005$ & $0{,}7657$ \\
+    16 & $1{,}7753$ & $1{,}0304$ & $0{,}7449$ & $0{,}0628$ & $0{,}4337$ \\
+    17 & $1{,}7571$ & $1{,}0304$ & $0{,}7267$ & $0{,}0613$ & $0{,}4331$ \\
+    18 & $-3{,}5101$ & $1{,}0304$ & $4{,}5405$ & $0{,}3828$ & $0{,}5768$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Rata-rata \textit{loss} dan rasio $\beta$ menurut
+Persamaan~\eqref{eq:adabeta} merupakan
+\begin{equation*}
+  \bar{L} = \sum_i L_i p_i = 0{,}2908, \qquad
+  \beta_1 = \frac{0{,}2908}{1 - 0{,}2908} = 0{,}4101 .
+\end{equation*}
+Karena $\bar{L} < 0{,}5$, pelatihan dapat dilanjutkan. Dengan bobot awal
+$w_i = 1$, bobot baru dihitung dengan Persamaan~\eqref{eq:adabobot}, misalnya
+untuk baris 1,
+$w = 1 \times 0{,}4101^{1 - 0{,}3203} = 0{,}5456$. Contoh dengan galat kecil mendapat bobot yang lebih kecil, sehingga
+pohon berikutnya lebih banyak belajar dari contoh yang sulit. Bobot pohon ini
+pada ramalan akhir merupakan $\log(1/\beta_1) = 0{,}8914$.
+Dengan satu pohon, ramalan AdaBoost.R2 sama dengan ramalan pohon tersebut.
+
+\subsection{Prediksi dan Konversi ke Rupiah}
+Ramalan \textit{return} pada blok uji dikembalikan ke rupiah dengan
+Persamaan~\eqref{eq:konversi}. Sebagai contoh, pada baris 20,
+ramalan XGBoost merupakan
+\begin{equation*}
+  \hat{P} = 1.492.819.333{,}33 \times \exp\!\left(-0{,}5357 \times 10^{-4}\right) = 1.492.739.358{,}18 .
+\end{equation*}
+Naive meramalkan harga terakhir, yaitu $1.492.819.333{,}33$.
+Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
+
+\begin{table}[htbp]
+  \caption{Ramalan pada Blok Uji}
+  \label{tab:man-uji}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|c|r|r|r|r|}
+    \hline
+    $j$ & $P_t$ & $P_{t+1}$ & $\hat{P}$ XGBoost & $\hat{P}$ AdaBoost.R2 \\
+    \hline
+    20 & $1.492.819.333{,}33$ & $1.492.819.000{,}00$ & $1.492.739.358{,}18$ & $1.492.973.156{,}09$ \\
+    21 & $1.492.819.000{,}00$ & $1.492.558.000{,}00$ & $1.492.975.905{,}51$ & $1.492.972.822{,}73$ \\
+    22 & $1.492.558.000{,}00$ & $1.492.819.000{,}00$ & $1.492.714.878{,}08$ & $1.492.711.795{,}83$ \\
+    23 & $1.492.819.000{,}00$ & $1.493.080.000{,}00$ & $1.492.739.024{,}86$ & $1.492.972.822{,}73$ \\
+    24 & $1.493.080.000{,}00$ & $1.492.987.000{,}00$ & $1.493.000.010{,}88$ & $1.493.233.849{,}62$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
+Tabel~\ref{tab:man-galat}, bersama selisih \textit{loss} absolut
+$d_t = |e_{\text{model}}| - |e_{\text{Naive}}|$ yang dipakai pada uji
+Diebold-Mariano.
+
+\begin{table}[htbp]
+  \caption{Galat dan Selisih \textit{Loss} pada Blok Uji}
+  \label{tab:man-galat}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|c|r|r|r|r|r|}
+    \hline
+    $j$ & $e$ Naive & $e$ XGBoost & $e$ AdaBoost.R2 & $d_t$ XGBoost & $d_t$ AdaBoost.R2 \\
+    \hline
+    20 & $-333{,}33$ & $79.641{,}82$ & $-154.156{,}09$ & $79.308{,}49$ & $153.822{,}76$ \\
+    21 & $-261.000{,}00$ & $-417.905{,}51$ & $-414.822{,}73$ & $156.905{,}51$ & $153.822{,}73$ \\
+    22 & $261.000{,}00$ & $104.121{,}92$ & $107.204{,}17$ & $-156.878{,}08$ & $-153.795{,}83$ \\
+    23 & $261.000{,}00$ & $340.975{,}14$ & $107.177{,}27$ & $79.975{,}14$ & $-153.822{,}73$ \\
+    24 & $-93.000{,}00$ & $-13.010{,}88$ & $-246.849{,}62$ & $-79.989{,}12$ & $153.849{,}62$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+\subsection{Perhitungan Metrik Evaluasi}
+MAE Naive menurut Persamaan~\eqref{eq:mae} merupakan
+\begin{equation*}
+  \begin{aligned}
+  \text{MAE}_{\text{Naive}} &= \frac{1}{5}\bigl(333{,}33 + 261.000{,}00 + 261.000{,}00 \\ &\qquad + 261.000{,}00 + 93.000{,}00\bigr) \\
+  &= 175.266{,}67 .
+  \end{aligned}
+\end{equation*}
+MAE vs Naive untuk XGBoost menurut Persamaan~\eqref{eq:maenaive} merupakan
+\begin{equation*}
+  \left(\frac{191.131{,}05}{175.266{,}67} - 1\right)
+  \times 100\% = 9{,}05\% .
+\end{equation*}
+Untuk akurasi arah, 5 dari 5 baris uji memiliki harga yang berubah, sehingga $n = 5$ pada Persamaan~\eqref{eq:arah}.
+Tabel~\ref{tab:man-metrik} merangkum seluruh metrik.
+
+\begin{table}[htbp]
+  \caption{Rangkuman Metrik pada Contoh}
+  \label{tab:man-metrik}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    Metrik & Naive & XGBoost & AdaBoost.R2 \\
+    \hline
+    MAE (Rp) & $175.266{,}67$ & $191.131{,}05$ & $206.041{,}98$ \\
+    RMSE (Rp) & $206.403{,}54$ & $248.299{,}23$ & $236.540{,}24$ \\
+    MAPE (\%) & $0{,}011741$ & $0{,}012804$ & $0{,}013803$ \\
+    MAE vs Naive (\%) & -- & $9{,}05$ & $17{,}56$ \\
+    Akurasi arah (\%) & -- & $60{,}00$ & $40{,}00$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+\subsection{Uji Diebold-Mariano dan Koreksi Holm}
+Uji dihitung dengan \textit{loss} absolut. Dari nilai $d_t$ XGBoost pada
+Tabel~\ref{tab:man-galat}, diperoleh $\bar{d} = 15.864{,}39$ dan
+$\hat{\phi}_0 = 13.411.159.273{,}75$. Karena $h_b = 1$, tidak ada autokovarians
+lag lain, sehingga menurut Persamaan~\eqref{eq:dm}
+\begin{equation*}
+  \text{DM} = \frac{15.864{,}39}{\sqrt{13.411.159.273{,}75/5}} = 0{,}3063 .
+\end{equation*}
+Faktor koreksi HLN pada Persamaan~\eqref{eq:hln} dengan $n = 5$ dan $h_b = 1$ merupakan $\sqrt{(5 + 1 - 2)/5} = 0{,}8944$, sehingga statistik
+terkoreksinya $0{,}2740$. Nilai $p$ dua sisi dari distribusi $t$
+berderajat bebas 4 merupakan $0{,}7977$.
+Tabel~\ref{tab:man-dm} memuat hasil kedua model.
+
+\begin{table}[htbp]
+  \caption{Uji Diebold-Mariano pada Contoh}
+  \label{tab:man-dm}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{|l|r|r|r|r|r|}
+    \hline
+    Model & $\bar{d}$ & $\hat{\phi}_0$ & DM & DM$^{*}$ & $p$ \\
+    \hline
+    XGBoost & $15.864{,}39$ & $13.411.159.273{,}75$ & $0{,}3063$ & $0{,}2740$ & $0{,}7977$ \\
+    AdaBoost.R2 & $30.775{,}31$ & $22.714.313.613{,}97$ & $0{,}4566$ & $0{,}4084$ & $0{,}7039$ \\
+    \hline
+  \end{tabular}
+  \endgroup
+  \sumber{Diolah penulis}
+\end{table}
+
+Koreksi Holm diterapkan pada kedua nilai $p$ dengan
+Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$; lalu $p_{(2)} = 0{,}7977$ (XGBoost) dibandingkan dengan $0{,}05/1 = 0{,}0500$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga tidak ada hipotesis yang ditolak dan pengujian berhenti. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
+tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.

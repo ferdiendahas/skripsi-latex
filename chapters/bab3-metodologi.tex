@@ -214,9 +214,12 @@ selisihnya \cite{working1960}. Autokorelasi semu tersebut dapat
 membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
 benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
 hasil dibahas.
-% CEK: keputusan Ferdi, laporkan juga hasil dengan harga close sebagai
-% pembanding atau cukup sebagai keterbatasan. Jangan pakai angka +0,25 dari
-% Working untuk harga typical.
+Untuk memeriksa pengaruh tersebut, pasangan dataset dan \textit{time frame}
+terpilih pada Tahap pertama juga dijalankan dengan harga penutupan pada
+keempat model, memakai strategi \textit{tuning} terpilih pada Tahap kedua.
+Hasilnya dilaporkan sebagai analisis pendukung, diuji dalam keluarga Holm
+tersendiri, dan tidak dipakai untuk memilih konfigurasi.
+% Catatan: jangan pakai angka +0,25 dari Working untuk harga typical.
 
 \subsection{Penanganan Data Hilang}
 Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
@@ -556,9 +559,9 @@ dipakai untuk satu tujuan saja, yaitu nilai kesalahan pada
 data validasi, karena \texttt{NSGAIISampler} merupakan implementasi algoritme
 genetika yang tersedia pada Optuna \cite{optunadocs}.
 Ketiga, jumlah 30 \textit{trial} pada Quasi-Monte Carlo bukan merupakan
-pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata.
-% CEK: pertimbangkan 32 trial untuk eksperimen final, atau tulis sebagai
-% keterbatasan.
+pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata. Jumlah
+30 \textit{trial} tetap dipakai supaya anggaran percobaan sama dengan metode
+pencarian lain, dan hal ini dicatat sebagai keterbatasan.
 
 Ruang dan anggaran percobaan setiap strategi tidak sama. Grid Search memakai
 tiga parameter dengan 27 kombinasi, metode lain memakai ruang pencarian yang
@@ -725,6 +728,8 @@ yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
 Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
 sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
 
+\input{chapters/bab3-contoh-perhitungan}
+
 \section{Skenario Pengujian}
 \label{sec:skenario}
 Eksperimen dijalankan dalam empat tahap yang berurutan.
@@ -744,7 +749,12 @@ yaitu 5 \textit{time frame} pada dataset \textit{candle} 1 menit dan
 4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap pasangan
 dijalankan pada 4 model dengan metode TPE, sehingga jumlahnya 36
 \textit{run}.
-% CEK: tulis alasan TPE dipakai pada Tahap 1 (diisi Ferdi).
+TPE dipakai pada Tahap pertama karena model perlu di-\textit{tuning} lebih
+dahulu agar perbandingan antar-\textit{time frame} tidak bergantung pada
+pengaturan bawaan. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
+pada tugas yang sulit memberi hasil lebih baik daripada Random Search
+\cite{bergstra2011}. Pemilihan strategi \textit{tuning} sendiri baru
+dilakukan pada Tahap kedua.
 Pasangan yang dipilih merupakan pasangan dengan nilai MAE validasi vs Naive
 terkecil di antara keempat model. Bila hasilnya seri, dipilih
 \textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
@@ -777,7 +787,7 @@ strategi \textit{tuning} tidak dipengaruhi oleh hasil pada blok uji final.
 
 Secara keseluruhan, rencana skenario memuat 36 \textit{run} pada Tahap
 pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 14 pada
-Tahap keempat. Sebagian skenario memakai konfigurasi yang sama antartahap,
+Tahap keempat, ditambah 4 \textit{run} pembanding harga penutupan. Sebagian skenario memakai konfigurasi yang sama antartahap,
 misalnya TPE dengan seluruh data latih. Karena itu, laporan hasil memisahkan
 jumlah skenario dari jumlah konfigurasi unik. Kombinasi teknik yang tidak
 berlaku pada AdaBoost tidak dijalankan.

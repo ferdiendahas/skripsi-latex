@@ -14,6 +14,7 @@
   $\hat{P}_{t+h}^{\text{Naive}}$ & : & Harga ramalan Naive pada waktu $t+h$ \\
   $x$ & : & Vektor fitur masukan model \\
   $F_m(x)$ & : & Model \textit{gradient boosting} gabungan setelah $m$ pohon \\
+  $F_0$ & : & Model awal sebelum pohon pertama ditambahkan \\
   $f_m(x)$ & : & Pohon regresi ke-$m$ \\
   $\rho_m$ & : & Bobot optimal untuk pohon ke-$m$ \\
   $\nu$ & : & \textit{Learning rate} \\
@@ -24,6 +25,13 @@
   $\mathbf{w}$ & : & Vektor bobot daun pada XGBoost \\
   $\gamma$ & : & Penalti jumlah daun pada XGBoost \\
   $\lambda$ & : & Penalti L2 bobot daun pada XGBoost \\
+  $g_i$ & : & Turunan pertama \textit{loss} contoh ke-$i$ pada XGBoost \\
+  $q_i$ & : & Turunan kedua \textit{loss} contoh ke-$i$ pada XGBoost \\
+  $G$ & : & Jumlah $g_i$ seluruh contoh pada satu daun \\
+  $Q$ & : & Jumlah $q_i$ seluruh contoh pada satu daun \\
+  $w^{*}$ & : & Bobot optimal satu daun pada XGBoost \\
+  \textit{Gain} & : & Penurunan \textit{loss} dari satu pemecahan pada
+    XGBoost \\
   $w_i$ & : & Bobot sampel ke-$i$ pada AdaBoost.R2 \\
   $p_i$ & : & Probabilitas sampel ke-$i$ pada AdaBoost.R2 \\
   $y_i$ & : & Nilai sebenarnya contoh ke-$i$ \\
@@ -42,10 +50,14 @@
   $c_t$ & : & Penanda arah, bernilai 1 bila arah tertebak benar dan 0 bila
     tidak \\
   $d_t$ & : & Selisih \textit{loss} dua ramalan pada data uji ke-$t$ \\
+  $\bar{d}$ & : & Rata-rata $d_t$ pada data uji \\
+  $\hat{\phi}_l$ & : & Autokovarians $d_t$ pada lag $l$ \\
   $\mathcal{L}(\cdot)$ & : & Fungsi \textit{loss} pada uji Diebold-Mariano \\
   $e_{1t}, e_{2t}$ & : & Galat ramalan pertama dan kedua \\
   $H_0$ & : & Hipotesis nol \\
   $h_b$ & : & \textit{Time frame} dalam satuan bar \\
+  $q$ & : & Banyaknya uji dalam satu keluarga pada koreksi Holm \\
+  $\alpha$ & : & Taraf signifikansi, yaitu 0,05 \\
   $P^{O}_t$ & : & Harga pembukaan pada bar ke-$t$ \\
   $P^{H}_t$ & : & Harga tertinggi pada bar ke-$t$ \\
   $P^{L}_t$ & : & Harga terendah pada bar ke-$t$ \\
@@ -64,6 +76,7 @@
   $\mathrm{Skor}(\theta)$ & : & Nilai objektif \textit{tuning}, yaitu rata-rata
     MAE \textit{return} pada $K$ \textit{fold} \\
   $s$ & : & Panjang jendela statistik bergulir, dalam menit \\
+  bp & : & Basis poin, yaitu $10^{-4}$ \\
 \end{longtable}
 \endgroup
 \clearpage

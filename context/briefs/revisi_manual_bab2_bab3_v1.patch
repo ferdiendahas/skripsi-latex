@@ -1,0 +1,157 @@
+diff --git a/chapters/bab2-tinjauan-pustaka.tex b/chapters/bab2-tinjauan-pustaka.tex
+index 037426d..6eb5331 100644
+--- a/chapters/bab2-tinjauan-pustaka.tex
++++ b/chapters/bab2-tinjauan-pustaka.tex
+@@ -384,6 +384,43 @@ suku regularisasinya merupakan
+   \item[$\gamma$] parameter penalti untuk jumlah daun,
+   \item[$\lambda$] parameter penalti L2 untuk bobot daun.
+ \end{keterangan}
++Setiap pohon baru dibangun dari gradien dan turunan kedua \textit{loss}
++terhadap ramalan sebelumnya. Untuk satu daun, bobot optimalnya merupakan
++\begin{equation}
++  w^{*} = -\frac{G}{Q + \lambda},
++  \label{eq:xgbbobot}
++\end{equation}
++dan penurunan \textit{loss} dari satu pemecahan merupakan
++\begin{equation}
++  \textit{Gain} = \frac{1}{2}\left[
++    \frac{G_{\text{kiri}}^2}{Q_{\text{kiri}} + \lambda}
++  + \frac{G_{\text{kanan}}^2}{Q_{\text{kanan}} + \lambda}
++  - \frac{(G_{\text{kiri}} + G_{\text{kanan}})^2}
++         {Q_{\text{kiri}} + Q_{\text{kanan}} + \lambda}
++  \right] - \gamma
++  \label{eq:xgbgain}
++\end{equation}
++\cite{chen2016}.
++% CEK: cocokkan dengan chen2016 bagian 2.2 (bobot daun dan gain), lalu
++% tambahkan ke kartu E5.
++\begin{keterangan}
++  \item[$w^{*}$] bobot optimal satu daun,
++  \item[$G$, $Q$] jumlah $g_i$ dan jumlah $q_i$ seluruh contoh di daun
++    tersebut,
++  \item[$g_i$] turunan pertama \textit{loss} contoh ke-$i$ terhadap ramalan
++    sebelumnya,
++  \item[$q_i$] turunan kedua \textit{loss} contoh ke-$i$ terhadap ramalan
++    sebelumnya,
++  \item[$G_{\text{kiri}}$, $Q_{\text{kiri}}$] jumlah $g_i$ dan $q_i$ pada calon
++    daun kiri,
++  \item[$G_{\text{kanan}}$, $Q_{\text{kanan}}$] jumlah $g_i$ dan $q_i$ pada
++    calon daun kanan.
++\end{keterangan}
++Pada \textit{loss} kuadrat $\frac{1}{2}(y_i - \hat{y}_i)^2$, nilai
++$g_i = \hat{y}_i - y_i$ dan $q_i = 1$. Turunan kedua ditulis $q_i$ supaya tidak
++tertukar dengan \textit{time frame} $h$. Pemecahan dengan \textit{Gain}
++terbesar dipilih.
++
+ Pada kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
+ yang dipublikasikan memakai XGBoost \cite{chen2016}.
+ 
+@@ -847,7 +884,21 @@ Fungsi \textit{loss} pada uji tersebut tidak harus berbentuk kuadratik dan
+ tidak harus simetris \cite{diebold1995}. Pada ramalan beberapa langkah ke depan, selisih \textit{loss} pada bar yang
+ berdekatan saling berkaitan. Karena itu, varians rata-rata $d_t$ dihitung
+ memakai autokovarians sampai lag $h_b-1$, dengan $h_b$ menyatakan
+-\textit{time frame} dalam satuan bar \cite{diebold1995}.
++\textit{time frame} dalam satuan bar \cite{diebold1995}. Statistik ujinya
++merupakan
++\begin{equation}
++  \text{DM} = \frac{\bar{d}}
++    {\sqrt{\left(\hat{\phi}_0 + 2\sum_{l=1}^{h_b-1}\hat{\phi}_l\right)/n}},
++  \qquad
++  \hat{\phi}_l = \frac{1}{n}\sum_{t=l+1}^{n}(d_t - \bar{d})(d_{t-l} - \bar{d}) .
++  \label{eq:dm}
++\end{equation}
++\begin{keterangan}
++  \item[$\bar{d}$] rata-rata $d_t$ pada data uji,
++  \item[$\hat{\phi}_l$] autokovarians $d_t$ pada lag $l$,
++  \item[$n$] banyaknya data uji.
++\end{keterangan}
++Nilai DM negatif berarti ramalan pertama memiliki \textit{loss} lebih kecil.
+ 
+ % [kartu G1]
+ Pada sampel berukuran kecil, statistik uji tersebut cenderung menolak
+@@ -870,7 +921,19 @@ model, \textit{time frame}, strategi \textit{tuning}, dan panjang data latih
+ diuji terhadap Naive.
+ Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
+ karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
+-\cite{holm1979}.
++\cite{holm1979}. Nilai $p$ dari $q$ uji diurutkan dari yang terkecil,
++$p_{(1)} \le p_{(2)} \le \dots \le p_{(q)}$. Hipotesis ke-$i$ ditolak bila
++\begin{equation}
++  p_{(i)} \le \frac{\alpha}{q - i + 1},
++  \label{eq:holm}
++\end{equation}
++dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
++ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
++\begin{keterangan}
++  \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
++  \item[$q$] banyaknya uji dalam satu keluarga,
++  \item[$\alpha$] taraf signifikansi, yaitu 0,05.
++\end{keterangan}
+ 
+ 
+ \section{Research Gap Penelitian}
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index 13e4df4..d2755b0 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -214,9 +214,12 @@ selisihnya \cite{working1960}. Autokorelasi semu tersebut dapat
+ membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
+ benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
+ hasil dibahas.
+-% CEK: keputusan Ferdi, laporkan juga hasil dengan harga close sebagai
+-% pembanding atau cukup sebagai keterbatasan. Jangan pakai angka +0,25 dari
+-% Working untuk harga typical.
++Untuk memeriksa pengaruh tersebut, pasangan dataset dan \textit{time frame}
++terpilih pada Tahap pertama juga dijalankan dengan harga penutupan pada
++keempat model, memakai strategi \textit{tuning} terpilih pada Tahap kedua.
++Hasilnya dilaporkan sebagai analisis pendukung, diuji dalam keluarga Holm
++tersendiri, dan tidak dipakai untuk memilih konfigurasi.
++% Catatan: jangan pakai angka +0,25 dari Working untuk harga typical.
+ 
+ \subsection{Penanganan Data Hilang}
+ Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
+@@ -556,9 +559,9 @@ dipakai untuk satu tujuan saja, yaitu nilai kesalahan pada
+ data validasi, karena \texttt{NSGAIISampler} merupakan implementasi algoritme
+ genetika yang tersedia pada Optuna \cite{optunadocs}.
+ Ketiga, jumlah 30 \textit{trial} pada Quasi-Monte Carlo bukan merupakan
+-pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata.
+-% CEK: pertimbangkan 32 trial untuk eksperimen final, atau tulis sebagai
+-% keterbatasan.
++pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata. Jumlah
++30 \textit{trial} tetap dipakai supaya anggaran percobaan sama dengan metode
++pencarian lain, dan hal ini dicatat sebagai keterbatasan.
+ 
+ Ruang dan anggaran percobaan setiap strategi tidak sama. Grid Search memakai
+ tiga parameter dengan 27 kombinasi, metode lain memakai ruang pencarian yang
+@@ -725,6 +728,8 @@ yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
+ Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
+ sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
+ 
++\input{chapters/bab3-contoh-perhitungan}
++
+ \section{Skenario Pengujian}
+ \label{sec:skenario}
+ Eksperimen dijalankan dalam empat tahap yang berurutan.
+@@ -744,7 +749,12 @@ yaitu 5 \textit{time frame} pada dataset \textit{candle} 1 menit dan
+ 4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap pasangan
+ dijalankan pada 4 model dengan metode TPE, sehingga jumlahnya 36
+ \textit{run}.
+-% CEK: tulis alasan TPE dipakai pada Tahap 1 (diisi Ferdi).
++TPE dipakai pada Tahap pertama karena model perlu di-\textit{tuning} lebih
++dahulu agar perbandingan antar-\textit{time frame} tidak bergantung pada
++pengaturan bawaan. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
++pada tugas yang sulit memberi hasil lebih baik daripada Random Search
++\cite{bergstra2011}. Pemilihan strategi \textit{tuning} sendiri baru
++dilakukan pada Tahap kedua.
+ Pasangan yang dipilih merupakan pasangan dengan nilai MAE validasi vs Naive
+ terkecil di antara keempat model. Bila hasilnya seri, dipilih
+ \textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
+@@ -777,7 +787,7 @@ strategi \textit{tuning} tidak dipengaruhi oleh hasil pada blok uji final.
+ 
+ Secara keseluruhan, rencana skenario memuat 36 \textit{run} pada Tahap
+ pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 14 pada
+-Tahap keempat. Sebagian skenario memakai konfigurasi yang sama antartahap,
++Tahap keempat, ditambah 4 \textit{run} pembanding harga penutupan. Sebagian skenario memakai konfigurasi yang sama antartahap,
+ misalnya TPE dengan seluruh data latih. Karena itu, laporan hasil memisahkan
+ jumlah skenario dari jumlah konfigurasi unik. Kombinasi teknik yang tidak
+ berlaku pada AdaBoost tidak dijalankan.
