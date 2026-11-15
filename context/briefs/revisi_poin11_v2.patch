@@ -1,0 +1,109 @@
+--- a/chapters/bab1-pendahuluan.tex	2026-11-13 18:09:28.429963014 +0700
++++ b/chapters/bab1-pendahuluan.tex	2026-11-15 22:40:30.573095604 +0700
+@@ -51,7 +51,7 @@
+ hanya sekitar 51 sampai 56 persen, sedikit di atas tebakan acak 50 persen
+ \cite{jaquart2021}. Pada data harian, model naive bahkan
+ lebih akurat daripada model \textit{machine learning}. Untuk Bitcoin, nilai \textit{Mean Absolute Percentage Error} (MAPE)
+-model naive 1,296, sedangkan XGBoost 1,902 \cite{puoti2024}. Karena itu,
++model naive 1,296\%, sedangkan XGBoost 1,902\% \cite{puoti2024}. Karena itu,
+ prediksi model perlu dibandingkan dengan Naive, yaitu tebakan bahwa harga
+ tidak berubah.
+ 
+@@ -71,9 +71,9 @@
+ sehingga masih perlu diuji.
+ 
+ % P5 -- [kartu B3, B2, A1]
+-Celah penelitian muncul dari dua hal. Pertama, penelitian pada data per menit
+-kebanyakan memprediksi arah pergerakan harga, bukan nilai harganya
+-\cite{akyildirim2023,jaquart2021}. Hasil seperti itu belum menjawab berapa
++Celah penelitian muncul dari dua hal. Pertama, penelitian \textit{intraday}
++Bitcoin yang terbaru masih memprediksi arah pergerakan harga, bukan nilai
++harganya \cite{akyildirim2023}. Hasil seperti itu belum menjawab berapa
+ harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
+ harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
+ Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak memakai pembanding
+--- a/chapters/bab2-tinjauan-pustaka.tex	2026-11-13 18:09:28.429963014 +0700
++++ b/chapters/bab2-tinjauan-pustaka.tex	2026-11-15 22:40:30.572337193 +0700
+@@ -967,10 +967,6 @@
+     Data \textit{intraday}, pembanding naive harga, uji Diebold-Mariano, XGBoost dan
+     CatBoost \\
+     \hline
+-    Jaquart dkk. \cite{jaquart2021} &
+-    Horizon 1--60 menit, uji Diebold-Mariano, biaya transaksi &
+-    Target nilai harga, empat model boosting, banyak metode optimasi \\
+-    \hline
+     Akyildirim dkk. \cite{akyildirim2023} &
+     Data \textit{intraday}, tiga rasio \textit{split} &
+     Target nilai harga, pasar spot, pembanding naive harga, uji
+--- a/chapters/bab3-metodologi.tex	2026-11-15 19:24:19.509916132 +0700
++++ b/chapters/bab3-metodologi.tex	2026-11-15 22:40:39.298787074 +0700
+@@ -61,8 +61,9 @@
+ Studi literatur dilakukan untuk menemukan celah penelitian dan landasan
+ metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
+ isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
+-celah penelitian dibatasi lima tahun terakhir, sedangkan paper sumber metode
+-boleh berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
++celah penelitian pada Tabel~\ref{tab:gap} dibatasi lima tahun terakhir, yaitu
++terbit tahun 2022 sampai 2026. Paper pendukung dan paper sumber metode boleh
++berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
+ memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
+ mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
+ penelitian pada Subbab~\ref{sec:gap}.
+@@ -207,10 +208,10 @@
+ Harga penutupan pada data 1 menit dapat berpindah-pindah antara harga beli
+ dan harga jual terbaik. Pada data \textit{snapshot} ticker 10 Oktober sampai
+ 12 November 2026, median selisih harga jual dan harga beli terbaik merupakan
+-Rp395.000, atau sekitar 0,028\% dari harga. Sebanyak 29,8\% \textit{candle}
+-1 menit hanya memuat satu harga, yaitu \textit{high}, \textit{low}, dan
+-\textit{close} bernilai sama. Proporsinya mencapai 69\% pada pukul 20.00 UTC
+-dan sekitar 12\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
++Rp395.000, atau sekitar 0,028\% dari harga. Di antara menit yang memiliki
++transaksi, sebanyak 24,8\% \textit{candle} hanya memuat satu harga, yaitu
++\textit{high}, \textit{low}, dan \textit{close} bernilai sama. Proporsinya
++mencapai 58\% pada pukul 20.00 UTC dan sekitar 11\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
+ \textit{return} penutupan antarmenit berautokorelasi negatif, yaitu $-0{,}35$
+ pada lag 1. Harga \textit{typical} merupakan rata-rata dari tiga harga,
+ sehingga autokorelasinya berkurang menjadi $-0{,}25$. Pada \textit{candle} yang
+@@ -219,6 +220,17 @@
+ % CEK: perbarui angka selisih harga jual-beli, proporsi candle satu harga, dan
+ % autokorelasi dengan data final.
+ 
++Bar tanpa transaksi diperlakukan sebagai harga tetap. Pada \textit{candle}
++bervolume nol, nilai \textit{high}, \textit{low}, dan \textit{close} sama dengan
++harga penutupan menit sebelumnya, seperti dijelaskan pada
++Subbab~\ref{sec:kumpul}. Akibatnya, harga \textit{typical}-nya berbeda dari
++harga \textit{typical} menit sebelumnya walaupun tidak ada transaksi. Perubahan
++tersebut bukan pergerakan pasar dan dapat ditebak dari \textit{candle}
++sebelumnya. Karena itu, harga pada bar bervolume nol ditetapkan sama dengan
++harga bar sebelumnya, yaitu $P_t = P_{t-1}$. Aturan yang sama berlaku pada bar
++5 menit yang kelima menitnya bervolume nol. Aturan ini tidak mengubah
++autokorelasi yang disebutkan di atas.
++
+ Namun, harga yang dirata-ratakan dapat memunculkan autokorelasi semu pada
+ selisihnya \cite{working1960}. Pada \textit{candle} 5 menit, autokorelasi
+ lag 1 \textit{return} harga \textit{typical} justru bernilai positif, yaitu
+@@ -346,8 +358,8 @@
+ Bagian pertama merupakan periode pengembangan, yaitu sekitar 80\% data awal.
+ Jumlahnya sedikit kurang dari 80\% karena baris di ujungnya dibuang, seperti
+ dijelaskan di bawah. Seluruh
+-pencarian \textit{hyperparameter} dan pemilihan konfigurasi pada
+-Tahap pertama sampai keempat dilakukan di bagian ini. Bagian kedua merupakan
++pencarian \textit{hyperparameter} pada keempat tahap dan pemilihan konfigurasi
++pada Tahap pertama dan kedua dilakukan di bagian ini. Bagian kedua merupakan
+ blok uji final, yaitu 20\% data akhir. Blok ini tidak dipakai untuk memilih
+ apa pun dan baru dipakai setelah seluruh pilihan dikunci. Blok uji final
+ hanya mencakup satu periode, sehingga hasilnya dapat dipengaruhi kondisi
+--- a/scripts/contoh_manual.py	2026-11-13 11:39:51.637103967 +0700
++++ b/scripts/contoh_manual.py	2026-11-15 22:40:39.315562126 +0700
+@@ -71,6 +71,11 @@
+     """Semua perhitungan untuk satu jendela 26 candle. Mengembalikan dict."""
+     R = {}
+     P = ((win["high"] + win["low"] + win["close"]) / 3).to_numpy()
++    # bar bervolume nol: harga dianggap tetap = harga bar sebelumnya (Bab III 3.4.2)
++    nol = win["volume"].to_numpy() == 0
++    for i in range(1, len(P)):
++        if nol[i]:
++            P[i] = P[i - 1]
+     R["P"] = P
+     r1 = np.full(N_CANDLE, np.nan)
+     r1[1:] = np.log(P[1:] / P[:-1])

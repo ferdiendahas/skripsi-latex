@@ -71,6 +71,11 @@ def hitung(win):
     """Semua perhitungan untuk satu jendela 26 candle. Mengembalikan dict."""
     R = {}
     P = ((win["high"] + win["low"] + win["close"]) / 3).to_numpy()
+    # bar bervolume nol: harga dianggap tetap = harga bar sebelumnya (Bab III 3.4.2)
+    nol = win["volume"].to_numpy() == 0
+    for i in range(1, len(P)):
+        if nol[i]:
+            P[i] = P[i - 1]
     R["P"] = P
     r1 = np.full(N_CANDLE, np.nan)
     r1[1:] = np.log(P[1:] / P[:-1])

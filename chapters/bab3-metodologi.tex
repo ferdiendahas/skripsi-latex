@@ -61,8 +61,9 @@ Subbab~\ref{sec:evaluasi}.
 Studi literatur dilakukan untuk menemukan celah penelitian dan landasan
 metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
 isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
-celah penelitian dibatasi lima tahun terakhir, sedangkan paper sumber metode
-boleh berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
+celah penelitian pada Tabel~\ref{tab:gap} dibatasi lima tahun terakhir, yaitu
+terbit tahun 2022 sampai 2026. Paper pendukung dan paper sumber metode boleh
+berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
 memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
 mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
 penelitian pada Subbab~\ref{sec:gap}.
@@ -207,10 +208,10 @@ harga \textit{typical} pada kedua dataset, yaitu
 Harga penutupan pada data 1 menit dapat berpindah-pindah antara harga beli
 dan harga jual terbaik. Pada data \textit{snapshot} ticker 10 Oktober sampai
 12 November 2026, median selisih harga jual dan harga beli terbaik merupakan
-Rp395.000, atau sekitar 0,028\% dari harga. Sebanyak 29,8\% \textit{candle}
-1 menit hanya memuat satu harga, yaitu \textit{high}, \textit{low}, dan
-\textit{close} bernilai sama. Proporsinya mencapai 69\% pada pukul 20.00 UTC
-dan sekitar 12\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
+Rp395.000, atau sekitar 0,028\% dari harga. Di antara menit yang memiliki
+transaksi, sebanyak 24,8\% \textit{candle} hanya memuat satu harga, yaitu
+\textit{high}, \textit{low}, dan \textit{close} bernilai sama. Proporsinya
+mencapai 58\% pada pukul 20.00 UTC dan sekitar 11\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
 \textit{return} penutupan antarmenit berautokorelasi negatif, yaitu $-0{,}35$
 pada lag 1. Harga \textit{typical} merupakan rata-rata dari tiga harga,
 sehingga autokorelasinya berkurang menjadi $-0{,}25$. Pada \textit{candle} yang
@@ -218,6 +219,17 @@ hanya memuat satu harga, harga \textit{typical} sama dengan harga penutupan,
 sehingga perpindahan tersebut tidak hilang sepenuhnya.
 % CEK: perbarui angka selisih harga jual-beli, proporsi candle satu harga, dan
 % autokorelasi dengan data final.
+
+Bar tanpa transaksi diperlakukan sebagai harga tetap. Pada \textit{candle}
+bervolume nol, nilai \textit{high}, \textit{low}, dan \textit{close} sama dengan
+harga penutupan menit sebelumnya, seperti dijelaskan pada
+Subbab~\ref{sec:kumpul}. Akibatnya, harga \textit{typical}-nya berbeda dari
+harga \textit{typical} menit sebelumnya walaupun tidak ada transaksi. Perubahan
+tersebut bukan pergerakan pasar dan dapat ditebak dari \textit{candle}
+sebelumnya. Karena itu, harga pada bar bervolume nol ditetapkan sama dengan
+harga bar sebelumnya, yaitu $P_t = P_{t-1}$. Aturan yang sama berlaku pada bar
+5 menit yang kelima menitnya bervolume nol. Aturan ini tidak mengubah
+autokorelasi yang disebutkan di atas.
 
 Namun, harga yang dirata-ratakan dapat memunculkan autokorelasi semu pada
 selisihnya \cite{working1960}. Pada \textit{candle} 5 menit, autokorelasi
@@ -346,8 +358,8 @@ Data dibagi berurutan menurut waktu, tanpa pengacakan, menjadi dua bagian.
 Bagian pertama merupakan periode pengembangan, yaitu sekitar 80\% data awal.
 Jumlahnya sedikit kurang dari 80\% karena baris di ujungnya dibuang, seperti
 dijelaskan di bawah. Seluruh
-pencarian \textit{hyperparameter} dan pemilihan konfigurasi pada
-Tahap pertama sampai keempat dilakukan di bagian ini. Bagian kedua merupakan
+pencarian \textit{hyperparameter} pada keempat tahap dan pemilihan konfigurasi
+pada Tahap pertama dan kedua dilakukan di bagian ini. Bagian kedua merupakan
 blok uji final, yaitu 20\% data akhir. Blok ini tidak dipakai untuk memilih
 apa pun dan baru dipakai setelah seluruh pilihan dikunci. Blok uji final
 hanya mencakup satu periode, sehingga hasilnya dapat dipengaruhi kondisi
