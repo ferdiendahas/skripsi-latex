@@ -143,7 +143,7 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
 
 Menit tanpa transaksi tetap muncul sebagai \textit{candle} dengan volume nol
 dan harga yang sama dengan harga penutupan menit sebelumnya. Pada data
-9 Oktober sampai 13 November 2026, \textit{candle} seperti itu mencakup 6,5\%
+10 Oktober sampai 12 November 2026, \textit{candle} seperti itu mencakup 6,6\%
 dari seluruh menit, dan tidak ada menit yang hilang. Karena itu, celah pada
 data berarti program \textit{collector} gagal mengambil data, bukan menit tanpa
 transaksi.
@@ -205,9 +205,9 @@ harga \textit{typical} pada kedua dataset, yaitu
   \item[$P^{C}_t$] harga penutupan pada bar ke-$t$.
 \end{keterangan}
 Harga penutupan pada data 1 menit dapat berpindah-pindah antara harga beli
-dan harga jual terbaik. Pada data \textit{snapshot} ticker 9 Oktober sampai
-13 November 2026, median selisih harga jual dan harga beli terbaik merupakan
-Rp396.000, atau sekitar 0,028\% dari harga. Sebanyak 29,5\% \textit{candle}
+dan harga jual terbaik. Pada data \textit{snapshot} ticker 10 Oktober sampai
+12 November 2026, median selisih harga jual dan harga beli terbaik merupakan
+Rp395.000, atau sekitar 0,028\% dari harga. Sebanyak 29,8\% \textit{candle}
 1 menit hanya memuat satu harga, yaitu \textit{high}, \textit{low}, dan
 \textit{close} bernilai sama. Proporsinya mencapai 69\% pada pukul 20.00 UTC
 dan sekitar 12\% pada pukul 14.00 UTC. Perpindahan harga tersebut membuat
@@ -742,13 +742,23 @@ terkoreksi Holm kurang dari 0,05. Bila uji \textit{loss} kuadrat memberi arah
 yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
 \textit{loss} absolut.
 
-Untuk rumusan masalah kedua, ramalan dengan strategi terpilih pada Tahap kedua
-juga dibandingkan dengan ramalan pengaturan \textit{default} pada blok uji
-final, untuk setiap model. Perbandingan tersebut memakai uji Diebold-Mariano
-\textit{loss} absolut yang sama, dengan ramalan \textit{default} sebagai
-pembanding. Keempat uji tersebut membentuk satu keluarga Holm tersendiri. Bila
-strategi terpilih merupakan \textit{default}, uji ini tidak dijalankan.
-Selisih antarstrategi lainnya dilaporkan secara deskriptif dari skor validasi.
+Selain terhadap Naive, pengaruh setiap perlakuan diuji dengan membandingkan
+dua ramalan dari model yang sama pada blok uji final. Perbandingan tersebut
+memakai uji Diebold-Mariano \textit{loss} absolut yang sama, dan konfigurasi
+dasarnya menjadi pembanding. Ada tiga perbandingan sebagai berikut.
+\begin{enumerate}
+  \item Strategi terpilih pada Tahap kedua dibandingkan dengan pengaturan
+    \textit{default} (4 uji). Bila strategi terpilih merupakan
+    \textit{default}, uji ini tidak dijalankan.
+  \item Data latih 75\% dan 50\% pada Tahap ketiga dibandingkan dengan data
+    latih 100\% (8 uji).
+  \item Setiap teknik pada Tahap keempat dibandingkan dengan konfigurasi yang
+    sama tanpa teknik tersebut (14 uji).
+\end{enumerate}
+Setiap perbandingan membentuk satu keluarga Holm tersendiri. Perbandingan ini
+tidak memerlukan \textit{run} tambahan, karena konfigurasi dasarnya sudah
+dijalankan pada Tahap kedua. Selisih antarstrategi lainnya dilaporkan secara
+deskriptif dari skor validasi.
 
 Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
 sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
@@ -834,12 +844,15 @@ pada Subbab~\ref{sec:rumusan}.
     \hline
     \textbf{Rumusan} & \textbf{Tahap} & \textbf{Keterangan} \\
     \hline
-    RM1 & Tahap pertama, ditambah Subbab~\ref{sec:fitur} sampai
+    RM1 & Tahap pertama dan ketiga, ditambah Subbab~\ref{sec:fitur} sampai
     Subbab~\ref{sec:model} &
-    Cara membangun keempat model pada berbagai \textit{time frame} \\
+    Cara membangun keempat model pada berbagai \textit{time frame}, termasuk
+    panjang data latih yang dipakai \\
     \hline
     RM2 & Tahap kedua dan Tahap keempat &
-    Pengaruh strategi \textit{tuning} dan teknik tambahan terhadap akurasi \\
+    Pengaruh strategi \textit{tuning} dan teknik tambahan terhadap akurasi,
+    diuji terhadap pengaturan \textit{default} dan terhadap konfigurasi tanpa
+    teknik tambahan \\
     \hline
     RM3 & Evaluasi pada blok uji final &
     Perbandingan performa keempat model terhadap Naive \\
