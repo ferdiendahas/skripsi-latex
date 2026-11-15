@@ -449,6 +449,13 @@ Carlo. Keterangan ``log'' berarti nilainya diambil pada skala logaritmik.
   \endgroup
 \end{table}
 
+Ruang pencarian XGBoost dan LightGBM sebagian besar sama, karena keduanya
+merupakan implementasi \textit{gradient boosting} berbasis pohon. Perbedaannya
+terletak pada dua parameter. LightGBM menambah \texttt{num\_leaves} karena
+pohonnya tumbuh secara \textit{leaf-wise}, dan memakai
+\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Ruang pencarian
+kedua model lainnya dirinci pada Tabel~\ref{tab:ruang2}.
+
 \begin{table}[htbp]
   \caption{Ruang Pencarian \textit{Hyperparameter} CatBoost dan AdaBoost}
   \label{tab:ruang2}
