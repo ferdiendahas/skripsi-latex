@@ -9,7 +9,7 @@
 > **Pembaruan 5 Nov 2026:** tambah bagian I (metrik evaluasi, I1–I6) dan J (teori Bab II, J1), semuanya dari PDF; tambahan isi E1 (overfitting, LAD → median, *relative importance*); judul F8 disesuaikan dengan Crossref.
 > **Versi 3.2 (10 Nov 2026):** D1 diisi dari PDF; tambah D5 `baur2021`, H2 `working1960`, H3 `indodaxapi`, I7 `pesaran1992`, J2 `hyndman2014fpp`, J3 `hastie2009`, J4 `lopezdeprado2018`; status klaim Bab II diperbarui. **Koreksi:** halaman Pesaran & Timmermann (1992) = 461–465 (sebelumnya salah ditulis 561–565).
 > **Versi 3.3 (13 Nov 2026):** baris relevansi G3, G5, D2, dan peran B3 disesuaikan dengan desain v4 (blok uji final tetap, Tahap 3 = panjang data latih, Holm per tahap). Isi paper tidak berubah. DOI H2 dan I7 ditambahkan dari `references.bib` (dicek agen ke Crossref 10 Nov 2026).
-> **Versi 3.4 (15 Nov 2026):** B5 diberi satuan MAPE (persen); E5 ditambah rumus bobot daun dan gain (bila terverifikasi); G3 dan H2 baris relevansi/catatan disesuaikan dengan desain dan data terbaru. Isi paper lain tidak berubah.
+> **Versi 3.4 (15 Nov 2026):** B5 diberi satuan MAPE (persen); E5 ditambah rumus bobot daun dan gain (terverifikasi, pers. 5 dan 7); G3 dan H2 baris relevansi/catatan disesuaikan dengan desain dan data terbaru. Isi paper lain tidak berubah.
 > **Tujuan:** acuan saat menulis narasi dan sitasi. Kutip hanya klaim yang tercatat di kartu, beserta lokasinya. Bila klaim tidak ada di kartu, anggap belum terverifikasi.
 > **Format:** review 11 poin. Poin 1–7 dan bagian "disebut paper" di poin 8 hanya berisi isi paper; yang tidak ada ditulis "tidak disebut" atau "tidak dicatat". Poin 9–11 dan usulan di poin 8 diberi label **[PR]** (penilaian reviewer).
 > **Lokasi:** "hlm." = nomor halaman cetak; "hlm. PDF" = urutan halaman berkas. Tiap kartu menyebut mana yang dipakai.
@@ -1158,7 +1158,7 @@
 9. **Kelebihan [PR]:** sederhana dan berlaku umum.
 10. **Kekurangan [PR]:** tidak memanfaatkan korelasi antaruji.
 11. **Kejanggalan [PR]:** tidak ditemukan.
-- **Boleh dikutip untuk:** prosedur Holm (urutkan nilai p, tolak berurutan dengan ambang α/(n − i + 1)); tingkat kesalahan berganda tetap α seperti Bonferroni dengan daya uji yang bisa lebih tinggi. **Jangan** klaim Holm memperhitungkan korelasi antaruji.
+- **Boleh dikutip untuk:** prosedur Holm (urutkan nilai p, tolak berurutan dengan ambang α/(n − i + 1)); tingkat kesalahan berganda tetap α seperti Bonferroni dengan daya uji yang bisa lebih tinggi. **Jangan** klaim Holm memperhitungkan korelasi antaruji. **Catatan notasi [PR]:** di skripsi, banyaknya uji (n di paper) ditulis J, karena n dipakai untuk banyaknya data uji. *(Ditambah 16 Nov 2026.)*
 
 ---
 

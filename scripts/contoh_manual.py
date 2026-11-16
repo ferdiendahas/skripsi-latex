@@ -573,7 +573,7 @@ Tabel~\ref{tab:man-dm} memuat hasil kedua model.
         simpul += (r" Status setiap model lalu ditentukan dari tanda MAE vs Naive dan "
                    r"statistik DM sesuai aturan pada Subbab~\ref{sec:evaluasi}.")
     T.append(r"""Koreksi Holm diterapkan pada kedua nilai $p$ dengan
-Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
+Persamaan~\eqref{eq:holm} dan $J = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
              + simpul + r""" Dengan hanya """ + str(len(uji)) + r""" data uji, hasil ini wajar dan
 tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.
 """)

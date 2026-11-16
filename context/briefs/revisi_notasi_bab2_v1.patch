@@ -1,0 +1,106 @@
+--- a/chapters/bab2-tinjauan-pustaka.tex	2026-11-16 00:05:53.263616362 +0700
++++ b/chapters/bab2-tinjauan-pustaka.tex	2026-11-16 21:09:47.155127828 +0700
+@@ -76,7 +76,7 @@
+     \hline
+     \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
+     XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah setelan bawaan) dan empat teknik &
+-    Ya & Diebold-Mariano dengan koreksi HLN \\
++    Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
+     \hline
+   \end{tabular}
+   \endgroup
+@@ -400,8 +400,6 @@
+   \label{eq:xgbgain}
+ \end{equation}
+ \cite{chen2016}.
+-% CEK: cocokkan dengan chen2016 bagian 2.2 (bobot daun dan gain), lalu
+-% tambahkan ke kartu E5.
+ \begin{keterangan}
+   \item[$w^{*}$] bobot optimal satu daun,
+   \item[$G$, $Q$] jumlah $g_i$ dan jumlah $q_i$ seluruh contoh di daun
+@@ -920,17 +918,19 @@
+ diuji terhadap Naive.
+ Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
+ karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
+-\cite{holm1979}. Nilai $p$ dari $q$ uji diurutkan dari yang terkecil,
+-$p_{(1)} \le p_{(2)} \le \dots \le p_{(q)}$. Hipotesis ke-$i$ ditolak bila
++\cite{holm1979}. Nilai $p$ dari $J$ uji diurutkan dari yang terkecil,
++$p_{(1)} \le p_{(2)} \le \dots \le p_{(J)}$. Hipotesis ke-$i$ ditolak bila
+ \begin{equation}
+-  p_{(i)} \le \frac{\alpha}{q - i + 1},
++  p_{(i)} \le \frac{\alpha}{J - i + 1},
+   \label{eq:holm}
+ \end{equation}
+ dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
+ ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
++Banyaknya uji ditulis $J$, karena $n$ sudah dipakai untuk banyaknya data uji
++dan $q_i$ untuk turunan kedua \textit{loss}.
+ \begin{keterangan}
+   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
+-  \item[$q$] banyaknya uji dalam satu keluarga,
++  \item[$J$] banyaknya uji dalam satu keluarga,
+   \item[$\alpha$] taraf signifikansi, yaitu 0,05.
+ \end{keterangan}
+ 
+@@ -996,7 +996,9 @@
+ hampir sama, validasi \textit{walk-forward} di dalam data latih, serta penanganan
+ kebocoran data. Hasilnya dinilai terhadap Naive dengan uji
+ Diebold-Mariano, sehingga perbedaan akurasi tidak hanya dibaca dari selisih
+-angka metrik.
++angka metrik. Uji yang sama juga dipakai untuk membandingkan antarkonfigurasi,
++misalnya hasil \textit{tuning} terhadap pengaturan \textit{default}, dengan
++koreksi Holm pada setiap keluarga uji.
+ 
+ Gambar~\ref{fig:kerangka} menyajikan kerangka pemikiran penelitian ini, mulai
+ dari masalah sampai keluaran yang diharapkan.
+--- a/chapters/bab3-contoh-perhitungan.tex	2026-11-13 11:39:51.637103967 +0700
++++ b/chapters/bab3-contoh-perhitungan.tex	2026-11-16 21:09:47.153479170 +0700
+@@ -411,5 +411,5 @@
+ \end{table}
+ 
+ Koreksi Holm diterapkan pada kedua nilai $p$ dengan
+-Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga pengujian berhenti pada hipotesis pertama. Hipotesis sesudahnya tidak ditolak tanpa diuji lagi. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
++Persamaan~\eqref{eq:holm} dan $J = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga pengujian berhenti pada hipotesis pertama. Hipotesis sesudahnya tidak ditolak tanpa diuji lagi. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
+ tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.
+--- a/frontmatter/daftar-notasi.tex	2026-11-13 10:36:51.708036188 +0700
++++ b/frontmatter/daftar-notasi.tex	2026-11-16 21:09:47.152900676 +0700
+@@ -56,7 +56,7 @@
+   $e_{1t}, e_{2t}$ & : & Galat ramalan pertama dan kedua \\
+   $H_0$ & : & Hipotesis nol \\
+   $h_b$ & : & \textit{Time frame} dalam satuan bar \\
+-  $q$ & : & Banyaknya uji dalam satu keluarga pada koreksi Holm \\
++  $J$ & : & Banyaknya uji dalam satu keluarga pada koreksi Holm \\
+   $\alpha$ & : & Taraf signifikansi, yaitu 0,05 \\
+   $P^{O}_t$ & : & Harga pembukaan pada bar ke-$t$ \\
+   $P^{H}_t$ & : & Harga tertinggi pada bar ke-$t$ \\
+--- a/scripts/contoh_manual.py	2026-11-16 00:05:53.267616362 +0700
++++ b/scripts/contoh_manual.py	2026-11-16 21:09:47.153375258 +0700
+@@ -573,7 +573,7 @@
+         simpul += (r" Status setiap model lalu ditentukan dari tanda MAE vs Naive dan "
+                    r"statistik DM sesuai aturan pada Subbab~\ref{sec:evaluasi}.")
+     T.append(r"""Koreksi Holm diterapkan pada kedua nilai $p$ dengan
+-Persamaan~\eqref{eq:holm} dan $q = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
++Persamaan~\eqref{eq:holm} dan $J = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
+              + simpul + r""" Dengan hanya """ + str(len(uji)) + r""" data uji, hasil ini wajar dan
+ tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.
+ """)
+--- a/context/kartu_paper_v3.4.md	2026-11-16 00:05:53.267616362 +0700
++++ b/context/kartu_paper_v3.4.md	2026-11-16 21:10:50.771585932 +0700
+@@ -9,7 +9,7 @@
+ > **Pembaruan 5 Nov 2026:** tambah bagian I (metrik evaluasi, I1–I6) dan J (teori Bab II, J1), semuanya dari PDF; tambahan isi E1 (overfitting, LAD → median, *relative importance*); judul F8 disesuaikan dengan Crossref.
+ > **Versi 3.2 (10 Nov 2026):** D1 diisi dari PDF; tambah D5 `baur2021`, H2 `working1960`, H3 `indodaxapi`, I7 `pesaran1992`, J2 `hyndman2014fpp`, J3 `hastie2009`, J4 `lopezdeprado2018`; status klaim Bab II diperbarui. **Koreksi:** halaman Pesaran & Timmermann (1992) = 461–465 (sebelumnya salah ditulis 561–565).
+ > **Versi 3.3 (13 Nov 2026):** baris relevansi G3, G5, D2, dan peran B3 disesuaikan dengan desain v4 (blok uji final tetap, Tahap 3 = panjang data latih, Holm per tahap). Isi paper tidak berubah. DOI H2 dan I7 ditambahkan dari `references.bib` (dicek agen ke Crossref 10 Nov 2026).
+-> **Versi 3.4 (15 Nov 2026):** B5 diberi satuan MAPE (persen); E5 ditambah rumus bobot daun dan gain (bila terverifikasi); G3 dan H2 baris relevansi/catatan disesuaikan dengan desain dan data terbaru. Isi paper lain tidak berubah.
++> **Versi 3.4 (15 Nov 2026):** B5 diberi satuan MAPE (persen); E5 ditambah rumus bobot daun dan gain (terverifikasi, pers. 5 dan 7); G3 dan H2 baris relevansi/catatan disesuaikan dengan desain dan data terbaru. Isi paper lain tidak berubah.
+ > **Tujuan:** acuan saat menulis narasi dan sitasi. Kutip hanya klaim yang tercatat di kartu, beserta lokasinya. Bila klaim tidak ada di kartu, anggap belum terverifikasi.
+ > **Format:** review 11 poin. Poin 1–7 dan bagian "disebut paper" di poin 8 hanya berisi isi paper; yang tidak ada ditulis "tidak disebut" atau "tidak dicatat". Poin 9–11 dan usulan di poin 8 diberi label **[PR]** (penilaian reviewer).
+ > **Lokasi:** "hlm." = nomor halaman cetak; "hlm. PDF" = urutan halaman berkas. Tiap kartu menyebut mana yang dipakai.
+@@ -1158,7 +1158,7 @@
+ 9. **Kelebihan [PR]:** sederhana dan berlaku umum.
+ 10. **Kekurangan [PR]:** tidak memanfaatkan korelasi antaruji.
+ 11. **Kejanggalan [PR]:** tidak ditemukan.
+-- **Boleh dikutip untuk:** prosedur Holm (urutkan nilai p, tolak berurutan dengan ambang α/(n − i + 1)); tingkat kesalahan berganda tetap α seperti Bonferroni dengan daya uji yang bisa lebih tinggi. **Jangan** klaim Holm memperhitungkan korelasi antaruji.
++- **Boleh dikutip untuk:** prosedur Holm (urutkan nilai p, tolak berurutan dengan ambang α/(n − i + 1)); tingkat kesalahan berganda tetap α seperti Bonferroni dengan daya uji yang bisa lebih tinggi. **Jangan** klaim Holm memperhitungkan korelasi antaruji. **Catatan notasi [PR]:** di skripsi, banyaknya uji (n di paper) ditulis J, karena n dipakai untuk banyaknya data uji. *(Ditambah 16 Nov 2026.)*
+ 
+ ---
+ 

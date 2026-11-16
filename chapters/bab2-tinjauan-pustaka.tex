@@ -76,7 +76,7 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
     \hline
     \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
     XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah setelan bawaan) dan empat teknik &
-    Ya & Diebold-Mariano dengan koreksi HLN \\
+    Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
     \hline
   \end{tabular}
   \endgroup
@@ -400,8 +400,6 @@ dan penurunan \textit{loss} dari satu pemecahan merupakan
   \label{eq:xgbgain}
 \end{equation}
 \cite{chen2016}.
-% CEK: cocokkan dengan chen2016 bagian 2.2 (bobot daun dan gain), lalu
-% tambahkan ke kartu E5.
 \begin{keterangan}
   \item[$w^{*}$] bobot optimal satu daun,
   \item[$G$, $Q$] jumlah $g_i$ dan jumlah $q_i$ seluruh contoh di daun
@@ -920,17 +918,19 @@ model, \textit{time frame}, strategi \textit{tuning}, dan panjang data latih
 diuji terhadap Naive.
 Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
 karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
-\cite{holm1979}. Nilai $p$ dari $q$ uji diurutkan dari yang terkecil,
-$p_{(1)} \le p_{(2)} \le \dots \le p_{(q)}$. Hipotesis ke-$i$ ditolak bila
+\cite{holm1979}. Nilai $p$ dari $J$ uji diurutkan dari yang terkecil,
+$p_{(1)} \le p_{(2)} \le \dots \le p_{(J)}$. Hipotesis ke-$i$ ditolak bila
 \begin{equation}
-  p_{(i)} \le \frac{\alpha}{q - i + 1},
+  p_{(i)} \le \frac{\alpha}{J - i + 1},
   \label{eq:holm}
 \end{equation}
 dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
 ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
+Banyaknya uji ditulis $J$, karena $n$ sudah dipakai untuk banyaknya data uji
+dan $q_i$ untuk turunan kedua \textit{loss}.
 \begin{keterangan}
   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
-  \item[$q$] banyaknya uji dalam satu keluarga,
+  \item[$J$] banyaknya uji dalam satu keluarga,
   \item[$\alpha$] taraf signifikansi, yaitu 0,05.
 \end{keterangan}
 
@@ -996,7 +996,9 @@ model dan metode optimasi secara setara, yaitu dengan jatah percobaan yang
 hampir sama, validasi \textit{walk-forward} di dalam data latih, serta penanganan
 kebocoran data. Hasilnya dinilai terhadap Naive dengan uji
 Diebold-Mariano, sehingga perbedaan akurasi tidak hanya dibaca dari selisih
-angka metrik.
+angka metrik. Uji yang sama juga dipakai untuk membandingkan antarkonfigurasi,
+misalnya hasil \textit{tuning} terhadap pengaturan \textit{default}, dengan
+koreksi Holm pada setiap keluarga uji.
 
 Gambar~\ref{fig:kerangka} menyajikan kerangka pemikiran penelitian ini, mulai
 dari masalah sampai keluaran yang diharapkan.
