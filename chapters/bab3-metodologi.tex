@@ -811,15 +811,18 @@ pada tugas yang sulit memberi hasil lebih baik daripada Random Search
 dilakukan pada Tahap kedua. Karena pasangan pada Tahap pertama dipilih dari
 hasil TPE, TPE dapat lebih diuntungkan pada Tahap kedua. Hal ini dicatat
 sebagai keterbatasan ketika hasil dibahas.
-Skor setiap pasangan merupakan rata-rata MAE validasi vs Naive keempat model,
-sama seperti aturan pada Tahap kedua. Pasangan dengan skor terkecil dipilih.
+Skor setiap pasangan merupakan median MAE validasi vs Naive keempat model,
+yaitu rata-rata dua nilai tengah setelah keempat nilai diurutkan. Median
+dipakai agar pilihan tidak ditentukan oleh satu model yang hasilnya jauh
+berbeda dari tiga model lainnya. Aturan yang sama dipakai pada Tahap kedua.
+Pasangan dengan skor terkecil dipilih.
 Bila hasilnya seri, dipilih
 \textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
 
 Tahap kedua mencari strategi \textit{tuning}. Dataset dan \textit{time frame}
 yang dipakai merupakan hasil Tahap pertama. Kombinasinya merupakan
 7 strategi dikali 4 model. Strategi yang dipilih merupakan strategi dengan
-rata-rata MAE validasi vs Naive keempat model terkecil. Pengaturan
+median MAE validasi vs Naive keempat model terkecil. Pengaturan
 \textit{default} juga boleh terpilih, sehingga kesimpulan bahwa
 \textit{tuning} tidak memperbaiki atau justru memperburuk performa tetap
 dimungkinkan. Selisih setiap strategi terhadap \textit{default} dilaporkan

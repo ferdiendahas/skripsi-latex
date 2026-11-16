@@ -26,7 +26,7 @@ Topik sudah ditetapkan setelah bimbingan 23 Oktober 2026.
 - **Pembagian data:** periode pengembangan ±80% data awal + blok uji final 20% data akhir, berurutan waktu, dengan *purging* berbasis waktu. Tahap 3 memvariasikan **panjang data latih** (100%, 75%, 50% periode pengembangan), bukan memindah blok uji.
 - **Optimasi:** 7 strategi *tuning* — *default*, Grid (27 kombinasi), Random, TPE, CMA-ES, GA (NSGA-II), QMC (masing-masing 30 *trial*) — ditambah 4 teknik tambahan (*early stopping*, top-15 fitur, *loss* L1, *pruner* median).
 - **Validasi dan evaluasi:** *walk-forward* 5 *fold* di periode pengembangan dengan *purging* berbasis waktu; objektif *tuning* = MAE harga (rupiah). Metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN dan koreksi Holm per keluarga uji.
-- **Aturan pemilihan:** Tahap 1 dan 2 memilih dari rata-rata MAE validasi vs Naive keempat model, hanya memakai skor validasi di periode pengembangan. Blok uji final baru dibuka setelah pilihan dikunci.
+- **Aturan pemilihan:** Tahap 1 dan 2 memilih dari median MAE validasi vs Naive keempat model (rata-rata dua nilai tengah), hanya memakai skor validasi di periode pengembangan. Blok uji final baru dibuka setelah pilihan dikunci.
 - **Prinsip dari dosen:** eksperimen harus banyak dan bervariasi.
 - **Sudut pandang pengguna:** trader jangka pendek, khususnya scalper.
 

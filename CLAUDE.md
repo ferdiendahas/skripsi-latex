@@ -62,5 +62,5 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
   - optimasi: default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 *trial*); teknik tambahan *early stopping*, top-15 fitur, *loss* L1, *pruner* median;
   - periode pengembangan ±80% + blok uji final 20% (*purging* berbasis waktu); validasi *walk-forward* 5 fold dengan *purging* berbasis waktu; Tahap 3 = panjang data latih 100/75/50%;
   - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda;
-  - Tahap 1 dan 2 memilih dari rata-rata MAE validasi vs Naive 4 model; RM2 diuji dengan DM strategi terpilih vs default (keluarga Holm sendiri).
+  - Tahap 1 dan 2 memilih dari median MAE validasi vs Naive 4 model (rata-rata dua nilai tengah); RM2 diuji dengan DM strategi terpilih vs default (keluarga Holm sendiri).
 - **Menunggu keputusan dosen:** tanggal pasti periode data, ada/tidaknya aplikasi web, dan aturan menentukan "model terbaik" (dikunci sebelum eksperimen final).

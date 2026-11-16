@@ -7,7 +7,7 @@
 > - Kode direvisi menjadi **v4** sesuai review dosen 11 Nov 2026 (K1–K10). Repo `ferdiendahas/prediksi_btc`, branch `main` = `revisi-dosen-v4` = commit `ed8b735`. Uji cepat lolos; v4 **belum** dipakai untuk eksperimen penuh. SHA-256 di Lampiran B dicocokkan ulang dengan repo pada 13 Nov 2026 (semua sama).
 > - Eksperimen final dijalankan **Februari 2027** dengan kode v4 dan data Okt 2026 – Feb 2027.
 >
-> **Perubahan v3.4 (16 Nov 2026):** aturan Tahap 1 menjadi rata-rata `cv_vs_naive_pct` 4 model; uji berpasangan RM2 (tiga keluarga Holm) ditambahkan; Tahap 4 dicatat 14 uji; aturan duplikat Holm ditandai **selesai**; aturan bar bervolume nol ($P_t = P_{t-1}$) ditambahkan; Lampiran B diperbarui untuk `config.py`, `run.py`, `ringkas.py`, dan `btcpred/data.py` beserta SHA-256 barunya. Angka hasil uji coba P1/P2 **tidak** berubah. **Menggantikan:** `hasil_eksperimen_v3.3.md` (arsip).
+> **Perubahan v3.4 (16 Nov 2026):** skor Tahap 1 dan Tahap 2 menjadi median `cv_vs_naive_pct` 4 model (rata-rata dua nilai tengah); uji berpasangan RM2 (tiga keluarga Holm) ditambahkan; Tahap 4 dicatat 14 uji; aturan duplikat Holm ditandai **selesai**; aturan bar bervolume nol ($P_t = P_{t-1}$) ditambahkan; Lampiran B diperbarui untuk `config.py`, `run.py`, `ringkas.py`, dan `btcpred/data.py` beserta SHA-256 barunya. Angka hasil uji coba P1/P2 **tidak** berubah. **Menggantikan:** `hasil_eksperimen_v3.3.md` (arsip).
 >
 > **Perubahan v3.3 (13 Nov 2026):** daftar run yang lolos Holm sebagai lebih buruk diperjelas (Bagian 4.3); dasar angka spread diberi keterangan (Bagian 4.5); rekomendasi aturan duplikat Holm (Bagian 7 poin 8); catatan keterbatasan blok uji tunggal (Bagian 5 poin 11). Angka dan kode tidak berubah.
 >
@@ -70,8 +70,8 @@ Bagian ini sudah sejalan dengan Bab III di repo `skripsi-latex`. Aturan duplikat
 | Objektif tuning | **MAE harga (rupiah)** rata-rata fold; skor Naive di fold yang sama dicatat → `cv_vs_naive_pct` | P1/P2: MAE return |
 | Optimasi | default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 trial); seed 42 | sama |
 | Teknik tambahan | early stopping (maks 2.000 pohon, sabar 50), top-15 fitur **di dalam fold**, loss L1, pruner median. AdaBoost + early stop/L1 = `tidak_berlaku` | P1/P2: top-15 di luar fold; AdaBoost tetap dijalankan |
-| Tahap 1 | Pilih (dataset, h) dengan **rata-rata** `cv_vs_naive_pct` 4 model terkecil (aturan sama seperti Tahap 2); pasangan yang belum lengkap 4 model dibuang; seri → h lebih pendek → candle_1m. **Tanpa syarat signifikansi** *(diubah 16 Nov 2026; sebelumnya nilai terkecil di antara 4 model)* | P1/P2: dari data uji, diutamakan yang signifikan |
-| Tahap 2 | Pilih strategi dengan rata-rata `cv_vs_naive_pct` 4 model terkecil; **default boleh terpilih**; seri → waktu tuning terpendek | P1/P2: dari data uji; default dilarang |
+| Tahap 1 | Pilih (dataset, h) dengan **median** `cv_vs_naive_pct` 4 model (rata-rata dua nilai tengah) terkecil (aturan sama seperti Tahap 2); pasangan yang belum lengkap 4 model dibuang; seri → h lebih pendek → candle_1m. **Tanpa syarat signifikansi** *(diubah 16 Nov 2026: nilai terkecil → rata-rata → median)* | P1/P2: dari data uji, diutamakan yang signifikan |
+| Tahap 2 | Pilih strategi dengan **median** `cv_vs_naive_pct` 4 model terkecil; strategi yang belum lengkap 4 model dibuang; **default boleh terpilih**; seri → waktu tuning terpendek | P1/P2: dari data uji; default dilarang |
 | Tahap 3 | Panjang data latih 100% / 75% / 50% (bagian akhir data pengembangan); blok uji tetap. Tanpa pemilihan | P1/P2: rasio split (blok uji ikut berubah) |
 | Tahap 4 | 4 teknik tambahan. Tanpa pemilihan. 14 run dijalankan (4 teknik x 4 model - 2 kombinasi AdaBoost `tidak_berlaku`), jadi keluarga uji berpasangannya berisi **14 uji** | sama |
 | Penguncian | `ringkas.py --tahap 2` menulis `keputusan_terkunci.json` (pilihan + hash). Blok uji baru dibuka lewat `ringkas.py --uji-final` | P1/P2: `KEPUTUSAN_TERKUNCI.md` manual |
@@ -354,13 +354,13 @@ Ruang pencarian, seed, jumlah trial, fold, model, dan fitur tidak berubah.
 
 ---
 
-## Lampiran B — Source code final v4 (`prediksi_btc`, branch `revisi-audit`, basis commit `5ef6b73`)
+## Lampiran B — Source code final v4 (`prediksi_btc`, branch `revisi-audit`, commit `be09d52`)
 
-SHA-256 (dihitung ulang 16 Nov 2026 dari branch `revisi-audit`):
+SHA-256 (dihitung ulang 17 Nov 2026 dari commit `be09d52`):
 ```text
 91d304cf7607550ff9c7d1b3801739e36f21779bb73748bff001ae0a42fe742a  config.py
 a348731469a11a274bbc8df949bd53772f1eb6a6e0f5c3c2cb3af5a500e231a7  run.py
-469fd56c2632a921e0031db5e2f86169c6e5c7805adfaf9a7a090f4c92ba3d1a  ringkas.py
+9bd16f9ff375f199ef119a633ec0f03e521a6dbcc7792075d8925552b6074071  ringkas.py
 d3eb736e266e52cdf4b593595e850ae2cab7ad1a60aa3a6b9e7256be3a774b3a  requirements.txt
 105a9024e4d43e9e719f0bbcf0e0994731bd390af893f1430bae2a8aa5cd4dce  btcpred/data.py
 d9602204d678acebe7cff0e2e6468e5a85bd10a60e6f997708b2ba80b937a192  btcpred/models.py
@@ -894,7 +894,8 @@ def pilih_tahap1(v, tag):
               kurang.to_string())
     pv = t.pivot_table(index=["dataset", "horizon_menit"], columns="model",
                        values="cv_vs_naive_pct", aggfunc="mean")
-    s = t.groupby(["dataset", "horizon_menit"]).cv_vs_naive_pct.mean().rename("skor").reset_index()
+    # Skor = median 4 model (rata-rata dua nilai tengah), Bab III Skenario Pengujian.
+    s = t.groupby(["dataset", "horizon_menit"]).cv_vs_naive_pct.median().rename("skor").reset_index()
     s["n_model"] = s.set_index(["dataset", "horizon_menit"]).index.map(n_model)
     s = s[s.n_model == 4].drop(columns="n_model")
     if s.empty:
@@ -903,7 +904,7 @@ def pilih_tahap1(v, tag):
     s = s.sort_values(["skor", "horizon_menit", "urut_ds"]).drop(columns="urut_ds")
     print(f"\n=== Tahap 1 (validasi, tag={tag}): cv_vs_naive_pct per model ===")
     print(pv.round(3).to_string())
-    print("\nSkor pasangan = rata-rata cv_vs_naive_pct 4 model:")
+    print("\nSkor pasangan = median cv_vs_naive_pct 4 model:")
     print(s.round(3).to_string(index=False))
     best = s.iloc[0]
     print(f"\n-> Terpilih: dataset={best.dataset}, horizon={int(best.horizon_menit)} menit "
@@ -920,24 +921,31 @@ def pilih_tahap2(v, tag):
         raise SystemExit(f"Tidak ada baris validasi dengan tag '{tag}'.")
     pv = t.pivot_table(index="optimasi", columns="model", values="cv_vs_naive_pct", aggfunc="mean")
     n_model = t.groupby("optimasi").model.nunique()
-    r = t.groupby("optimasi").agg(rata2=("cv_vs_naive_pct", "mean"),
+    # Skor = median 4 model (rata-rata dua nilai tengah), sama dengan Tahap 1.
+    r = t.groupby("optimasi").agg(skor=("cv_vs_naive_pct", "median"),
+                                  rata2=("cv_vs_naive_pct", "mean"),
                                   detik_tuning=("detik_tuning", "sum")).reset_index()
     r["n_model"] = r.optimasi.map(n_model)
-    r = r.sort_values(["rata2", "detik_tuning"])
+    kurang = r[r.n_model < 4]
+    if len(kurang):
+        print("PERINGATAN: strategi berikut belum lengkap 4 model dan tidak ikut dipilih:\n",
+              kurang.optimasi.to_string(index=False))
+    r = r[r.n_model == 4]
+    if r.empty:
+        raise SystemExit("Tidak ada strategi yang lengkap 4 model.")
+    r = r.sort_values(["skor", "detik_tuning"])
     print(f"\n=== Tahap 2 (validasi, tag={tag}): cv_vs_naive_pct per model ===")
     print(pv.round(3).to_string())
-    print("\nRata-rata 4 model (seri -> waktu tuning terpendek):")
+    print("\nSkor = median 4 model; rata2 hanya informasi (seri -> waktu tuning terpendek):")
     print(r.round(3).to_string(index=False))
     if "default" in pv.index:
         print("\nSelisih tiap strategi terhadap 'default' per model (poin persen; negatif = lebih baik):")
         print((pv - pv.loc["default"]).round(3).to_string())
-    if (r.n_model < 4).any():
-        print("PERINGATAN: ada strategi yang belum lengkap 4 model.")
     best = r.iloc[0]
-    print(f"\n-> Terpilih: optimasi={best.optimasi} (rata-rata {best.rata2:+.3f}%)")
+    print(f"\n-> Terpilih: optimasi={best.optimasi} (median {best.skor:+.3f}%)")
     (OUT / "ringkasan").mkdir(exist_ok=True)
     r.to_csv(OUT / "ringkasan" / "tahap2_validasi.csv", index=False)
-    return dict(optimasi=best.optimasi, rata2_cv_vs_naive_pct=float(best.rata2)), t
+    return dict(optimasi=best.optimasi, skor_cv_vs_naive_pct=float(best.skor)), t
 
 
 def kunci(v, tag1, tag2, paksa):
