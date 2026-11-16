@@ -631,7 +631,7 @@
     - Sebelum COVID: koefisien LIQ +0,476 (q0,1), +0,271 (q0,5), **−0,849** (q0,9).
     - Sesudah COVID: koefisien LIQ +3,197, +3,272, +2,822.
     - Arahnya berbalik pada kuantil 0,9 sebelum COVID, dan besarannya naik tajam sesudah COVID.
-- **Boleh dikutip untuk:** efisiensi Bitcoin berubah-waktu; likuiditas, stres keuangan, dan COVID memengaruhi efisiensi. Hati-hati: arah efek likuiditas tidak lazim (menaikkan inefisiensi) dan *dummy* COVID ikut mencakup 2022.
+- **Boleh dikutip untuk:** *return* kripto berekor tebal sehingga asumsi normalitas tidak sesuai (hlm. 21; dinyatakan paper saat membahas keterbatasan AMIM) *(ditambah 16 Nov 2026)*; efisiensi Bitcoin berubah-waktu; likuiditas, stres keuangan, dan COVID memengaruhi efisiensi. Hati-hati: arah efek likuiditas tidak lazim (menaikkan inefisiensi) dan *dummy* COVID ikut mencakup 2022.
 
 ---
 

@@ -63,7 +63,7 @@ metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
 isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
 celah penelitian pada Tabel~\ref{tab:gap} dibatasi lima tahun terakhir, yaitu
 terbit tahun 2022 sampai 2026. Paper pendukung dan paper sumber metode boleh
-berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
+berasal dari tahun berapa pun. Metadata setiap referensi dicocokkan dengan Crossref atau doi.org untuk
 memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
 mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
 penelitian pada Subbab~\ref{sec:gap}.
@@ -465,7 +465,12 @@ Ruang pencarian XGBoost dan LightGBM sebagian besar sama, karena keduanya
 merupakan implementasi \textit{gradient boosting} berbasis pohon. Perbedaannya
 terletak pada dua parameter. LightGBM menambah \texttt{num\_leaves} karena
 pohonnya tumbuh secara \textit{leaf-wise}, dan memakai
-\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Ruang pencarian
+\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Karena
+\texttt{max\_depth} juga dicari, sebagian kombinasi dapat memiliki
+\texttt{num\_leaves} lebih besar daripada $2^{\texttt{max\_depth}}$. Pada
+kombinasi seperti itu, jumlah daun yang benar-benar terbentuk tetap dibatasi
+oleh kedalaman pohon, sehingga \texttt{num\_leaves} yang berlebih tidak
+berpengaruh. Ruang pencarian
 kedua model lainnya dirinci pada Tabel~\ref{tab:ruang2}.
 
 \begin{table}[htbp]
@@ -666,7 +671,10 @@ LightGBM, dan CatBoost. Jumlah pohon maksimum ditetapkan 2.000, dan pelatihan
 dihentikan bila tidak ada perbaikan selama 50 iterasi berturut-turut pada
 blok validasi di setiap \textit{fold}. Jumlah pohon pada model akhir
 ditetapkan sebagai rata-rata jumlah pohon terbaik dari kelima \textit{fold}.
-Teknik ini tidak berlaku untuk AdaBoost.
+Teknik ini tidak berlaku untuk AdaBoost. Karena blok validasi yang sama dipakai
+untuk menghentikan pelatihan dan untuk memberi skor, skor validasi teknik ini
+cenderung sedikit lebih baik daripada sebenarnya. Karena itu, perbandingan
+teknik ini memakai blok uji final, bukan skor validasi.
 
 Teknik kedua merupakan seleksi 15 fitur teratas. Di setiap \textit{fold},
 model dengan pengaturan \textit{default} dilatih pada bagian latih

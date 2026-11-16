@@ -1,0 +1,99 @@
+--- a/chapters/bab1-pendahuluan.tex	2026-11-16 00:05:53.263616362 +0700
++++ b/chapters/bab1-pendahuluan.tex	2026-11-16 21:29:26.401500198 +0700
+@@ -1,6 +1,6 @@
+ \chapter{Pendahuluan}
+ % Bab I v3.0 -- prediksi harga BTC/IDR dengan model boosting.
+-% Sumber klaim: context/kartu_paper_v3.1.md (kode kartu di komentar).
++% Sumber klaim: context/kartu_paper_v3.4.md (kode kartu di komentar).
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab1-pendahuluan.tex.
+ 
+ \section{Latar Belakang}
+@@ -19,8 +19,8 @@
+ % CEK: kalimat umum, tanpa sumber
+ Namun, harga Bitcoin sangat mudah berubah. Volatilitasnya hampir 10 kali
+ lebih tinggi daripada volatilitas kurs mata uang utama \cite{baur2021}.
+-Perubahan harga mata uang kripto juga tidak mengikuti pola distribusi normal
+-\cite{mokni2024}. Artinya, kenaikan atau penurunan harga yang besar lebih
++\textit{Return} mata uang kripto juga berekor tebal, sehingga tidak sesuai
++dengan asumsi distribusi normal \cite{mokni2024}. Artinya, kenaikan atau penurunan harga yang besar lebih
+ sering terjadi daripada yang biasanya diperkirakan.
+ 
+ % P2 -- [kartu C1, C6]
+@@ -71,8 +71,8 @@
+ sehingga masih perlu diuji.
+ 
+ % P5 -- [kartu B3, B2, A1]
+-Celah penelitian muncul dari dua hal. Pertama, penelitian \textit{intraday}
+-Bitcoin yang terbaru masih memprediksi arah pergerakan harga, bukan nilai
++Celah penelitian muncul dari dua hal. Pertama, sebagian penelitian
++\textit{intraday} Bitcoin masih memprediksi arah pergerakan harga, bukan nilai
+ harganya \cite{akyildirim2023}. Hasil seperti itu belum menjawab berapa
+ harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
+ harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
+--- a/chapters/bab2-tinjauan-pustaka.tex	2026-11-16 21:28:10.237360785 +0700
++++ b/chapters/bab2-tinjauan-pustaka.tex	2026-11-16 21:29:26.401636734 +0700
+@@ -1,6 +1,6 @@
+ \chapter{Tinjauan Pustaka}
+ % Bab II v3.0 -- prediksi harga BTC/IDR dengan model boosting.
+-% Sumber klaim: context/kartu_paper_v3.1.md (kode kartu ditulis di komentar).
++% Sumber klaim: context/kartu_paper_v3.4.md (kode kartu ditulis di komentar).
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab2-tinjauan-pustaka.tex.
+ 
+ % Daftar keterangan simbol yang dipasang tepat di bawah setiap persamaan.
+@@ -71,7 +71,7 @@
+     Ya & Tidak jelas \\
+     \hline
+     Oprea \& B\^{a}ra \cite{oprea2026} & Harian & Harga &
+-    XGBoost (\textit{meta-learner}) & Tidak dicatat & Tidak dicatat &
++    XGBoost (\textit{meta-learner}) & Tidak dicatat & Tidak &
+     Diebold-Mariano \\
+     \hline
+     \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
+--- a/chapters/bab3-metodologi.tex	2026-11-16 00:05:53.263616362 +0700
++++ b/chapters/bab3-metodologi.tex	2026-11-16 21:29:26.401376741 +0700
+@@ -63,7 +63,7 @@
+ isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
+ celah penelitian pada Tabel~\ref{tab:gap} dibatasi lima tahun terakhir, yaitu
+ terbit tahun 2022 sampai 2026. Paper pendukung dan paper sumber metode boleh
+-berasal dari tahun berapa pun. Setiap DOI dibuka di doi.org untuk
++berasal dari tahun berapa pun. Metadata setiap referensi dicocokkan dengan Crossref atau doi.org untuk
+ memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
+ mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
+ penelitian pada Subbab~\ref{sec:gap}.
+@@ -465,7 +465,12 @@
+ merupakan implementasi \textit{gradient boosting} berbasis pohon. Perbedaannya
+ terletak pada dua parameter. LightGBM menambah \texttt{num\_leaves} karena
+ pohonnya tumbuh secara \textit{leaf-wise}, dan memakai
+-\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Ruang pencarian
++\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Karena
++\texttt{max\_depth} juga dicari, sebagian kombinasi dapat memiliki
++\texttt{num\_leaves} lebih besar daripada $2^{\texttt{max\_depth}}$. Pada
++kombinasi seperti itu, jumlah daun yang benar-benar terbentuk tetap dibatasi
++oleh kedalaman pohon, sehingga \texttt{num\_leaves} yang berlebih tidak
++berpengaruh. Ruang pencarian
+ kedua model lainnya dirinci pada Tabel~\ref{tab:ruang2}.
+ 
+ \begin{table}[htbp]
+@@ -666,7 +671,10 @@
+ dihentikan bila tidak ada perbaikan selama 50 iterasi berturut-turut pada
+ blok validasi di setiap \textit{fold}. Jumlah pohon pada model akhir
+ ditetapkan sebagai rata-rata jumlah pohon terbaik dari kelima \textit{fold}.
+-Teknik ini tidak berlaku untuk AdaBoost.
++Teknik ini tidak berlaku untuk AdaBoost. Karena blok validasi yang sama dipakai
++untuk menghentikan pelatihan dan untuk memberi skor, skor validasi teknik ini
++cenderung sedikit lebih baik daripada sebenarnya. Karena itu, perbandingan
++teknik ini memakai blok uji final, bukan skor validasi.
+ 
+ Teknik kedua merupakan seleksi 15 fitur teratas. Di setiap \textit{fold},
+ model dengan pengaturan \textit{default} dilatih pada bagian latih
+--- a/context/kartu_paper_v3.4.md	2026-11-16 21:28:10.237360785 +0700
++++ b/context/kartu_paper_v3.4.md	2026-11-16 21:29:26.400700116 +0700
+@@ -631,7 +631,7 @@
+     - Sebelum COVID: koefisien LIQ +0,476 (q0,1), +0,271 (q0,5), **−0,849** (q0,9).
+     - Sesudah COVID: koefisien LIQ +3,197, +3,272, +2,822.
+     - Arahnya berbalik pada kuantil 0,9 sebelum COVID, dan besarannya naik tajam sesudah COVID.
+-- **Boleh dikutip untuk:** efisiensi Bitcoin berubah-waktu; likuiditas, stres keuangan, dan COVID memengaruhi efisiensi. Hati-hati: arah efek likuiditas tidak lazim (menaikkan inefisiensi) dan *dummy* COVID ikut mencakup 2022.
++- **Boleh dikutip untuk:** *return* kripto berekor tebal sehingga asumsi normalitas tidak sesuai (hlm. 21; dinyatakan paper saat membahas keterbatasan AMIM) *(ditambah 16 Nov 2026)*; efisiensi Bitcoin berubah-waktu; likuiditas, stres keuangan, dan COVID memengaruhi efisiensi. Hati-hati: arah efek likuiditas tidak lazim (menaikkan inefisiensi) dan *dummy* COVID ikut mencakup 2022.
+ 
+ ---
+ 
