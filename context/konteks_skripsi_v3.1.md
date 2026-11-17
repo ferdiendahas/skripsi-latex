@@ -76,7 +76,7 @@ Folder kode lama `/Users/ea/Documents/Skripsi BTC/skripsi_rv` berisi pipeline re
 5. Menyusun ulang praskripsi Bab 1–3. Sebagian besar isi lama diganti karena penelitian kini lebih sederhana.
 6. Menetapkan judul final bersama dosen.
 7. Menetapkan tanggal pasti periode data dan ada/tidaknya aplikasi web.
-8. Memutuskan skor Tahap 1–2: rata-rata atau median 4 model (audit 3.1, menunggu keputusan).
+8. ~~Memutuskan skor Tahap 1–2: rata-rata atau median 4 model~~ — selesai 16 Nov 2026: **median** (Bab III Skenario Pengujian; `ringkas.py` commit `be09d52`).
 
 ## 6. Kewajiban log harian
 

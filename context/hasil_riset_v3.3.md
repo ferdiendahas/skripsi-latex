@@ -267,8 +267,8 @@ Rincian lengkap dan kode: `hasil_eksperimen_v3.4.md` Bagian 3 dan Lampiran B. Ba
 | Objektif tuning | MAE rupiah rata-rata fold; skor Naive di fold yang sama | Selaras metrik utama (I3) |
 | Optimasi | Default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 trial), seed 42 | F1–F10; dosen: "optimasi sebanyak mungkin" |
 | Teknik tambahan | Early stopping (≤2.000 pohon, sabar 50), top-15 fitur di dalam fold, loss L1, pruner median; AdaBoost + early stop/L1 tidak berlaku | J1, J3, E1, F7 |
-| Tahap 1 | Pilih (dataset, *time frame*) dari skor validasi vs Naive | — |
-| Tahap 2 | Pilih strategi tuning dari rata-rata skor validasi 4 model; default boleh terpilih | — |
+| Tahap 1 | Pilih (dataset, *time frame*) dengan median skor validasi vs Naive 4 model (rata-rata dua nilai tengah); pasangan yang belum lengkap 4 model dibuang | — |
+| Tahap 2 | Pilih strategi tuning dengan median skor validasi 4 model; strategi yang belum lengkap 4 model dibuang; default boleh terpilih *(diubah 17 Nov 2026: rata-rata → median)* | — |
 | Tahap 3 | Panjang data latih 100/75/50% (bagian akhir), blok uji tetap; tanpa pemilihan | Review dosen |
 | Tahap 4 | 4 teknik tambahan; tanpa pemilihan | — |
 | Penguncian | Pilihan Tahap 1–2 dikunci (file + hash) sebelum blok uji dibuka | Anti-HARKing |

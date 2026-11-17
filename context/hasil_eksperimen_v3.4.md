@@ -4,7 +4,7 @@
 >
 > **Status per 13 November 2026:**
 > - P1 (14–20 Okt 2026, 92 run) dan P2 (10 Okt – 10 Nov 2026, 120 run) **selesai**. Keduanya **uji coba**, bukan hasil skripsi.
-> - Kode direvisi menjadi **v4** sesuai review dosen 11 Nov 2026 (K1–K10). Repo `ferdiendahas/prediksi_btc`, branch `main` = `revisi-dosen-v4` = commit `ed8b735`. Uji cepat lolos; v4 **belum** dipakai untuk eksperimen penuh. SHA-256 di Lampiran B dicocokkan ulang dengan repo pada 13 Nov 2026 (semua sama).
+> - Kode direvisi menjadi **v4** sesuai review dosen 11 Nov 2026 (K1–K10). Repo `ferdiendahas/prediksi_btc`, branch `main` = commit `8524462` (merge `revisi-audit`, 17 Nov 2026). `revisi-dosen-v4` (`ed8b735`) = versi v4 awal, 12 Nov. Uji cepat lolos; v4 **belum** dipakai untuk eksperimen penuh. SHA-256 di Lampiran B dicocokkan ulang dengan `main` pada 17 Nov 2026 (semua sama).
 > - Eksperimen final dijalankan **Februari 2027** dengan kode v4 dan data Okt 2026 – Feb 2027.
 >
 > **Perubahan v3.4 (16 Nov 2026):** skor Tahap 1 dan Tahap 2 menjadi median `cv_vs_naive_pct` 4 model (rata-rata dua nilai tengah); uji berpasangan RM2 (tiga keluarga Holm) ditambahkan; Tahap 4 dicatat 14 uji; aturan duplikat Holm ditandai **selesai**; aturan bar bervolume nol ($P_t = P_{t-1}$) ditambahkan; Lampiran B diperbarui untuk `config.py`, `run.py`, `ringkas.py`, dan `btcpred/data.py` beserta SHA-256 barunya. Angka hasil uji coba P1/P2 **tidak** berubah. **Menggantikan:** `hasil_eksperimen_v3.3.md` (arsip).
@@ -47,6 +47,7 @@
 | 11 Nov | Review dosen → brief kode K1–K12 | — |
 | 12 Nov | **Kode v4** (commit `ed8b735`), uji cepat lolos, `main` disamakan dengan `revisi-dosen-v4` | Siap untuk eksperimen final |
 | 13 Nov | Holm per tahap dihitung ulang untuk P1/P2 (analisis tambahan, tidak mengubah pilihan) | 0 run lolos Holm sebagai lebih baik |
+| 17 Nov | `revisi-audit` di-merge ke `main` (`8524462`): aturan volume nol, resep *close*, `qmc`, median Tahap 1–2 | — |
 | Feb 2027 | Eksperimen final dengan kode v4 | ⏳ |
 
 ---
@@ -281,7 +282,7 @@ Keunggulan run P1 ±Rp2.500 per prediksi (0,723% × MAE Naive candle_1m h1 Rp349
 
 ## 7. Catatan untuk eksperimen final (Februari 2027)
 
-1. **Pull kode terbaru** (`main` = `ed8b735`) dan `pip install -r requirements.txt` (tambahan `statsmodels`).
+1. **Pull kode terbaru** (`main` = `8524462` atau sesudahnya) dan `pip install -r requirements.txt` (tambahan `statsmodels`).
 2. **Ekspor CSV candle 1 menit terbaru** dari VPS (`indodax ekspor`) dan arahkan `CANDLE_1M` di `config.py` ke file itu. Ticker tidak perlu.
 3. **Atur periode** `START_UTC`/`END_UTC` di `config.py` (saat ini masih 14–20 Okt 2026) atau beri `--start`/`--end` di setiap perintah. Periode harus sama di semua tahap.
 4. **Pakai folder `hasil/` baru.** Jangan campur dengan hasil P1/P2 (format kolomnya berbeda).
@@ -307,7 +308,7 @@ Tahap 3 tidak dipetakan ke RM tertentu; dipakai untuk melihat ketahanan hasil te
 
 ## 9. Lingkungan dan cara menjalankan (v4)
 
-- Repo: `https://github.com/ferdiendahas/prediksi_btc` (public), branch `main`, commit `ed8b735`. Folder Mac: `/Users/ea/Documents/Prediksi BTC SKRIPSI/prediksi_btc`.
+- Repo: `https://github.com/ferdiendahas/prediksi_btc` (public), branch `main`, commit `8524462`. Folder Mac: `/Users/ea/Documents/Prediksi BTC SKRIPSI/prediksi_btc`.
 - Python 3.14.8 (venv). Paket: pandas 3.1, numpy 2.5, scipy 1.18.1, scikit-learn 1.9, xgboost 3.4, lightgbm 4.7, catboost 1.2.10, optuna 5.0, cmaes 0.13, statsmodels (baru). `hasil/lingkungan.txt` dibuat otomatis.
 - Perangkat: Apple M5, 10 core, 16 GB, macOS 26.2.
 
@@ -354,13 +355,13 @@ Ruang pencarian, seed, jumlah trial, fold, model, dan fitur tidak berubah.
 
 ---
 
-## Lampiran B — Source code final v4 (`prediksi_btc`, branch `revisi-audit`, commit `be09d52`)
+## Lampiran B — Source code final v4 (`prediksi_btc`, branch `main`, commit `8524462`)
 
-SHA-256 (dihitung ulang 17 Nov 2026 dari commit `be09d52`):
+SHA-256 (dihitung ulang 17 Nov 2026 dari `main` commit `8524462`):
 ```text
 91d304cf7607550ff9c7d1b3801739e36f21779bb73748bff001ae0a42fe742a  config.py
 a348731469a11a274bbc8df949bd53772f1eb6a6e0f5c3c2cb3af5a500e231a7  run.py
-9bd16f9ff375f199ef119a633ec0f03e521a6dbcc7792075d8925552b6074071  ringkas.py
+ec200b49a8b20b4b57869a7c6d112aa82b67e20aaad0f1ab240db503a26b6285  ringkas.py
 d3eb736e266e52cdf4b593595e850ae2cab7ad1a60aa3a6b9e7256be3a774b3a  requirements.txt
 105a9024e4d43e9e719f0bbcf0e0994731bd390af893f1430bae2a8aa5cd4dce  btcpred/data.py
 d9602204d678acebe7cff0e2e6468e5a85bd10a60e6f997708b2ba80b937a192  btcpred/models.py
@@ -796,11 +797,13 @@ Urutan pemakaian:
     python ringkas.py --uji-final          # baru membuka hasil_uji_final.csv (+ Holm)
 
 Aturan:
-  Tahap 1 : pasangan (dataset, horizon) dengan rata-rata cv_vs_naive_pct 4 model
-            terkecil, sama seperti aturan Tahap 2. Pasangan yang belum lengkap 4 model
-            dibuang. Seri -> horizon lebih pendek -> candle_1m. Tanpa syarat signifikansi.
-  Tahap 2 : strategi dengan rata-rata cv_vs_naive_pct 4 model terkecil. 'default'
-            boleh terpilih. Seri -> total waktu tuning terpendek.
+  Tahap 1 : pasangan (dataset, horizon) dengan median cv_vs_naive_pct 4 model
+            (rata-rata dua nilai tengah) terkecil, sama seperti aturan Tahap 2.
+            Pasangan yang belum lengkap 4 model dibuang. Seri -> horizon lebih
+            pendek -> candle_1m. Tanpa syarat signifikansi.
+  Tahap 2 : strategi dengan median cv_vs_naive_pct 4 model terkecil; strategi yang
+            belum lengkap 4 model dibuang. 'default' boleh terpilih. Seri -> total
+            waktu tuning terpendek.
   Uji final: RM3 -> satu keluarga Holm = semua baris model-vs-Naive dalam satu tahap
             (tag tahap4_* digabung jadi satu keluarga 'tahap4'). Konfigurasi duplikat
             (run_id tanpa tag) dihitung sekali.

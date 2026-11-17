@@ -1,0 +1,51 @@
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index f1548be..f48bd1c 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -815,14 +815,16 @@ Skor setiap pasangan merupakan median MAE validasi vs Naive keempat model,
+ yaitu rata-rata dua nilai tengah setelah keempat nilai diurutkan. Median
+ dipakai agar pilihan tidak ditentukan oleh satu model yang hasilnya jauh
+ berbeda dari tiga model lainnya. Aturan yang sama dipakai pada Tahap kedua.
+-Pasangan dengan skor terkecil dipilih.
++Pasangan dengan skor terkecil dipilih. Pasangan yang hasilnya belum lengkap
++untuk keempat model tidak ikut dipilih.
+ Bila hasilnya seri, dipilih
+ \textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
+ 
+ Tahap kedua mencari strategi \textit{tuning}. Dataset dan \textit{time frame}
+ yang dipakai merupakan hasil Tahap pertama. Kombinasinya merupakan
+ 7 strategi dikali 4 model. Strategi yang dipilih merupakan strategi dengan
+-median MAE validasi vs Naive keempat model terkecil. Pengaturan
++median MAE validasi vs Naive keempat model terkecil. Strategi yang hasilnya
++belum lengkap untuk keempat model juga tidak ikut dipilih. Pengaturan
+ \textit{default} juga boleh terpilih, sehingga kesimpulan bahwa
+ \textit{tuning} tidak memperbaiki atau justru memperburuk performa tetap
+ dimungkinkan. Selisih setiap strategi terhadap \textit{default} dilaporkan
+diff --git a/context/hasil_riset_v3.3.md b/context/hasil_riset_v3.3.md
+index d38bda9..38fe3ae 100644
+--- a/context/hasil_riset_v3.3.md
++++ b/context/hasil_riset_v3.3.md
+@@ -267,8 +267,8 @@ Rincian lengkap dan kode: `hasil_eksperimen_v3.4.md` Bagian 3 dan Lampiran B. Ba
+ | Objektif tuning | MAE rupiah rata-rata fold; skor Naive di fold yang sama | Selaras metrik utama (I3) |
+ | Optimasi | Default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 trial), seed 42 | F1–F10; dosen: "optimasi sebanyak mungkin" |
+ | Teknik tambahan | Early stopping (≤2.000 pohon, sabar 50), top-15 fitur di dalam fold, loss L1, pruner median; AdaBoost + early stop/L1 tidak berlaku | J1, J3, E1, F7 |
+-| Tahap 1 | Pilih (dataset, *time frame*) dari skor validasi vs Naive | — |
+-| Tahap 2 | Pilih strategi tuning dari rata-rata skor validasi 4 model; default boleh terpilih | — |
++| Tahap 1 | Pilih (dataset, *time frame*) dengan median skor validasi vs Naive 4 model (rata-rata dua nilai tengah); pasangan yang belum lengkap 4 model dibuang | — |
++| Tahap 2 | Pilih strategi tuning dengan median skor validasi 4 model; strategi yang belum lengkap 4 model dibuang; default boleh terpilih *(diubah 17 Nov 2026: rata-rata → median)* | — |
+ | Tahap 3 | Panjang data latih 100/75/50% (bagian akhir), blok uji tetap; tanpa pemilihan | Review dosen |
+ | Tahap 4 | 4 teknik tambahan; tanpa pemilihan | — |
+ | Penguncian | Pilihan Tahap 1–2 dikunci (file + hash) sebelum blok uji dibuka | Anti-HARKing |
+diff --git a/context/konteks_skripsi_v3.1.md b/context/konteks_skripsi_v3.1.md
+index 242ae7a..dcb5d50 100644
+--- a/context/konteks_skripsi_v3.1.md
++++ b/context/konteks_skripsi_v3.1.md
+@@ -76,7 +76,7 @@ Folder kode lama `/Users/ea/Documents/Skripsi BTC/skripsi_rv` berisi pipeline re
+ 5. Menyusun ulang praskripsi Bab 1–3. Sebagian besar isi lama diganti karena penelitian kini lebih sederhana.
+ 6. Menetapkan judul final bersama dosen.
+ 7. Menetapkan tanggal pasti periode data dan ada/tidaknya aplikasi web.
+-8. Memutuskan skor Tahap 1–2: rata-rata atau median 4 model (audit 3.1, menunggu keputusan).
++8. ~~Memutuskan skor Tahap 1–2: rata-rata atau median 4 model~~ — selesai 16 Nov 2026: **median** (Bab III Skenario Pengujian; `ringkas.py` commit `be09d52`).
+ 
+ ## 6. Kewajiban log harian
+ 
