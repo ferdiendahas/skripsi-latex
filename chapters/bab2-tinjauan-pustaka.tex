@@ -1,6 +1,6 @@
 \chapter{Tinjauan Pustaka}
 % Bab II v3.0 -- prediksi harga BTC/IDR dengan model boosting.
-% Sumber klaim: context/kartu_paper_v3.4.md (kode kartu ditulis di komentar).
+% Sumber klaim: context/kartu_paper_v3.5.md (kode kartu ditulis di komentar).
 % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab2-tinjauan-pustaka.tex.
 
 % Daftar keterangan simbol yang dipasang tepat di bawah setiap persamaan.
@@ -199,8 +199,16 @@ tertentu ke tipe \textit{trader} tertentu pada pasar kripto. Penelitian ini
 berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
 \textit{scalper}. Fokus tersebut didasarkan pada teori pasar heterogen
 \cite{muller1997,dacorogna1995}, bukan pada temuan empiris.
-% CEK: butuh sumber definisi scalper. Kartu C5 dan C6 melarang dipakai
-% sebagai definisi istilah tersebut.
+% [kartu C7] hlm. 937 (definisi), hlm. 948 (lama posisi).
+\textit{Scalper} merupakan pelaku pasar yang berperan seperti
+\textit{marketmaker}, yaitu memasang harga beli dan harga jual yang dapat
+diambil oleh order pasar, tanpa kewajiban menyediakan likuiditas
+\cite{silber1984}. Posisi \textit{scalper} dipegang sangat singkat. Pada data
+penelitian tersebut, rata-rata posisi dipegang kurang dari 2 menit. Data itu
+berasal dari pasar \textit{futures}, sehingga angkanya belum tentu berlaku
+pada pasar kripto. Karena itu, penelitian ini memakai istilah
+\textit{scalper} hanya sebagai contoh \textit{trader} jangka pendek, bukan
+sebagai batas \textit{time frame} yang diuji.
 % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
 % tambahkan hanya bila dosen meminta.
 
@@ -263,7 +271,11 @@ Hasil ramalan \textit{return} dikembalikan ke satuan rupiah dengan
 \end{keterangan}
 Selisih nilai logaritma menyatakan perubahan relatif terhadap nilai
 sebelumnya \cite{hyndman2014fpp}.
-% CEK: definisi formal return logaritmik belum ada sumber (Tsay tidak didapat).
+% [kartu J5] pers. 1.6 hlm. 4; jumlah multi-periode hlm. 5 (Tsay ed. 1).
+\textit{Return} logaritmik merupakan logaritma natural dari rasio dua harga,
+dan disebut juga \textit{continuously compounded return}. \textit{Return}
+logaritmik untuk beberapa periode sama dengan jumlah \textit{return}
+logaritmik setiap periodenya \cite{tsay2002}.
 \textit{Return} logaritmik sudah lazim dipakai sebagai target pada peramalan
 aset kripto \cite{bouteska2024}.
 
@@ -304,11 +316,12 @@ Diebold-Mariano \cite{diebold1995}.
 Model boosting tidak membaca urutan waktu secara langsung. Karena itu,
 informasi dari masa lalu perlu diubah menjadi fitur pada setiap baris data.
 Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa bar
-sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya jumlah
+sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya rata-rata
 atau simpangan baku, dari nilai di dalam jendela waktu yang bergeser
-mengikuti waktu. Kedua jenis fitur tersebut hanya memakai data sampai waktu
+mengikuti waktu. Rata-rata dan simpangan baku bergulir sudah dipakai sebagai
+fitur model boosting pada peramalan deret waktu \cite{nasios2022}. Kedua jenis fitur tersebut hanya memakai data sampai waktu
 $t$, sehingga tidak memuat informasi dari masa depan.
-% CEK: butuh sumber (fitur statistik bergulir). Kartu J2 hanya memuat lag.
+% [kartu J6] bagian 2.1; rolling sum tidak disebut paper.
 
 Fitur waktu yang berulang, seperti jam dalam sehari, dapat dikodekan dengan
 fungsi sinus dan kosinus \cite{hyndman2014fpp}. Dengan cara itu, jam 23 dan
@@ -697,9 +710,13 @@ Teknik kedua berupa seleksi fitur, yaitu melatih ulang model hanya dengan
 sebagian fitur yang dinilai paling penting. Kepentingan fitur pada model
 boosting dapat diukur dari sumbangan setiap fitur dalam menurunkan kesalahan
 pada pohon-pohonnya, dan biasanya hanya sedikit fitur yang berpengaruh besar
-\cite{hastie2009}. Tujuan seleksi fitur adalah mengurangi derau dari fitur
-yang kurang informatif.
-% CEK: butuh sumber prosedur seleksi top-k (mis. Guyon & Elisseeff 2003).
+\cite{hastie2009}. Seleksi fitur bertujuan memperbaiki performa prediksi,
+membuat model lebih cepat dan murah, serta memberi pemahaman yang lebih baik
+tentang data. Cara mengurutkan fitur menurut skornya lalu memakai sebagian
+fitur teratas disebut pemeringkatan fitur atau \textit{variable ranking}
+\cite{guyon2003}. Banyaknya fitur yang diambil pada penelitian ini merupakan
+pilihan desain dan dijelaskan pada Bab III.
+% [kartu J7] hlm. 1157 (tujuan), bagian 2.1 hlm. 1160 (ranking).
 
 % [kartu E1, I3]
 Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi

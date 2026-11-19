@@ -1,0 +1,188 @@
+diff --git a/bibliography/references.bib b/bibliography/references.bib
+index 442aea9..8f57fd8 100644
+--- a/bibliography/references.bib
++++ b/bibliography/references.bib
+@@ -1,9 +1,8 @@
+ % references.bib -- referensi skripsi v3.0 (prediksi harga BTC/IDR dengan
+ % boosting). Dibangun dari `context/kartu_paper_v3*.md`.
+ %
+-% Memuat 49 key yang dikutip di Bab I-III + dua rujukan institusional
+-% (pedoman2025, kbbi). Entri v2.9 (HAR-RV) sudah dihapus seluruhnya pada
+-% 9 Nov 2026, setelah Bab I-III v3.0 selesai ditulis.
++% Memuat 60 key; semuanya dikutip di Bab I-III (dicek 19 Nov 2026). Entri
++% v2.9 (HAR-RV) sudah dihapus seluruhnya pada 9 Nov 2026.
+ %
+ % Semua DOI pada bagian aktif dibuka lewat api.crossref.org pada 4 Nov 2026
+ % dan judul serta penulisnya cocok dengan kartu, kecuali yang ditandai % CEK.
+@@ -163,6 +162,22 @@
+   doi     = {10.1080/1351847X.2023.2241883}
+ }
+ 
++% Kartu C7. Metadata dari scan JSTOR (stable 2327606): volume, nomor, dan
++% halaman tercetak di PDF. CEK: DOI Wiley belum dicek ke Crossref/doi.org
++% (tidak bisa dibuka dari sesi 19 Nov 2026); sementara memakai URL JSTOR,
++% sama seperti holm1979.
++@article{silber1984,
++  author  = {Silber, William L.},
++  title   = {Marketmaker Behavior in an Auction Market: An Analysis of Scalpers in Futures Markets},
++  journal = {The Journal of Finance},
++  volume  = {39},
++  number  = {4},
++  pages   = {937--953},
++  year    = {1984},
++  url     = {https://www.jstor.org/stable/2327606},
++  urldate = {2026-11-19}
++}
++
+ % ===========================================================================
+ % D. Pasar Bitcoin dan efisiensi
+ % ===========================================================================
+@@ -631,6 +646,42 @@
+   isbn      = {978-1-119-48208-6}
+ }
+ 
++% Kartu J5. Edisi 1 (2002), bukan edisi 3 (2010). Penerbit, kota, seri, dan
++% ISBN dari halaman katalog di PDF; dicocokkan dengan Open Library 19 Nov 2026.
++@book{tsay2002,
++  author    = {Tsay, Ruey S.},
++  title     = {Analysis of Financial Time Series},
++  series    = {Wiley Series in Probability and Statistics},
++  publisher = {Wiley},
++  address   = {New York},
++  year      = {2002},
++  isbn      = {0-471-41544-8}
++}
++
++% Kartu J6. Yang dibaca preprint arXiv 2310.13029v1; metadata versi terbit
++% dicocokkan dengan EconPapers/RePEc 19 Nov 2026. CEK: cocokkan ke Crossref.
++@article{nasios2022,
++  author  = {Nasios, Ioannis and Vogklis, Konstantinos},
++  title   = {Blending gradient boosted trees and neural networks for point and probabilistic forecasting of hierarchical time series},
++  journal = {International Journal of Forecasting},
++  volume  = {38},
++  number  = {4},
++  pages   = {1448--1459},
++  year    = {2022},
++  doi     = {10.1016/j.ijforecast.2022.01.001}
++}
++
++% Kartu J7. Halaman resmi JMLR dicek 19 Nov 2026 (v3, 1157--1182, Mar 2003).
++% JMLR tidak memakai DOI.
++@article{guyon2003,
++  author  = {Guyon, Isabelle and Elisseeff, Andr{\'e}},
++  title   = {An Introduction to Variable and Feature Selection},
++  journal = {Journal of Machine Learning Research},
++  volume  = {3},
++  pages   = {1157--1182},
++  year    = {2003}
++}
++
+ % ---------------------------------------------------------------------------
+ % Metrik evaluasi dan teori pendukung (kartu I dan J)
+ % ---------------------------------------------------------------------------
+diff --git a/chapters/bab1-pendahuluan.tex b/chapters/bab1-pendahuluan.tex
+index 08dd661..8f767c1 100644
+--- a/chapters/bab1-pendahuluan.tex
++++ b/chapters/bab1-pendahuluan.tex
+@@ -1,6 +1,6 @@
+ \chapter{Pendahuluan}
+ % Bab I v3.0 -- prediksi harga BTC/IDR dengan model boosting.
+-% Sumber klaim: context/kartu_paper_v3.4.md (kode kartu di komentar).
++% Sumber klaim: context/kartu_paper_v3.5.md (kode kartu di komentar).
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab1-pendahuluan.tex.
+ 
+ \section{Latar Belakang}
+@@ -32,7 +32,11 @@ Pelaku pasar tidak bertransaksi pada rentang waktu yang sama. Ada
+ sedangkan sebagian lain memegang posisi sampai beberapa hari \cite{liu2023}.
+ Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
+ \textit{scalper}.
+-% CEK: butuh sumber definisi scalper
++% [kartu C7] Silber = pasar futures; jangan klaim 15--60 menit horizon scalper.
++\textit{Scalper} merupakan pelaku pasar yang memasang harga beli dan harga
++jual, lalu memegang posisinya dalam waktu yang sangat singkat, yaitu dalam
++hitungan menit \cite{silber1984}. Definisi tersebut berasal dari pasar
++\textit{futures}, bukan pasar kripto.
+ % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+ % tambahkan hanya bila dosen meminta.
+ Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
+diff --git a/chapters/bab2-tinjauan-pustaka.tex b/chapters/bab2-tinjauan-pustaka.tex
+index da29455..efb3dea 100644
+--- a/chapters/bab2-tinjauan-pustaka.tex
++++ b/chapters/bab2-tinjauan-pustaka.tex
+@@ -1,6 +1,6 @@
+ \chapter{Tinjauan Pustaka}
+ % Bab II v3.0 -- prediksi harga BTC/IDR dengan model boosting.
+-% Sumber klaim: context/kartu_paper_v3.4.md (kode kartu ditulis di komentar).
++% Sumber klaim: context/kartu_paper_v3.5.md (kode kartu ditulis di komentar).
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab2-tinjauan-pustaka.tex.
+ 
+ % Daftar keterangan simbol yang dipasang tepat di bawah setiap persamaan.
+@@ -199,8 +199,16 @@ tertentu ke tipe \textit{trader} tertentu pada pasar kripto. Penelitian ini
+ berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
+ \textit{scalper}. Fokus tersebut didasarkan pada teori pasar heterogen
+ \cite{muller1997,dacorogna1995}, bukan pada temuan empiris.
+-% CEK: butuh sumber definisi scalper. Kartu C5 dan C6 melarang dipakai
+-% sebagai definisi istilah tersebut.
++% [kartu C7] hlm. 937 (definisi), hlm. 948 (lama posisi).
++\textit{Scalper} merupakan pelaku pasar yang berperan seperti
++\textit{marketmaker}, yaitu memasang harga beli dan harga jual yang dapat
++diambil oleh order pasar, tanpa kewajiban menyediakan likuiditas
++\cite{silber1984}. Posisi \textit{scalper} dipegang sangat singkat. Pada data
++penelitian tersebut, rata-rata posisi dipegang kurang dari 2 menit. Data itu
++berasal dari pasar \textit{futures}, sehingga angkanya belum tentu berlaku
++pada pasar kripto. Karena itu, penelitian ini memakai istilah
++\textit{scalper} hanya sebagai contoh \textit{trader} jangka pendek, bukan
++sebagai batas \textit{time frame} yang diuji.
+ % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+ % tambahkan hanya bila dosen meminta.
+ 
+@@ -263,7 +271,11 @@ Hasil ramalan \textit{return} dikembalikan ke satuan rupiah dengan
+ \end{keterangan}
+ Selisih nilai logaritma menyatakan perubahan relatif terhadap nilai
+ sebelumnya \cite{hyndman2014fpp}.
+-% CEK: definisi formal return logaritmik belum ada sumber (Tsay tidak didapat).
++% [kartu J5] pers. 1.6 hlm. 4; jumlah multi-periode hlm. 5 (Tsay ed. 1).
++\textit{Return} logaritmik merupakan logaritma natural dari rasio dua harga,
++dan disebut juga \textit{continuously compounded return}. \textit{Return}
++logaritmik untuk beberapa periode sama dengan jumlah \textit{return}
++logaritmik setiap periodenya \cite{tsay2002}.
+ \textit{Return} logaritmik sudah lazim dipakai sebagai target pada peramalan
+ aset kripto \cite{bouteska2024}.
+ 
+@@ -304,11 +316,12 @@ Diebold-Mariano \cite{diebold1995}.
+ Model boosting tidak membaca urutan waktu secara langsung. Karena itu,
+ informasi dari masa lalu perlu diubah menjadi fitur pada setiap baris data.
+ Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa bar
+-sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya jumlah
++sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya rata-rata
+ atau simpangan baku, dari nilai di dalam jendela waktu yang bergeser
+-mengikuti waktu. Kedua jenis fitur tersebut hanya memakai data sampai waktu
++mengikuti waktu. Rata-rata dan simpangan baku bergulir sudah dipakai sebagai
++fitur model boosting pada peramalan deret waktu \cite{nasios2022}. Kedua jenis fitur tersebut hanya memakai data sampai waktu
+ $t$, sehingga tidak memuat informasi dari masa depan.
+-% CEK: butuh sumber (fitur statistik bergulir). Kartu J2 hanya memuat lag.
++% [kartu J6] bagian 2.1; rolling sum tidak disebut paper.
+ 
+ Fitur waktu yang berulang, seperti jam dalam sehari, dapat dikodekan dengan
+ fungsi sinus dan kosinus \cite{hyndman2014fpp}. Dengan cara itu, jam 23 dan
+@@ -697,9 +710,13 @@ Teknik kedua berupa seleksi fitur, yaitu melatih ulang model hanya dengan
+ sebagian fitur yang dinilai paling penting. Kepentingan fitur pada model
+ boosting dapat diukur dari sumbangan setiap fitur dalam menurunkan kesalahan
+ pada pohon-pohonnya, dan biasanya hanya sedikit fitur yang berpengaruh besar
+-\cite{hastie2009}. Tujuan seleksi fitur adalah mengurangi derau dari fitur
+-yang kurang informatif.
+-% CEK: butuh sumber prosedur seleksi top-k (mis. Guyon & Elisseeff 2003).
++\cite{hastie2009}. Seleksi fitur bertujuan memperbaiki performa prediksi,
++membuat model lebih cepat dan murah, serta memberi pemahaman yang lebih baik
++tentang data. Cara mengurutkan fitur menurut skornya lalu memakai sebagian
++fitur teratas disebut pemeringkatan fitur atau \textit{variable ranking}
++\cite{guyon2003}. Banyaknya fitur yang diambil pada penelitian ini merupakan
++pilihan desain dan dijelaskan pada Bab III.
++% [kartu J7] hlm. 1157 (tujuan), bagian 2.1 hlm. 1160 (ranking).
+ 
+ % [kartu E1, I3]
+ Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi
+diff --git a/context/hasil_riset_v3.4.md b/context/arsip/hasil_riset_v3.4.md
+similarity index 100%
+rename from context/hasil_riset_v3.4.md
+rename to context/arsip/hasil_riset_v3.4.md
