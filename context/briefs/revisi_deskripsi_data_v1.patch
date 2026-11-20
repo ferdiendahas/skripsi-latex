@@ -1,0 +1,31 @@
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index a0982d4..dd5e594 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -135,19 +135,22 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
+     \hline
+     \textit{Candle} 1 menit & 1 menit & API publik Indodax &
+     waktu, \textit{open}, \textit{high}, \textit{low}, \textit{close}, volume &
+-    [periode] & [jumlah] \\
++    10 Okt 2026 -- 10 Feb 2027 & 178.560 \\
+     \hline
+     \textit{Candle} 5 menit & 5 menit & Agregasi \textit{candle} 1 menit &
+     waktu, \textit{open}, \textit{high}, \textit{low}, \textit{close}, volume &
+-    [periode] & [jumlah] \\
++    10 Okt 2026 -- 10 Feb 2027 & 35.712 \\
+     \hline
+   \end{tabular}
+   \endgroup
+ \end{table}
+ Tabel~\ref{tab:data} menunjukkan bahwa kedua dataset memiliki kolom yang sama,
+ yaitu waktu dan OHLCV. Perbedaannya terletak pada resolusi dan sumbernya.
+-Periode dan jumlah baris diisi setelah data final terkumpul.
+-% CEK: diisi setelah data final Februari 2027
++Kedua dataset mencakup periode yang sama, yaitu 124 hari. Jumlah baris
++\textit{candle} 1 menit sama dengan banyaknya menit dalam periode tersebut,
++sedangkan jumlah baris \textit{candle} 5 menit merupakan seperlimanya.
++% CEK: 178.560 dan 35.712 = jumlah bar penuh 10 Okt 00.00 - 10 Feb 23.59 UTC.
++% Cocokkan dengan data final Februari 2027 (berkurang bila ada menit hilang).
+ 
+ Menit tanpa transaksi tetap muncul sebagai \textit{candle} dengan volume nol
+ dan harga yang sama dengan harga penutupan menit sebelumnya. Pada data
