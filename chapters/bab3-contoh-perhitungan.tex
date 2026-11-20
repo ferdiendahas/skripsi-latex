@@ -285,7 +285,7 @@ ramalan XGBoost merupakan
   \hat{P} = 1.492.819.333{,}33 \times \exp\!\left(-0{,}5357 \times 10^{-4}\right) = 1.492.739.358{,}18 .
 \end{equation*}
 Naive meramalkan harga terakhir, yaitu $1.492.819.333{,}33$.
-Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
+Tabel~\ref{tab:man-uji} memuat ramalan pada seluruh blok uji.
 
 \begin{table}[htbp]
   \caption{Ramalan pada Blok Uji}
@@ -307,6 +307,10 @@ Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
   \end{tabular}
   \endgroup
 \end{table}
+
+Berdasarkan Tabel~\ref{tab:man-uji}, ramalan kedua model berbeda paling jauh
+Rp156.905{,}51 dari harga terakhir $P_t$. Selisih ini kecil karena
+\textit{return} yang diramal juga sangat kecil.
 
 Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
 Tabel~\ref{tab:man-galat}, bersama selisih \textit{loss} absolut

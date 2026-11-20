@@ -460,7 +460,7 @@ ramalan XGBoost merupakan
              + r""" \times 10^{-4}\right) = """ + f(H["XGBoost"]["Ph"][0]) + r""" .
 \end{equation*}
 Naive meramalkan harga terakhir, yaitu """ + m(R["Pt"][0]) + r""".
-Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
+Tabel~\ref{tab:man-uji} memuat ramalan pada seluruh blok uji.
 """)
     rows = []
     for k, jj in enumerate(uji):
@@ -469,6 +469,12 @@ Tabel~\ref{tab:man-uji} memuat ramalan dan galat pada seluruh blok uji.
     T.append(tabel("Ramalan pada Blok Uji", "tab:man-uji", "|c|r|r|r|r|",
                    ["$j$", "$P_t$", "$P_{t+1}$", r"$\hat{P}$ XGBoost", r"$\hat{P}$ AdaBoost.R2"],
                    rows))
+    jauh = max(abs(H[mm]["Ph"][k] - R["Pt"][k])
+               for mm in ("XGBoost", "AdaBoost.R2") for k in range(len(uji)))
+    T.append(r"""Berdasarkan Tabel~\ref{tab:man-uji}, ramalan kedua model berbeda paling jauh
+Rp""" + f(jauh) + r""" dari harga terakhir $P_t$. Selisih ini kecil karena
+\textit{return} yang diramal juga sangat kecil.
+""")
     T.append(r"""Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
 Tabel~\ref{tab:man-galat}, bersama selisih \textit{loss} absolut
 $d_t = |e_{\text{model}}| - |e_{\text{Naive}}|$ yang dipakai pada uji

@@ -23,7 +23,7 @@ Gambar~\ref{fig:alur} menampilkan alur ketujuh langkah tersebut.
   \label{fig:alur}
 \end{figure}
 
-Langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
+Berdasarkan Gambar~\ref{fig:alur}, langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
 publik Indodax oleh program \textit{collector} yang berjalan otomatis di
 server, lalu disimpan ke basis data. Rinciannya dibahas pada
 Subbab~\ref{sec:kumpul}.
@@ -63,8 +63,7 @@ metode. Paper dikumpulkan dari jurnal dan prosiding, lalu dibaca dan dicatat
 isinya dalam bentuk ringkasan terstruktur. Paper yang dipakai untuk menyusun
 celah penelitian pada Tabel~\ref{tab:gap} dibatasi lima tahun terakhir, yaitu
 terbit tahun 2022 sampai 2026. Paper pendukung dan paper sumber metode boleh
-berasal dari tahun berapa pun. Metadata setiap referensi dicocokkan dengan Crossref atau doi.org untuk
-memastikan metadatanya benar. Hasil studi literatur disajikan pada Bab~II,
+berasal dari tahun berapa pun. Data setiap referensi, seperti judul, penulis, dan DOI, dicocokkan dengan Crossref atau doi.org. Hasil studi literatur disajikan pada Bab~II,
 mulai dari penelitian terdahulu pada Subbab~\ref{sec:terdahulu} sampai celah
 penelitian pada Subbab~\ref{sec:gap}.
 
@@ -80,6 +79,11 @@ Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
   \caption{Skema Pengumpulan Data}
   \label{fig:kumpul}
 \end{figure}
+Gambar~\ref{fig:kumpul} menunjukkan bahwa program \textit{collector} mengambil
+dua jenis data dari API publik Indodax, yaitu ticker dan \textit{candle}
+1 menit. Keduanya disimpan di basis data SQLite. Data ticker hanya disimpan,
+sedangkan \textit{candle} 1 menit dipakai langsung sebagai dataset pertama dan
+diagregasi menjadi dataset \textit{candle} 5 menit.
 
 Data diambil dari API publik Indodax tanpa memakai API \textit{key}
 \cite{indodaxapi}. Sebuah
@@ -140,6 +144,9 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
   \end{tabular}
   \endgroup
 \end{table}
+Tabel~\ref{tab:data} menunjukkan bahwa kedua dataset memiliki kolom yang sama,
+yaitu waktu dan OHLCV. Perbedaannya terletak pada resolusi dan sumbernya.
+Periode dan jumlah baris diisi setelah data final terkumpul.
 % CEK: diisi setelah data final Februari 2027
 
 Menit tanpa transaksi tetap muncul sebagai \textit{candle} dengan volume nol
@@ -237,8 +244,7 @@ lag 1 \textit{return} harga \textit{typical} justru bernilai positif, yaitu
 $0{,}13$, sedangkan \textit{return} harga penutupan bernilai $-0{,}25$.
 Autokorelasi semu tersebut dapat
 membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
-benar-benar dapat diprediksi. Hal ini dicatat sebagai keterbatasan ketika
-hasil dibahas.
+benar-benar dapat diprediksi. Hal ini menjadi keterbatasan penelitian.
 Untuk memeriksa pengaruh tersebut, pasangan dataset dan \textit{time frame}
 terpilih pada Tahap pertama juga dijalankan dengan harga penutupan pada
 keempat model, memakai strategi \textit{tuning} terpilih pada Tahap kedua.
@@ -247,8 +253,7 @@ tersendiri, dan tidak dipakai untuk memilih konfigurasi.
 % Catatan: jangan pakai angka +0,25 dari Working untuk harga typical.
 
 \subsection{Penanganan Data Hilang}
-Data diurutkan menurut waktu, lalu disusun ulang pada grid waktu yang rapat,
-yaitu setiap 1 menit untuk dataset pertama dan setiap 5 menit untuk dataset
+Data diurutkan menurut waktu, lalu disusun ulang pada urutan waktu yang lengkap, yaitu setiap 1 menit untuk dataset pertama dan setiap 5 menit untuk dataset
 kedua. Bar yang tidak ada datanya dibiarkan kosong dan tidak diisi dengan nilai
 dugaan. Fitur maupun target yang perhitungannya melewati bar kosong otomatis
 ikut terbuang pada tahap berikutnya. Cara ini dipilih supaya tidak ada nilai
@@ -279,6 +284,9 @@ antara jendela fitur dan target.
   \caption{Pembentukan Fitur dan Target}
   \label{fig:fitur}
 \end{figure}
+Pada Gambar~\ref{fig:fitur}, fitur dihitung dari jendela bar masa lalu sampai
+bar sekarang, yaitu bar $t$. Target diambil dari bar pada waktu $t+h$,
+sehingga fitur tidak memakai data yang belum terjadi.
 
 Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
 
@@ -326,20 +334,19 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
   \end{tabular}
   \endgroup
 \end{table}
+Berdasarkan Tabel~\ref{tab:fitur}, fitur terbanyak berasal dari statistik
+bergulir, yaitu 15 fitur, lalu \textit{lag return} sebanyak 12 fitur. Seluruh
+fitur dihitung dari harga, volume, dan waktu \textit{candle}.
 
 Jendela bergulir $s$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
 \textit{candle} 1 menit. Pada dataset \textit{candle} 5 menit, jendela
 terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
 240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua bar.
 
-Prediksi dibuat ketika \textit{candle} terakhir sudah ditutup. Karena itu,
-kedua dataset tidak hanya berbeda resolusi. Dua belas \textit{lag} mencakup
+Prediksi dibuat ketika \textit{candle} terakhir sudah ditutup. Selain itu, kedua dataset tidak hanya berbeda resolusi. Dua belas \textit{lag} mencakup
 12 menit pada \textit{candle} 1 menit dan 60 menit pada \textit{candle}
 5 menit, jendela terpendeknya berbeda, dan harga \textit{typical} pada
-\textit{candle} 5 menit dihitung dari OHLC hasil agregasi. Oleh karena itu,
-perbandingan kedua dataset pada Tahap pertama dibaca sebagai perbandingan dua
-konfigurasi peramalan secara keseluruhan, bukan sebagai pengaruh resolusi
-data saja.
+\textit{candle} 5 menit dihitung dari OHLC hasil agregasi. Karena itu, Tahap pertama membandingkan dua cara peramalan secara utuh, bukan hanya pengaruh resolusi data.
 
 Target yang diramal merupakan \textit{return} logaritmik $r_{t,h}$ pada
 Persamaan~\eqref{eq:return}. Hasil ramalan dikembalikan ke satuan rupiah
@@ -363,8 +370,7 @@ pada Tahap pertama dan kedua dilakukan di bagian ini. Bagian kedua merupakan
 blok uji final, yaitu 20\% data akhir. Blok ini tidak dipakai untuk memilih
 apa pun dan baru dipakai setelah seluruh pilihan dikunci. Blok uji final
 hanya mencakup satu periode, sehingga hasilnya dapat dipengaruhi kondisi
-pasar pada periode tersebut \cite{tashman2000}. Hal ini dicatat sebagai
-keterbatasan ketika hasil dibahas.
+pasar pada periode tersebut \cite{tashman2000}. Hal ini menjadi keterbatasan penelitian.
 Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
 
 \begin{figure}[htbp]
@@ -373,6 +379,11 @@ Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
   \caption{Pembagian Data dan \textit{Purging}}
   \label{fig:bagi}
 \end{figure}
+Pada Gambar~\ref{fig:bagi} bagian (a), periode pengembangan berada sebelum
+blok uji final, dan potongan yang diarsir di antara keduanya dibuang. Bagian
+(b) menunjukkan panjang data latih 100\%, 75\%, dan 50\% pada Tahap ketiga.
+Ketiganya memakai bagian data latih yang paling akhir dan blok uji final yang
+sama.
 
 Baris latih yang targetnya berada di dalam blok uji final dibuang. Langkah
 tersebut disebut \textit{purging} dan sudah dijelaskan pada
@@ -461,7 +472,7 @@ Carlo. Keterangan ``log'' berarti nilainya diambil pada skala logaritmik.
   \endgroup
 \end{table}
 
-Ruang pencarian XGBoost dan LightGBM sebagian besar sama, karena keduanya
+Berdasarkan Tabel~\ref{tab:ruang}, ruang pencarian XGBoost dan LightGBM sebagian besar sama, karena keduanya
 merupakan implementasi \textit{gradient boosting} berbasis pohon. Perbedaannya
 terletak pada dua parameter. LightGBM menambah \texttt{num\_leaves} karena
 pohonnya tumbuh secara \textit{leaf-wise}, dan memakai
@@ -500,6 +511,11 @@ kedua model lainnya dirinci pada Tabel~\ref{tab:ruang2}.
   \end{tabular}
   \endgroup
 \end{table}
+Berdasarkan Tabel~\ref{tab:ruang2}, CatBoost memakai nama parameter yang
+berbeda, yaitu \texttt{iterations} untuk jumlah pohon dan \texttt{depth} untuk
+kedalaman pohon. AdaBoost memiliki parameter kategorikal \texttt{loss} dan
+kedalaman pohon dasar \texttt{max\_depth}. Jumlah pohon AdaBoost dibatasi
+sampai 500.
 
 Grid Search memakai daftar nilai tetap yang berbeda dari ruang pencarian
 tersebut. Tabel~\ref{tab:grid} merinci ketiga parameter yang dipakai, sehingga
@@ -540,7 +556,7 @@ jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
   \endgroup
 \end{table}
 
-Ketiga parameter tersebut sama untuk keempat model, yaitu jumlah pohon,
+Berdasarkan Tabel~\ref{tab:grid}, jenis ketiga parameter tersebut sama untuk keempat model, yaitu jumlah pohon,
 ukuran pohon, dan \textit{learning rate}. Parameter lain dibiarkan pada nilai
 bawaannya. Nilai yang dipakai AdaBoost berbeda dari ketiga model lain karena
 rentang \textit{learning rate} bawaannya juga berbeda.
@@ -587,7 +603,7 @@ pengaturannya.
   \endgroup
 \end{table}
 
-Ada tiga catatan desain yang perlu disebut. Pertama, CMA-ES tidak dapat
+Berdasarkan Tabel~\ref{tab:optimasi}, semua metode pencarian kecuali Grid Search memakai 30 \textit{trial} dan \textit{seed} 42. Ada tiga hal yang perlu diperhatikan dari pengaturan tersebut. Pertama, CMA-ES tidak dapat
 menangani parameter kategorikal, sehingga parameter \texttt{loss} pada
 AdaBoost dipilih secara acak oleh \textit{random sampler}. Kedua, NSGA-II
 dipakai untuk satu tujuan saja, yaitu nilai kesalahan pada
@@ -596,18 +612,16 @@ genetika yang tersedia pada Optuna \cite{optunadocs}.
 Ketiga, jumlah 30 \textit{trial} pada Quasi-Monte Carlo bukan merupakan
 pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata. Jumlah
 30 \textit{trial} tetap dipakai supaya anggaran percobaan sama dengan metode
-pencarian lain, dan hal ini dicatat sebagai keterbatasan.
+pencarian lain, dan hal ini menjadi keterbatasan penelitian.
 
 Ruang dan anggaran percobaan setiap strategi tidak sama. Grid Search memakai
 tiga parameter dengan 27 kombinasi, metode lain memakai ruang pencarian yang
 lebih luas dengan 30 \textit{trial}, dan pengaturan \textit{default} tidak
-menjalankan pencarian. Karena itu, hasil Tahap kedua dibaca sebagai
-perbandingan strategi \textit{tuning}, bukan perbandingan algoritme pencarian
-secara murni. Jumlah \textit{trial} yang selesai dan yang dipangkas dicatat
+menjalankan pencarian. Karena itu, Tahap kedua membandingkan strategi \textit{tuning} secara utuh, bukan hanya algoritme pencariannya. Jumlah \textit{trial} yang selesai dan yang dipangkas dicatat
 untuk setiap \textit{run}.
 
 Selain itu, metode yang memakai unsur acak dijalankan dengan \textit{seed}
-yang sama. Karena itu, beberapa \textit{trial} awalnya dapat menghasilkan
+yang sama. Akibatnya, beberapa \textit{trial} awalnya dapat menghasilkan
 konfigurasi yang identik.
 
 \subsection{Validasi \textit{Walk-Forward}}
@@ -623,7 +637,7 @@ skema validasinya.
   \label{fig:walk}
 \end{figure}
 
-Data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
+Seperti terlihat pada Gambar~\ref{fig:walk}, data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
 Jendela latih bertambah pada setiap \textit{fold}, dan blok validasinya selalu
 berada sesudah jendela latih. Baris latih yang waktu targetnya tidak
 mendahului awal blok validasi dibuang, sehingga target pada data latih tidak
@@ -719,7 +733,7 @@ Harga OHLC BTC/IDR di Indodax bergerak dalam kelipatan Rp1.000
 \cite{indodaxapi}. Harga \textit{typical} merupakan rata-rata tiga harga
 tersebut, sehingga dapat berubah dalam kelipatan sekitar Rp333. Harga
 \textit{typical} dianggap tetap bila selisih $P_{t+h}$ dan $P_t$ lebih kecil
-dari Rp1, yaitu $r_{t,h} = 0$ secara numerik.
+dari Rp1, sehingga $r_{t,h}$ dianggap nol.
 
 Khusus akurasi arah, bar yang harga sebenarnya tetap tidak ikut dihitung
 karena arahnya tidak terdefinisi. Karena itu, $n$ pada
@@ -743,8 +757,7 @@ Selisih akurasi antara ramalan model dan ramalan Naive diuji dengan uji
 Diebold-Mariano dua sisi pada Persamaan~\eqref{eq:dmstat}. Uji utama memakai
 \textit{loss} absolut karena MAE merupakan metrik utama. Uji dengan
 \textit{loss} kuadrat dilaporkan sebagai pendukung. Varians rata-rata selisih
-\textit{loss} dihitung memakai autokovarians sampai lag $h_b - 1$ pada grid
-waktu yang rapat, sehingga pasangan bar yang dipisahkan oleh bar kosong
+\textit{loss} dihitung memakai autokovarians sampai lag $h_b - 1$ pada urutan waktu yang lengkap, sehingga pasangan bar yang dipisahkan oleh bar kosong
 tidak dihitung pada lag yang salah. Hasilnya lalu dikalikan faktor koreksi
 HLN pada Persamaan~\eqref{eq:hln}, dan nilai kritisnya diambil dari
 distribusi $t$ berderajat bebas $n - 1$.
@@ -797,7 +810,7 @@ Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
   \label{fig:tahap}
 \end{figure}
 
-Tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi
+Berdasarkan Gambar~\ref{fig:tahap}, tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi
 yang dijalankan terdiri atas 9 pasangan dataset dan \textit{time frame},
 yaitu 5 \textit{time frame} pada dataset \textit{candle} 1 menit dan
 4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap pasangan
@@ -809,8 +822,7 @@ pengaturan bawaan. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
 pada tugas yang sulit memberi hasil lebih baik daripada Random Search
 \cite{bergstra2011}. Pemilihan strategi \textit{tuning} sendiri baru
 dilakukan pada Tahap kedua. Karena pasangan pada Tahap pertama dipilih dari
-hasil TPE, TPE dapat lebih diuntungkan pada Tahap kedua. Hal ini dicatat
-sebagai keterbatasan ketika hasil dibahas.
+hasil TPE, TPE dapat lebih diuntungkan pada Tahap kedua. Hal ini menjadi keterbatasan penelitian.
 Skor setiap pasangan merupakan median MAE validasi vs Naive keempat model,
 yaitu rata-rata dua nilai tengah setelah keempat nilai diurutkan. Median
 dipakai agar pilihan tidak ditentukan oleh satu model yang hasilnya jauh
@@ -850,7 +862,7 @@ strategi \textit{tuning} tidak dipengaruhi oleh hasil pada blok uji final.
 Secara keseluruhan, rencana skenario memuat 36 \textit{run} pada Tahap
 pertama, 28 pada Tahap kedua, 12 pada Tahap ketiga, dan 14 pada
 Tahap keempat, ditambah 4 \textit{run} pembanding harga penutupan. Sebagian skenario memakai konfigurasi yang sama antartahap,
-misalnya TPE dengan seluruh data latih. Karena itu, laporan hasil memisahkan
+misalnya TPE dengan seluruh data latih. Oleh sebab itu, laporan hasil memisahkan
 jumlah skenario dari jumlah konfigurasi unik. Kombinasi teknik yang tidak
 berlaku pada AdaBoost tidak dijalankan.
 
@@ -886,9 +898,11 @@ pada Subbab~\ref{sec:rumusan}.
   \endgroup
 \end{table}
 
-Tahap ketiga tidak dipetakan ke satu rumusan masalah tertentu. Tahap tersebut
-dipakai untuk melihat apakah hasilnya tetap serupa ketika panjang data latih
-diubah.
+Berdasarkan Tabel~\ref{tab:petaRM}, rumusan masalah pertama dijawab dari
+Tahap pertama dan ketiga, yaitu cara membangun model pada berbagai
+\textit{time frame} dan dengan panjang data latih yang berbeda. Rumusan
+masalah kedua dijawab dari Tahap kedua dan keempat. Rumusan masalah ketiga
+dijawab dari evaluasi keempat model terhadap Naive pada blok uji final.
 
 \section{Lingkungan Penelitian}
 \label{sec:lingkungan}
@@ -924,7 +938,7 @@ Tabel~\ref{tab:lingkungan} merinci perangkat dan pustaka yang dipakai.
   \endgroup
 \end{table}
 
-Seluruh eksperimen dijalankan pada satu perangkat yang sama, sehingga waktu
+Berdasarkan Tabel~\ref{tab:lingkungan}, seluruh eksperimen dijalankan pada satu perangkat yang sama, sehingga waktu
 \textit{tuning} antarstrategi dapat dibandingkan. Pengumpulan data berjalan
 terpisah di VPS, sehingga proses pengumpulan tetap berjalan ketika eksperimen
 dijalankan.

@@ -85,11 +85,14 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
   ability}; HLN = koreksi Harvey-Leybourne-Newbold.\par}
 \end{table}
 
-Penelitian terdahulu tersebut dapat dibagi menjadi tiga kelompok menurut
+Berdasarkan Tabel~\ref{tab:terdahulu}, sebagian besar penelitian terdahulu
+memakai data harian. Hanya satu penelitian yang memakai pembanding naive
+harga, dan belum ada penelitian yang memakai keempat model boosting
+sekaligus. Penelitian tersebut dapat dibagi menjadi tiga kelompok menurut
 jenis data dan target yang diprediksi.
 
 % [kartu A2, B1, B5, B8]
-Kelompok pertama memakai data harian. XGBoost dilaporkan paling baik dalam
+Kelompok pertama memakai data harian. Hasil penelitian menunjukkan bahwa XGBoost paling baik dalam
 menggabungkan beberapa ramalan harian Bitcoin \cite{wei2023}. Penelitian
 tersebut juga memeriksa apakah hasil baiknya hanya muncul karena kebetulan,
 yaitu dengan \textit{model confidence set} dan uji \textit{superior predictive
@@ -104,7 +107,7 @@ per menit.
 
 % [kartu B2, B3]
 Kelompok kedua memakai data per menit, tetapi memprediksi arah harga, bukan
-nilai harganya. Harga Bitcoin jangka pendek dilaporkan sulit ditebak, tetapi
+nilai harganya. Harga Bitcoin jangka pendek ditemukan sulit ditebak, tetapi
 hasil tebakannya masih sedikit di atas tebakan acak. Keuntungan sebelum biaya
 transaksi juga dapat berubah menjadi kerugian setelah biaya dihitung
 \cite{jaquart2021}. Pada data \textit{futures} Bitcoin, XGBoost dipakai untuk
@@ -301,6 +304,10 @@ Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model 
   \caption{Horizon Prediksi dan Pembanding Naive}
   \label{fig:horizon-naive}
 \end{figure}
+Pada Gambar~\ref{fig:horizon-naive}, data hanya tersedia sampai waktu $t$.
+Naive memakai harga terakhir $P_t$ sebagai ramalan untuk waktu $t+h$,
+sedangkan model boosting meramal \textit{return} $\hat{r}_{t,h}$ lalu
+mengubahnya menjadi harga ramalan.
 
 % [kartu B5, G2]
 Metode naive bukan pembanding yang lemah. Pada peramalan harga kripto
@@ -368,13 +375,15 @@ proses penambahan pohon tersebut.
     \cite{friedman2001}}
   \label{fig:gradient-boosting}
 \end{figure}
+Gambar~\ref{fig:gradient-boosting} menunjukkan bahwa proses dimulai dari model
+awal $F_0(x)$. Pohon ditambahkan satu per satu sampai pohon ke-$M$, dan setiap
+pohon memperbaiki kesalahan model sebelumnya. Gabungan seluruh pohon menjadi
+model akhir.
 
 % [kartu E7, E8]
 Model berbasis pohon dipilih dengan dua pertimbangan. Pertama, pada data
 tabular berukuran menengah, model berbasis pohon konsisten mengungguli model
-\textit{deep learning} \cite{grinsztajn2022}. Perlu dicatat bahwa data deret
-waktu dikeluarkan dari \textit{benchmark} tersebut, sehingga temuannya tidak
-otomatis berlaku pada data penelitian ini. Kedua, LightGBM dipakai oleh seluruh
+\textit{deep learning} \cite{grinsztajn2022}. Namun, data deret waktu tidak termasuk dalam pengujian tersebut, sehingga hasilnya belum tentu berlaku pada data penelitian ini. Kedua, LightGBM dipakai oleh seluruh
 50 tim teratas pada kompetisi peramalan M5 \cite{makridakis2022}. Kondisi
 kompetisi tersebut berbeda dengan penelitian ini, karena melibatkan banyak
 deret sekaligus beserta data eksogen.
@@ -448,7 +457,7 @@ LightGBM menumbuhkan pohon secara \textit{leaf-wise}, yaitu memecah daun yang
 memberi penurunan \textit{loss} terbesar. Pada jumlah daun yang sama, cara ini
 umumnya menghasilkan \textit{loss} yang lebih rendah daripada pertumbuhan
 \textit{level-wise}. Kelemahannya, pohon dapat mengalami \textit{overfitting}
-pada data berukuran kecil. Karena itu, tersedia parameter \texttt{max\_depth}
+pada data berukuran kecil. Untuk mengatasinya, tersedia parameter \texttt{max\_depth}
 untuk membatasi kedalaman pohon \cite{lightgbmfeatures}.
 Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
 
@@ -460,6 +469,9 @@ Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
     \textit{Leaf-wise} \cite{lightgbmfeatures}}
   \label{fig:leafwise}
 \end{figure}
+Pada Gambar~\ref{fig:leafwise}, pertumbuhan \textit{level-wise} memecah semua
+simpul pada satu kedalaman sekaligus. Pertumbuhan \textit{leaf-wise} hanya
+memecah daun yang memberi penurunan \textit{loss} terbesar.
 
 Parameter utama untuk mencegah \textit{overfitting} pada pertumbuhan
 \textit{leaf-wise} merupakan jumlah daun (\texttt{num\_leaves}) dan jumlah
@@ -494,18 +506,18 @@ biasa dengan pohon simetris.
     Pohon Simetris (\textit{Oblivious}) \cite{prokhorenkova2018}}
   \label{fig:pohon-simetris}
 \end{figure}
+Pada Gambar~\ref{fig:pohon-simetris}, pohon biasa dapat memakai kondisi yang
+berbeda pada setiap simpul. Pada pohon simetris, semua simpul pada kedalaman
+yang sama memakai kondisi yang sama, misalnya $x_2 < c_2$.
 
 Mode \textit{ordered} dilaporkan paling bermanfaat pada kumpulan data
-berukuran kecil. Pada \textit{benchmark} yang dilaporkan, CatBoost mengungguli
-XGBoost dan LightGBM \cite{prokhorenkova2018}. Kumpulan data pada
-\textit{benchmark} tersebut bukan data deret waktu, sehingga hasilnya tidak
-otomatis berlaku pada penelitian ini.
+berukuran kecil. Pada pengujian dalam penelitian tersebut, CatBoost mengungguli XGBoost dan LightGBM \cite{prokhorenkova2018}. Data yang diuji bukan data deret waktu, sehingga hasilnya belum tentu berlaku pada penelitian ini.
 
 \subsection{AdaBoost}
 % [kartu E2]
 AdaBoost berbeda dari ketiga model sebelumnya karena tidak memakai gradien.
 AdaBoost merupakan algoritme \textit{boosting} yang menaikkan bobot contoh
-yang salah diprediksi, sehingga pembelajar berikutnya lebih fokus pada contoh yang sulit
+yang salah diprediksi, sehingga model berikutnya lebih fokus pada contoh yang sulit
 \cite{freund1997}. Algoritme aslinya dirancang untuk masalah klasifikasi.
 
 % [kartu E9, E10]
@@ -531,8 +543,7 @@ bentuk berikut,
     \textit{square}, atau \textit{exponential},
   \item[$\hat{y}_i$] nilai ramalan untuk contoh ke-$i$,
   \item[$y_i$] nilai sebenarnya untuk contoh ke-$i$,
-  \item[$D$] galat absolut terbesar pada iterasi tersebut, dipakai sebagai
-    penormal sehingga $0 \le L_i \le 1$.
+  \item[$D$] galat absolut terbesar pada iterasi tersebut, dipakai agar nilai $L_i$ berada di antara 0 dan 1.
 \end{keterangan}
 Rata-rata \textit{loss} berbobot dan rasio $\beta_m$ dihitung dengan
 \begin{equation}
@@ -568,12 +579,15 @@ tersebut.
     \cite{drucker1997}}
   \label{fig:adaboost}
 \end{figure}
+Gambar~\ref{fig:adaboost} menunjukkan bahwa satu iterasi terdiri atas
+pengambilan sampel ulang, pelatihan pohon, perhitungan \textit{loss}, dan
+pembaruan bobot. Iterasi diulang sampai jumlah pohon mencapai $M$ atau
+pelatihan berhenti karena $\bar{L} \ge 0{,}5$. Setelah itu, seluruh pohon
+digabung menjadi ramalan akhir.
 
 Bentuk \textit{loss} yang terbaik berbeda antarmasalah \cite{drucker1997}.
-Karena itu, parameter \texttt{loss} layak dimasukkan ke dalam ruang pencarian
-\textit{hyperparameter}. Perlu dicatat bahwa parameter \textit{learning rate}
-pada \texttt{AdaBoostRegressor} merupakan tambahan dari implementasi
-scikit-learn \cite{sklearnadaboost}, bukan bagian dari algoritme asli.
+Dengan demikian, parameter \texttt{loss} layak dimasukkan ke dalam ruang pencarian
+\textit{hyperparameter}. Parameter \textit{learning rate} pada \texttt{AdaBoostRegressor} merupakan tambahan dari scikit-learn \cite{sklearnadaboost}, bukan bagian dari algoritme aslinya.
 
 
 \section{Optimasi \textit{Hyperparameter}}
@@ -603,7 +617,7 @@ bertambah \cite{bergstra2012}. Grid Search tetap dinilai andal bila parameter
 yang dicari hanya satu atau dua.
 
 Random Search mencoba kombinasi yang diambil secara acak dari ruang pencarian.
-Dengan anggaran percobaan yang sama, Random Search dilaporkan menemukan model
+Dengan anggaran percobaan yang sama, Random Search dapat menemukan model
 yang sama baik atau lebih baik daripada Grid Search dengan waktu komputasi
 lebih sedikit \cite{bergstra2012}. Alasannya, biasanya hanya sedikit \textit{hyperparameter} yang benar-benar
 berpengaruh, dan \textit{hyperparameter} yang berpengaruh itu berbeda
@@ -617,10 +631,13 @@ Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
     dan Random Search \cite{bergstra2012}}
   \label{fig:grid-random}
 \end{figure}
+Pada Gambar~\ref{fig:grid-random}, titik percobaan Grid Search tersusun dalam
+baris dan kolom, sehingga parameter yang penting hanya dicoba pada sedikit
+nilai. Dengan jumlah percobaan yang sama, Random Search mencoba lebih banyak
+nilai yang berbeda untuk parameter yang penting.
 
 Bukti empiris tersebut berasal dari percobaan pada jaringan saraf, bukan pada
-model boosting. Karena itu, keunggulan Random Search pada penelitian ini tetap
-diuji, tidak diandaikan.
+model boosting. Karena itu, keunggulan Random Search tetap perlu diuji pada penelitian ini.
 
 \subsection{Bayesian Optimization dengan TPE}
 % [kartu F2]
@@ -641,13 +658,13 @@ konfigurasi yang rasionya paling kecil,
 \end{equation}
 \begin{keterangan}
   \item[$\theta$] satu konfigurasi \textit{hyperparameter},
-  \item[$\ell(\theta)$] kerapatan konfigurasi yang menghasilkan
+  \item[$\ell(\theta)$] sebaran konfigurasi yang menghasilkan
     \textit{loss} di bawah kuantil $\gamma_{\text{TPE}}$,
-  \item[$g(\theta)$] kerapatan konfigurasi yang menghasilkan
+  \item[$g(\theta)$] sebaran konfigurasi yang menghasilkan
     \textit{loss} sisanya,
   \item[$\gamma_{\text{TPE}}$] kuantil yang memisahkan kedua kelompok.
 \end{keterangan}
-Pada penelitian yang sama, TPE dilaporkan lebih baik daripada Random
+Pada penelitian yang sama, TPE juga lebih baik daripada Random
 Search pada tugas-tugas yang sulit. Bukti tersebut juga berasal dari
 percobaan pada jaringan saraf, bukan pada model boosting.
 
@@ -805,8 +822,7 @@ ukuran relatif terhadap Naive. Ukuran tersebut merupakan turunan dari
     pembanding.
 \end{keterangan}
 Nilai negatif berarti ramalan model lebih akurat daripada Naive,
-sedangkan nilai positif berarti sebaliknya. Istilah MAE vs Naive merupakan
-penyebutan dalam penelitian ini, bukan istilah baku dari sumber rujukan.
+sedangkan nilai positif berarti sebaliknya. Nama MAE vs Naive dibuat sendiri dalam penelitian ini, bukan istilah dari sumber rujukan.
 
 % [kartu I3, E1]
 MAE dipilih sebagai metrik utama juga karena kaitannya dengan \textit{loss}
@@ -830,8 +846,7 @@ galat ramalan,
 Karena galat dikuadratkan lebih dahulu, RMSE memberi bobot yang lebih besar
 pada galat berukuran besar dan lebih sensitif terhadap pencilan
 \cite{chai2014}. Nilai RMSE selalu lebih besar atau sama dengan MAE
-\cite{willmott2005}. Kedua metrik dilaporkan sebaiknya dipakai bersama, karena
-satu metrik saja belum cukup menggambarkan sebaran galat \cite{chai2014}.
+\cite{willmott2005}. Kedua metrik sebaiknya dipakai bersama, karena satu metrik saja belum cukup menggambarkan sebaran galat \cite{chai2014}.
 
 \subsection{Mean Absolute Percentage Error}
 % [kartu I6, I5]
@@ -943,8 +958,7 @@ $p_{(1)} \le p_{(2)} \le \dots \le p_{(J)}$. Hipotesis ke-$i$ ditolak bila
 \end{equation}
 dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
 ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
-Banyaknya uji ditulis $J$, karena $n$ sudah dipakai untuk banyaknya data uji
-dan $q_i$ untuk turunan kedua \textit{loss}.
+Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
 \begin{keterangan}
   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
   \item[$J$] banyaknya uji dalam satu keluarga,
@@ -997,8 +1011,7 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
   \endgroup
 \end{table}
 
-Sejauh literatur yang diperiksa, belum ditemukan penelitian yang sekaligus
-memenuhi lima hal berikut. Pertama, memprediksi nilai harga Bitcoin, bukan
+Berdasarkan Tabel~\ref{tab:gap}, belum ada penelitian yang dibaca yang sekaligus memenuhi lima hal berikut. Pertama, memprediksi nilai harga Bitcoin, bukan
 arah pergerakannya, pada data per menit dengan beberapa horizon. Kedua,
 membandingkan keempat model boosting, yaitu XGBoost, LightGBM, CatBoost, dan
 AdaBoost, yang seluruhnya disetel \textit{hyperparameter}-nya. Ketiga,
@@ -1027,7 +1040,7 @@ dari masalah sampai keluaran yang diharapkan.
   \label{fig:kerangka}
 \end{figure}
 
-Kerangka pemikiran tersebut mengarah pada tiga rumusan masalah. Rumusan
+Kerangka pemikiran pada Gambar~\ref{fig:kerangka} mengarah pada tiga rumusan masalah. Rumusan
 masalah pertama membahas cara membangun model XGBoost, LightGBM, CatBoost,
 dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
 \textit{time frame}. Rumusan masalah kedua membahas pengaruh optimasi

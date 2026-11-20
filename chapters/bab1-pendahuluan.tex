@@ -42,8 +42,7 @@ hitungan menit \cite{silber1984}. Definisi tersebut berasal dari pasar
 Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
 berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak disebut
 \textit{time frame}, melainkan resolusi \textit{candle}. \textit{Time frame}
-divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling
-optimal.
+divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling baik.
 
 % P3 -- [kartu D4, B2, B5]
 Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
@@ -81,9 +80,7 @@ harganya \cite{akyildirim2023}. Hasil seperti itu belum menjawab berapa
 harga yang akan terjadi. Kedua, penelitian yang paling dekat memprediksi nilai
 harga kripto per menit masih punya beberapa kekurangan \cite{rodrigues2025}.
 Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak memakai pembanding
-naive, tidak memakai uji Diebold-Mariano, dan memasang penskala sebelum data
-dibagi, sehingga statistik data uji ikut terpakai. Sejauh literatur yang diperiksa, belum ditemukan penelitian
-yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
+naive, tidak memakai uji Diebold-Mariano, dan melakukan normalisasi sebelum data dibagi, sehingga informasi dari data uji ikut masuk ke data latih. Dari literatur yang dibaca, belum ada penelitian yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
 keempat model boosting yang semuanya dioptimasi.
 
 % P6 -- sumber data dari context/konteks_collector_data_v3.0.md (Bagian 3, 6)
