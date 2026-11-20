@@ -747,7 +747,13 @@ turun, serta akurasi arah pembanding sederhana, yaitu tanda \textit{return}
 satu bar terakhir.
 
 Model terbaik pada rumusan masalah ketiga ditentukan dari nilai MAE vs Naive
-terkecil pada blok uji final. RMSE dan MAPE dipakai sebagai pendukung untuk
+terkecil pada blok uji final. Perbandingan ini hanya memakai konfigurasi yang
+sudah dikunci, yaitu pasangan dataset dan \textit{time frame} dari Tahap
+pertama, strategi \textit{tuning} dari Tahap kedua, seluruh data latih, dan
+tanpa teknik tambahan. Dengan begitu, setiap model hanya memiliki satu hasil,
+dan pemilihan model terbaik tidak dilakukan dengan mencari hasil terbaik dari
+banyak konfigurasi pada blok uji final. Hasil Tahap ketiga dan keempat tetap
+dilaporkan untuk menjawab rumusan masalah pertama dan kedua. RMSE dan MAPE dipakai sebagai pendukung untuk
 melihat apakah urutan model tetap sama. Sebuah model baru disebut lebih baik
 daripada Naive bila memenuhi aturan signifikansi di bawah.
 % CEK: usulan aturan model terbaik, konfirmasi ke dosen sebelum eksperimen

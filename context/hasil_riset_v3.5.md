@@ -6,11 +6,11 @@
 >
 > **Perubahan v3.3 (16 November 2026):** rujukan kartu diganti ke `kartu_paper_v3.4.md`; angka autokorelasi di Bagian VIII diperbarui dengan data 10 Okt – 12 Nov 2026 dan aturan bar bervolume nol; aturan duplikat Holm di Bagian IX ditandai **selesai**. **Menggantikan:** `hasil_riset_v3.2.md` (arsip).
 >
-> **Status (19 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `8524462`; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (v3.1). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.4.md`. Referensi: `kartu_paper_v3.5.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
+> **Status (19 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `8524462`; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (v3.1). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.4.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
 >
 > **Menggantikan:** `hasil_riset_v3.1.md` dan `hasil_riset_v3.0.md` (arsip). Versi v2.9 (realized variance / HAR-RV) tetap arsip.
 >
-> **Aturan sumber:** klaim tentang isi paper hanya boleh ditulis bila tercatat di `kartu_paper_v3.5.md`, beserta lokasinya. Kode kartu ditulis dalam kurung, misalnya (A1). Tanda ⚠ = belum terverifikasi atau masih menunggu keputusan.
+> **Aturan sumber:** klaim tentang isi paper hanya boleh ditulis bila tercatat di `kartu_paper_v3.6.md`, beserta lokasinya. Kode kartu ditulis dalam kurung, misalnya (A1). Tanda ⚠ = belum terverifikasi atau masih menunggu keputusan.
 >
 > **Aturan Bab I–III:** hasil eksperimen (angka MAE, peringkat model, metode optimasi terbaik, *time frame* terbaik) **tidak boleh** muncul di Bab I–III, termasuk hasil uji coba P1/P2. Yang boleh: desain, data, alasan pemilihan metode, dan literatur.
 >
@@ -377,6 +377,7 @@ Rincian: `hasil_eksperimen_v3.4.md` Bagian 4–5. Angka di bawah dari **uji coba
 1. ~~Tanggal pasti periode data final~~ — selesai 17 Nov 2026: **10 Okt 2026 – 10 Feb 2027**, sesuai Bab I.
 2. Perlu output aplikasi/dashboard atau tidak.
 3. Aturan "model terbaik" untuk RM3 (usulan Bab III: MAE vs Naive terkecil di blok uji + Holm). Kunci sebelum eksperimen final.
+   - Cakupan RM3 sudah ditulis di Bab III (20 Nov 2026); tetap konfirmasi ke dosen.
 4. Judul final.
 5. ~~Istilah data primer atau sekunder~~ — selesai 17 Nov 2026: **data primer**.
 6. QMC 30 atau 32 trial; `has_time=True` CatBoost; beberapa seed untuk Tahap 2.
@@ -389,6 +390,7 @@ Rincian: `hasil_eksperimen_v3.4.md` Bagian 4–5. Angka di bawah dari **uji coba
 - Angka di baris `% CEK` (deskripsi data Bab III) diperbarui dengan data final.
 
 ### Verifikasi referensi (status `references.bib`, 13 Nov 2026)
+- **21 Nov 2026:** DOI `silber1984` ditambahkan (dari Ferdi); J4 diperbarui dari teks bab 7 → T5 ✅.
 - **19 Nov 2026:** `silber1984`, `tsay2002`, `nasios2022`, `guyon2003` masuk `.bib` (60 entri, semuanya dikutip). Metadata `nasios2022` dari EconPapers, `guyon2003` dari halaman JMLR, `tsay2002` dari katalog di PDF + Open Library. ⚠ DOI Wiley `silber1984` belum dicek (sementara URL JSTOR 2327606); `nasios2022` belum dicocokkan ke Crossref.
 Sudah dicek ke Crossref oleh agen `.bib` (4 dan 10 Nov 2026): DOI seluruh entri aktif, termasuk B5 versi ACM, C4 Kirilenko, C6 Liu 32(13), G2 Diebold, H1 Parkinson, H2 Working (10.2307/1907574), I7 Pesaran (10.1080/07350015.1992.10509922), D5 Baur. Volume F2 (24) dan versi `lightgbm` 4.7.0 (E6) juga sudah dipastikan.
 

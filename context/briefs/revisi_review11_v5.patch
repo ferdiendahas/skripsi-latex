@@ -1,0 +1,109 @@
+diff --git a/bibliography/references.bib b/bibliography/references.bib
+index 8f57fd8..a4a04e3 100644
+--- a/bibliography/references.bib
++++ b/bibliography/references.bib
+@@ -162,10 +162,9 @@
+   doi     = {10.1080/1351847X.2023.2241883}
+ }
+ 
+-% Kartu C7. Metadata dari scan JSTOR (stable 2327606): volume, nomor, dan
+-% halaman tercetak di PDF. CEK: DOI Wiley belum dicek ke Crossref/doi.org
+-% (tidak bisa dibuka dari sesi 19 Nov 2026); sementara memakai URL JSTOR,
+-% sama seperti holm1979.
++% Kartu C7. Volume, nomor, dan halaman dari scan JSTOR (stable 2327606).
++% DOI Wiley dikirim Ferdi 21 Nov 2026. CEK: buka sekali di doi.org untuk
++% memastikan DOI mengarah ke artikel ini.
+ @article{silber1984,
+   author  = {Silber, William L.},
+   title   = {Marketmaker Behavior in an Auction Market: An Analysis of Scalpers in Futures Markets},
+@@ -173,9 +172,8 @@
+   volume  = {39},
+   number  = {4},
+   pages   = {937--953},
+-  year    = {1984},
+-  url     = {https://www.jstor.org/stable/2327606},
+-  urldate = {2026-11-19}
++  year    = {1984},
++  doi     = {10.1111/j.1540-6261.1984.tb03886.x}
+ }
+ 
+ % ===========================================================================
+diff --git a/chapters/bab1-pendahuluan.tex b/chapters/bab1-pendahuluan.tex
+index b057647..184a164 100644
+--- a/chapters/bab1-pendahuluan.tex
++++ b/chapters/bab1-pendahuluan.tex
+@@ -39,10 +39,7 @@ hitungan menit \cite{silber1984}. Definisi tersebut berasal dari pasar
+ \textit{futures}, bukan pasar kripto.
+ % CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+ % tambahkan hanya bila dosen meminta.
+-Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu
+-berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak disebut
+-\textit{time frame}, melainkan resolusi \textit{candle}. \textit{Time frame}
+-divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling baik.
++Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu berapa menit ke depan harga diprediksi. \textit{Time frame} divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling baik.
+ 
+ % P3 -- [kartu D4, B2, B5]
+ Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
+diff --git a/chapters/bab2-tinjauan-pustaka.tex b/chapters/bab2-tinjauan-pustaka.tex
+index 06af5dd..2e3ed92 100644
+--- a/chapters/bab2-tinjauan-pustaka.tex
++++ b/chapters/bab2-tinjauan-pustaka.tex
+@@ -219,7 +219,7 @@ Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi,
+ yaitu berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak
+ disebut \textit{time frame}, melainkan resolusi \textit{candle}.
+ \textit{Time frame} divariasikan pada 1, 5, 15, 30, dan 60 menit untuk mencari
+-hasil prediksi yang paling optimal.
++hasil prediksi yang paling baik.
+ 
+ 
+ \section{\textit{Forecasting} dan \textit{Time Series}}
+@@ -771,15 +771,25 @@ relatif antarmetode juga dapat berubah ketika periode ujinya diganti
+ \textit{walk-forward} dengan beberapa \textit{fold} pada penelitian ini.
+ 
+ Kebocoran data merupakan masuknya informasi dari data uji ke dalam proses
+-pelatihan. Salah satu bentuknya terjadi ketika penskala dipasang pada seluruh
+-data sebelum data dibagi, sehingga statistik data uji ikut terpakai
++pelatihan. Kebocoran dapat membuat model terlihat mampu memprediksi, padahal
++fitur yang dipakai sebenarnya tidak berguna \cite{lopezdeprado2018}. Salah
++satu bentuknya terjadi ketika normalisasi dilakukan pada seluruh data sebelum
++data dibagi, sehingga informasi dari data uji ikut masuk ke data latih
+ \cite{rodrigues2025}.
+ 
+ Bentuk kebocoran lain terjadi pada batas antara data latih dan data uji. Target
+ pada horizon $h$ dihitung dari harga $h$ menit ke depan, sehingga target bagi
+ $h$ bar terakhir data latih memakai harga yang sudah berada di dalam periode
+ uji. Potongan tersebut perlu dibuang sebelum pelatihan. Tindakan itu disebut
+-\textit{purging} \cite{lopezdeprado2018}.
++\textit{purging}, yaitu membuang data latih yang targetnya tumpang tindih
++waktunya dengan target pada data uji \cite{lopezdeprado2018}.
++% [kartu J4] hlm. 105 (definisi purging dan embargo), hlm. 107 (embargo
++% hanya untuk data latih sesudah data uji).
++Selain \textit{purging}, terdapat \textit{embargo}, yaitu membuang data latih
++yang letaknya tepat sesudah data uji. \textit{Embargo} hanya diperlukan untuk
++data latih yang berada sesudah data uji, bukan sebelumnya. Pada penelitian
++ini, data latih selalu berada sebelum data uji, sehingga \textit{embargo}
++tidak dipakai.
+ 
+ 
+ \section{Pengukuran Nilai Error}
+ Kinerja ramalan diukur dengan membandingkan harga ramalan terhadap harga
+ sebenarnya pada data uji. Galat ramalan pada waktu $t$ merupakan
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index b2615d8..a0982d4 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -747,7 +747,13 @@ turun, serta akurasi arah pembanding sederhana, yaitu tanda \textit{return}
+ satu bar terakhir.
+ 
+ Model terbaik pada rumusan masalah ketiga ditentukan dari nilai MAE vs Naive
+-terkecil pada blok uji final. RMSE dan MAPE dipakai sebagai pendukung untuk
++terkecil pada blok uji final. Perbandingan ini hanya memakai konfigurasi yang
++sudah dikunci, yaitu pasangan dataset dan \textit{time frame} dari Tahap
++pertama, strategi \textit{tuning} dari Tahap kedua, seluruh data latih, dan
++tanpa teknik tambahan. Dengan begitu, setiap model hanya memiliki satu hasil,
++dan pemilihan model terbaik tidak dilakukan dengan mencari hasil terbaik dari
++banyak konfigurasi pada blok uji final. Hasil Tahap ketiga dan keempat tetap
++dilaporkan untuk menjawab rumusan masalah pertama dan kedua. RMSE dan MAPE dipakai sebagai pendukung untuk
+ melihat apakah urutan model tetap sama. Sebuah model baru disebut lebih baik
+ daripada Naive bila memenuhi aturan signifikansi di bawah.
+ % CEK: usulan aturan model terbaik, konfirmasi ke dosen sebelum eksperimen

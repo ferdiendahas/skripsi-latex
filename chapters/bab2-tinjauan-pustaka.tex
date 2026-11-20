@@ -1,6 +1,6 @@
 \chapter{Tinjauan Pustaka}
 % Bab II v3.0 -- prediksi harga BTC/IDR dengan model boosting.
-% Sumber klaim: context/kartu_paper_v3.5.md (kode kartu ditulis di komentar).
+% Sumber klaim: context/kartu_paper_v3.6.md (kode kartu ditulis di komentar).
 % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab2-tinjauan-pustaka.tex.
 
 % Daftar keterangan simbol yang dipasang tepat di bawah setiap persamaan.
@@ -219,7 +219,7 @@ Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi,
 yaitu berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak
 disebut \textit{time frame}, melainkan resolusi \textit{candle}.
 \textit{Time frame} divariasikan pada 1, 5, 15, 30, dan 60 menit untuk mencari
-hasil prediksi yang paling optimal.
+hasil prediksi yang paling baik.
 
 
 \section{\textit{Forecasting} dan \textit{Time Series}}
@@ -771,15 +771,25 @@ relatif antarmetode juga dapat berubah ketika periode ujinya diganti
 \textit{walk-forward} dengan beberapa \textit{fold} pada penelitian ini.
 
 Kebocoran data merupakan masuknya informasi dari data uji ke dalam proses
-pelatihan. Salah satu bentuknya terjadi ketika penskala dipasang pada seluruh
-data sebelum data dibagi, sehingga statistik data uji ikut terpakai
+pelatihan. Kebocoran dapat membuat model terlihat mampu memprediksi, padahal
+fitur yang dipakai sebenarnya tidak berguna \cite{lopezdeprado2018}. Salah
+satu bentuknya terjadi ketika normalisasi dilakukan pada seluruh data sebelum
+data dibagi, sehingga informasi dari data uji ikut masuk ke data latih
 \cite{rodrigues2025}.
 
 Bentuk kebocoran lain terjadi pada batas antara data latih dan data uji. Target
 pada horizon $h$ dihitung dari harga $h$ menit ke depan, sehingga target bagi
 $h$ bar terakhir data latih memakai harga yang sudah berada di dalam periode
 uji. Potongan tersebut perlu dibuang sebelum pelatihan. Tindakan itu disebut
-\textit{purging} \cite{lopezdeprado2018}.
+\textit{purging}, yaitu membuang data latih yang targetnya tumpang tindih
+waktunya dengan target pada data uji \cite{lopezdeprado2018}.
+% [kartu J4] hlm. 105 (definisi purging dan embargo), hlm. 107 (embargo
+% hanya untuk data latih sesudah data uji).
+Selain \textit{purging}, terdapat \textit{embargo}, yaitu membuang data latih
+yang letaknya tepat sesudah data uji. \textit{Embargo} hanya diperlukan untuk
+data latih yang berada sesudah data uji, bukan sebelumnya. Pada penelitian
+ini, data latih selalu berada sebelum data uji, sehingga \textit{embargo}
+tidak dipakai.
 
 
 \section{Pengukuran Nilai Error}
