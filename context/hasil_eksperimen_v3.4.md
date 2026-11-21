@@ -15,7 +15,7 @@
 >
 > **Aturan Bab I–III:** angka dan peringkat di dokumen ini **tidak boleh** masuk Bab I–III. Bab I–III hanya memuat desain (Bagian 3), data, alasan metode, dan literatur.
 >
-> **Notasi:** BTC/IDR = spot Indodax. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. ✓ = signifikan lebih baik (MAE vs Naive < 0, DM_MAE < 0, p_MAE < 0,05); ✗ = signifikan lebih buruk (DM_MAE > 0, p_MAE < 0,05). Di P1/P2, ✓/✗ memakai p tanpa koreksi kecuali disebut Holm. *corr* = korelasi return prediksi dengan return aktual di data uji.
+> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. ✓ = signifikan lebih baik (MAE vs Naive < 0, DM_MAE < 0, p_MAE < 0,05); ✗ = signifikan lebih buruk (DM_MAE > 0, p_MAE < 0,05). Di P1/P2, ✓/✗ memakai p tanpa koreksi kecuali disebut Holm. *corr* = korelasi return prediksi dengan return aktual di data uji.
 
 ---
 

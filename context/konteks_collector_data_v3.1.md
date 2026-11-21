@@ -6,7 +6,7 @@
 >
 > **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.4.md`. Konteks umum ada di `konteks_skripsi_v3.2.md`.
 >
-> **Notasi:** BTC/IDR = pasar spot Indodax. Semua timestamp di database dalam UTC. WIB = UTC+7.
+> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). Semua timestamp di database dalam UTC. WIB = UTC+7.
 
 ---
 

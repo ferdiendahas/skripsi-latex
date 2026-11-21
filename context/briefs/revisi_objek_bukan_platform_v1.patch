@@ -1,0 +1,134 @@
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 762eb98..4c912ea 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -29,7 +29,8 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
+ - Istilah asing `\textit{}` pada kemunculan pertama per bab, termasuk *trader*, *scalper*, *time frame*, *candle*, *hyperparameter*. Nama model dan metode (XGBoost, LightGBM, Grid Search, TPE) ditulis tegak.
+ - Singkatan ditulis kepanjangannya saat pertama kali muncul di setiap bab.
+ - "Naive" (kapital) = pembanding di penelitian ini. "model naive" = model naive di penelitian orang lain.
+-- Notasi pasar: **BTC/IDR** = spot Indodax (yang dipakai). Pasar spot selalu ditulis dengan garis miring.
++- Notasi pasar: **BTC/IDR** = harga Bitcoin dalam rupiah. Sumber datanya API publik Indodax. Pasar spot selalu ditulis dengan garis miring.
++- **Objek penelitian = harga BTC/IDR, bukan "pasar Indodax".** Indodax hanya disebut sebagai sumber data (API, *collector*, kelipatan harga Rp1.000, *candle* yang tersedia). Jangan menulis "pasar spot Indodax", "harga Bitcoin di Indodax", "prediksi untuk Indodax", atau istilah "oracle". Penelitian tidak membuat sistem prediksi untuk platform tertentu. Keterbatasan yang wajib tetap ada: data berasal dari satu sumber, sehingga hasil berlaku untuk data harga dari sumber tersebut.
+ - *Time frame* = jarak waktu prediksi (berapa menit ke depan harga diprediksi), bukan resolusi *candle*.
+ - Notasi: $P_t$ harga, $h$ *time frame*/horizon (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
+ - Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
+diff --git a/assets/tikz-v3/g3-alur-penelitian.tex b/assets/tikz-v3/g3-alur-penelitian.tex
+index 19931e9..1d29eac 100644
+--- a/assets/tikz-v3/g3-alur-penelitian.tex
++++ b/assets/tikz-v3/g3-alur-penelitian.tex
+@@ -1,6 +1,6 @@
+ % G3-1 Alur penelitian.
+ % Sumber: diolah penulis; rincian collector dari
+-% context/konteks_collector_data_v3.0.md.
++% context/konteks_collector_data_v3.1.md.
+ \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+     tahap/.style={draw,rectangle,text width=96mm,align=left,
+       inner sep=3pt,minimum height=11mm},
+diff --git a/assets/tikz-v3/g3-pengumpulan-data.tex b/assets/tikz-v3/g3-pengumpulan-data.tex
+index db4b043..2b4f828 100644
+--- a/assets/tikz-v3/g3-pengumpulan-data.tex
++++ b/assets/tikz-v3/g3-pengumpulan-data.tex
+@@ -1,6 +1,6 @@
+ % G3-2 Pengumpulan data.
+ % Sumber: diolah penulis; seluruh rincian dari
+-% context/konteks_collector_data_v3.0.md (Bagian 1, 3, 4, 6).
++% context/konteks_collector_data_v3.1.md (Bagian 1, 3, 4, 6).
+ \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+     sumber/.style={draw,rectangle,rounded corners=2pt,text width=42mm,
+       align=center,inner sep=2.5pt,minimum height=13mm},
+diff --git a/chapters/bab1-pendahuluan.tex b/chapters/bab1-pendahuluan.tex
+index 0d3f3ab..c777dc3 100644
+--- a/chapters/bab1-pendahuluan.tex
++++ b/chapters/bab1-pendahuluan.tex
+@@ -80,7 +80,7 @@ Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak m
+ naive, tidak memakai uji Diebold-Mariano, dan melakukan normalisasi sebelum data dibagi, sehingga informasi dari data uji ikut masuk ke data latih. Dari literatur yang dibaca, belum ada penelitian yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
+ keempat model boosting yang semuanya dioptimasi.
+ 
+-% P6 -- sumber data dari context/konteks_collector_data_v3.0.md (Bagian 3, 6)
++% P6 -- sumber data dari context/konteks_collector_data_v3.1.md (Bagian 3, 6)
+ Penelitian ini memakai data harga BTC/IDR dari \textit{Application Programming Interface} (API) publik Indodax dalam bentuk
+ \textit{candle} 1 menit. \textit{Candle} 5 menit dibentuk dari \textit{candle}
+ 1 menit, karena Indodax tidak menyediakan \textit{candle} 5 menit. Keempat
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index 97a35f2..f6586f5 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -1,7 +1,7 @@
+ \chapter{Metodologi}
+ % Bab III v3.0 -- rancangan penelitian prediksi harga BTC/IDR dengan boosting.
+ % Angka desain diambil dari source code di context/hasil_eksperimen_v3.0.md
+-% (Lampiran B) dan context/konteks_collector_data_v3.0.md.
++% (Lampiran B) dan context/konteks_collector_data_v3.1.md.
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab3-metodologi.tex.
+ % CEK: subbab desain aplikasi ditambahkan bila dosen meminta.
+ 
+diff --git a/context/hasil_eksperimen_v3.4.md b/context/hasil_eksperimen_v3.4.md
+index 5db57c5..339b991 100644
+--- a/context/hasil_eksperimen_v3.4.md
++++ b/context/hasil_eksperimen_v3.4.md
+@@ -15,7 +15,7 @@
+ >
+ > **Aturan Bab I–III:** angka dan peringkat di dokumen ini **tidak boleh** masuk Bab I–III. Bab I–III hanya memuat desain (Bagian 3), data, alasan metode, dan literatur.
+ >
+-> **Notasi:** BTC/IDR = spot Indodax. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. ✓ = signifikan lebih baik (MAE vs Naive < 0, DM_MAE < 0, p_MAE < 0,05); ✗ = signifikan lebih buruk (DM_MAE > 0, p_MAE < 0,05). Di P1/P2, ✓/✗ memakai p tanpa koreksi kecuali disebut Holm. *corr* = korelasi return prediksi dengan return aktual di data uji.
++> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. ✓ = signifikan lebih baik (MAE vs Naive < 0, DM_MAE < 0, p_MAE < 0,05); ✗ = signifikan lebih buruk (DM_MAE > 0, p_MAE < 0,05). Di P1/P2, ✓/✗ memakai p tanpa koreksi kecuali disebut Holm. *corr* = korelasi return prediksi dengan return aktual di data uji.
+ 
+ ---
+ 
+diff --git a/context/hasil_riset_v3.5.md b/context/hasil_riset_v3.5.md
+index 93f8283..953ca27 100644
+--- a/context/hasil_riset_v3.5.md
++++ b/context/hasil_riset_v3.5.md
+@@ -14,7 +14,7 @@
+ >
+ > **Aturan Bab I–III:** hasil eksperimen (angka MAE, peringkat model, metode optimasi terbaik, *time frame* terbaik) **tidak boleh** muncul di Bab I–III, termasuk hasil uji coba P1/P2. Yang boleh: desain, data, alasan pemilihan metode, dan literatur.
+ >
+-> **Notasi:** BTC/IDR = pasar spot Indodax. "Naive" = prediksi bahwa harga h menit lagi sama dengan harga sekarang. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. *Time frame* = jarak waktu prediksi (horizon), bukan resolusi *candle*.
++> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). "Naive" = prediksi bahwa harga h menit lagi sama dengan harga sekarang. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. *Time frame* = jarak waktu prediksi (horizon), bukan resolusi *candle*.
+ 
+ ---
+ 
+@@ -66,7 +66,7 @@
+ Bagaimana membangun dan mengoptimasi empat model boosting untuk memprediksi harga BTC/IDR beberapa menit ke depan pada berbagai *time frame*, dan model mana yang paling akurat **dibandingkan dengan Naive**?
+ 
+ ### Kalimat inti
+-> "Saya membangun empat model boosting, mengoptimasinya dengan berbagai metode, untuk memprediksi harga Bitcoin di Indodax beberapa menit ke depan, lalu menguji apakah prediksinya benar-benar lebih baik dari tebakan paling sederhana, yaitu harga tidak berubah."
++> "Saya membangun empat model boosting, mengoptimasinya dengan berbagai metode, untuk memprediksi harga Bitcoin dalam rupiah (BTC/IDR) beberapa menit ke depan, lalu menguji apakah prediksinya benar-benar lebih baik dari tebakan paling sederhana, yaitu harga tidak berubah."
+ 
+ ### Acuan utama: Rodrigues & Machado (2025), *Information* 16(4), 300 (A1)
+ 
+@@ -316,7 +316,7 @@ Tahap 3 (panjang data latih) tidak dipetakan ke RM tertentu.
+ Judul sementara di repo LaTeX (`metadata.tex`): **"Prediksi Harga BTC/IDR pada Berbagai Time Frame dengan Model Boosting dan Optimasi Hyperparameter"** (13 kata). Diputuskan bersama dosen.
+ 
+ ### Batasan penelitian (sesuai Bab I)
+-- Objek BTC/IDR spot Indodax melalui API publik.
++- Objek: harga BTC/IDR; data diambil dari API publik Indodax (satu sumber data).
+ - Data candle 1 menit dan candle 5 menit (agregasi), periode 10 Okt 2026 – 10 Feb 2027 (⚠).
+ - Model XGBoost, LightGBM, CatBoost, AdaBoost; pembanding Naive.
+ - Optimasi Grid, Random, TPE, CMA-ES, GA (NSGA-II), QMC.
+diff --git a/context/konteks_collector_data_v3.1.md b/context/konteks_collector_data_v3.1.md
+index 2797f3f..eb4bc49 100644
+--- a/context/konteks_collector_data_v3.1.md
++++ b/context/konteks_collector_data_v3.1.md
+@@ -6,7 +6,7 @@
+ >
+ > **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.4.md`. Konteks umum ada di `konteks_skripsi_v3.2.md`.
+ >
+-> **Notasi:** BTC/IDR = pasar spot Indodax. Semua timestamp di database dalam UTC. WIB = UTC+7.
++> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). Semua timestamp di database dalam UTC. WIB = UTC+7.
+ 
+ ---
+ 
+diff --git a/context/konteks_skripsi_v3.2.md b/context/konteks_skripsi_v3.2.md
+index 5ac360e..cf6c458 100644
+--- a/context/konteks_skripsi_v3.2.md
++++ b/context/konteks_skripsi_v3.2.md
+@@ -22,7 +22,7 @@ Dokumen ini menggantikan seluruh konteks sebelumnya. Kalau ada dokumen lama yang
+ Topik sudah ditetapkan setelah bimbingan 23 Oktober 2026.
+ 
+ - **Tujuan:** mencari model terbaik untuk memprediksi harga Bitcoin (nilai numerik, regresi) dalam waktu dekat.
+-- **Objek:** pasangan spot BTC/IDR di Indodax. Harga dalam rupiah.
++- **Objek:** harga Bitcoin dalam rupiah (BTC/IDR). Data diambil dari API publik Indodax sebagai sumber data; penelitian tidak membuat prediksi untuk platform tertentu (keputusan Ferdi, 22 Nov 2026).
+ - **Model yang dibandingkan (empat):** XGBoost, LightGBM, CatBoost, AdaBoost.
+ - **Time frame prediksi:** 1, 5, 15, 30, dan 60 menit; 1 menit hanya untuk *candle* 1 menit. *Time frame* = jarak waktu prediksi, bukan resolusi *candle*. Lama satu *candle* disebut resolusi *candle*.
+ - **Pembagian data:** periode pengembangan ±80% data awal + blok uji final 20% data akhir, berurutan waktu, dengan *purging* berbasis waktu. Tahap 3 memvariasikan **panjang data latih** (100%, 75%, 50% periode pengembangan), bukan memindah blok uji.

@@ -22,7 +22,7 @@ Dokumen ini menggantikan seluruh konteks sebelumnya. Kalau ada dokumen lama yang
 Topik sudah ditetapkan setelah bimbingan 23 Oktober 2026.
 
 - **Tujuan:** mencari model terbaik untuk memprediksi harga Bitcoin (nilai numerik, regresi) dalam waktu dekat.
-- **Objek:** pasangan spot BTC/IDR di Indodax. Harga dalam rupiah.
+- **Objek:** harga Bitcoin dalam rupiah (BTC/IDR). Data diambil dari API publik Indodax sebagai sumber data; penelitian tidak membuat prediksi untuk platform tertentu (keputusan Ferdi, 22 Nov 2026).
 - **Model yang dibandingkan (empat):** XGBoost, LightGBM, CatBoost, AdaBoost.
 - **Time frame prediksi:** 1, 5, 15, 30, dan 60 menit; 1 menit hanya untuk *candle* 1 menit. *Time frame* = jarak waktu prediksi, bukan resolusi *candle*. Lama satu *candle* disebut resolusi *candle*.
 - **Pembagian data:** periode pengembangan ±80% data awal + blok uji final 20% data akhir, berurutan waktu, dengan *purging* berbasis waktu. Tahap 3 memvariasikan **panjang data latih** (100%, 75%, 50% periode pengembangan), bukan memindah blok uji.

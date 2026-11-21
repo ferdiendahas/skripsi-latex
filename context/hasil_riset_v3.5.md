@@ -14,7 +14,7 @@
 >
 > **Aturan Bab I–III:** hasil eksperimen (angka MAE, peringkat model, metode optimasi terbaik, *time frame* terbaik) **tidak boleh** muncul di Bab I–III, termasuk hasil uji coba P1/P2. Yang boleh: desain, data, alasan pemilihan metode, dan literatur.
 >
-> **Notasi:** BTC/IDR = pasar spot Indodax. "Naive" = prediksi bahwa harga h menit lagi sama dengan harga sekarang. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. *Time frame* = jarak waktu prediksi (horizon), bukan resolusi *candle*.
+> **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). "Naive" = prediksi bahwa harga h menit lagi sama dengan harga sekarang. "MAE vs Naive (%)" negatif = model lebih akurat dari Naive. *Time frame* = jarak waktu prediksi (horizon), bukan resolusi *candle*.
 
 ---
 
@@ -66,7 +66,7 @@
 Bagaimana membangun dan mengoptimasi empat model boosting untuk memprediksi harga BTC/IDR beberapa menit ke depan pada berbagai *time frame*, dan model mana yang paling akurat **dibandingkan dengan Naive**?
 
 ### Kalimat inti
-> "Saya membangun empat model boosting, mengoptimasinya dengan berbagai metode, untuk memprediksi harga Bitcoin di Indodax beberapa menit ke depan, lalu menguji apakah prediksinya benar-benar lebih baik dari tebakan paling sederhana, yaitu harga tidak berubah."
+> "Saya membangun empat model boosting, mengoptimasinya dengan berbagai metode, untuk memprediksi harga Bitcoin dalam rupiah (BTC/IDR) beberapa menit ke depan, lalu menguji apakah prediksinya benar-benar lebih baik dari tebakan paling sederhana, yaitu harga tidak berubah."
 
 ### Acuan utama: Rodrigues & Machado (2025), *Information* 16(4), 300 (A1)
 
@@ -316,7 +316,7 @@ Tahap 3 (panjang data latih) tidak dipetakan ke RM tertentu.
 Judul sementara di repo LaTeX (`metadata.tex`): **"Prediksi Harga BTC/IDR pada Berbagai Time Frame dengan Model Boosting dan Optimasi Hyperparameter"** (13 kata). Diputuskan bersama dosen.
 
 ### Batasan penelitian (sesuai Bab I)
-- Objek BTC/IDR spot Indodax melalui API publik.
+- Objek: harga BTC/IDR; data diambil dari API publik Indodax (satu sumber data).
 - Data candle 1 menit dan candle 5 menit (agregasi), periode 10 Okt 2026 – 10 Feb 2027 (⚠).
 - Model XGBoost, LightGBM, CatBoost, AdaBoost; pembanding Naive.
 - Optimasi Grid, Random, TPE, CMA-ES, GA (NSGA-II), QMC.

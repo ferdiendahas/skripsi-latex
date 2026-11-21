@@ -29,7 +29,8 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 - Istilah asing `\textit{}` pada kemunculan pertama per bab, termasuk *trader*, *scalper*, *time frame*, *candle*, *hyperparameter*. Nama model dan metode (XGBoost, LightGBM, Grid Search, TPE) ditulis tegak.
 - Singkatan ditulis kepanjangannya saat pertama kali muncul di setiap bab.
 - "Naive" (kapital) = pembanding di penelitian ini. "model naive" = model naive di penelitian orang lain.
-- Notasi pasar: **BTC/IDR** = spot Indodax (yang dipakai). Pasar spot selalu ditulis dengan garis miring.
+- Notasi pasar: **BTC/IDR** = harga Bitcoin dalam rupiah. Sumber datanya API publik Indodax. Pasar spot selalu ditulis dengan garis miring.
+- **Objek penelitian = harga BTC/IDR, bukan "pasar Indodax".** Indodax hanya disebut sebagai sumber data (API, *collector*, kelipatan harga Rp1.000, *candle* yang tersedia). Jangan menulis "pasar spot Indodax", "harga Bitcoin di Indodax", "prediksi untuk Indodax", atau istilah "oracle". Penelitian tidak membuat sistem prediksi untuk platform tertentu. Keterbatasan yang wajib tetap ada: data berasal dari satu sumber, sehingga hasil berlaku untuk data harga dari sumber tersebut.
 - *Time frame* = jarak waktu prediksi (berapa menit ke depan harga diprediksi), bukan resolusi *candle*.
 - Notasi: $P_t$ harga, $h$ *time frame*/horizon (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
 - Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
