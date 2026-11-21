@@ -20,6 +20,15 @@
 \setlength{\@fpbot}{0pt plus 1fil}
 \makeatother
 
+% Setiap gambar TikZ dibungkus bingkai tipis supaya batas gambar terlihat
+% jelas dan tidak tercampur dengan teks di sekitarnya.
+\newcommand{\gambartikz}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{6pt}%
+  \setlength{\fboxrule}{0.4pt}%
+  \fbox{\input{#1}}%
+  \endgroup}
+
 \begin{document}
 \buatsampul
 
