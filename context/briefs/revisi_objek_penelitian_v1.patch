@@ -1,0 +1,34 @@
+diff --git a/chapters/bab1-pendahuluan.tex b/chapters/bab1-pendahuluan.tex
+index 0a38bb8..0d3f3ab 100644
+--- a/chapters/bab1-pendahuluan.tex
++++ b/chapters/bab1-pendahuluan.tex
+@@ -143,8 +143,9 @@ Manfaat penelitian ini adalah sebagai berikut:
+ \label{sec:batasan}
+ Batasan masalah penelitian ini adalah sebagai berikut:
+ \begin{enumerate}
+-  \item Objek penelitian berupa harga BTC/IDR di pasar spot Indodax, yang
+-        diambil melalui API publik.
++  \item Objek penelitian berupa harga Bitcoin dalam rupiah (BTC/IDR). Data
++        harga diambil dari satu sumber, yaitu API publik Indodax, sehingga
++        hasil penelitian berlaku untuk data harga dari sumber tersebut.
+   \item Data berupa \textit{candle} 1 menit dan \textit{candle} 5 menit.
+         \textit{Candle} 5 menit dibentuk dari \textit{candle} 1 menit.
+   \item Data dikumpulkan sejak 10 Oktober 2026 sampai 10 Februari 2027.
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index dd5e594..1561df8 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -69,8 +69,11 @@ penelitian pada Subbab~\ref{sec:gap}.
+ 
+ \section{Pengumpulan Data}
+ \label{sec:kumpul}
+-Objek penelitian ini merupakan harga BTC/IDR di pasar spot Indodax. Data
+-penelitian ini merupakan data primer yang dikumpulkan sendiri.
++Objek penelitian ini merupakan harga Bitcoin dalam rupiah (BTC/IDR). Data
++harga diambil dari API publik Indodax sebagai sumber data. Penelitian ini
++tidak membuat sistem prediksi untuk platform tertentu, melainkan memprediksi
++nilai harganya saja. Data penelitian ini merupakan data primer yang
++dikumpulkan sendiri.
+ Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
+ 
+ \begin{figure}[htbp]
