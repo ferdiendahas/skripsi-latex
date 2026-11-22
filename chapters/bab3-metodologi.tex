@@ -1,6 +1,6 @@
 \chapter{Metodologi}
 % Bab III v3.0 -- rancangan penelitian prediksi harga BTC/IDR dengan boosting.
-% Angka desain diambil dari source code di context/hasil_eksperimen_v3.0.md
+% Angka desain diambil dari source code di context/hasil_eksperimen_v3.5.md
 % (Lampiran B) dan context/konteks_collector_data_v3.1.md.
 % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab3-metodologi.tex.
 % CEK: subbab desain aplikasi ditambahkan bila dosen meminta.
@@ -29,30 +29,30 @@ server, lalu disimpan ke basis data. Rinciannya dibahas pada
 Subbab~\ref{sec:kumpul}.
 
 Langkah kedua merupakan praproses. \textit{Candle} 5 menit dibentuk dari
-\textit{candle} 1 menit, lalu harga yang dipakai ditetapkan dan bar yang
-hilang ditangani. Rinciannya dibahas pada Subbab~\ref{sec:praproses}.
+\textit{candle} 1 menit, lalu harga yang dipakai ditetapkan dan
+\textit{candle} yang hilang ditangani. Rinciannya dibahas pada Subbab~\ref{sec:praproses}.
 
 Langkah ketiga merupakan pembentukan fitur dan target. Fitur dihitung hanya
 dari data sampai waktu $t$, sedangkan targetnya merupakan \textit{return}
-logaritmik pada \textit{time frame} $h$. Rinciannya dibahas pada
+logaritmik pada horizon prediksi $h$. Rinciannya dibahas pada
 Subbab~\ref{sec:fitur}.
 
 Langkah keempat merupakan pembagian data. Data dibagi berurutan menurut waktu
-menjadi periode pengembangan dan blok uji final. Baris latih yang targetnya
-melewati awal blok uji final dibuang. Rinciannya dibahas pada
+menjadi data latih dan data uji. Baris latih yang targetnya melewati awal
+data uji dibuang. Rinciannya dibahas pada
 Subbab~\ref{sec:bagi}.
 
 Langkah kelima merupakan optimasi \textit{hyperparameter}. Pencarian dan
-seluruh pemilihan konfigurasi dilakukan hanya di periode pengembangan dengan
+seluruh pemilihan konfigurasi dilakukan hanya di data latih dengan
 validasi \textit{walk-forward}. Rinciannya dibahas pada
 Subbab~\ref{sec:model}.
 
 Langkah keenam merupakan pelatihan model akhir dan prediksi. Setelah
-konfigurasi dikunci, model dilatih ulang pada periode pengembangan, lalu
-dipakai untuk memprediksi blok uji final, dan hasilnya dikonversi ke rupiah.
+konfigurasi ditetapkan, model dilatih ulang pada seluruh data latih, lalu
+dipakai untuk memprediksi data uji, dan hasilnya dikonversi ke rupiah.
 Rinciannya dibahas pada Subbab~\ref{sec:model}.
 
-Langkah ketujuh merupakan evaluasi. Ramalan model dibandingkan dengan ramalan
+Langkah ketujuh merupakan evaluasi. Prediksi model dibandingkan dengan prediksi
 Naive memakai beberapa metrik dan uji statistik. Rinciannya dibahas pada
 Subbab~\ref{sec:evaluasi}.
 
@@ -100,10 +100,11 @@ basis data SQLite.
 pada tabel \texttt{ohlc\_1m}. Waktu setiap \textit{candle} menandai awal
 \textit{candle} dalam zona waktu UTC. Sebagai contoh, \textit{candle} 10.04
 mencakup transaksi pukul 10.04.00 sampai 10.04.59, sehingga nilai OHLCV-nya
-baru lengkap pada pukul 10.05. Indodax hanya menyediakan \textit{candle}
-dengan resolusi 1, 15, 30, 60, dan 240 menit, serta harian dan mingguan.
-Karena itu, \textit{candle} 1 menit dipakai sebagai resolusi terkecil yang
-tersedia.
+baru lengkap pada pukul 10.05. Lama satu \textit{candle} disebut
+\textit{time frame}. Indodax hanya menyediakan \textit{candle} dengan
+\textit{time frame} 1, 15, 30, 60, dan 240 menit, serta harian dan mingguan.
+Karena itu, \textit{candle} 1 menit dipakai sebagai \textit{time frame}
+terkecil yang tersedia.
 
 Program \textit{collector} mengambil ulang data 5 menit terakhir setiap kali
 berjalan. Dengan cara itu, \textit{candle} yang belum selesai terbentuk saat
@@ -133,7 +134,7 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
                   |>{\raggedright\arraybackslash}p{0.12\textwidth}%
                   |>{\raggedright\arraybackslash}p{0.10\textwidth}|}
     \hline
-    \textbf{Dataset} & \textbf{Resolusi} & \textbf{Sumber} &
+    \textbf{Dataset} & \textbf{\textit{Time frame}} & \textbf{Sumber} &
     \textbf{Kolom data} & \textbf{Periode} & \textbf{Jumlah baris} \\
     \hline
     \textit{Candle} 1 menit & 1 menit & API publik Indodax &
@@ -148,7 +149,7 @@ Tabel~\ref{tab:data} merangkum kedua dataset yang dipakai.
   \endgroup
 \end{table}
 Tabel~\ref{tab:data} menunjukkan bahwa kedua dataset memiliki kolom yang sama,
-yaitu waktu dan OHLCV. Perbedaannya terletak pada resolusi dan sumbernya.
+yaitu waktu dan OHLCV. Perbedaannya terletak pada \textit{time frame} dan sumbernya.
 Kedua dataset mencakup periode yang sama, yaitu 124 hari. Jumlah baris
 \textit{candle} 1 menit sama dengan banyaknya menit dalam periode tersebut,
 sedangkan jumlah baris \textit{candle} 5 menit merupakan seperlimanya.
@@ -175,8 +176,9 @@ dijelaskan pada subbab berikut.
 \subsection{Pembentukan \textit{Candle} 5 Menit}
 Karena Indodax tidak menyediakan \textit{candle} 5 menit, dataset kedua
 dibentuk dengan menggabungkan lima \textit{candle} 1 menit yang berurutan.
-Misalkan $\tau$ menyatakan nomor bar 5 menit dan $j$ menyatakan nomor menit di
-dalam bar tersebut. Nilai bar 5 menit ke-$\tau$ dihitung dengan
+Misalkan $\tau$ menyatakan nomor \textit{candle} 5 menit dan $j$ menyatakan
+nomor menit di dalam \textit{candle} tersebut. Nilai \textit{candle} 5 menit
+ke-$\tau$ dihitung dengan
 \begin{equation}
   \begin{aligned}
     P^{O}_\tau &= P^{O}_{j_1}, &\qquad
@@ -188,21 +190,23 @@ dalam bar tersebut. Nilai bar 5 menit ke-$\tau$ dihitung dengan
   \label{eq:agregasi}
 \end{equation}
 \begin{keterangan}
-  \item[$P^{O}_\tau$] harga pembukaan bar 5 menit ke-$\tau$,
-  \item[$P^{H}_\tau$] harga tertinggi bar 5 menit ke-$\tau$,
-  \item[$P^{L}_\tau$] harga terendah bar 5 menit ke-$\tau$,
-  \item[$P^{C}_\tau$] harga penutupan bar 5 menit ke-$\tau$,
-  \item[$V_\tau$] volume bar 5 menit ke-$\tau$,
-  \item[$j$] nomor menit di dalam bar ke-$\tau$, dengan $j_1$ menit pertama
+  \item[$P^{O}_\tau$] harga pembukaan \textit{candle} 5 menit ke-$\tau$,
+  \item[$P^{H}_\tau$] harga tertinggi \textit{candle} 5 menit ke-$\tau$,
+  \item[$P^{L}_\tau$] harga terendah \textit{candle} 5 menit ke-$\tau$,
+  \item[$P^{C}_\tau$] harga penutupan \textit{candle} 5 menit ke-$\tau$,
+  \item[$V_\tau$] volume \textit{candle} 5 menit ke-$\tau$,
+  \item[$j$] nomor menit di dalam \textit{candle} ke-$\tau$, dengan $j_1$ menit pertama
     yang tersedia dan $j_5$ menit terakhir yang tersedia,
   \item[$P^{O}_j$, $P^{H}_j$, $P^{L}_j$, $P^{C}_j$, $V_j$] nilai
     \textit{candle} 1 menit pada menit ke-$j$.
 \end{keterangan}
-Batas bar 5 menit mengikuti kelipatan 5 menit pada zona waktu UTC, misalnya
-10.00--10.04 dan 10.05--10.09. Waktu bar 5 menit menandai awal bar tersebut.
-Bila ada menit yang kosong di dalam satu bar 5 menit, bar tersebut tetap
-dibentuk dari menit yang tersedia dan dicatat sebagai bar parsial. Bila
-kelima menitnya kosong, bar tersebut dianggap hilang. Jumlah bar parsial
+Batas \textit{candle} 5 menit mengikuti kelipatan 5 menit pada zona waktu UTC,
+misalnya 10.00--10.04 dan 10.05--10.09. Waktu \textit{candle} 5 menit menandai
+awal \textit{candle} tersebut. Bila ada menit yang kosong di dalam satu
+\textit{candle} 5 menit, \textit{candle} tersebut tetap dibentuk dari menit
+yang tersedia dan dicatat sebagai \textit{candle} parsial. Bila kelima
+menitnya kosong, \textit{candle} tersebut dianggap hilang. Jumlah
+\textit{candle} parsial
 dilaporkan bersama deskripsi data.
 
 \subsection{Definisi Harga}
@@ -214,9 +218,9 @@ harga \textit{typical} pada kedua dataset, yaitu
 \end{equation}
 \begin{keterangan}
   \item[$P_t$] harga yang dipakai pada waktu $t$,
-  \item[$P^{H}_t$] harga tertinggi pada bar ke-$t$,
-  \item[$P^{L}_t$] harga terendah pada bar ke-$t$,
-  \item[$P^{C}_t$] harga penutupan pada bar ke-$t$.
+  \item[$P^{H}_t$] harga tertinggi pada \textit{candle} ke-$t$,
+  \item[$P^{L}_t$] harga terendah pada \textit{candle} ke-$t$,
+  \item[$P^{C}_t$] harga penutupan pada \textit{candle} ke-$t$.
 \end{keterangan}
 Harga penutupan pada data 1 menit dapat berpindah-pindah antara harga beli
 dan harga jual terbaik. Pada data \textit{snapshot} ticker 10 Oktober sampai
@@ -233,15 +237,16 @@ sehingga perpindahan tersebut tidak hilang sepenuhnya.
 % CEK: perbarui angka selisih harga jual-beli, proporsi candle satu harga, dan
 % autokorelasi dengan data final.
 
-Bar tanpa transaksi diperlakukan sebagai harga tetap. Pada \textit{candle}
-bervolume nol, nilai \textit{high}, \textit{low}, dan \textit{close} sama dengan
+\textit{Candle} tanpa transaksi diperlakukan sebagai harga tetap. Pada
+\textit{candle} tanpa transaksi (volume nol), nilai \textit{high}, \textit{low}, dan \textit{close} sama dengan
 harga penutupan menit sebelumnya, seperti dijelaskan pada
 Subbab~\ref{sec:kumpul}. Akibatnya, harga \textit{typical}-nya berbeda dari
 harga \textit{typical} menit sebelumnya walaupun tidak ada transaksi. Perubahan
 tersebut bukan pergerakan pasar dan dapat ditebak dari \textit{candle}
-sebelumnya. Karena itu, harga pada bar bervolume nol ditetapkan sama dengan
-harga bar sebelumnya, yaitu $P_t = P_{t-1}$. Aturan yang sama berlaku pada bar
-5 menit yang kelima menitnya bervolume nol. Aturan ini tidak mengubah
+sebelumnya. Karena itu, harga pada \textit{candle} tanpa transaksi ditetapkan
+sama dengan harga \textit{candle} sebelumnya, yaitu $P_t = P_{t-1}$. Aturan
+yang sama berlaku pada \textit{candle} 5 menit yang kelima menitnya tanpa
+transaksi. Aturan ini tidak mengubah
 autokorelasi yang disebutkan di atas.
 
 Namun, harga yang dirata-ratakan dapat memunculkan autokorelasi semu pada
@@ -251,21 +256,21 @@ $0{,}13$, sedangkan \textit{return} harga penutupan bernilai $-0{,}25$.
 Autokorelasi semu tersebut dapat
 membuat model tampak lebih baik daripada Naive, padahal bukan karena harganya
 benar-benar dapat diprediksi. Hal ini menjadi keterbatasan penelitian.
-Untuk memeriksa pengaruh tersebut, pasangan dataset dan \textit{time frame}
-terpilih pada Tahap pertama juga dijalankan dengan harga penutupan pada
-keempat model, memakai strategi \textit{tuning} terpilih pada Tahap kedua.
-Hasilnya dilaporkan sebagai analisis pendukung, diuji dalam keluarga Holm
-tersendiri, dan tidak dipakai untuk memilih konfigurasi.
+Untuk memeriksa pengaruh tersebut, kombinasi dataset dan horizon terpilih pada
+Tahap pertama juga dijalankan dengan harga penutupan pada keempat model,
+memakai metode optimasi terpilih pada Tahap kedua. Hasilnya dilaporkan sebagai
+analisis pendukung, diuji dalam keluarga uji Holm tersendiri, yaitu kelompok
+uji yang dikoreksi bersama, dan tidak dipakai untuk memilih konfigurasi.
 % Catatan: jangan pakai angka +0,25 dari Working untuk harga typical.
 
 \subsection{Penanganan Data Hilang}
 Data diurutkan menurut waktu, lalu disusun ulang pada urutan waktu yang lengkap, yaitu setiap 1 menit untuk dataset pertama dan setiap 5 menit untuk dataset
-kedua. Bar yang tidak ada datanya dibiarkan kosong dan tidak diisi dengan nilai
-dugaan. Fitur maupun target yang perhitungannya melewati bar kosong otomatis
+kedua. \textit{Candle} yang tidak ada datanya dibiarkan kosong dan tidak diisi
+dengan nilai dugaan. Fitur maupun target yang perhitungannya melewati
+\textit{candle} kosong otomatis
 ikut terbuang pada tahap berikutnya. Cara ini dipilih supaya tidak ada nilai
 buatan yang masuk ke dalam data latih maupun data uji. Menit tanpa transaksi
-tidak termasuk celah, karena tetap tercatat sebagai \textit{candle} bervolume
-nol. Jumlah dan lokasi celah dilaporkan, dan celah yang lebih panjang dari
+tidak termasuk celah, karena tetap tercatat sebagai \textit{candle} dengan volume nol. Jumlah dan lokasi celah dilaporkan, dan celah yang lebih panjang dari
 6 jam diperiksa terhadap catatan \textit{collector}.
 
 \subsection{Normalisasi}
@@ -275,7 +280,7 @@ memecah data berdasarkan urutan nilai fitur, bukan berdasarkan besarnya.
 Model berbasis pohon tidak terpengaruh oleh transformasi monoton pada fitur,
 sehingga penskalaan tidak diperlukan \cite{hastie2009}.
 Pilihan ini sekaligus menghindari salah satu bentuk kebocoran data yang
-dibahas pada Subbab~\ref{sec:validasi}, yaitu penskala yang dipasang sebelum data dibagi.
+dibahas pada Subbab~\ref{sec:validasi}, yaitu normalisasi yang dilakukan sebelum data dibagi.
 
 \section{Pembentukan Fitur dan Target}
 \label{sec:fitur}
@@ -290,8 +295,9 @@ antara jendela fitur dan target.
   \caption{Pembentukan Fitur dan Target}
   \label{fig:fitur}
 \end{figure}
-Pada Gambar~\ref{fig:fitur}, fitur dihitung dari jendela bar masa lalu sampai
-bar sekarang, yaitu bar $t$. Target diambil dari bar pada waktu $t+h$,
+Pada Gambar~\ref{fig:fitur}, fitur dihitung dari jendela \textit{candle} masa
+lalu sampai \textit{candle} sekarang, yaitu \textit{candle} $t$. Target diambil
+dari \textit{candle} pada waktu $t+h$,
 sehingga fitur tidak memakai data yang belum terjadi.
 
 Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
@@ -312,7 +318,7 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
     \textbf{Jumlah} \\
     \hline
     \textit{Lag return} & \texttt{ret\_lag1} s.d.\ \texttt{ret\_lag12} &
-    \textit{return} logaritmik 1 bar pada 12 bar terakhir sampai waktu $t$ & 12 \\
+    \textit{return} logaritmik 1 \textit{candle} pada 12 \textit{candle} terakhir sampai waktu $t$ & 12 \\
     \hline
     Statistik bergulir & \texttt{ret\_sum\_w}, \texttt{ret\_std\_w},
     \texttt{nol\_w} & jumlah \textit{return}, simpangan baku \textit{return},
@@ -347,35 +353,34 @@ fitur dihitung dari harga, volume, dan waktu \textit{candle}.
 Jendela bergulir $s$ bernilai 5, 15, 30, 60, dan 240 menit pada dataset
 \textit{candle} 1 menit. Pada dataset \textit{candle} 5 menit, jendela
 terpendek menjadi 10 menit, sehingga nilainya menjadi 10, 15, 30, 60, dan
-240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua bar.
+240 menit. Hal ini terjadi karena panjang jendela minimum ditetapkan dua \textit{candle}.
 
-Prediksi dibuat ketika \textit{candle} terakhir sudah ditutup. Selain itu, kedua dataset tidak hanya berbeda resolusi. Dua belas \textit{lag} mencakup
+Prediksi dibuat ketika \textit{candle} terakhir sudah ditutup. Selain itu, kedua dataset tidak hanya berbeda \textit{time frame}. Dua belas \textit{lag} mencakup
 12 menit pada \textit{candle} 1 menit dan 60 menit pada \textit{candle}
 5 menit, jendela terpendeknya berbeda, dan harga \textit{typical} pada
-\textit{candle} 5 menit dihitung dari OHLC hasil agregasi. Karena itu, Tahap pertama membandingkan dua cara peramalan secara utuh, bukan hanya pengaruh resolusi data.
+\textit{candle} 5 menit dihitung dari OHLC hasil agregasi. Karena itu, Tahap pertama membandingkan dua cara prediksi secara utuh, bukan hanya pengaruh \textit{time frame}.
 
-Target yang diramal merupakan \textit{return} logaritmik $r_{t,h}$ pada
-Persamaan~\eqref{eq:return}. Hasil ramalan dikembalikan ke satuan rupiah
+Target yang diprediksi merupakan \textit{return} logaritmik $r_{t,h}$ pada
+Persamaan~\eqref{eq:return}. Hasil prediksi dikembalikan ke satuan rupiah
 dengan Persamaan~\eqref{eq:konversi}. Alasan memakai \textit{return}, bukan
 harga secara langsung, sudah dibahas pada Subbab~\ref{subsec:return}.
 
-\textit{Time frame} yang diuji bernilai 1, 5, 15, 30, dan 60 menit.
-\textit{Time frame} 1 menit hanya dipakai pada dataset \textit{candle} 1
-menit. \textit{Time frame} dalam satuan bar dihitung dengan
-$h_b = h / \Delta$, dengan $\Delta$ menyatakan resolusi \textit{candle}, yaitu
-1 atau 5 menit.
+Horizon prediksi yang diuji bernilai 1, 5, 15, 30, dan 60 menit. Horizon
+1 menit hanya dipakai pada dataset \textit{candle} 1 menit. Horizon dalam
+satuan \textit{candle} dihitung dengan $h_b = h / \Delta$, dengan $\Delta$
+menyatakan \textit{time frame} \textit{candle}, yaitu 1 atau 5 menit.
 
 \section{Pembagian Data}
 \label{sec:bagi}
 Data dibagi berurutan menurut waktu, tanpa pengacakan, menjadi dua bagian.
-Bagian pertama merupakan periode pengembangan, yaitu sekitar 80\% data awal.
+Bagian pertama merupakan data latih, yaitu sekitar 80\% data awal.
 Jumlahnya sedikit kurang dari 80\% karena baris di ujungnya dibuang, seperti
 dijelaskan di bawah. Seluruh
 pencarian \textit{hyperparameter} pada keempat tahap dan pemilihan konfigurasi
 pada Tahap pertama dan kedua dilakukan di bagian ini. Bagian kedua merupakan
-blok uji final, yaitu 20\% data akhir. Blok ini tidak dipakai untuk memilih
-apa pun dan baru dipakai setelah seluruh pilihan dikunci. Blok uji final
-hanya mencakup satu periode, sehingga hasilnya dapat dipengaruhi kondisi
+data uji, yaitu 20\% data akhir. Data uji tidak dipakai untuk memilih apa pun
+dan baru dipakai setelah seluruh pilihan ditetapkan. Data uji hanya mencakup
+satu periode, sehingga hasilnya dapat dipengaruhi kondisi
 pasar pada periode tersebut \cite{tashman2000}. Hal ini menjadi keterbatasan penelitian.
 Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
 
@@ -385,13 +390,12 @@ Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
   \caption{Pembagian Data dan \textit{Purging}}
   \label{fig:bagi}
 \end{figure}
-Pada Gambar~\ref{fig:bagi} bagian (a), periode pengembangan berada sebelum
-blok uji final, dan potongan yang diarsir di antara keduanya dibuang. Bagian
+Pada Gambar~\ref{fig:bagi} bagian (a), data latih berada sebelum data uji, dan
+potongan yang diarsir di antara keduanya dibuang. Bagian
 (b) menunjukkan panjang data latih 100\%, 75\%, dan 50\% pada Tahap ketiga.
-Ketiganya memakai bagian data latih yang paling akhir dan blok uji final yang
-sama.
+Ketiganya memakai bagian data latih yang paling akhir dan data uji yang sama.
 
-Baris latih yang targetnya berada di dalam blok uji final dibuang. Langkah
+Baris latih yang targetnya berada di dalam data uji dibuang. Langkah
 tersebut disebut \textit{purging} dan sudah dijelaskan pada
 Subbab~\ref{sec:validasi}. Batasnya dihitung berdasarkan waktu, bukan jumlah
 baris, karena sebagian baris sudah terbuang pada tahap praproses. Kedua
@@ -404,16 +408,16 @@ bagian data merupakan
 \end{equation}
 \begin{keterangan}
   \item[$t$] waktu awal \textit{candle} pada suatu baris,
-  \item[$h$] \textit{time frame} dalam menit,
-  \item[$t_u$] waktu awal blok uji final, yaitu waktu baris
+  \item[$h$] horizon prediksi dalam menit,
+  \item[$t_u$] waktu awal data uji, yaitu waktu baris
     ke-$(\lfloor 0{,}8N \rfloor + 1)$,
   \item[$N$] jumlah baris data setelah fitur dan target dibentuk,
   \item[$\lfloor \cdot \rfloor$] pembulatan ke bawah.
 \end{keterangan}
 
 Pada Tahap ketiga, panjang data latih divariasikan menjadi 100\%, 75\%, dan
-50\% dari periode pengembangan, dengan memakai bagian yang paling akhir.
-Blok uji finalnya tetap sama. Dengan cara itu, perbedaan hasil antarvariasi
+50\% dari seluruh data latih, dengan memakai bagian yang paling akhir. Data
+ujinya tetap sama. Dengan cara itu, perbedaan hasil antarvariasi
 hanya berasal dari panjang riwayat latih, bukan dari perbedaan periode uji.
 
 \section{Pembangunan Model dan Optimasi \textit{Hyperparameter}}
@@ -434,8 +438,8 @@ pohon dasar. Pembandingnya merupakan Naive pada
 Persamaan~\eqref{eq:naive}.
 
 Seluruh model memakai \textit{seed} acak 42, sehingga hasilnya dapat diulang.
-Pengaturan \textit{default} memakai nilai bawaan dari masing-masing pustaka.
-Pada AdaBoost, pohon dasar bawaannya merupakan pohon regresi dengan kedalaman
+Pengaturan \textit{default} merupakan nilai bawaan dari masing-masing pustaka.
+Pada AdaBoost, pohon dasar \textit{default}-nya merupakan pohon regresi dengan kedalaman
 3 \cite{sklearnadaboost}.
 
 \subsection{Ruang Pencarian \textit{Hyperparameter}}
@@ -564,13 +568,13 @@ jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
 
 Berdasarkan Tabel~\ref{tab:grid}, jenis ketiga parameter tersebut sama untuk keempat model, yaitu jumlah pohon,
 ukuran pohon, dan \textit{learning rate}. Parameter lain dibiarkan pada nilai
-bawaannya. Nilai yang dipakai AdaBoost berbeda dari ketiga model lain karena
-rentang \textit{learning rate} bawaannya juga berbeda.
+\textit{default}-nya. Nilai yang dipakai AdaBoost berbeda dari ketiga model
+lain karena rentang \textit{learning rate} \textit{default}-nya juga berbeda.
 
 \subsection{Metode Optimasi}
-Tujuh strategi \textit{tuning} dibandingkan, yaitu satu pengaturan tanpa
-\textit{tuning} dan enam metode pencarian. Setiap strategi terdiri atas
-metode pencarian beserta ruang dan anggaran percobaannya. Seluruh metode
+Tujuh metode optimasi dibandingkan, yaitu satu pengaturan tanpa
+\textit{tuning} dan enam metode pencarian. Setiap metode optimasi terdiri atas
+metode pencarian beserta ruang pencarian dan jumlah \textit{trial}-nya. Seluruh metode
 pencarian dijalankan dengan pustaka Optuna. Teori setiap metode sudah dibahas
 pada Subbab~\ref{sec:optimasi}. Tabel~\ref{tab:optimasi} merangkum
 pengaturannya.
@@ -617,13 +621,14 @@ data validasi, karena \texttt{NSGAIISampler} merupakan implementasi algoritme
 genetika yang tersedia pada Optuna \cite{optunadocs}.
 Ketiga, jumlah 30 \textit{trial} pada Quasi-Monte Carlo bukan merupakan
 pangkat dua, sehingga sebaran barisan Sobol tidak terjamin rata. Jumlah
-30 \textit{trial} tetap dipakai supaya anggaran percobaan sama dengan metode
-pencarian lain, dan hal ini menjadi keterbatasan penelitian.
+30 \textit{trial} tetap dipakai supaya jumlah \textit{trial}-nya sama dengan
+metode pencarian lain, dan hal ini menjadi keterbatasan penelitian.
 
-Ruang dan anggaran percobaan setiap strategi tidak sama. Grid Search memakai
+Ruang pencarian dan jumlah \textit{trial} setiap metode optimasi tidak sama. Grid Search memakai
 tiga parameter dengan 27 kombinasi, metode lain memakai ruang pencarian yang
 lebih luas dengan 30 \textit{trial}, dan pengaturan \textit{default} tidak
-menjalankan pencarian. Karena itu, Tahap kedua membandingkan strategi \textit{tuning} secara utuh, bukan hanya algoritme pencariannya. Jumlah \textit{trial} yang selesai dan yang dipangkas dicatat
+menjalankan pencarian. Karena itu, Tahap kedua membandingkan metode optimasi secara utuh, bukan hanya
+algoritme pencariannya. Jumlah \textit{trial} yang selesai dan yang dipangkas dicatat
 untuk setiap \textit{run}.
 
 Selain itu, metode yang memakai unsur acak dijalankan dengan \textit{seed}
@@ -631,8 +636,8 @@ yang sama. Akibatnya, beberapa \textit{trial} awalnya dapat menghasilkan
 konfigurasi yang identik.
 
 \subsection{Validasi \textit{Walk-Forward}}
-Pencarian \textit{hyperparameter} hanya memakai data latih pada periode
-pengembangan. Blok uji final tidak disentuh sama sekali pada tahap ini. Gambar~\ref{fig:walk} menggambarkan
+Pencarian \textit{hyperparameter} hanya memakai data latih. Data uji tidak
+disentuh sama sekali pada tahap ini. Gambar~\ref{fig:walk} menggambarkan
 skema validasinya.
 
 \begin{figure}[htbp]
@@ -644,10 +649,10 @@ skema validasinya.
 \end{figure}
 
 Seperti terlihat pada Gambar~\ref{fig:walk}, data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
-Jendela latih bertambah pada setiap \textit{fold}, dan blok validasinya selalu
+Jendela latih bertambah pada setiap \textit{fold}, dan data validasinya selalu
 berada sesudah jendela latih. Baris latih yang waktu targetnya tidak
-mendahului awal blok validasi dibuang, sehingga target pada data latih tidak
-melewati blok validasi. Batas ini dihitung berdasarkan waktu dengan aturan
+mendahului awal data validasi dibuang, sehingga target pada data latih tidak
+melewati data validasi. Batas ini dihitung berdasarkan waktu dengan aturan
 yang sama seperti Persamaan~\eqref{eq:split}.
 
 Nilai yang dioptimasi merupakan rata-rata MAE harga pada kelima
@@ -663,24 +668,23 @@ Nilai yang dioptimasi merupakan rata-rata MAE harga pada kelima
     \textit{hyperparameter} $\theta$,
   \item[$K$] jumlah \textit{fold}, bernilai 5,
   \item[$k$] nomor \textit{fold},
-  \item[$\mathcal{V}_k$] himpunan indeks bar pada blok validasi
+  \item[$\mathcal{V}_k$] himpunan indeks \textit{candle} pada data validasi
     \textit{fold} ke-$k$,
-  \item[$n_k$] banyaknya bar pada blok validasi \textit{fold} ke-$k$,
+  \item[$n_k$] banyaknya \textit{candle} pada data validasi \textit{fold} ke-$k$,
   \item[$P_t$, $P_{t+h}$] harga pada waktu $t$ dan $t+h$,
-  \item[$\hat{r}_{t,h}$] \textit{return} hasil ramalan.
+  \item[$\hat{r}_{t,h}$] \textit{return} hasil prediksi.
 \end{keterangan}
 
 Objektif tersebut dihitung dalam rupiah supaya sama dengan metrik utama pada
 Subbab~\ref{sec:evaluasi}. Model tetap dilatih pada \textit{return}, lalu
-ramalannya dikonversi ke rupiah sebelum skor dihitung. Skor yang sama juga
+prediksinya dikonversi ke rupiah sebelum skor dihitung. Skor yang sama juga
 dihitung untuk Naive pada setiap \textit{fold}. Selisih relatif keduanya
 disebut MAE validasi vs Naive dan dipakai untuk memilih konfigurasi pada
 Tahap pertama dan kedua.
 
 Konfigurasi dengan nilai $\mathrm{Skor}(\theta)$ terkecil dipilih sebagai
 konfigurasi terbaik. Setelah itu, model dilatih ulang pada seluruh data latih
-di periode pengembangan dengan konfigurasi tersebut, lalu dipakai untuk
-memprediksi blok uji final.
+dengan konfigurasi tersebut, lalu dipakai untuk memprediksi data uji.
 
 \subsection{Teknik Optimasi Tambahan}
 Empat teknik tambahan diuji secara terpisah. Teorinya sudah dibahas pada
@@ -689,20 +693,19 @@ Subbab~\ref{subsec:teknik}.
 Teknik pertama merupakan \textit{early stopping}, yang dipakai pada XGBoost,
 LightGBM, dan CatBoost. Jumlah pohon maksimum ditetapkan 2.000, dan pelatihan
 dihentikan bila tidak ada perbaikan selama 50 iterasi berturut-turut pada
-blok validasi di setiap \textit{fold}. Jumlah pohon pada model akhir
+data validasi di setiap \textit{fold}. Jumlah pohon pada model akhir
 ditetapkan sebagai rata-rata jumlah pohon terbaik dari kelima \textit{fold}.
-Teknik ini tidak berlaku untuk AdaBoost. Karena blok validasi yang sama dipakai
-untuk menghentikan pelatihan dan untuk memberi skor, skor validasi teknik ini
+Teknik ini tidak berlaku untuk AdaBoost. Karena data validasi yang sama dipakai
+untuk menghentikan pelatihan dan untuk memberi skor, MAE validasi teknik ini
 cenderung sedikit lebih baik daripada sebenarnya. Karena itu, perbandingan
-teknik ini memakai blok uji final, bukan skor validasi.
+teknik ini memakai data uji, bukan MAE validasi.
 
 Teknik kedua merupakan seleksi 15 fitur teratas. Di setiap \textit{fold},
 model dengan pengaturan \textit{default} dilatih pada bagian latih
 \textit{fold} tersebut, lalu 15 fitur dengan nilai \textit{feature importance}
-tertinggi dipilih untuk menilai blok validasinya. Dengan cara itu, label pada
-blok validasi tidak ikut menentukan fitur. Setelah konfigurasi dikunci,
-seleksi diulang pada seluruh data latih di periode pengembangan untuk model
-akhir.
+tertinggi dipilih untuk menilai data validasinya. Dengan cara itu, label pada
+data validasi tidak ikut menentukan fitur. Setelah konfigurasi ditetapkan,
+seleksi diulang pada seluruh data latih untuk model akhir.
 
 Teknik ketiga merupakan penggantian fungsi \textit{loss} pelatihan menjadi
 \textit{loss} absolut. XGBoost memakai \texttt{reg:absoluteerror}, LightGBM
@@ -721,17 +724,17 @@ keempat model. Kombinasi yang tidak berlaku tidak dijalankan dan ditandai
 
 \section{Evaluasi Model}
 \label{sec:evaluasi}
-Ramalan dievaluasi pada blok uji final dalam satuan rupiah. Harga ramalan diperoleh
-dengan mengembalikan \textit{return} hasil ramalan ke rupiah memakai
+Prediksi dievaluasi pada data uji dalam satuan rupiah. Harga prediksi diperoleh
+dengan mengembalikan \textit{return} hasil prediksi ke rupiah memakai
 Persamaan~\eqref{eq:konversi}.
 
 Metrik utama penelitian ini merupakan MAE pada Persamaan~\eqref{eq:mae},
 karena satuannya sama dengan harga dan mudah ditafsirkan. Karena nilai MAE
 bergantung pada tingkat harga, hasilnya juga dinyatakan secara relatif
 terhadap Naive dengan Persamaan~\eqref{eq:maenaive}.
-Nilai MAE dalam rupiah tidak dibandingkan langsung antar-\textit{time frame},
-karena kesalahan pada \textit{time frame} yang lebih panjang wajar lebih
-besar. Perbandingan antar-\textit{time frame} dan antardataset memakai
+Nilai MAE dalam rupiah tidak dibandingkan langsung antarhorizon, karena
+kesalahan pada horizon yang lebih panjang wajar lebih besar. Perbandingan
+antarhorizon dan antardataset memakai
 MAE vs Naive. Metrik pendukungnya
 merupakan RMSE pada Persamaan~\eqref{eq:rmse}, MAPE pada
 Persamaan~\eqref{eq:mape}, dan akurasi arah pada Persamaan~\eqref{eq:arah}.
@@ -741,35 +744,35 @@ tersebut, sehingga dapat berubah dalam kelipatan sekitar Rp333. Harga
 \textit{typical} dianggap tetap bila selisih $P_{t+h}$ dan $P_t$ lebih kecil
 dari Rp1, sehingga $r_{t,h}$ dianggap nol.
 
-Khusus akurasi arah, bar yang harga sebenarnya tetap tidak ikut dihitung
+Khusus akurasi arah, \textit{candle} yang harga sebenarnya tetap tidak ikut dihitung
 karena arahnya tidak terdefinisi. Karena itu, $n$ pada
 Persamaan~\eqref{eq:arah} merupakan banyaknya data uji yang harganya berubah.
-Akurasi arah hanya dilaporkan untuk keempat model. Naive selalu meramalkan
-harga tetap, sehingga arah ramalannya tidak pernah terdefinisi. Bila model
-meramalkan \textit{return} tepat nol, ramalan tersebut dihitung sebagai arah
+Akurasi arah hanya dilaporkan untuk keempat model. Naive selalu memprediksi
+harga tetap, sehingga arah prediksinya tidak pernah terdefinisi. Bila model
+memprediksi \textit{return} tepat nol, prediksi tersebut dihitung sebagai arah
 yang salah. Supaya mudah ditafsirkan, akurasi arah dilaporkan bersama jumlah
 observasi yang dinilai, persentase harga yang tetap, proporsi harga naik dan
 turun, serta akurasi arah pembanding sederhana, yaitu tanda \textit{return}
-satu bar terakhir.
+satu \textit{candle} terakhir.
 
 Model terbaik pada rumusan masalah ketiga ditentukan dari nilai MAE vs Naive
-terkecil pada blok uji final. Perbandingan ini hanya memakai konfigurasi yang
-sudah dikunci, yaitu pasangan dataset dan \textit{time frame} dari Tahap
-pertama, strategi \textit{tuning} dari Tahap kedua, seluruh data latih, dan
+terkecil pada data uji. Perbandingan ini hanya memakai konfigurasi yang
+sudah ditetapkan, yaitu kombinasi dataset dan horizon dari Tahap pertama,
+metode optimasi dari Tahap kedua, seluruh data latih, dan
 tanpa teknik tambahan. Dengan begitu, setiap model hanya memiliki satu hasil,
 dan pemilihan model terbaik tidak dilakukan dengan mencari hasil terbaik dari
-banyak konfigurasi pada blok uji final. Hasil Tahap ketiga dan keempat tetap
+banyak konfigurasi pada data uji. Hasil Tahap ketiga dan keempat tetap
 dilaporkan untuk menjawab rumusan masalah pertama dan kedua. RMSE dan MAPE dipakai sebagai pendukung untuk
 melihat apakah urutan model tetap sama. Sebuah model baru disebut lebih baik
 daripada Naive bila memenuhi aturan signifikansi di bawah.
 % CEK: usulan aturan model terbaik, konfirmasi ke dosen sebelum eksperimen
 % final.
 
-Selisih akurasi antara ramalan model dan ramalan Naive diuji dengan uji
+Selisih akurasi antara prediksi model dan prediksi Naive diuji dengan uji
 Diebold-Mariano dua sisi pada Persamaan~\eqref{eq:dmstat}. Uji utama memakai
 \textit{loss} absolut karena MAE merupakan metrik utama. Uji dengan
 \textit{loss} kuadrat dilaporkan sebagai pendukung. Varians rata-rata selisih
-\textit{loss} dihitung memakai autokovarians sampai lag $h_b - 1$ pada urutan waktu yang lengkap, sehingga pasangan bar yang dipisahkan oleh bar kosong
+\textit{loss} dihitung memakai autokovarians sampai lag $h_b - 1$ pada urutan waktu yang lengkap, sehingga pasangan \textit{candle} yang dipisahkan oleh \textit{candle} kosong
 tidak dihitung pada lag yang salah. Hasilnya lalu dikalikan faktor koreksi
 HLN pada Persamaan~\eqref{eq:hln}, dan nilai kritisnya diambil dari
 distribusi $t$ berderajat bebas $n - 1$.
@@ -778,22 +781,22 @@ Koreksi Holm yang dibahas pada Subbab~\ref{sec:dm} diterapkan pada nilai $p$
 uji utama. Satu keluarga uji berisi seluruh perbandingan model terhadap Naive
 dalam satu tahap. Keempat teknik pada Tahap keempat digabung menjadi satu
 keluarga. Konfigurasi yang sama persis di dalam satu keluarga dihitung satu
-kali. Sebuah ramalan model disebut lebih baik secara
+kali. Sebuah prediksi model disebut lebih baik secara
 signifikan daripada Naive bila nilai MAE vs Naive kurang dari nol, statistik
 DM \textit{loss} absolut kurang dari nol, dan nilai $p$ terkoreksi Holm kurang
-dari 0,05. Sebaliknya, ramalan disebut lebih buruk secara signifikan bila
+dari 0,05. Sebaliknya, prediksi disebut lebih buruk secara signifikan bila
 statistik DM \textit{loss} absolut lebih besar dari nol dan nilai $p$
 terkoreksi Holm kurang dari 0,05. Bila uji \textit{loss} kuadrat memberi arah
 yang berbeda, perbedaan itu dilaporkan, tetapi keputusan tetap mengikuti uji
 \textit{loss} absolut.
 
 Selain terhadap Naive, pengaruh setiap perlakuan diuji dengan membandingkan
-dua ramalan dari model yang sama pada blok uji final. Perbandingan tersebut
+dua prediksi dari model yang sama pada data uji. Perbandingan tersebut
 memakai uji Diebold-Mariano \textit{loss} absolut yang sama, dan konfigurasi
 dasarnya menjadi pembanding. Ada tiga perbandingan sebagai berikut.
 \begin{enumerate}
-  \item Strategi terpilih pada Tahap kedua dibandingkan dengan pengaturan
-    \textit{default} (4 uji). Bila strategi terpilih merupakan
+  \item Metode optimasi terpilih pada Tahap kedua dibandingkan dengan
+    pengaturan \textit{default} (4 uji). Bila metode terpilih merupakan
     \textit{default}, uji ini tidak dijalankan.
   \item Data latih 75\% dan 50\% pada Tahap ketiga dibandingkan dengan data
     latih 100\% (8 uji).
@@ -802,8 +805,8 @@ dasarnya menjadi pembanding. Ada tiga perbandingan sebagai berikut.
 \end{enumerate}
 Setiap perbandingan membentuk satu keluarga Holm tersendiri. Perbandingan ini
 tidak memerlukan \textit{run} tambahan, karena konfigurasi dasarnya sudah
-dijalankan pada Tahap kedua. Selisih antarstrategi lainnya dilaporkan secara
-deskriptif dari skor validasi.
+dijalankan pada Tahap kedua. Selisih antarmetode optimasi lainnya dilaporkan
+secara deskriptif dari MAE validasi.
 
 Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
 sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
@@ -822,37 +825,37 @@ Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
   \label{fig:tahap}
 \end{figure}
 
-Berdasarkan Gambar~\ref{fig:tahap}, tahap pertama mencari pasangan dataset dan \textit{time frame}. Kombinasi
-yang dijalankan terdiri atas 9 pasangan dataset dan \textit{time frame},
-yaitu 5 \textit{time frame} pada dataset \textit{candle} 1 menit dan
-4 \textit{time frame} pada dataset \textit{candle} 5 menit. Setiap pasangan
+Berdasarkan Gambar~\ref{fig:tahap}, tahap pertama mencari kombinasi dataset dan
+horizon prediksi. Kombinasi yang dijalankan berjumlah 9, yaitu 5 horizon pada
+dataset \textit{candle} 1 menit dan 4 horizon pada dataset \textit{candle}
+5 menit. Setiap kombinasi
 dijalankan pada 4 model dengan metode TPE, sehingga jumlahnya 36
 \textit{run}.
 TPE dipakai pada Tahap pertama karena model perlu di-\textit{tuning} lebih
-dahulu agar perbandingan antar-\textit{time frame} tidak bergantung pada
-pengaturan bawaan. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
+dahulu agar perbandingan antarhorizon tidak bergantung pada pengaturan
+\textit{default}. TPE tersedia langsung pada Optuna \cite{akiba2019} dan
 pada tugas yang sulit memberi hasil lebih baik daripada Random Search
-\cite{bergstra2011}. Pemilihan strategi \textit{tuning} sendiri baru
-dilakukan pada Tahap kedua. Karena pasangan pada Tahap pertama dipilih dari
+\cite{bergstra2011}. Pemilihan metode optimasi sendiri baru dilakukan pada Tahap kedua. Karena
+kombinasi pada Tahap pertama dipilih dari
 hasil TPE, TPE dapat lebih diuntungkan pada Tahap kedua. Hal ini menjadi keterbatasan penelitian.
-Skor setiap pasangan merupakan median MAE validasi vs Naive keempat model,
+Skor setiap kombinasi merupakan median MAE validasi vs Naive keempat model,
 yaitu rata-rata dua nilai tengah setelah keempat nilai diurutkan. Median
 dipakai agar pilihan tidak ditentukan oleh satu model yang hasilnya jauh
 berbeda dari tiga model lainnya. Aturan yang sama dipakai pada Tahap kedua.
-Pasangan dengan skor terkecil dipilih. Pasangan yang hasilnya belum lengkap
+Kombinasi dengan skor terkecil dipilih. Kombinasi yang hasilnya belum lengkap
 untuk keempat model tidak ikut dipilih.
-Bila hasilnya seri, dipilih
-\textit{time frame} yang lebih pendek, lalu dataset \textit{candle} 1 menit.
+Bila hasilnya seri, dipilih horizon yang lebih pendek, lalu dataset
+\textit{candle} 1 menit.
 
-Tahap kedua mencari strategi \textit{tuning}. Dataset dan \textit{time frame}
-yang dipakai merupakan hasil Tahap pertama. Kombinasinya merupakan
-7 strategi dikali 4 model. Strategi yang dipilih merupakan strategi dengan
-median MAE validasi vs Naive keempat model terkecil. Strategi yang hasilnya
+Tahap kedua mencari metode optimasi. Dataset dan horizon yang dipakai merupakan
+hasil Tahap pertama. Kombinasinya merupakan 7 metode optimasi dikali 4 model.
+Metode yang dipilih merupakan metode dengan median MAE validasi vs Naive
+keempat model terkecil. Metode yang hasilnya
 belum lengkap untuk keempat model juga tidak ikut dipilih. Pengaturan
 \textit{default} juga boleh terpilih, sehingga kesimpulan bahwa
 \textit{tuning} tidak memperbaiki atau justru memperburuk performa tetap
-dimungkinkan. Selisih setiap strategi terhadap \textit{default} dilaporkan
-per model. Bila hasilnya seri, dipilih strategi dengan waktu \textit{tuning}
+dimungkinkan. Selisih setiap metode terhadap \textit{default} dilaporkan per
+model. Bila hasilnya seri, dipilih metode dengan waktu \textit{tuning}
 terpendek.
 
 Tahap ketiga menguji panjang data latih. Konfigurasi dari Tahap pertama dan
@@ -863,11 +866,11 @@ Tahap keempat menguji teknik optimasi tambahan. Konfigurasi dari Tahap pertama
 dan kedua dijalankan dengan teknik yang berlaku pada setiap model. Tahap ini
 juga tidak memilih apa pun.
 
-Pemilihan pada Tahap pertama dan kedua hanya memakai skor validasi di periode
-pengembangan. Aturan pemilihan dikunci sebelum Tahap pertama dijalankan,
-dan pilihan dari setiap tahap dicatat sebelum blok uji final dibuka.
-Pengurutan ini penting supaya pemilihan dataset, \textit{time frame}, dan
-strategi \textit{tuning} tidak dipengaruhi oleh hasil pada blok uji final.
+Pemilihan pada Tahap pertama dan kedua hanya memakai MAE validasi di data
+latih. Aturan pemilihan ditetapkan sebelum Tahap pertama dijalankan, dan
+pilihan dari setiap tahap dicatat sebelum data uji dipakai. Pengurutan ini
+penting supaya pemilihan dataset, horizon, dan metode optimasi tidak
+dipengaruhi oleh hasil pada data uji.
 % CEK: aturan dikunci ulang untuk eksperimen final (dataset candle 1 dan
 % 5 menit). Aturan model terbaik ada di Subbab Evaluasi Model.
 
@@ -895,15 +898,15 @@ pada Subbab~\ref{sec:rumusan}.
     \hline
     RM1 & Tahap pertama dan ketiga, ditambah Subbab~\ref{sec:fitur} sampai
     Subbab~\ref{sec:model} &
-    Cara membangun keempat model pada berbagai \textit{time frame}, termasuk
+    Cara membangun keempat model pada berbagai horizon prediksi, termasuk
     panjang data latih yang dipakai \\
     \hline
     RM2 & Tahap kedua dan Tahap keempat &
-    Pengaruh strategi \textit{tuning} dan teknik tambahan terhadap akurasi,
+    Pengaruh metode optimasi dan teknik tambahan terhadap akurasi,
     diuji terhadap pengaturan \textit{default} dan terhadap konfigurasi tanpa
     teknik tambahan \\
     \hline
-    RM3 & Evaluasi pada blok uji final &
+    RM3 & Evaluasi pada data uji &
     Perbandingan performa keempat model terhadap Naive \\
     \hline
   \end{tabular}
@@ -911,10 +914,10 @@ pada Subbab~\ref{sec:rumusan}.
 \end{table}
 
 Berdasarkan Tabel~\ref{tab:petaRM}, rumusan masalah pertama dijawab dari
-Tahap pertama dan ketiga, yaitu cara membangun model pada berbagai
-\textit{time frame} dan dengan panjang data latih yang berbeda. Rumusan
+Tahap pertama dan ketiga, yaitu cara membangun model pada berbagai horizon
+prediksi dan dengan panjang data latih yang berbeda. Rumusan
 masalah kedua dijawab dari Tahap kedua dan keempat. Rumusan masalah ketiga
-dijawab dari evaluasi keempat model terhadap Naive pada blok uji final.
+dijawab dari evaluasi keempat model terhadap Naive pada data uji.
 
 \section{Lingkungan Penelitian}
 \label{sec:lingkungan}
@@ -951,7 +954,7 @@ Tabel~\ref{tab:lingkungan} merinci perangkat dan pustaka yang dipakai.
 \end{table}
 
 Berdasarkan Tabel~\ref{tab:lingkungan}, seluruh eksperimen dijalankan pada satu perangkat yang sama, sehingga waktu
-\textit{tuning} antarstrategi dapat dibandingkan. Pengumpulan data berjalan
+\textit{tuning} antarmetode optimasi dapat dibandingkan. Pengumpulan data berjalan
 terpisah di VPS, sehingga proses pengumpulan tetap berjalan ketika eksperimen
 dijalankan.
 % CEK: perbarui versi bila berubah sebelum eksperimen final.

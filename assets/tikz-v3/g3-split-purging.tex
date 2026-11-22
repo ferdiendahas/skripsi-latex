@@ -14,11 +14,11 @@
     {arah waktu (tidak ada pengacakan)};
 
   % ===== (a) pembagian utama =====
-  % Batas periode pengembangan ada di x = 88 untuk semua baris.
+  % Batas data latih ada di x = 88 untuk semua baris.
   \node[anchor=south west] at (14,-6) {\textbf{(a)} pembagian utama};
-  \node[latih,minimum width=74mm] (a1) at (14,6) {periode pengembangan (80\%)};
+  \node[latih,minimum width=74mm] (a1) at (14,6) {data latih (80\%)};
   \node[buang,minimum width=6mm]  (a2) at (88,6) {};
-  \node[uji,minimum width=30mm]   (a3) at (94,6) {blok uji final (20\%)};
+  \node[uji,minimum width=30mm]   (a3) at (94,6) {data uji (20\%)};
 
   % ===== (b) panjang data latih pada Tahap ketiga =====
   \node[anchor=south west] at (14,22)
@@ -27,17 +27,17 @@
   \node[anchor=east,font=\small] at (12,30) {100\%};
   \node[latih,minimum width=74mm] (b1) at (14,30) {data latih};
   \node[buang,minimum width=6mm]       at (88,30) {};
-  \node[uji,minimum width=30mm]        at (94,30) {blok uji final};
+  \node[uji,minimum width=30mm]        at (94,30) {data uji};
 
   \node[anchor=east,font=\small] at (12,44) {75\%};
   \node[latih,minimum width=55.5mm] (c1) at (32.5,44) {data latih};
   \node[buang,minimum width=6mm]         at (88,44)   {};
-  \node[uji,minimum width=30mm]          at (94,44)   {blok uji final};
+  \node[uji,minimum width=30mm]          at (94,44)   {data uji};
 
   \node[anchor=east,font=\small] at (12,58) {50\%};
   \node[latih,minimum width=37mm] (d1) at (51,58) {data latih};
   \node[buang,minimum width=6mm]  (d2) at (88,58) {};
-  \node[uji,minimum width=30mm]        at (94,58) {blok uji final};
+  \node[uji,minimum width=30mm]        at (94,58) {data uji};
 
   % --- label purging, menunjuk ke potongan yang diarsir ---
   \draw[panah] (72,76) -- (d2.south);
@@ -45,10 +45,10 @@
 
   % --- legenda ---
   \node[latih,minimum width=6mm] at (14,88) {};
-  \node[anchor=west] at (21,88) {periode pengembangan};
+  \node[anchor=west] at (21,88) {data latih};
   \node[buang,minimum width=6mm] at (58,88) {};
   \node[anchor=west] at (65,88) {dibuang (\textit{purging})};
   \node[uji,minimum width=6mm] at (100,88) {};
-  \node[anchor=west] at (107,88) {blok uji final};
+  \node[anchor=west] at (107,88) {data uji};
 
 \end{tikzpicture}

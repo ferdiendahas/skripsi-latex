@@ -8,10 +8,10 @@
   $r_{t,h}$ & : & \textit{Return} logaritmik dari waktu $t$ sampai $t+h$ \\
   $P_t$ & : & Harga pada waktu $t$ \\
   $P_{t+h}$ & : & Harga sebenarnya pada waktu $t+h$ \\
-  $h$ & : & \textit{Time frame} atau horizon prediksi, dalam menit \\
-  $\hat{P}_{t+h}$ & : & Harga hasil ramalan model pada waktu $t+h$ \\
-  $\hat{r}_{t,h}$ & : & \textit{Return} logaritmik hasil ramalan \\
-  $\hat{P}_{t+h}^{\text{Naive}}$ & : & Harga ramalan Naive pada waktu $t+h$ \\
+  $h$ & : & Horizon prediksi, dalam menit \\
+  $\hat{P}_{t+h}$ & : & Harga hasil prediksi model pada waktu $t+h$ \\
+  $\hat{r}_{t,h}$ & : & \textit{Return} logaritmik hasil prediksi \\
+  $\hat{P}_{t+h}^{\text{Naive}}$ & : & Harga prediksi Naive pada waktu $t+h$ \\
   $x$ & : & Vektor fitur masukan model \\
   $F_m(x)$ & : & Model \textit{gradient boosting} gabungan setelah $m$ pohon \\
   $F_0$ & : & Model awal sebelum pohon pertama ditambahkan \\
@@ -35,7 +35,7 @@
   $w_i$ & : & Bobot sampel ke-$i$ pada AdaBoost.R2 \\
   $p_i$ & : & Probabilitas sampel ke-$i$ pada AdaBoost.R2 \\
   $y_i$ & : & Nilai sebenarnya contoh ke-$i$ \\
-  $\hat{y}_i$ & : & Nilai ramalan contoh ke-$i$ \\
+  $\hat{y}_i$ & : & Nilai prediksi contoh ke-$i$ \\
   $L_i$ & : & \textit{Loss} contoh ke-$i$ pada AdaBoost.R2 \\
   $D$ & : & Galat absolut terbesar pada satu iterasi AdaBoost.R2 \\
   $\bar{L}$ & : & Rata-rata \textit{loss} berbobot pada satu iterasi \\
@@ -45,34 +45,34 @@
     kuantil $\gamma_{\text{TPE}}$ \\
   $g(\theta)$ & : & Kerapatan konfigurasi dengan \textit{loss} sisanya \\
   $\gamma_{\text{TPE}}$ & : & Kuantil pemisah pada TPE \\
-  $e_t$ & : & Galat ramalan pada data uji ke-$t$ \\
+  $e_t$ & : & Galat prediksi pada data uji ke-$t$ \\
   $n$ & : & Banyaknya data uji \\
   $c_t$ & : & Penanda arah, bernilai 1 bila arah tertebak benar dan 0 bila
     tidak \\
-  $d_t$ & : & Selisih \textit{loss} dua ramalan pada data uji ke-$t$ \\
+  $d_t$ & : & Selisih \textit{loss} dua prediksi pada data uji ke-$t$ \\
   $\bar{d}$ & : & Rata-rata $d_t$ pada data uji \\
   $\hat{\phi}_l$ & : & Autokovarians $d_t$ pada lag $l$ \\
   $\mathcal{L}(\cdot)$ & : & Fungsi \textit{loss} pada uji Diebold-Mariano \\
-  $e_{1t}, e_{2t}$ & : & Galat ramalan pertama dan kedua \\
+  $e_{1t}, e_{2t}$ & : & Galat prediksi pertama dan kedua \\
   $H_0$ & : & Hipotesis nol \\
-  $h_b$ & : & \textit{Time frame} dalam satuan bar \\
+  $h_b$ & : & Horizon dalam satuan \textit{candle} \\
   $J$ & : & Banyaknya uji dalam satu keluarga pada koreksi Holm \\
   $\alpha$ & : & Taraf signifikansi, yaitu 0,05 \\
-  $P^{O}_t$ & : & Harga pembukaan pada bar ke-$t$ \\
-  $P^{H}_t$ & : & Harga tertinggi pada bar ke-$t$ \\
-  $P^{L}_t$ & : & Harga terendah pada bar ke-$t$ \\
-  $P^{C}_t$ & : & Harga penutupan pada bar ke-$t$ \\
-  $V_t$ & : & Volume pada bar ke-$t$ \\
-  $\tau$ & : & Indeks bar 5 menit hasil agregasi \\
-  $j$ & : & Indeks menit di dalam satu bar 5 menit \\
-  $\Delta$ & : & Resolusi \textit{candle}, yaitu 1 atau 5 menit \\
-  $t_u$ & : & Waktu awal blok uji final \\
+  $P^{O}_t$ & : & Harga pembukaan pada \textit{candle} ke-$t$ \\
+  $P^{H}_t$ & : & Harga tertinggi pada \textit{candle} ke-$t$ \\
+  $P^{L}_t$ & : & Harga terendah pada \textit{candle} ke-$t$ \\
+  $P^{C}_t$ & : & Harga penutupan pada \textit{candle} ke-$t$ \\
+  $V_t$ & : & Volume pada \textit{candle} ke-$t$ \\
+  $\tau$ & : & Indeks \textit{candle} 5 menit hasil agregasi \\
+  $j$ & : & Indeks menit di dalam satu \textit{candle} 5 menit \\
+  $\Delta$ & : & \textit{Time frame} \textit{candle}, yaitu 1 atau 5 menit \\
+  $t_u$ & : & Waktu awal data uji \\
   $N$ & : & Jumlah baris data setelah fitur dan target dibentuk \\
   $K$ & : & Jumlah \textit{fold} pada validasi \textit{walk-forward} \\
   $k$ & : & Nomor \textit{fold} \\
-  $\mathcal{V}_k$ & : & Himpunan indeks bar pada blok validasi
+  $\mathcal{V}_k$ & : & Himpunan indeks \textit{candle} pada data validasi
     \textit{fold} ke-$k$ \\
-  $n_k$ & : & Banyaknya bar pada blok validasi \textit{fold} ke-$k$ \\
+  $n_k$ & : & Banyaknya \textit{candle} pada data validasi \textit{fold} ke-$k$ \\
   $\mathrm{Skor}(\theta)$ & : & Nilai objektif \textit{tuning}, yaitu rata-rata
     MAE \textit{return} pada $K$ \textit{fold} \\
   $s$ & : & Panjang jendela statistik bergulir, dalam menit \\

@@ -53,7 +53,7 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
     \textbf{Naive harga} & \textbf{Uji signifikansi} \\
     \hline
     Rodrigues \& Machado \cite{rodrigues2025} & Menit, 30 hari & Harga &
-    XGBoost, LightGBM & Setelan bawaan & Tidak & Wilcoxon \\
+    XGBoost, LightGBM & \textit{Default} & Tidak & Wilcoxon \\
     \hline
     Wei dkk. \cite{wei2023} & Harian & Return & XGBoost, LightGBM &
     Tidak dicatat & Tidak & MDM, MCS, SPA \\
@@ -75,7 +75,7 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
     Diebold-Mariano \\
     \hline
     \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
-    XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah setelan bawaan) dan empat teknik &
+    XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah \textit{default}) dan empat teknik &
     Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
     \hline
   \end{tabular}
@@ -93,14 +93,14 @@ jenis data dan target yang diprediksi.
 
 % [kartu A2, B1, B5, B8]
 Kelompok pertama memakai data harian. Hasil penelitian menunjukkan bahwa XGBoost paling baik dalam
-menggabungkan beberapa ramalan harian Bitcoin \cite{wei2023}. Penelitian
+menggabungkan beberapa prediksi harian Bitcoin \cite{wei2023}. Penelitian
 tersebut juga memeriksa apakah hasil baiknya hanya muncul karena kebetulan,
 yaitu dengan \textit{model confidence set} dan uji \textit{superior predictive
 ability}. LightGBM dan AdaBoost dilaporkan memberi hasil yang baik untuk
-meramal \textit{return} Bitcoin harian \cite{bouteska2024}. Namun, pembanding
+memprediksi \textit{return} Bitcoin harian \cite{bouteska2024}. Namun, pembanding
 \textit{random walk} pada penelitian tersebut dihitung pada \textit{return},
 bukan pada harga. Model yang menyesuaikan diri dengan kondisi pasar juga sudah
-dipakai untuk meramal harga Bitcoin harian \cite{oprea2026}. Pada data harga
+dipakai untuk memprediksi harga Bitcoin harian \cite{oprea2026}. Pada data harga
 kripto harian, model naive dilaporkan sulit dikalahkan \cite{puoti2024}.
 Karena semuanya memakai data harian, hasilnya belum tentu berlaku pada data
 per menit.
@@ -122,7 +122,8 @@ paling dekat dengan penelitian ini membandingkan beberapa model
 \textit{machine learning} pada data kripto per menit selama 30 hari
 \cite{rodrigues2025}. Model terbaiknya tetap stabil sampai horizon 240 menit,
 tetapi memburuk tajam pada horizon 1.440 menit. Model boosting pada penelitian
-tersebut memakai setelan bawaan, sedangkan model jaringan sarafnya dituning.
+tersebut memakai pengaturan \textit{default}, yaitu pengaturan bawaan dari
+pustakanya, sedangkan model jaringan sarafnya dituning.
 Akibatnya, perbandingan keduanya belum setara. Penelitian tersebut juga tidak
 memakai pembanding naive.
 
@@ -161,9 +162,9 @@ berubah merupakan pembanding yang kuat. Karena itu, penelitian ini memakai
 Naive sebagai pembanding utama.
 
 
-\section{\textit{Time Frame} dan Tipe \textit{Trader}}
+\section{Horizon Waktu dan Tipe \textit{Trader}}
 Pasar keuangan tidak terdiri atas satu jenis pelaku saja. Perbedaan horizon
-waktu antarpelaku pasar menjadi dasar pemilihan \textit{time frame} pada
+waktu antarpelaku pasar menjadi dasar pemilihan horizon prediksi pada
 penelitian ini.
 
 % [kartu C1]
@@ -211,15 +212,14 @@ penelitian tersebut, rata-rata posisi dipegang kurang dari 2 menit. Data itu
 berasal dari pasar \textit{futures}, sehingga angkanya belum tentu berlaku
 pada pasar kripto. Karena itu, penelitian ini memakai istilah
 \textit{scalper} hanya sebagai contoh \textit{trader} jangka pendek, bukan
-sebagai batas \textit{time frame} yang diuji.
-% CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+sebagai batas horizon prediksi yang diuji.
+% CATATAN: swing trader tidak disebut karena horizon terpanjang 60 menit;
 % tambahkan hanya bila dosen meminta.
 
-Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi,
-yaitu berapa menit ke depan harga diprediksi. Lama satu \textit{candle} tidak
-disebut \textit{time frame}, melainkan resolusi \textit{candle}.
-\textit{Time frame} divariasikan pada 1, 5, 15, 30, dan 60 menit untuk mencari
-hasil prediksi yang paling baik.
+Dalam penelitian ini, horizon prediksi merupakan jarak waktu prediksi,
+yaitu berapa menit ke depan harga diprediksi. Horizon prediksi divariasikan
+pada 1, 5, 15, 30, dan 60 menit untuk mencari hasil prediksi yang paling
+baik.
 
 
 \section{\textit{Forecasting} dan \textit{Time Series}}
@@ -240,15 +240,16 @@ ringkasan pergerakan harga pada satu selang waktu. Satu \textit{candle}
 memuat lima nilai, yaitu harga pembukaan (\textit{open}), harga tertinggi
 (\textit{high}), harga terendah (\textit{low}), harga penutupan
 (\textit{close}), dan volume perdagangan. Kelima nilai tersebut biasa disingkat
-OHLCV \cite{indodaxapi}.
-Data OHLCV per menit sudah dipakai untuk meramal harga kripto jangka pendek
+OHLCV \cite{indodaxapi}. Lama satu \textit{candle} disebut \textit{time frame},
+misalnya 1 menit atau 5 menit.
+Data OHLCV per menit sudah dipakai untuk memprediksi harga kripto jangka pendek
 \cite{rodrigues2025}.
 
 \subsection{Return Logaritmik}
 \label{subsec:return}
-Penelitian ini tidak meramal harga secara langsung, melainkan meramal
+Penelitian ini tidak memprediksi harga secara langsung, melainkan memprediksi
 \textit{return} logaritmik pada horizon $h$. Pilihan tersebut diambil karena
-ramalan pohon regresi pada setiap daerah merupakan rata-rata target data latih
+prediksi pohon regresi pada setiap daerah merupakan rata-rata target data latih
 di daerah tersebut \cite{hastie2009}. Akibatnya, model berbasis pohon tidak
 dapat memprediksi nilai di luar rentang target data latihnya.
 \textit{Return} logaritmik pada horizon $h$ merupakan
@@ -260,16 +261,16 @@ dapat memprediksi nilai di luar rentang target data latihnya.
   \item[$r_{t,h}$] \textit{return} logaritmik dari waktu $t$ sampai $t+h$,
   \item[$P_t$] harga pada waktu $t$,
   \item[$P_{t+h}$] harga pada waktu $t+h$,
-  \item[$h$] \textit{time frame} atau horizon prediksi dalam satuan menit.
+  \item[$h$] horizon prediksi dalam satuan menit.
 \end{keterangan}
-Hasil ramalan \textit{return} dikembalikan ke satuan rupiah dengan
+Hasil prediksi \textit{return} dikembalikan ke satuan rupiah dengan
 \begin{equation}
   \hat{P}_{t+h} = P_t \exp\!\left(\hat{r}_{t,h}\right).
   \label{eq:konversi}
 \end{equation}
 \begin{keterangan}
-  \item[$\hat{P}_{t+h}$] harga hasil ramalan pada waktu $t+h$,
-  \item[$\hat{r}_{t,h}$] \textit{return} logaritmik hasil ramalan,
+  \item[$\hat{P}_{t+h}$] harga hasil prediksi pada waktu $t+h$,
+  \item[$\hat{r}_{t,h}$] \textit{return} logaritmik hasil prediksi,
   \item[$P_t$] harga pada waktu $t$, yaitu harga terakhir yang diketahui.
 \end{keterangan}
 Selisih nilai logaritma menyatakan perubahan relatif terhadap nilai
@@ -283,8 +284,8 @@ logaritmik setiap periodenya \cite{tsay2002}.
 aset kripto \cite{bouteska2024}.
 
 \subsection{Horizon Prediksi dan Metode Naive}
-Horizon prediksi $h$ menyatakan seberapa jauh ke depan ramalan dibuat. Horizon
-inilah yang dalam penelitian ini disebut \textit{time frame}. Metode naive
+Horizon prediksi $h$ menyatakan seberapa jauh ke depan prediksi dibuat. Metode
+naive
 merupakan metode peramalan paling sederhana, yaitu menebak bahwa harga pada
 waktu $t+h$ sama dengan observasi terakhir \cite{hyndman2006},
 \begin{equation}
@@ -292,11 +293,11 @@ waktu $t+h$ sama dengan observasi terakhir \cite{hyndman2006},
   \label{eq:naive}
 \end{equation}
 \begin{keterangan}
-  \item[$\hat{P}_{t+h}^{\text{Naive}}$] harga ramalan Naive pada
+  \item[$\hat{P}_{t+h}^{\text{Naive}}$] harga prediksi Naive pada
     waktu $t+h$,
   \item[$P_t$] harga pada waktu $t$.
 \end{keterangan}
-Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model pada horizon $h$.
+Gambar~\ref{fig:horizon-naive} membandingkan prediksi Naive dengan prediksi model pada horizon $h$.
 
 \begin{figure}[htbp]
   \centering
@@ -305,16 +306,16 @@ Gambar~\ref{fig:horizon-naive} membandingkan ramalan Naive dengan ramalan model 
   \label{fig:horizon-naive}
 \end{figure}
 Pada Gambar~\ref{fig:horizon-naive}, data hanya tersedia sampai waktu $t$.
-Naive memakai harga terakhir $P_t$ sebagai ramalan untuk waktu $t+h$,
-sedangkan model boosting meramal \textit{return} $\hat{r}_{t,h}$ lalu
-mengubahnya menjadi harga ramalan.
+Naive memakai harga terakhir $P_t$ sebagai prediksi untuk waktu $t+h$,
+sedangkan model boosting memprediksi \textit{return} $\hat{r}_{t,h}$ lalu
+mengubahnya menjadi harga prediksi.
 
 % [kartu B5, G2]
 Metode naive bukan pembanding yang lemah. Pada peramalan harga kripto
 harian secara univariat, model naive dilaporkan sulit dikalahkan oleh model
 \textit{machine learning} maupun \textit{deep learning} \cite{puoti2024}.
-Contoh klasiknya berasal dari pasar valuta asing. Ramalan tanpa perubahan
-ternyata memiliki rata-rata galat absolut yang lebih kecil daripada ramalan
+Contoh klasiknya berasal dari pasar valuta asing. Prediksi tanpa perubahan
+ternyata memiliki rata-rata galat absolut yang lebih kecil daripada prediksi
 \textit{forward rate}, meskipun selisihnya tidak signifikan menurut uji
 Diebold-Mariano \cite{diebold1995}.
 
@@ -322,8 +323,7 @@ Diebold-Mariano \cite{diebold1995}.
 \label{subsec:teorifitur}
 Model boosting tidak membaca urutan waktu secara langsung. Karena itu,
 informasi dari masa lalu perlu diubah menjadi fitur pada setiap baris data.
-Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa bar
-sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya rata-rata
+Fitur \textit{lag} merupakan nilai suatu variabel pada beberapa periode sebelumnya \cite{hyndman2014fpp}. Fitur statistik bergulir merupakan ringkasan, misalnya rata-rata
 atau simpangan baku, dari nilai di dalam jendela waktu yang bergeser
 mengikuti waktu. Rata-rata dan simpangan baku bergulir sudah dipakai sebagai
 fitur model boosting pada peramalan deret waktu \cite{nasios2022}. Kedua jenis fitur tersebut hanya memakai data sampai waktu
@@ -406,7 +406,7 @@ suku regularisasinya merupakan
   \item[$\lambda$] parameter penalti L2 untuk bobot daun.
 \end{keterangan}
 Setiap pohon baru dibangun dari gradien dan turunan kedua \textit{loss}
-terhadap ramalan sebelumnya. Untuk satu daun, bobot optimalnya merupakan
+terhadap prediksi sebelumnya. Untuk satu daun, bobot optimalnya merupakan
 \begin{equation}
   w^{*} = -\frac{G}{Q + \lambda},
   \label{eq:xgbbobot}
@@ -426,9 +426,9 @@ dan penurunan \textit{loss} dari satu pemecahan merupakan
   \item[$w^{*}$] bobot optimal satu daun,
   \item[$G$, $Q$] jumlah $g_i$ dan jumlah $q_i$ seluruh contoh di daun
     tersebut,
-  \item[$g_i$] turunan pertama \textit{loss} contoh ke-$i$ terhadap ramalan
+  \item[$g_i$] turunan pertama \textit{loss} contoh ke-$i$ terhadap prediksi
     sebelumnya,
-  \item[$q_i$] turunan kedua \textit{loss} contoh ke-$i$ terhadap ramalan
+  \item[$q_i$] turunan kedua \textit{loss} contoh ke-$i$ terhadap prediksi
     sebelumnya,
   \item[$G_{\text{kiri}}$, $Q_{\text{kiri}}$] jumlah $g_i$ dan $q_i$ pada calon
     daun kiri,
@@ -437,7 +437,7 @@ dan penurunan \textit{loss} dari satu pemecahan merupakan
 \end{keterangan}
 Pada \textit{loss} kuadrat $\frac{1}{2}(y_i - \hat{y}_i)^2$, nilai
 $g_i = \hat{y}_i - y_i$ dan $q_i = 1$. Turunan kedua ditulis $q_i$ supaya tidak
-tertukar dengan \textit{time frame} $h$. Pemecahan dengan \textit{Gain}
+tertukar dengan horizon $h$. Pemecahan dengan \textit{Gain}
 terbesar dipilih.
 
 Pada kompetisi Kaggle tahun 2015, 17 dari 29 solusi pemenang
@@ -541,7 +541,7 @@ bentuk berikut,
 \begin{keterangan}
   \item[$L_i$] \textit{loss} contoh ke-$i$ dengan bentuk linear,
     \textit{square}, atau \textit{exponential},
-  \item[$\hat{y}_i$] nilai ramalan untuk contoh ke-$i$,
+  \item[$\hat{y}_i$] nilai prediksi untuk contoh ke-$i$,
   \item[$y_i$] nilai sebenarnya untuk contoh ke-$i$,
   \item[$D$] galat absolut terbesar pada iterasi tersebut, dipakai agar nilai $L_i$ berada di antara 0 dan 1.
 \end{keterangan}
@@ -554,7 +554,7 @@ Rata-rata \textit{loss} berbobot dan rasio $\beta_m$ dihitung dengan
   \item[$\bar{L}$] rata-rata \textit{loss} berbobot pada satu iterasi,
   \item[$p_i$] probabilitas sampel ke-$i$,
   \item[$\beta_m$] rasio pada pohon ke-$m$ yang dipakai untuk memperbarui bobot dan menentukan
-    bobot ramalan.
+    bobot prediksi.
 \end{keterangan}
 Bobot sampel kemudian diperbarui dengan
 \begin{equation}
@@ -568,7 +568,7 @@ Bobot sampel kemudian diperbarui dengan
 \end{keterangan}
 Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ \cite{drucker1997} atau bila
 jumlah pohon mencapai batas $M$ (\texttt{n\_estimators}) \cite{sklearnadaboost}.
-Ramalan akhir berupa median berbobot dari ramalan seluruh pohon, dengan bobot
+Prediksi akhir berupa median berbobot dari prediksi seluruh pohon, dengan bobot
 $\log(1/\beta_m)$ untuk pohon ke-$m$ \cite{drucker1997}. Gambar~\ref{fig:adaboost} merangkum alur
 tersebut.
 
@@ -583,7 +583,7 @@ Gambar~\ref{fig:adaboost} menunjukkan bahwa satu iterasi terdiri atas
 pengambilan sampel ulang, pelatihan pohon, perhitungan \textit{loss}, dan
 pembaruan bobot. Iterasi diulang sampai jumlah pohon mencapai $M$ atau
 pelatihan berhenti karena $\bar{L} \ge 0{,}5$. Setelah itu, seluruh pohon
-digabung menjadi ramalan akhir.
+digabung menjadi prediksi akhir.
 
 Bentuk \textit{loss} yang terbaik berbeda antarmasalah \cite{drucker1997}.
 Dengan demikian, parameter \texttt{loss} layak dimasukkan ke dalam ruang pencarian
@@ -606,18 +606,19 @@ Optuna merupakan pustaka untuk optimasi \textit{hyperparameter}
 \cite{akiba2019}. Ruang pencarian pada Optuna ditulis langsung di dalam
 program, sehingga mudah diatur. Optuna menyediakan beberapa metode pencarian,
 yang disebut \textit{sampler}, serta fitur \textit{pruning} untuk menghentikan
-percobaan yang hasilnya buruk.
+percobaan yang hasilnya buruk. Satu kali percobaan satu konfigurasi
+\textit{hyperparameter} disebut \textit{trial}.
 
 \subsection{Grid Search dan Random Search}
 % [kartu F1]
 Grid Search mencoba seluruh kombinasi dari daftar nilai yang sudah ditentukan
-untuk tiap parameter. Jumlah percobaannya merupakan hasil kali banyaknya nilai
+untuk tiap parameter. Jumlah \textit{trial}-nya merupakan hasil kali banyaknya nilai
 pada tiap parameter, sehingga cepat membengkak ketika jumlah parameter
 bertambah \cite{bergstra2012}. Grid Search tetap dinilai andal bila parameter
 yang dicari hanya satu atau dua.
 
 Random Search mencoba kombinasi yang diambil secara acak dari ruang pencarian.
-Dengan anggaran percobaan yang sama, Random Search dapat menemukan model
+Dengan jumlah \textit{trial} yang sama, Random Search dapat menemukan model
 yang sama baik atau lebih baik daripada Grid Search dengan waktu komputasi
 lebih sedikit \cite{bergstra2012}. Alasannya, biasanya hanya sedikit \textit{hyperparameter} yang benar-benar
 berpengaruh, dan \textit{hyperparameter} yang berpengaruh itu berbeda
@@ -631,26 +632,26 @@ Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
     dan Random Search \cite{bergstra2012}}
   \label{fig:grid-random}
 \end{figure}
-Pada Gambar~\ref{fig:grid-random}, titik percobaan Grid Search tersusun dalam
+Pada Gambar~\ref{fig:grid-random}, titik \textit{trial} Grid Search tersusun dalam
 baris dan kolom, sehingga parameter yang penting hanya dicoba pada sedikit
-nilai. Dengan jumlah percobaan yang sama, Random Search mencoba lebih banyak
+nilai. Dengan jumlah \textit{trial} yang sama, Random Search mencoba lebih banyak
 nilai yang berbeda untuk parameter yang penting.
 
-Bukti empiris tersebut berasal dari percobaan pada jaringan saraf, bukan pada
+Bukti empiris tersebut berasal dari eksperimen pada jaringan saraf, bukan pada
 model boosting. Karena itu, keunggulan Random Search tetap perlu diuji pada penelitian ini.
 
 \subsection{Bayesian Optimization dengan TPE}
 % [kartu F2]
 Bayesian Optimization mencari \textit{hyperparameter} secara bertahap.
-Hasil percobaan sebelumnya dipakai untuk memilih percobaan berikutnya
+Hasil \textit{trial} sebelumnya dipakai untuk memilih \textit{trial} berikutnya
 \cite{bergstra2011}.
 
 Tree-structured Parzen Estimator atau TPE merupakan salah satu cara dalam
-Bayesian Optimization. TPE membagi percobaan sebelumnya menjadi dua
+Bayesian Optimization. TPE membagi \textit{trial} sebelumnya menjadi dua
 kelompok, yaitu kelompok dengan \textit{loss} kecil dan kelompok sisanya.
 Batas kedua kelompok ditentukan oleh kuantil $\gamma_{\text{TPE}}$. Sebaran
 nilai \textit{hyperparameter} pada kedua kelompok itu masing-masing disebut
-$\ell(\theta)$ dan $g(\theta)$. Percobaan berikutnya dipilih dari
+$\ell(\theta)$ dan $g(\theta)$. \textit{Trial} berikutnya dipilih dari
 konfigurasi yang rasionya paling kecil,
 \begin{equation}
   \frac{g(\theta)}{\ell(\theta)} .
@@ -665,8 +666,7 @@ konfigurasi yang rasionya paling kecil,
   \item[$\gamma_{\text{TPE}}$] kuantil yang memisahkan kedua kelompok.
 \end{keterangan}
 Pada penelitian yang sama, TPE juga lebih baik daripada Random
-Search pada tugas-tugas yang sulit. Bukti tersebut juga berasal dari
-percobaan pada jaringan saraf, bukan pada model boosting.
+Search pada tugas-tugas yang sulit. Bukti tersebut juga berasal dari eksperimen pada jaringan saraf, bukan pada model boosting.
 
 
 \subsection{CMA-ES}
@@ -700,14 +700,14 @@ Optuna \cite{optunadocs}.
 
 \subsection{Quasi-Monte Carlo dengan Barisan Sobol}
 % [kartu F8, F9, F10]
-Quasi-Monte Carlo (QMC) memilih titik percobaan dengan barisan Sobol. Barisan
+Quasi-Monte Carlo (QMC) memilih titik \textit{trial} dengan barisan Sobol. Barisan
 Sobol dirancang agar titik-titiknya tersebar rata \cite{sobol1967}. Berbeda
 dengan bilangan acak, barisan ini tidak meninggalkan celah kosong atau titik
 yang menumpuk. Optuna memakai QMC dari pustaka SciPy \cite{roy2023qmc}.
 
-Sebaran yang rata tersebut hanya terjamin bila jumlah percobaan merupakan
+Sebaran yang rata tersebut hanya terjamin bila jumlah \textit{trial} merupakan
 pangkat dua, misalnya 16, 32, atau 64 \cite{scipysobol}. Hal ini perlu
-diperhatikan ketika jumlah percobaan ditetapkan.
+diperhatikan ketika jumlah \textit{trial} ditetapkan.
 
 \subsection{Teknik Optimasi Tambahan}
 \label{subsec:teknik}
@@ -743,13 +743,13 @@ Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi
 seperti dibahas pada Subbab~\ref{subsec:mae}.
 
 % [kartu F6, F7]
-Teknik keempat berupa \textit{pruning}, yaitu menghentikan percobaan yang
+Teknik keempat berupa \textit{pruning}, yaitu menghentikan \textit{trial} yang
 hasil sementaranya buruk, sehingga waktu komputasi dapat dipakai untuk
-percobaan lain. Cara ini berasal dari prinsip \textit{successive halving},
+\textit{trial} lain. Cara ini berasal dari prinsip \textit{successive halving},
 yaitu mencoba banyak konfigurasi dengan sedikit sumber daya, membuang yang
 terburuk, lalu mengulanginya \cite{li2018}. Penelitian ini memakai
-\textit{median pruner}. Percobaan dihentikan bila hasil sementaranya lebih
-buruk daripada median percobaan sebelumnya pada tahap yang sama
+\textit{median pruner}. \textit{Trial} dihentikan bila hasil sementaranya lebih
+buruk daripada median \textit{trial} sebelumnya pada tahap yang sama
 \cite{optunadocs}.
 
 
@@ -759,8 +759,7 @@ buruk daripada median percobaan sebelumnya pada tahap yang sama
 Validasi silang biasa mengacak data, sehingga urutan waktunya rusak
 \cite{cerqueira2020}. Pada data deret waktu, data latih dan data validasi
 harus tetap berurutan. Salah satu caranya merupakan \textit{prequential in
-blocks}, yaitu model dilatih pada data awal, lalu diuji pada blok data
-berikutnya. Data latihnya terus bertambah pada setiap putaran. Penelitian ini
+blocks}, yaitu model dilatih pada data awal, lalu diuji pada bagian data berikutnya. Data latihnya terus bertambah pada setiap putaran. Penelitian ini
 menyebut cara tersebut validasi \textit{walk-forward}.
 
 % [kartu G5]
@@ -779,7 +778,7 @@ data dibagi, sehingga informasi dari data uji ikut masuk ke data latih
 
 Bentuk kebocoran lain terjadi pada batas antara data latih dan data uji. Target
 pada horizon $h$ dihitung dari harga $h$ menit ke depan, sehingga target bagi
-$h$ bar terakhir data latih memakai harga yang sudah berada di dalam periode
+data latih pada $h$ menit terakhir memakai harga yang sudah berada di dalam periode
 uji. Potongan tersebut perlu dibuang sebelum pelatihan. Tindakan itu disebut
 \textit{purging}, yaitu membuang data latih yang targetnya tumpang tindih
 waktunya dengan target pada data uji \cite{lopezdeprado2018}.
@@ -793,8 +792,8 @@ tidak dipakai.
 
 
 \section{Pengukuran Nilai Error}
-Kinerja ramalan diukur dengan membandingkan harga ramalan terhadap harga
-sebenarnya pada data uji. Galat ramalan pada waktu $t$ merupakan
+Kinerja prediksi diukur dengan membandingkan harga prediksi terhadap harga
+sebenarnya pada data uji. Galat prediksi pada waktu $t$ merupakan
 $e_t = P_{t+h} - \hat{P}_{t+h}$, dengan $n$ menyatakan banyaknya data uji
 \cite{hyndman2006}.
 
@@ -802,13 +801,13 @@ $e_t = P_{t+h} - \hat{P}_{t+h}$, dengan $n$ menyatakan banyaknya data uji
 \label{subsec:mae}
 % [kartu I5, I4, I2]
 \textit{Mean absolute error} atau MAE merupakan rata-rata nilai mutlak galat
-ramalan,
+prediksi,
 \begin{equation}
   \text{MAE} = \frac{1}{n}\sum_{t=1}^{n} \lvert e_t \rvert .
   \label{eq:mae}
 \end{equation}
 \begin{keterangan}
-  \item[$e_t$] galat ramalan pada data uji ke-$t$,
+  \item[$e_t$] galat prediksi pada data uji ke-$t$,
   \item[$n$] banyaknya data uji.
 \end{keterangan}
 Satuan MAE sama dengan satuan variabel yang diukur \cite{willmott2005},
@@ -827,16 +826,16 @@ ukuran relatif terhadap Naive. Ukuran tersebut merupakan turunan dari
   \label{eq:maenaive}
 \end{equation}
 \begin{keterangan}
-  \item[$\text{MAE}_{\text{model}}$] MAE ramalan model,
-  \item[$\text{MAE}_{\text{Naive}}$] MAE ramalan Naive sebagai
+  \item[$\text{MAE}_{\text{model}}$] MAE prediksi model,
+  \item[$\text{MAE}_{\text{Naive}}$] MAE prediksi Naive sebagai
     pembanding.
 \end{keterangan}
-Nilai negatif berarti ramalan model lebih akurat daripada Naive,
+Nilai negatif berarti prediksi model lebih akurat daripada Naive,
 sedangkan nilai positif berarti sebaliknya. Nama MAE vs Naive dibuat sendiri dalam penelitian ini, bukan istilah dari sumber rujukan.
 
 % [kartu I3, E1]
 MAE dipilih sebagai metrik utama juga karena kaitannya dengan \textit{loss}
-pelatihan. Ramalan yang meminimalkan \textit{loss} absolut merupakan median,
+pelatihan. Prediksi yang meminimalkan \textit{loss} absolut merupakan median,
 sedangkan yang meminimalkan \textit{loss} kuadrat merupakan rata-rata
 \cite{gneiting2011}. Karena itu, pelatihan dengan \textit{loss} L1 sejalan
 dengan evaluasi memakai MAE.
@@ -844,13 +843,13 @@ dengan evaluasi memakai MAE.
 \subsection{Root Mean Square Error}
 % [kartu I5, I1, I4]
 \textit{Root mean square error} atau RMSE merupakan akar dari rata-rata kuadrat
-galat ramalan,
+galat prediksi,
 \begin{equation}
   \text{RMSE} = \sqrt{\frac{1}{n}\sum_{t=1}^{n} e_t^2 } .
   \label{eq:rmse}
 \end{equation}
 \begin{keterangan}
-  \item[$e_t$] galat ramalan pada data uji ke-$t$,
+  \item[$e_t$] galat prediksi pada data uji ke-$t$,
   \item[$n$] banyaknya data uji.
 \end{keterangan}
 Karena galat dikuadratkan lebih dahulu, RMSE memberi bobot yang lebih besar
@@ -868,7 +867,7 @@ mutlak yang dinyatakan dalam persen terhadap nilai sebenarnya,
   \label{eq:mape}
 \end{equation}
 \begin{keterangan}
-  \item[$e_t$] galat ramalan pada data uji ke-$t$,
+  \item[$e_t$] galat prediksi pada data uji ke-$t$,
   \item[$P_{t+h}$] harga sebenarnya pada waktu $t+h$,
   \item[$n$] banyaknya data uji.
 \end{keterangan}
@@ -894,7 +893,7 @@ benar,
 \end{keterangan}
 Ukuran ini mengikuti definisi akurasi arah sebagai proporsi arah perubahan
 yang tertebak benar \cite{pesaran1992}.
-Ukuran ini dipakai sebagai metrik pendukung saja, karena ramalan dapat menebak
+Ukuran ini dipakai sebagai metrik pendukung saja, karena prediksi dapat menebak
 arah dengan benar tetapi tetap meleset jauh dalam besaran. Akurasi arah sudah
 lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
 \cite{jaquart2021}.
@@ -903,8 +902,8 @@ lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
 \section{Uji Diebold-Mariano}
 \label{sec:dm}
 % [kartu G2]
-Selisih akurasi antara dua ramalan belum tentu bermakna secara statistik. Uji
-Diebold-Mariano dipakai untuk menguji apakah dua ramalan berbeda akurasinya
+Selisih akurasi antara dua prediksi belum tentu bermakna secara statistik. Uji
+Diebold-Mariano dipakai untuk menguji apakah dua prediksi berbeda akurasinya
 \cite{diebold1995}. Uji ini sudah dipakai pada penelitian prediksi Bitcoin
 jangka pendek \cite{jaquart2021}. Uji tersebut bekerja pada selisih \textit{loss}
 \begin{equation}
@@ -913,17 +912,17 @@ jangka pendek \cite{jaquart2021}. Uji tersebut bekerja pada selisih \textit{loss
   \label{eq:dmstat}
 \end{equation}
 \begin{keterangan}
-  \item[$d_t$] selisih \textit{loss} kedua ramalan pada data uji ke-$t$,
-  \item[$e_{1t}$] galat ramalan pertama,
-  \item[$e_{2t}$] galat ramalan kedua,
+  \item[$d_t$] selisih \textit{loss} kedua prediksi pada data uji ke-$t$,
+  \item[$e_{1t}$] galat prediksi pertama,
+  \item[$e_{2t}$] galat prediksi kedua,
   \item[$\mathcal{L}(\cdot)$] fungsi \textit{loss}, misalnya nilai mutlak atau kuadrat,
-  \item[$H_0$] hipotesis nol, yaitu kedua ramalan sama akuratnya.
+  \item[$H_0$] hipotesis nol, yaitu kedua prediksi sama akuratnya.
 \end{keterangan}
 Fungsi \textit{loss} pada uji tersebut tidak harus berbentuk kuadratik dan
-tidak harus simetris \cite{diebold1995}. Pada ramalan beberapa langkah ke depan, selisih \textit{loss} pada bar yang
-berdekatan saling berkaitan. Karena itu, varians rata-rata $d_t$ dihitung
+tidak harus simetris \cite{diebold1995}. Pada prediksi beberapa langkah ke depan, selisih \textit{loss}
+pada \textit{candle} yang berdekatan saling berkaitan. Karena itu, varians rata-rata $d_t$ dihitung
 memakai autokovarians sampai lag $h_b-1$, dengan $h_b$ menyatakan
-\textit{time frame} dalam satuan bar \cite{diebold1995}. Statistik ujinya
+horizon dalam satuan \textit{candle} \cite{diebold1995}. Statistik ujinya
 merupakan
 \begin{equation}
   \text{DM} = \frac{\bar{d}}
@@ -937,7 +936,7 @@ merupakan
   \item[$\hat{\phi}_l$] autokovarians $d_t$ pada lag $l$,
   \item[$n$] banyaknya data uji.
 \end{keterangan}
-Nilai DM negatif berarti ramalan pertama memiliki \textit{loss} lebih kecil.
+Nilai DM negatif berarti prediksi pertama memiliki \textit{loss} lebih kecil.
 
 % [kartu G1]
 Pada sampel berukuran kecil, statistik uji tersebut cenderung menolak
@@ -948,15 +947,15 @@ hipotesis nol terlalu sering. Koreksi Harvey-Leybourne-Newbold (HLN) yang dipaka
 \end{equation}
 \begin{keterangan}
   \item[$n$] banyaknya data uji,
-  \item[$h_b$] \textit{time frame} dalam satuan bar, yaitu $h$ dibagi
-    resolusi \textit{candle} (1 atau 5 menit).
+  \item[$h_b$] horizon dalam satuan \textit{candle}, yaitu $h$ dibagi
+    \textit{time frame} \textit{candle} (1 atau 5 menit).
 \end{keterangan}
 dengan nilai kritis diambil dari distribusi $t$ berderajat bebas $n-1$
 \cite{harvey1997}.
 
 % [kartu G3]
 Penelitian ini menjalankan banyak uji sekaligus, karena setiap kombinasi
-model, \textit{time frame}, strategi \textit{tuning}, dan panjang data latih
+model, \textit{time frame}, horizon, metode optimasi, dan panjang data latih
 diuji terhadap Naive.
 Semakin banyak uji dilakukan, semakin besar kemungkinan muncul hasil signifikan
 karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
@@ -971,7 +970,7 @@ ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
 Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
 \begin{keterangan}
   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
-  \item[$J$] banyaknya uji dalam satu keluarga,
+  \item[$J$] banyaknya uji dalam satu keluarga uji, yaitu kelompok uji yang dikoreksi bersama,
   \item[$\alpha$] taraf signifikansi, yaitu 0,05.
 \end{keterangan}
 
@@ -997,7 +996,7 @@ penelitian terdahulu yang paling dekat dengan penelitian ini.
     Rodrigues \& Machado \cite{rodrigues2025} &
     Harga per menit, XGBoost dan LightGBM, horizon pendek &
     \textit{Tuning} boosting, CatBoost dan AdaBoost, pembanding naive, uji
-    Diebold-Mariano, penskala dipasang setelah data dibagi \\
+    Diebold-Mariano, normalisasi setelah data dibagi \\
     \hline
     Wei dkk. \cite{wei2023} &
     XGBoost dan LightGBM untuk Bitcoin, uji MDM, MCS, dan SPA &
@@ -1028,12 +1027,13 @@ AdaBoost, yang seluruhnya disetel \textit{hyperparameter}-nya. Ketiga,
 membandingkan banyak metode optimasi \textit{hyperparameter} sekaligus beserta
 teknik tambahannya. Keempat, memakai metode naive pada harga sebagai pembanding
 sekaligus uji Diebold-Mariano untuk menilai perbedaan akurasinya. Kelima,
-memakai data BTC/IDR dari bursa Indonesia yang dikumpulkan secara langsung.
+memakai data harga BTC/IDR yang dikumpulkan langsung dari API publik
+Indodax.
 
 Kontribusi penelitian ini dari sisi Informatika terletak pada rancangan
 eksperimennya, bukan pada teori keuangan. Rancangan tersebut membandingkan
-model dan metode optimasi secara setara, yaitu dengan jatah percobaan yang
-hampir sama, validasi \textit{walk-forward} di dalam data latih, serta penanganan
+model dan metode optimasi secara setara, yaitu dengan jumlah \textit{trial}
+yang hampir sama, validasi \textit{walk-forward} di dalam data latih, serta penanganan
 kebocoran data. Hasilnya dinilai terhadap Naive dengan uji
 Diebold-Mariano, sehingga perbedaan akurasi tidak hanya dibaca dari selisih
 angka metrik. Uji yang sama juga dipakai untuk membandingkan antarkonfigurasi,
@@ -1053,7 +1053,7 @@ dari masalah sampai keluaran yang diharapkan.
 Kerangka pemikiran pada Gambar~\ref{fig:kerangka} mengarah pada tiga rumusan masalah. Rumusan
 masalah pertama membahas cara membangun model XGBoost, LightGBM, CatBoost,
 dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
-\textit{time frame}. Rumusan masalah kedua membahas pengaruh optimasi
+horizon prediksi. Rumusan masalah kedua membahas pengaruh optimasi
 \textit{hyperparameter} terhadap akurasi keempat model tersebut. Rumusan
 masalah ketiga membahas model yang memiliki performa terbaik berdasarkan
 nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive.

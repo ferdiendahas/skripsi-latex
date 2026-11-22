@@ -86,7 +86,7 @@ def hitung(win):
     x = np.round(r1[j] * BP, 4)
     y = np.round(r1[j + 1] * BP, 4)
     N = len(j)
-    ju = math.floor(0.8 * N) + 1                 # baris awal blok uji
+    ju = math.floor(0.8 * N) + 1                 # baris awal data uji
     latih = j[(j + 1) < ju]                      # t + h < t_u
     purge = j[(j < ju) & ((j + 1) >= ju)]
     uji = j[j >= ju]
@@ -298,13 +298,13 @@ Subbab ini memberi contoh perhitungan untuk setiap tahap pada
 Subbab~\ref{sec:fitur} sampai Subbab~\ref{sec:evaluasi}. Contoh memakai
 26 \textit{candle} 1 menit BTC/IDR yang dikumpulkan pada """ + tgl(w0) + r""" pukul
 """ + jam(w0) + "--" + jam(w1) + r""" UTC. Supaya dapat diikuti dengan tangan, contoh
-memakai \textit{time frame} 1 menit, satu fitur, yaitu \texttt{ret\_lag1}, dan satu
+memakai horizon 1 menit, satu fitur, yaitu \texttt{ret\_lag1}, dan satu
 pohon dengan kedalaman 1. Angka pada subbab ini hanya menunjukkan cara
 menghitung dan bukan hasil penelitian.
 
 \subsection{Agregasi \textit{Candle} 5 Menit dan Harga \textit{Typical}}
 Tabel~\ref{tab:man-agregasi} memuat lima \textit{candle} 1 menit pertama dan
-bar 5 menit yang dibentuk dengan Persamaan~\eqref{eq:agregasi}. Waktu ditulis
+\textit{candle} 5 menit yang dibentuk dengan Persamaan~\eqref{eq:agregasi}. Waktu ditulis
 dalam UTC, harga dalam rupiah, dan volume dalam BTC.
 """)
     rows = []
@@ -312,15 +312,15 @@ dalam UTC, harga dalam rupiah, dan volume dalam BTC.
         rows.append([jam(t), m(r.open, 0), m(r.high, 0), m(r.low, 0), m(r.close, 0), m(r.volume, 6)])
     b5 = win.iloc[:5]
     o5, h5, l5, c5, v5 = b5.open.iloc[0], b5.high.max(), b5.low.min(), b5.close.iloc[-1], b5.volume.sum()
-    rows.append([r"\textbf{Bar 5 menit}", m(o5, 0), m(h5, 0), m(l5, 0), m(c5, 0), m(v5, 6)])
+    rows.append([r"\textbf{\textit{Candle} 5 menit}", m(o5, 0), m(h5, 0), m(l5, 0), m(c5, 0), m(v5, 6)])
     T.append(tabel(r"Contoh Agregasi \textit{Candle} 1 Menit menjadi 5 Menit", "tab:man-agregasi",
                    "|l|r|r|r|r|r|", ["Waktu", "Open", "High", "Low", "Close", "Volume"],
                    rows, sep=2))
     p5 = (h5 + l5 + c5) / 3
-    T.append(r"""Harga \textit{open} bar 5 menit diambil dari menit pertama, \textit{high}
+    T.append(r"""Harga \textit{open} \textit{candle} 5 menit diambil dari menit pertama, \textit{high}
 merupakan nilai terbesar, \textit{low} nilai terkecil, \textit{close} diambil dari
 menit terakhir, dan volume merupakan jumlah kelima menit. Harga \textit{typical}
-bar tersebut menurut Persamaan~\eqref{eq:typical} merupakan
+\textit{candle} tersebut menurut Persamaan~\eqref{eq:typical} merupakan
 \begin{equation*}
   P = \frac{""" + f(h5, 0) + " + " + f(l5, 0) + " + " + f(c5, 0) + r"""}{3}
     = """ + f(p5) + r""" .
@@ -330,7 +330,7 @@ Contoh selanjutnya memakai dataset \textit{candle} 1 menit. Harga
 Tabel~\ref{tab:man-harga}.
 
 \subsection{\textit{Return}, Fitur, dan Target}
-\textit{Return} satu bar dihitung dengan Persamaan~\eqref{eq:return} untuk
+\textit{Return} satu \textit{candle} dihitung dengan Persamaan~\eqref{eq:return} untuk
 $h = 1$. Supaya angkanya mudah dibaca, \textit{return} ditulis dalam basis poin
 (bp), dengan 1~bp $= 10^{-4}$. Sebagai contoh, \textit{return} pada
 menit ke-$1$ merupakan
@@ -353,12 +353,12 @@ menit sesudahnya. Dengan 26 menit, terbentuk $N = """ + str(R["N"]) + r"""$ bari
 $j = 1, \ldots, """ + str(R["N"]) + r"""$.
 
 \subsection{Pembagian Data dan \textit{Purging}}
-Menurut Persamaan~\eqref{eq:split}, blok uji final dimulai pada baris ke-$(\lfloor
+Menurut Persamaan~\eqref{eq:split}, data uji dimulai pada baris ke-$(\lfloor
 0{,}8 \times """ + str(R["N"]) + r""" \rfloor + 1) = """ + str(R["ju"]) + r"""$, sehingga
-blok uji berisi baris """ + str(uji[0]) + "--" + str(uji[-1]) + r""" ("""
+data uji berisi baris """ + str(uji[0]) + "--" + str(uji[-1]) + r""" ("""
              + str(len(uji)) + r""" baris). Baris """ + ", ".join(map(str, pur))
              + r""" memiliki target pada menit ke-""" + str(R["ju"]) + r""", yaitu tepat pada awal
-blok uji, sehingga baris tersebut dibuang. Data latih berisi baris
+data uji, sehingga baris tersebut dibuang. Data latih berisi baris
 """ + str(lat[0]) + "--" + str(lat[-1]) + " (" + str(len(lat)) + r""" baris).
 
 \subsection{Satu Iterasi XGBoost}
@@ -404,7 +404,7 @@ Bobot kedua daun menurut Persamaan~\eqref{eq:xgbbobot} merupakan
   w^{*}_{\text{kanan}} = -\frac{""" + f(b["Gn"], 4) + r"""}{""" + f(b["Qn"], 0)
              + r""" + 1} = """ + f(X["wn"], 4) + r""" .
 \end{equation*}
-Ramalan setelah satu pohon dihitung dengan Persamaan~\eqref{eq:boosting},
+Prediksi setelah satu pohon dihitung dengan Persamaan~\eqref{eq:boosting},
 \begin{equation*}
   F_1 = """ + f(X["F0"], 4) + r""" + """ + f(NU, 1) + r""" \times w^{*} =
   \begin{cases}
@@ -422,7 +422,7 @@ kedalaman lebih dari 1.
 Pohon AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
 diikuti, contoh ini memakai seluruh data latih tanpa pengambilan sampel ulang,
 sehingga $p_i = 1/""" + str(len(lat)) + r"""$. Titik pemecahan terbaik merupakan
-$x < """ + f(A["stump"]["thr"], 4) + r"""$~bp, dengan ramalan """ + m(A["stump"]["mk"], 4)
+$x < """ + f(A["stump"]["thr"], 4) + r"""$~bp, dengan prediksi """ + m(A["stump"]["mk"], 4)
              + r"""~bp di daun kiri dan """ + m(A["stump"]["mn"], 4) + r"""~bp di daun kanan.
 Galat absolut terbesar merupakan $D = """ + f(A["D"], 4) + r"""$~bp. \textit{Loss}
 linear tiap contoh dihitung dengan Persamaan~\eqref{eq:adaloss} dan dimuat pada
@@ -448,34 +448,34 @@ untuk baris """ + str(lat[0]) + r""",
 $w = 1 \times """ + f(A["beta"], 4) + "^{1 - " + f(A["L"][0], 4) + "} = " + f(A["wbaru"][0], 4)
              + r"""$. Contoh dengan galat kecil mendapat bobot yang lebih kecil, sehingga
 pohon berikutnya lebih banyak belajar dari contoh yang sulit. Bobot pohon ini
-pada ramalan akhir merupakan $\log(1/\beta_1) = """ + f(math.log(1 / A["beta"]), 4) + r"""$.
-Dengan satu pohon, ramalan AdaBoost.R2 sama dengan ramalan pohon tersebut.
+pada prediksi akhir merupakan $\log(1/\beta_1) = """ + f(math.log(1 / A["beta"]), 4) + r"""$.
+Dengan satu pohon, prediksi AdaBoost.R2 sama dengan prediksi pohon tersebut.
 
 \subsection{Prediksi dan Konversi ke Rupiah}
-Ramalan \textit{return} pada blok uji dikembalikan ke rupiah dengan
+Prediksi \textit{return} pada data uji dikembalikan ke rupiah dengan
 Persamaan~\eqref{eq:konversi}. Sebagai contoh, pada baris """ + str(uji[0]) + r""",
-ramalan XGBoost merupakan
+prediksi XGBoost merupakan
 \begin{equation*}
   \hat{P} = """ + f(R["Pt"][0]) + r""" \times \exp\!\left(""" + f(H["XGBoost"]["rhat"][0], 4)
              + r""" \times 10^{-4}\right) = """ + f(H["XGBoost"]["Ph"][0]) + r""" .
 \end{equation*}
-Naive meramalkan harga terakhir, yaitu """ + m(R["Pt"][0]) + r""".
-Tabel~\ref{tab:man-uji} memuat ramalan pada seluruh blok uji.
+Naive memprediksi harga terakhir, yaitu """ + m(R["Pt"][0]) + r""".
+Tabel~\ref{tab:man-uji} memuat prediksi pada seluruh data uji.
 """)
     rows = []
     for k, jj in enumerate(uji):
         rows.append([str(jj), m(R["Pt"][k]), m(R["Pn"][k]),
                      m(H["XGBoost"]["Ph"][k]), m(H["AdaBoost.R2"]["Ph"][k])])
-    T.append(tabel("Ramalan pada Blok Uji", "tab:man-uji", "|c|r|r|r|r|",
+    T.append(tabel("Prediksi pada Data Uji", "tab:man-uji", "|c|r|r|r|r|",
                    ["$j$", "$P_t$", "$P_{t+1}$", r"$\hat{P}$ XGBoost", r"$\hat{P}$ AdaBoost.R2"],
                    rows))
     jauh = max(abs(H[mm]["Ph"][k] - R["Pt"][k])
                for mm in ("XGBoost", "AdaBoost.R2") for k in range(len(uji)))
-    T.append(r"""Berdasarkan Tabel~\ref{tab:man-uji}, ramalan kedua model berbeda paling jauh
+    T.append(r"""Berdasarkan Tabel~\ref{tab:man-uji}, prediksi kedua model berbeda paling jauh
 Rp""" + f(jauh) + r""" dari harga terakhir $P_t$. Selisih ini kecil karena
-\textit{return} yang diramal juga sangat kecil.
+\textit{return} yang diprediksi juga sangat kecil.
 """)
-    T.append(r"""Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
+    T.append(r"""Galat $e_t = P_{t+1} - \hat{P}$ setiap prediksi dimuat pada
 Tabel~\ref{tab:man-galat}, bersama selisih \textit{loss} absolut
 $d_t = |e_{\text{model}}| - |e_{\text{Naive}}|$ yang dipakai pada uji
 Diebold-Mariano.
@@ -485,7 +485,7 @@ Diebold-Mariano.
         rows.append([str(jj), m(H["Naive"]["e"][k]), m(H["XGBoost"]["e"][k]),
                      m(H["AdaBoost.R2"]["e"][k]), m(H["XGBoost"]["d"][k]),
                      m(H["AdaBoost.R2"]["d"][k])])
-    T.append(tabel("Galat dan Selisih \\textit{Loss} pada Blok Uji", "tab:man-galat",
+    T.append(tabel("Galat dan Selisih \\textit{Loss} pada Data Uji", "tab:man-galat",
                    "|c|r|r|r|r|r|",
                    ["$j$", r"$e$ Naive", r"$e$ XGBoost", r"$e$ AdaBoost.R2",
                     r"$d_t$ XGBoost", r"$d_t$ AdaBoost.R2"], rows))
@@ -581,7 +581,7 @@ Tabel~\ref{tab:man-dm} memuat hasil kedua model.
     T.append(r"""Koreksi Holm diterapkan pada kedua nilai $p$ dengan
 Persamaan~\eqref{eq:holm} dan $J = 2$. Setelah diurutkan, """ + "; lalu ".join(kal) + ". "
              + simpul + r""" Dengan hanya """ + str(len(uji)) + r""" data uji, hasil ini wajar dan
-tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.
+tidak menggambarkan hasil penelitian, yang memakai seluruh data uji.
 """)
     return "\n".join(T)
 

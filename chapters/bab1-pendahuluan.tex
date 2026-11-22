@@ -37,17 +37,20 @@ Penelitian ini berfokus pada kebutuhan \textit{trader} jangka pendek, seperti
 jual, lalu memegang posisinya dalam waktu yang sangat singkat, yaitu dalam
 hitungan menit \cite{silber1984}. Definisi tersebut berasal dari pasar
 \textit{futures}, bukan pasar kripto.
-% CATATAN: swing trader tidak disebut karena time frame terpanjang 60 menit;
+% CATATAN: swing trader tidak disebut karena horizon terpanjang 60 menit;
 % tambahkan hanya bila dosen meminta.
-Dalam penelitian ini, \textit{time frame} berarti jarak waktu prediksi, yaitu berapa menit ke depan harga diprediksi. \textit{Time frame} divariasikan dari 1 sampai 60 menit untuk mencari hasil prediksi yang paling baik.
+Dalam penelitian ini, horizon prediksi merupakan jarak waktu prediksi, yaitu
+berapa menit ke depan harga diprediksi. Horizon prediksi divariasikan dari 1
+sampai 60 menit untuk mencari hasil prediksi yang paling baik. Adapun
+\textit{time frame} merupakan lama satu \textit{candle}, misalnya 1 menit atau
+5 menit.
 
 % P3 -- [kartu D4, B2, B5]
 Prediksi atau \textit{forecasting} merupakan upaya menduga nilai yang belum
 terjadi dengan memakai data yang sudah tersedia \cite{hyndman2014fpp}.
 Menduga harga jangka pendek bukan pekerjaan mudah. Menurut teori pasar efisien
 bentuk lemah, harga tidak dapat diprediksi dari riwayat harganya sendiri, dan
-pasar Bitcoin ditemukan mendekati kondisi tersebut \cite{yi2023}. Pada data per menit, peluang prediksi juga kecil. Pada \textit{time frame} 1
-sampai 60 menit, akurasi menebak arah harga dengan \textit{gradient boosting}
+pasar Bitcoin ditemukan mendekati kondisi tersebut \cite{yi2023}. Pada data per menit, peluang prediksi juga kecil. Pada horizon 1 sampai 60 menit, akurasi menebak arah harga dengan \textit{gradient boosting}
 hanya sekitar 51 sampai 56 persen, sedikit di atas tebakan acak 50 persen
 \cite{jaquart2021}. Pada data harian, model naive bahkan
 lebih akurat daripada model \textit{machine learning}. Untuk Bitcoin, nilai \textit{Mean Absolute Percentage Error} (MAPE)
@@ -63,11 +66,10 @@ Penelitian ini memakai empat model boosting, yaitu XGBoost, LightGBM,
 CatBoost, dan AdaBoost. Akurasi model boosting bergantung pada
 pengaturan \textit{hyperparameter}, yaitu pengaturan model yang ditetapkan
 sebelum pelatihan. Namun, pada sebagian penelitian, pengaturan tersebut kurang
-diperhatikan. Ada penelitian kripto yang memakai setelan bawaan tanpa
-\textit{tuning} \cite{rodrigues2025}, dan ada yang hanya memakai Grid Search
+diperhatikan. Ada penelitian kripto yang memakai pengaturan \textit{default} tanpa \textit{tuning} \cite{rodrigues2025}, dan ada yang hanya memakai Grid Search
 \cite{bouteska2024,jaquart2021}. Padahal, Random Search ditemukan lebih
 efisien daripada Grid Search \cite{bergstra2012}. Bukti tersebut berasal dari
-percobaan pada jaringan saraf, bukan dari model boosting untuk harga kripto,
+eksperimen pada jaringan saraf, bukan dari model boosting untuk harga kripto,
 sehingga masih perlu diuji.
 
 % P5 -- [kartu B3, B2, A1]
@@ -82,17 +84,17 @@ keempat model boosting yang semuanya dioptimasi.
 
 % P6 -- sumber data dari context/konteks_collector_data_v3.1.md (Bagian 3, 6)
 Penelitian ini memakai data harga BTC/IDR dari \textit{Application Programming Interface} (API) publik Indodax dalam bentuk
-\textit{candle} 1 menit. \textit{Candle} 5 menit dibentuk dari \textit{candle}
-1 menit, karena Indodax tidak menyediakan \textit{candle} 5 menit. Keempat
-model boosting dibangun pada beberapa \textit{time frame}, yaitu 1, 5, 15, 30,
-dan 60 menit. Model tersebut kemudian dioptimasi dengan beberapa metode, yaitu
+\textit{candle} dengan \textit{time frame} 1 menit. \textit{Candle} 5 menit
+dibentuk dari \textit{candle} 1 menit, karena Indodax tidak menyediakan
+\textit{time frame} 5 menit. Keempat model boosting dibangun pada beberapa
+horizon prediksi, yaitu 1, 5, 15, 30, dan 60 menit. Model tersebut kemudian dioptimasi dengan beberapa metode, yaitu
 Grid Search, Random Search, Tree-structured Parzen Estimator (TPE), Covariance Matrix Adaptation
 Evolution Strategy (CMA-ES), Genetic
 Algorithm, dan Quasi-Monte Carlo. Performa model diukur dengan \textit{Mean Absolute Error} (MAE),
 \textit{Root Mean Square Error} (RMSE), dan MAPE, lalu dibandingkan dengan
 Naive. Perbedaan akurasi antara model dan Naive diuji dengan uji
-Diebold-Mariano. Data dibagi berurutan menurut waktu menjadi periode
-pengembangan dan blok uji final.
+Diebold-Mariano. Data dibagi berurutan menurut waktu menjadi data latih
+dan data uji.
 Dari rancangan tersebut disusun rumusan masalah penelitian ini.
 
 \section{Rumusan Masalah}
@@ -102,7 +104,7 @@ sebagai berikut:
 \begin{enumerate}
   \item\label{rm:1} Bagaimana membangun model XGBoost, LightGBM, CatBoost,
         dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
-        \textit{time frame}?
+        horizon prediksi?
   \item\label{rm:2} Bagaimana pengaruh optimasi \textit{hyperparameter}
         terhadap akurasi keempat model tersebut?
   \item\label{rm:3} Model mana yang memiliki performa terbaik berdasarkan
@@ -114,7 +116,7 @@ Tujuan penelitian ini adalah sebagai berikut:
 \begin{enumerate}
   \item\label{tujuan:1} Membangun model XGBoost, LightGBM, CatBoost, dan
         AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
-        \textit{time frame}.
+        horizon prediksi.
   \item\label{tujuan:2} Menganalisis pengaruh optimasi
         \textit{hyperparameter} terhadap akurasi keempat model.
   \item\label{tujuan:3} Menentukan model dengan performa terbaik berdasarkan
@@ -146,7 +148,8 @@ Batasan masalah penelitian ini adalah sebagai berikut:
   \item Objek penelitian berupa harga Bitcoin dalam rupiah (BTC/IDR). Data
         harga diambil dari satu sumber, yaitu API publik Indodax, sehingga
         hasil penelitian berlaku untuk data harga dari sumber tersebut.
-  \item Data berupa \textit{candle} 1 menit dan \textit{candle} 5 menit.
+  \item Data berupa \textit{candle} dengan \textit{time frame} 1 menit dan
+        5 menit.
         \textit{Candle} 5 menit dibentuk dari \textit{candle} 1 menit.
   \item Data dikumpulkan sejak 10 Oktober 2026 sampai 10 Februari 2027.
   \item Model terbatas pada XGBoost, LightGBM, CatBoost, dan AdaBoost, dengan
@@ -154,8 +157,8 @@ Batasan masalah penelitian ini adalah sebagai berikut:
   \item Metode optimasi \textit{hyperparameter} terbatas pada Grid Search,
         Random Search, TPE, CMA-ES, Genetic Algorithm (NSGA-II), dan
         Quasi-Monte Carlo.
-  \item \textit{Time frame} prediksi terbatas pada 1, 5, 15, 30, dan 60 menit.
-      \textit{Time frame} 1 menit hanya dipakai pada \textit{candle} 1 menit.
+  \item Horizon prediksi terbatas pada 1, 5, 15, 30, dan 60 menit.
+        Horizon 1 menit hanya dipakai pada \textit{candle} 1 menit.
   \item Fitur hanya berasal dari data OHLCV dan waktu (\textit{timestamp})
         \textit{candle}.
         Penelitian ini tidak memakai data sentimen, berita, \textit{on-chain},

@@ -7,7 +7,7 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 ## Status
 - **Praskripsi.** Bab I–III saja.
 - Eksperimen 14–20 Okt 2026 (satu minggu) hanya **uji coba awal**. Eksperimen final dijalankan Februari 2027 dengan data Oktober 2026 – Februari 2027.
-- **Hasil eksperimen tidak boleh muncul di Bab I–III**, termasuk angka MAE, persentase vs Naive, model/metode/*time frame* terbaik. Yang boleh: desain, deskripsi data, alasan pemilihan metode, literatur, dan angka dari paper orang lain yang tercatat di kartu.
+- **Hasil eksperimen tidak boleh muncul di Bab I–III**, termasuk angka MAE, persentase vs Naive, model/metode/horizon terbaik. Yang boleh: desain, deskripsi data, alasan pemilihan metode, literatur, dan angka dari paper orang lain yang tercatat di kartu.
 
 ## Sumber konteks (`context/`) — selalu pakai nomor versi tertinggi
 - `kartu_paper_v3*.md` — **satu-satunya sumber klaim isi paper.** Ikuti baris "Boleh dikutip untuk" dan "Jangan". Tidak semua kartu wajib dipakai.
@@ -31,8 +31,16 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 - "Naive" (kapital) = pembanding di penelitian ini. "model naive" = model naive di penelitian orang lain.
 - Notasi pasar: **BTC/IDR** = harga Bitcoin dalam rupiah. Sumber datanya API publik Indodax. Pasar spot selalu ditulis dengan garis miring.
 - **Objek penelitian = harga BTC/IDR, bukan "pasar Indodax".** Indodax hanya disebut sebagai sumber data (API, *collector*, kelipatan harga Rp1.000, *candle* yang tersedia). Jangan menulis "pasar spot Indodax", "harga Bitcoin di Indodax", "prediksi untuk Indodax", atau istilah "oracle". Penelitian tidak membuat sistem prediksi untuk platform tertentu. Keterbatasan yang wajib tetap ada: data berasal dari satu sumber, sehingga hasil berlaku untuk data harga dari sumber tersebut.
-- *Time frame* = jarak waktu prediksi (berapa menit ke depan harga diprediksi), bukan resolusi *candle*.
-- Notasi: $P_t$ harga, $h$ *time frame*/horizon (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
+- **Istilah baku (23 Nov 2026), jangan dicampur:**
+  - **horizon prediksi** ($h$) = berapa menit ke depan harga diprediksi (1, 5, 15, 30, 60 menit). Cukup "horizon" setelah disebut lengkap. Di bagian tipe *trader*, lama pegang posisi ditulis "horizon waktu".
+  - ***time frame*** = lama satu *candle* (1 menit, 5 menit), sesuai istilah trader. **Jangan** memakai *time frame* untuk jarak prediksi, dan jangan memakai "resolusi *candle*".
+  - **data latih** (bukan "periode pengembangan"), **data uji** (bukan "blok uji final"), **data validasi** pada *fold* (bukan "blok validasi").
+  - **metode optimasi** (*hyperparameter*), bukan "strategi *tuning*"; **MAE validasi**, bukan "skor validasi"; "kombinasi dataset dan horizon", bukan "pasangan".
+  - **prediksi**/**memprediksi** untuk keluaran model (bukan "ramalan"); "peramalan" hanya untuk nama bidang (*forecasting*).
+  - ***trial*** untuk satu percobaan *tuning* (bukan "percobaan"/"anggaran percobaan"); ***default*** (pengaturan bawaan pustaka).
+  - ***candle*** di narasi (bukan "bar"); "*candle* tanpa transaksi (volume nol)"; "ditetapkan" (bukan "dikunci") di narasi.
+  - Kode `prediksi_btc` tetap memakai nama lama (`horizon_menit`, `t_u`, `hasil_uji_final.csv`); jangan ubah kode hanya karena istilah.
+- Notasi: $P_t$ harga, $h$ horizon prediksi (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
 - Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
 - Diagram konsep memakai TikZ di `assets/tikz-v3/`. Gambar data hanya dari keluaran pipeline `prediksi_btc`. Jangan menempel gambar dari paper; gambar ulang dan tulis "diadaptasi dari".
 
@@ -49,19 +57,19 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 - Jangan commit/push kecuali Ferdi minta.
 
 ## Fakta kunci (ringkas)
-- Judul final belum ditetapkan. Dosen pembimbing: Dr. Rizky Parlika, S.Kom, M.Kom.
+- Judul sementara: "Prediksi Harga BTC/IDR Jangka Pendek dengan Model Boosting dan Optimasi Hyperparameter" (23 Nov 2026); final diputuskan bersama dosen. Dosen pembimbing: Dr. Rizky Parlika, S.Kom, M.Kom.
 - **Rumusan masalah:**
-  1. Bagaimana membangun model XGBoost, LightGBM, CatBoost, dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai *time frame*?
+  1. Bagaimana membangun model XGBoost, LightGBM, CatBoost, dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai horizon prediksi?
   2. Bagaimana pengaruh optimasi *hyperparameter* terhadap akurasi keempat model tersebut?
   3. Model mana yang memiliki performa terbaik berdasarkan nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive?
 - **Data:** API publik Indodax; *collector* Python dijalankan cron tiap 1 menit di VPS (UTC) dan disimpan di SQLite. *Candle* 1 menit dari `tradingview/history_v2` (`tf=1`). **Indodax tidak menyediakan candle 5 menit**, jadi *candle* 5 menit dibentuk dari agregasi *candle* 1 menit. Snapshot ticker ikut disimpan, tetapi tidak dipakai dalam eksperimen.
 - **Desain:**
-  - *time frame* 1, 5, 15, 30, 60 menit (1 menit hanya untuk *candle* 1 menit); lama satu candle disebut resolusi candle;
+  - horizon prediksi 1, 5, 15, 30, 60 menit (1 menit hanya untuk *candle* 1 menit); *time frame* *candle* 1 dan 5 menit;
   - harga *typical* (high+low+close)/3; target *log return*, dikonversi ke rupiah;
   - fitur dari harga dan volume *candle* saja;
   - model XGBoost, LightGBM, CatBoost, AdaBoost (AdaBoost.R2) + Naive;
   - optimasi: default, Grid (27), Random, TPE, CMA-ES, GA (NSGA-II), QMC (30 *trial*); teknik tambahan *early stopping*, top-15 fitur, *loss* L1, *pruner* median;
-  - periode pengembangan ±80% + blok uji final 20% (*purging* berbasis waktu); validasi *walk-forward* 5 fold dengan *purging* berbasis waktu; Tahap 3 = panjang data latih 100/75/50%;
+  - data latih ±80% + data uji 20% (*purging* berbasis waktu); validasi *walk-forward* 5 fold dengan *purging* berbasis waktu; Tahap 3 = panjang data latih 100/75/50%;
   - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda;
-  - Tahap 1 dan 2 memilih dari median MAE validasi vs Naive 4 model (rata-rata dua nilai tengah); RM2 diuji dengan DM strategi terpilih vs default (keluarga Holm sendiri).
+  - Tahap 1 dan 2 memilih dari median MAE validasi vs Naive 4 model (rata-rata dua nilai tengah); RM2 diuji dengan DM metode optimasi terpilih vs default (keluarga Holm sendiri).
 - **Menunggu keputusan dosen:** tanggal pasti periode data, ada/tidaknya aplikasi web, dan aturan menentukan "model terbaik" (dikunci sebelum eksperimen final).

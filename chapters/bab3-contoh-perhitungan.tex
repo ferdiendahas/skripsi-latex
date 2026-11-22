@@ -6,13 +6,13 @@ Subbab ini memberi contoh perhitungan untuk setiap tahap pada
 Subbab~\ref{sec:fitur} sampai Subbab~\ref{sec:evaluasi}. Contoh memakai
 26 \textit{candle} 1 menit BTC/IDR yang dikumpulkan pada 14 Oktober 2026 pukul
 03.00--03.25 UTC. Supaya dapat diikuti dengan tangan, contoh
-memakai \textit{time frame} 1 menit, satu fitur, yaitu \texttt{ret\_lag1}, dan satu
+memakai horizon 1 menit, satu fitur, yaitu \texttt{ret\_lag1}, dan satu
 pohon dengan kedalaman 1. Angka pada subbab ini hanya menunjukkan cara
 menghitung dan bukan hasil penelitian.
 
 \subsection{Agregasi \textit{Candle} 5 Menit dan Harga \textit{Typical}}
 Tabel~\ref{tab:man-agregasi} memuat lima \textit{candle} 1 menit pertama dan
-bar 5 menit yang dibentuk dengan Persamaan~\eqref{eq:agregasi}. Waktu ditulis
+\textit{candle} 5 menit yang dibentuk dengan Persamaan~\eqref{eq:agregasi}. Waktu ditulis
 dalam UTC, harga dalam rupiah, dan volume dalam BTC.
 
 \begin{table}[htbp]
@@ -31,16 +31,16 @@ dalam UTC, harga dalam rupiah, dan volume dalam BTC.
     03.02 & $1.492.446.000$ & $1.492.446.000$ & $1.490.757.000$ & $1.491.156.000$ & $0{,}000893$ \\
     03.03 & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000$ & $1.491.157.000$ & $0{,}000746$ \\
     03.04 & $1.491.157.000$ & $1.492.446.000$ & $1.491.157.000$ & $1.491.955.000$ & $0{,}000199$ \\
-    \textbf{Bar 5 menit} & $1.492.447.000$ & $1.492.447.000$ & $1.490.706.000$ & $1.491.955.000$ & $0{,}004291$ \\
+    \textbf{\textit{Candle} 5 menit} & $1.492.447.000$ & $1.492.447.000$ & $1.490.706.000$ & $1.491.955.000$ & $0{,}004291$ \\
     \hline
   \end{tabular}
   \endgroup
 \end{table}
 
-Harga \textit{open} bar 5 menit diambil dari menit pertama, \textit{high}
+Harga \textit{open} \textit{candle} 5 menit diambil dari menit pertama, \textit{high}
 merupakan nilai terbesar, \textit{low} nilai terkecil, \textit{close} diambil dari
 menit terakhir, dan volume merupakan jumlah kelima menit. Harga \textit{typical}
-bar tersebut menurut Persamaan~\eqref{eq:typical} merupakan
+\textit{candle} tersebut menurut Persamaan~\eqref{eq:typical} merupakan
 \begin{equation*}
   P = \frac{1.492.447.000 + 1.490.706.000 + 1.491.955.000}{3}
     = 1.491.702.666{,}67 .
@@ -50,7 +50,7 @@ Contoh selanjutnya memakai dataset \textit{candle} 1 menit. Harga
 Tabel~\ref{tab:man-harga}.
 
 \subsection{\textit{Return}, Fitur, dan Target}
-\textit{Return} satu bar dihitung dengan Persamaan~\eqref{eq:return} untuk
+\textit{Return} satu \textit{candle} dihitung dengan Persamaan~\eqref{eq:return} untuk
 $h = 1$. Supaya angkanya mudah dibaca, \textit{return} ditulis dalam basis poin
 (bp), dengan 1~bp $= 10^{-4}$. Sebagai contoh, \textit{return} pada
 menit ke-$1$ merupakan
@@ -108,10 +108,10 @@ menit sesudahnya. Dengan 26 menit, terbentuk $N = 24$ baris, yaitu
 $j = 1, \ldots, 24$.
 
 \subsection{Pembagian Data dan \textit{Purging}}
-Menurut Persamaan~\eqref{eq:split}, blok uji final dimulai pada baris ke-$(\lfloor
+Menurut Persamaan~\eqref{eq:split}, data uji dimulai pada baris ke-$(\lfloor
 0{,}8 \times 24 \rfloor + 1) = 20$, sehingga
-blok uji berisi baris 20--24 (5 baris). Baris 19 memiliki target pada menit ke-20, yaitu tepat pada awal
-blok uji, sehingga baris tersebut dibuang. Data latih berisi baris
+data uji berisi baris 20--24 (5 baris). Baris 19 memiliki target pada menit ke-20, yaitu tepat pada awal
+data uji, sehingga baris tersebut dibuang. Data latih berisi baris
 1--18 (18 baris).
 
 \subsection{Satu Iterasi XGBoost}
@@ -206,7 +206,7 @@ Bobot kedua daun menurut Persamaan~\eqref{eq:xgbbobot} merupakan
   w^{*}_{\text{kiri}} = -\frac{-26{,}4460}{9 + 1} = 2{,}6446, \qquad
   w^{*}_{\text{kanan}} = -\frac{26{,}4460}{9 + 1} = -2{,}6446 .
 \end{equation*}
-Ramalan setelah satu pohon dihitung dengan Persamaan~\eqref{eq:boosting},
+Prediksi setelah satu pohon dihitung dengan Persamaan~\eqref{eq:boosting},
 \begin{equation*}
   F_1 = 0{,}2576 + 0{,}3 \times w^{*} =
   \begin{cases}
@@ -224,7 +224,7 @@ kedalaman lebih dari 1.
 Pohon AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
 diikuti, contoh ini memakai seluruh data latih tanpa pengambilan sampel ulang,
 sehingga $p_i = 1/18$. Titik pemecahan terbaik merupakan
-$x < 11{,}1159$~bp, dengan ramalan $1{,}0304$~bp di daun kiri dan $-12{,}8788$~bp di daun kanan.
+$x < 11{,}1159$~bp, dengan prediksi $1{,}0304$~bp di daun kiri dan $-12{,}8788$~bp di daun kanan.
 Galat absolut terbesar merupakan $D = 11{,}8618$~bp. \textit{Loss}
 linear tiap contoh dihitung dengan Persamaan~\eqref{eq:adaloss} dan dimuat pada
 Tabel~\ref{tab:man-ada}.
@@ -274,21 +274,21 @@ $w_i = 1$, bobot baru dihitung dengan Persamaan~\eqref{eq:adabobot}, misalnya
 untuk baris 1,
 $w = 1 \times 0{,}4101^{1 - 0{,}3203} = 0{,}5456$. Contoh dengan galat kecil mendapat bobot yang lebih kecil, sehingga
 pohon berikutnya lebih banyak belajar dari contoh yang sulit. Bobot pohon ini
-pada ramalan akhir merupakan $\log(1/\beta_1) = 0{,}8914$.
-Dengan satu pohon, ramalan AdaBoost.R2 sama dengan ramalan pohon tersebut.
+pada prediksi akhir merupakan $\log(1/\beta_1) = 0{,}8914$.
+Dengan satu pohon, prediksi AdaBoost.R2 sama dengan prediksi pohon tersebut.
 
 \subsection{Prediksi dan Konversi ke Rupiah}
-Ramalan \textit{return} pada blok uji dikembalikan ke rupiah dengan
+Prediksi \textit{return} pada data uji dikembalikan ke rupiah dengan
 Persamaan~\eqref{eq:konversi}. Sebagai contoh, pada baris 20,
-ramalan XGBoost merupakan
+prediksi XGBoost merupakan
 \begin{equation*}
   \hat{P} = 1.492.819.333{,}33 \times \exp\!\left(-0{,}5357 \times 10^{-4}\right) = 1.492.739.358{,}18 .
 \end{equation*}
-Naive meramalkan harga terakhir, yaitu $1.492.819.333{,}33$.
-Tabel~\ref{tab:man-uji} memuat ramalan pada seluruh blok uji.
+Naive memprediksi harga terakhir, yaitu $1.492.819.333{,}33$.
+Tabel~\ref{tab:man-uji} memuat prediksi pada seluruh data uji.
 
 \begin{table}[htbp]
-  \caption{Ramalan pada Blok Uji}
+  \caption{Prediksi pada Data Uji}
   \label{tab:man-uji}
   \centering
   \begingroup
@@ -308,17 +308,17 @@ Tabel~\ref{tab:man-uji} memuat ramalan pada seluruh blok uji.
   \endgroup
 \end{table}
 
-Berdasarkan Tabel~\ref{tab:man-uji}, ramalan kedua model berbeda paling jauh
+Berdasarkan Tabel~\ref{tab:man-uji}, prediksi kedua model berbeda paling jauh
 Rp156.905{,}51 dari harga terakhir $P_t$. Selisih ini kecil karena
-\textit{return} yang diramal juga sangat kecil.
+\textit{return} yang diprediksi juga sangat kecil.
 
-Galat $e_t = P_{t+1} - \hat{P}$ setiap ramalan dimuat pada
+Galat $e_t = P_{t+1} - \hat{P}$ setiap prediksi dimuat pada
 Tabel~\ref{tab:man-galat}, bersama selisih \textit{loss} absolut
 $d_t = |e_{\text{model}}| - |e_{\text{Naive}}|$ yang dipakai pada uji
 Diebold-Mariano.
 
 \begin{table}[htbp]
-  \caption{Galat dan Selisih \textit{Loss} pada Blok Uji}
+  \caption{Galat dan Selisih \textit{Loss} pada Data Uji}
   \label{tab:man-galat}
   \centering
   \begingroup
@@ -416,4 +416,4 @@ Tabel~\ref{tab:man-dm} memuat hasil kedua model.
 
 Koreksi Holm diterapkan pada kedua nilai $p$ dengan
 Persamaan~\eqref{eq:holm} dan $J = 2$. Setelah diurutkan, $p_{(1)} = 0{,}7039$ (AdaBoost.R2) dibandingkan dengan $0{,}05/2 = 0{,}0250$. Nilai $p$ terkecil sudah lebih besar daripada ambangnya, sehingga pengujian berhenti pada hipotesis pertama. Hipotesis sesudahnya tidak ditolak tanpa diuji lagi. Kedua model dinyatakan tidak berbeda secara signifikan dari Naive. Dengan hanya 5 data uji, hasil ini wajar dan
-tidak menggambarkan hasil penelitian, yang memakai seluruh blok uji final.
+tidak menggambarkan hasil penelitian, yang memakai seluruh data uji.
