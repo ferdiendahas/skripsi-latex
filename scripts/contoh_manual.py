@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""contoh_manual.py — membuat subbab "Contoh Perhitungan Manual" (Bab III).
+"""contoh_manual.py — membuat contoh perhitungan dengan DATA ASLI (cadangan Lampiran).
+
+Sejak 24 Nov 2026, Bab III memakai contoh angka permisalan yang ditulis manual
+(chapters/bab3-contoh-perhitungan.tex). Keluaran skrip ini disimpan di
+chapters/lampiran-contoh-data-asli.tex dan belum di-\\input ke dokumen.
 
 Mengambil 26 candle 1 menit BTC/IDR asli dari CSV ekspor collector, lalu
 menghitung dengan tangan (numpy biasa, tanpa pustaka model):
@@ -16,7 +20,7 @@ Keluaran: berkas .tex siap di-\\input ke Bab III.
 
 Pemakaian:
   python contoh_manual.py --csv btcidr_candle_1menit_XXXX.csv \\
-      --mulai "2026-10-14 03:00" --out chapters/bab3-contoh-perhitungan.tex
+      --mulai "2026-10-14 03:00" --out chapters/lampiran-contoh-data-asli.tex
 --mulai = waktu UTC paling awal yang dicari; skrip mencari jendela 26 menit
 pertama (mulai kelipatan 5 menit) yang lengkap dan layak dihitung.
 """
@@ -590,7 +594,7 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument("--csv", required=True)
     a.add_argument("--mulai", required=True, help="waktu UTC, mis. '2026-10-14 03:00'")
-    a.add_argument("--out", default="bab3-contoh-perhitungan.tex")
+    a.add_argument("--out", default="lampiran-contoh-data-asli.tex")
     a = a.parse_args()
     df = baca(a.csv)
     win = cari(df, a.mulai)

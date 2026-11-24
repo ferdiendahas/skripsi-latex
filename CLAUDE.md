@@ -42,6 +42,7 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
   - Kode `prediksi_btc` tetap memakai nama lama (`horizon_menit`, `t_u`, `hasil_uji_final.csv`); jangan ubah kode hanya karena istilah.
 - Notasi: $P_t$ harga, $h$ horizon prediksi (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
 - Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
+- **Contoh perhitungan manual** (`chapters/bab3-contoh-perhitungan.tex`) memakai **angka permisalan** yang ditulis manual (24 Nov 2026): 6 baris latih, 3 baris uji, fitur $x_1$/$x_2$, $\nu = 0{,}5$, 1 bp ≈ Rp100.000. Bila angka diubah, hitung ulang semua langkah dan cocokkan XGBoost/LightGBM/CatBoost (mode Plain) dengan pustaka aslinya. Contoh dengan data asli ada di `chapters/lampiran-contoh-data-asli.tex` (keluaran `scripts/contoh_manual.py`, belum di-`\input`).
 - Diagram konsep memakai TikZ di `assets/tikz-v3/`. Gambar data hanya dari keluaran pipeline `prediksi_btc`. Jangan menempel gambar dari paper; gambar ulang dan tulis "diadaptasi dari".
 
 ## `references.bib`
