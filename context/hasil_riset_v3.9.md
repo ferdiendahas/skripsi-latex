@@ -16,7 +16,7 @@
 >
 > **Perubahan v3.3 (16 November 2026):** rujukan kartu diganti ke `kartu_paper_v3.4.md`; angka autokorelasi di Bagian VIII diperbarui dengan data 10 Okt – 12 Nov 2026 dan aturan bar bervolume nol; aturan duplikat Holm di Bagian IX ditandai **selesai**. **Menggantikan:** `hasil_riset_v3.2.md` (arsip).
 >
-> **Status (28 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `9ada221`, CatBoost Plain; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `130cfdd`, 28 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.7.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
+> **Status (28 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `9ada221`, CatBoost Plain; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `130cfdd`, 28 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.8.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
 >
 > **Menggantikan:** `hasil_riset_v3.1.md` dan `hasil_riset_v3.0.md` (arsip). Versi v2.9 (realized variance / HAR-RV) tetap arsip.
 >
@@ -267,7 +267,7 @@ Pendukung minor: B6 Dudek dkk. (2025, preprint; target volatilitas; contoh Optun
 
 ## V. Rancangan penelitian (ringkas, desain v4)
 
-Rincian lengkap dan kode: `hasil_eksperimen_v3.7.md` Bagian 3 dan Lampiran B. Bab III repo `skripsi-latex` sudah memakai desain ini.
+Rincian lengkap dan kode: `hasil_eksperimen_v3.8.md` Bagian 3 dan Lampiran B. Bab III repo `skripsi-latex` sudah memakai desain ini.
 
 | Komponen | Keputusan | Dasar |
 |---|---|---|
@@ -342,7 +342,7 @@ Judul sementara di repo LaTeX (`metadata.tex`): **"Prediksi Harga BTC/IDR Jangka
 
 ## VII. Gambaran uji coba dan kaitannya dengan literatur (untuk Bab IV–V, bukan Bab I–III)
 
-Rincian: `hasil_eksperimen_v3.7.md` Bagian 4–5. Angka di bawah dari **uji coba** dengan kode lama (P1: 92 run, P2: 120 run); hasil skripsi menunggu eksperimen final v4.
+Rincian: `hasil_eksperimen_v3.8.md` Bagian 4–5. Angka di bawah dari **uji coba** dengan kode lama (P1: 92 run, P2: 120 run); hasil skripsi menunggu eksperimen final v4.
 
 | Temuan uji coba | Kaitan literatur | Batasan saat menulis |
 |---|---|---|

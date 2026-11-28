@@ -64,7 +64,7 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
 - Jangan commit/push kecuali Ferdi minta.
 
 ## Fakta kunci (ringkas)
-- Judul sementara: "Prediksi Harga BTC/IDR Jangka Pendek dengan Model Boosting dan Optimasi Hyperparameter" (23 Nov 2026); final diputuskan bersama dosen. Dosen pembimbing: Dr. Rizky Parlika, S.Kom, M.Kom.
+- Judul sementara: "Prediksi Harga BTC/IDR Jangka Pendek dengan Model Boosting dan Optimasi Hyperparameter" (23 Nov 2026); final diputuskan bersama dosen. Dosen pembimbing 1: Dr. Rizky Parlika, S.Kom., M.Kom.; pembimbing 2: Angga Lisdiyanto, S.Kom., M.Kom.
 - **Rumusan masalah:**
   1. Bagaimana membangun model XGBoost, LightGBM, CatBoost, dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai horizon prediksi?
   2. Bagaimana pengaruh optimasi *hyperparameter* terhadap akurasi keempat model tersebut?
@@ -79,4 +79,4 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
   - data latih ±80% + data uji 20% (*purging* berbasis waktu); validasi *walk-forward* 5 fold dengan *purging* berbasis waktu; Tahap 3 = panjang data latih 100/75/50%;
   - metrik MAE, RMSE, MAPE, akurasi arah; uji Diebold-Mariano dengan koreksi HLN; koreksi Holm untuk uji berganda;
   - Tahap 1 dan 2 memilih dari median MAE validasi vs Naive 4 model (rata-rata dua nilai tengah); RM2 diuji dengan DM metode optimasi terpilih vs default (keluarga Holm sendiri).
-- **Menunggu keputusan dosen:** tanggal pasti periode data, ada/tidaknya aplikasi web, dan aturan menentukan "model terbaik" (dikunci sebelum eksperimen final).
+- **Menunggu keputusan dosen:** ada/tidaknya aplikasi web, aturan menentukan "model terbaik" (dikunci sebelum eksperimen final), QMC 30/32, multi-*seed*, dan 7 hal dari panduan format (`hasil_riset_v3*` Bagian IX no. 9). Periode data sudah pasti: 10 Okt 2026 – 10 Feb 2027.

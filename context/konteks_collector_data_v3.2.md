@@ -6,7 +6,7 @@
 >
 > **Perubahan v3.1 (16 November 2026):** Bagian 7 poin 5 dikoreksi. Indodax ternyata **tetap** membuat candle untuk menit tanpa transaksi, sehingga celah pada data berarti collector gagal mengambil data. **Menggantikan:** `konteks_collector_data_v3.0.md` (arsip).
 >
-> **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.7.md`. Konteks umum ada di `konteks_skripsi_v3.5.md`.
+> **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.8.md`. Konteks umum ada di `konteks_skripsi_v3.6.md`.
 >
 > **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). Semua timestamp di database dalam UTC. WIB = UTC+7.
 
