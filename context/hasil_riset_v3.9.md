@@ -16,7 +16,7 @@
 >
 > **Perubahan v3.3 (16 November 2026):** rujukan kartu diganti ke `kartu_paper_v3.4.md`; angka autokorelasi di Bagian VIII diperbarui dengan data 10 Okt – 12 Nov 2026 dan aturan bar bervolume nol; aturan duplikat Holm di Bagian IX ditandai **selesai**. **Menggantikan:** `hasil_riset_v3.2.md` (arsip).
 >
-> **Status (28 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `9ada221`, CatBoost Plain; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `130cfdd`, 28 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.8.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
+> **Status (28 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `9ada221`, CatBoost Plain; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `ae379bd`, 28 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.8.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
 >
 > **Menggantikan:** `hasil_riset_v3.1.md` dan `hasil_riset_v3.0.md` (arsip). Versi v2.9 (realized variance / HAR-RV) tetap arsip.
 >
@@ -445,7 +445,7 @@ Masih terbuka:
 | Uji coba P2 (10 Okt – 10 Nov) + analisis | ✅ 11 Nov 2026 |
 | Review dosen → kode v4 | ✅ 12 Nov 2026 (commit `ed8b735`) |
 | Dokumen riset v3.3 dan eksperimen v3.4 | ✅ 16 Nov 2026 |
-| Bab I–III (LaTeX) | 🔄 commit `130cfdd` (28 Nov 2026): review v5 + panduan format; menunggu keputusan dosen (Bagian IX) |
+| Bab I–III (LaTeX) | 🔄 commit `ae379bd` (28 Nov 2026): review v5, panduan format, dan review poin 11 (v6); menunggu keputusan dosen (Bagian IX) |
 | Review v5 (11 poin, 26 Nov 2026) | ✅ 27 Nov 2026: context v3.7/v3.8; Bab I–III (CatBoost Plain, keterbatasan Holm, N1–N11); kode `boosting_type="Plain"` |
 | Panduan format penulisan (27 Nov 2026) | ✅ perbaikan tanpa keputusan pembimbing masuk Bab I–III; 7 hal ditahan (Bagian IX no. 9) |
 | Samakan aturan duplikat Holm (Bab III vs kode) | ✅ 16 Nov 2026 |

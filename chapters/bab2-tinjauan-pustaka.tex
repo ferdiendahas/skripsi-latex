@@ -765,7 +765,7 @@ diperhatikan ketika jumlah \textit{trial} ditetapkan.
 \subsection{Teknik Optimasi Tambahan}
 \label{subsec:teknik}
 Penelitian ini menguji empat teknik tambahan, yaitu \textit{early stopping},
-seleksi fitur, \textit{loss} L1, dan \textit{pruning}.
+seleksi fitur, \textit{loss} absolut (L1), dan \textit{pruning}.
 
 % [kartu J1]
 Teknik pertama berupa \textit{early stopping}. Boosting yang dijalankan
@@ -790,7 +790,7 @@ pilihan desain dan dijelaskan pada Bab III.
 
 % [kartu E1, I3]
 Teknik ketiga berupa penggantian fungsi \textit{loss} pelatihan menjadi
-\textit{loss} absolut atau L1. Varian \textit{gradient boosting} dengan
+\textit{loss} absolut. Varian \textit{gradient boosting} dengan
 \textit{loss} absolut sudah dirumuskan sebagai LAD\_TreeBoost
 \cite{friedman2001}. Pilihan tersebut selaras dengan MAE sebagai metrik utama,
 seperti dibahas pada Subbab~\ref{subsec:mae}.
@@ -918,7 +918,7 @@ sedangkan nilai positif berarti sebaliknya. Nama MAE vs Naive dibuat sendiri dal
 MAE dipilih sebagai metrik utama juga karena kaitannya dengan \textit{loss}
 pelatihan. Prediksi yang meminimalkan \textit{loss} absolut merupakan median,
 sedangkan yang meminimalkan \textit{loss} kuadrat merupakan rata-rata
-\cite{gneiting2011}. Karena itu, pelatihan dengan \textit{loss} L1 sejalan
+\cite{gneiting2011}. Karena itu, pelatihan dengan \textit{loss} absolut sejalan
 dengan evaluasi memakai MAE.
 
 \subsection{Root Mean Square Error}
