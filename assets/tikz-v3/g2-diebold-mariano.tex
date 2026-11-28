@@ -1,0 +1,18 @@
+% G2-10 Alur uji Diebold-Mariano + HLN + Holm. Simbolik, tanpa angka.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    kotak/.style={draw,rectangle,align=center,inner sep=3pt,minimum height=9mm,text width=30mm},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+  \node[kotak] (e1) at (0,0)  {galat prediksi 1\\$e_{1t}$};
+  \node[kotak] (e2) at (0,16) {galat prediksi 2\\$e_{2t}$};
+  \node[kotak] (d)  at (42,8) {selisih \textit{loss}\\$d_t$};
+  \node[kotak] (dm) at (84,8) {statistik DM\\dari $\bar{d}$ dan $\hat{\phi}_l$};
+  \node[kotak] (hln) at (84,30) {koreksi HLN\\dan distribusi $t$};
+  \node[kotak] (p) at (42,30) {nilai $p$ setiap uji};
+  \node[kotak] (holm) at (0,30) {koreksi Holm\\dalam satu keluarga uji};
+  \draw[panah] (e1.east) -- (d.west);
+  \draw[panah] (e2.east) -- (d.west);
+  \draw[panah] (d) -- (dm);
+  \draw[panah] (dm) -- (hln);
+  \draw[panah] (hln) -- (p);
+  \draw[panah] (p) -- (holm);
+\end{tikzpicture}

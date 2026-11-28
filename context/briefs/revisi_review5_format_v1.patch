@@ -1,0 +1,2578 @@
+diff --git a/CLAUDE.md b/CLAUDE.md
+index fc76bb1..b6806f8 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -42,7 +42,13 @@ Repo LaTeX praskripsi (proposal) Informatika UPN "Veteran" Jawa Timur, kelas `up
+   - Kode `prediksi_btc` tetap memakai nama lama (`horizon_menit`, `t_u`, `hasil_uji_final.csv`); jangan ubah kode hanya karena istilah.
+ - Notasi: $P_t$ harga, $h$ horizon prediksi (menit), $r_{t,h}=\ln(P_{t+h}/P_t)$, $\hat{P}_{t+h}=P_t\exp(\hat{r}_{t,h})$. Simbol baru ditambahkan ke `frontmatter/daftar-notasi.tex`. Simbol v2.9 yang tidak dipakai lagi boleh dihapus hanya bila brief menyuruh.
+ - Rujuk persamaan, tabel, dan gambar dengan `\ref`/`\eqref`, jangan disalin ulang.
+-- **Contoh perhitungan manual** (`chapters/bab3-contoh-perhitungan.tex`) memakai **angka permisalan** yang ditulis manual (24 Nov 2026): 6 baris latih, 3 baris uji, fitur $x_1$/$x_2$, $\nu = 0{,}5$, 1 bp ≈ Rp100.000. Bila angka diubah, hitung ulang semua langkah dan cocokkan XGBoost/LightGBM/CatBoost (mode Plain) dengan pustaka aslinya. Contoh dengan data asli ada di `chapters/lampiran-contoh-data-asli.tex` (keluaran `scripts/contoh_manual.py`, belum di-`\input`).
++- **Contoh perhitungan manual** (`chapters/bab3-contoh-perhitungan.tex`) memakai **angka permisalan** yang ditulis manual (24 Nov 2026): 6 baris latih, 3 baris uji, fitur $x_1$/$x_2$, $\nu = 0{,}5$, 1 bp ≈ Rp100.000. Bila angka diubah, hitung ulang semua langkah dan cocokkan XGBoost/LightGBM/CatBoost (mode Plain) dengan pustaka aslinya. Ilustrasi *ordered boosting* di contoh hanya menjelaskan ide; eksperimen memakai CatBoost mode Plain (`boosting_type="Plain"` di kode, 27 Nov 2026). Contoh dengan data asli ada di `chapters/lampiran-contoh-data-asli.tex` (keluaran `scripts/contoh_manual.py`, belum di-`\input`).
++- **Tata letak (panduan format, 27 Nov 2026):**
++  - **Prinsip gambar (keputusan Ferdi 27 Nov 2026):** (1) sebelum gambar, perkenalkan konteks dan rujuk nomornya ("ditunjukkan pada Gambar~\ref{...}"); (2) letakkan `figure` sesudah paragraf yang pertama kali merujuknya; (3) sesudah gambar, jelaskan isi, ciri, atau tafsirannya. Pembuka penjelasan boleh bervariasi ("Pada Gambar ...", "Berdasarkan Gambar ...", "Gambar ... menunjukkan ..."). `flafter` dipakai agar gambar tidak muncul di atas rujukannya.
++  - Tidak ada ruang kosong > 3 cm, kecuali halaman terakhir bab. Jangan pakai `[H]`; gambar memakai `[!htbp]`.
++  - Setelah compile, jalankan `python scripts/cek_tata_letak.py build/praskripsi.pdf`. Hasil harus 0 pelanggaran gambar (gambar muncul sebelum dirujuk). Ruang kosong hanya boleh di akhir bab atau daftar.
++  - Tabel daftar diberi kolom No, dan judul kolom ditulis tebal. Hindari kode RM1/RQ1 di naskah; tulis "rumusan masalah pertama".
++  - Grafik data Bab III (`fig:statdata`) dibuat dari `scripts/grafik_data.py`, yang memakai `btcpred.data.load`. Datanya ada di `assets/data/`, dan grafik memakai pgfplots hitam-putih.
+ - Diagram konsep memakai TikZ di `assets/tikz-v3/`. Gambar data hanya dari keluaran pipeline `prediksi_btc`. Jangan menempel gambar dari paper; gambar ulang dan tulis "diadaptasi dari".
+ 
+ ## `references.bib`
+diff --git a/assets/tikz-v3/g2-diebold-mariano.tex b/assets/tikz-v3/g2-diebold-mariano.tex
+new file mode 100644
+index 0000000..b66b465
+--- /dev/null
++++ b/assets/tikz-v3/g2-diebold-mariano.tex
+@@ -0,0 +1,18 @@
++% G2-10 Alur uji Diebold-Mariano + HLN + Holm. Simbolik, tanpa angka.
++\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
++    kotak/.style={draw,rectangle,align=center,inner sep=3pt,minimum height=9mm,text width=30mm},
++    panah/.style={-{Stealth[length=2.2mm]}}]
++  \node[kotak] (e1) at (0,0)  {galat prediksi 1\\$e_{1t}$};
++  \node[kotak] (e2) at (0,16) {galat prediksi 2\\$e_{2t}$};
++  \node[kotak] (d)  at (42,8) {selisih \textit{loss}\\$d_t$};
++  \node[kotak] (dm) at (84,8) {statistik DM\\dari $\bar{d}$ dan $\hat{\phi}_l$};
++  \node[kotak] (hln) at (84,30) {koreksi HLN\\dan distribusi $t$};
++  \node[kotak] (p) at (42,30) {nilai $p$ setiap uji};
++  \node[kotak] (holm) at (0,30) {koreksi Holm\\dalam satu keluarga uji};
++  \draw[panah] (e1.east) -- (d.west);
++  \draw[panah] (e2.east) -- (d.west);
++  \draw[panah] (d) -- (dm);
++  \draw[panah] (dm) -- (hln);
++  \draw[panah] (hln) -- (p);
++  \draw[panah] (p) -- (holm);
++\end{tikzpicture}
+diff --git a/assets/tikz-v3/g2-galat.tex b/assets/tikz-v3/g2-galat.tex
+new file mode 100644
+index 0000000..3c73816
+--- /dev/null
++++ b/assets/tikz-v3/g2-galat.tex
+@@ -0,0 +1,17 @@
++% G2-9 Galat prediksi e_t untuk MAE dan RMSE. Simbolik, tanpa angka.
++\begin{tikzpicture}[x=1mm,y=1mm,font=\footnotesize,
++    asli/.style={circle,fill=black,inner sep=1.4pt},
++    pred/.style={circle,draw=black,fill=white,inner sep=1.4pt}]
++  \draw[-{Stealth[length=2.2mm]}] (0,0) -- (110,0) node[anchor=west] {waktu};
++  \draw[-{Stealth[length=2.2mm]}] (0,0) -- (0,40) node[anchor=south] {harga};
++  \foreach \x/\a/\p [count=\k] in {15/24/12, 35/20/32, 55/14/26, 75/34/22, 95/27/33}{
++    \draw[densely dashed] (\x,\a) -- (\x,\p);
++    \node[asli] at (\x,\a) {};
++    \node[pred] at (\x,\p) {};
++    \node[anchor=north] at (\x,0) {$t_{\k}$};
++  }
++  \node[anchor=west] at (36.5,26) {$e_{t_2}$};
++  \node[asli,label={[font=\footnotesize]right:harga sebenarnya $P_{t+h}$}] at (8,-12) {};
++  \node[pred,label={[font=\footnotesize]right:harga prediksi $\hat{P}_{t+h}$}] at (58,-12) {};
++  \draw[densely dashed] (5,-18) -- (11,-18) node[anchor=west] {galat $e_t$};
++\end{tikzpicture}
+diff --git a/assets/tikz-v3/g2-kerangka-pemikiran.tex b/assets/tikz-v3/g2-kerangka-pemikiran.tex
+index 8a868c4..ae82e5f 100644
+--- a/assets/tikz-v3/g2-kerangka-pemikiran.tex
++++ b/assets/tikz-v3/g2-kerangka-pemikiran.tex
+@@ -30,7 +30,7 @@
+ 
+   \node[judul] (j5) at (12,72)  {Keluaran};
+   \node[tahap] (k5) at (76,72)
+-    {Jawaban atas RM1--RM3.};
++    {Jawaban atas ketiga rumusan masalah.};
+ 
+   \foreach \a/\b in {1/2,2/3,3/4,4/5}{
+     \draw[panah] (k\a.south) -- (k\b.north);
+diff --git a/assets/tikz-v3/g2-validasi-asal.tex b/assets/tikz-v3/g2-validasi-asal.tex
+new file mode 100644
+index 0000000..38af50c
+--- /dev/null
++++ b/assets/tikz-v3/g2-validasi-asal.tex
+@@ -0,0 +1,21 @@
++% G2-8 Satu titik asal vs beberapa titik asal (prequential in blocks).
++% Sumber konsep: tashman2000 (G5) dan cerqueira2020 (G4). Simbolik, tanpa angka.
++\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
++    latih/.style={draw,minimum height=4.5mm,inner sep=0pt,anchor=west},
++    uji/.style={draw,fill=black!25,minimum height=4.5mm,inner sep=0pt,anchor=west},
++    panah/.style={-{Stealth[length=2.2mm]}}]
++  \node[anchor=west,font=\small] at (0,0) {(a) Satu titik asal};
++  \node[latih,minimum width=80mm] at (22,6.5) {latih};
++  \node[uji,minimum width=20mm] at (102,6.5) {uji};
++  \node[anchor=east] at (20,6.5) {putaran 1};
++  \node[anchor=west,font=\small] at (0,14) {(b) Beberapa titik asal};
++  \foreach \i in {1,2,3,4}{
++    \pgfmathsetmacro{\y}{14 + 6.5*\i}
++    \pgfmathsetmacro{\w}{20*\i}
++    \node[anchor=east] at (20,\y) {putaran \i};
++    \node[latih,minimum width=\w mm] at (22,\y) {latih};
++    \node[uji,minimum width=20mm] at (22+\w,\y) {uji};
++  }
++  \draw[panah] (22,45) -- (124,45);
++  \node[anchor=north] at (73,46) {arah waktu};
++\end{tikzpicture}
+diff --git a/assets/tikz-v3/g3-statistik-data.tex b/assets/tikz-v3/g3-statistik-data.tex
+new file mode 100644
+index 0000000..6f1bc91
+--- /dev/null
++++ b/assets/tikz-v3/g3-statistik-data.tex
+@@ -0,0 +1,28 @@
++% G3-0 Grafik statistik data. Data dari scripts/grafik_data.py (lewat
++% btcpred.data.load di prediksi_btc). Hitam-putih; perbarui datanya saat
++% data final Februari 2027 tersedia.
++\begin{tikzpicture}
++  \begin{axis}[name=a, width=0.86\textwidth, height=4.6cm,
++      title={(a) Harga \textit{typical} BTC/IDR setiap awal jam},
++      title style={font=\footnotesize},
++      xlabel={Hari ke- sejak 10 Oktober 2026 (UTC)},
++      ylabel={Harga (juta Rp)},
++      label style={font=\footnotesize}, tick label style={font=\footnotesize},
++      /pgf/number format/.cd, use comma, 1000 sep={.},
++      xmin=0, enlarge x limits=0.01, grid=none]
++    \addplot[black, thin, mark=none] table[x=hari, y=harga_juta]
++      {assets/data/harga_per_jam.dat};
++  \end{axis}
++  \begin{axis}[at={(a.south)}, anchor=north, yshift=-2.3cm,
++      width=0.86\textwidth, height=4.6cm,
++      title={(b) Sebaran \textit{return} logaritmik 1 menit},
++      title style={font=\footnotesize},
++      xlabel={\textit{Return} (bp); bin tepi memuat nilai di luar $\pm$20 bp},
++      ylabel={Persentase (\%)},
++      label style={font=\footnotesize}, tick label style={font=\footnotesize},
++      /pgf/number format/.cd, use comma, 1000 sep={.},
++      ybar, bar width=0.8, xmin=-21, xmax=21, ymin=0]
++    \addplot[draw=black, fill=black!25] table[x=tengah, y=persen]
++      {assets/data/hist_return_1m.dat};
++  \end{axis}
++\end{tikzpicture}
+diff --git a/praskripsi.tex b/praskripsi.tex
+index 4a13768..8603d95 100644
+--- a/praskripsi.tex
++++ b/praskripsi.tex
+@@ -4,6 +4,11 @@
+ % Kelas memberi caption tabel justification=raggedright sehingga rata kiri,
+ % padahal tabelnya sendiri di tengah. Samakan dengan caption gambar.
+ \captionsetup[table]{justification=centering,singlelinecheck=true}
++% Grafik data (Gambar statistik data di Bab III) digambar dengan pgfplots.
++\usepackage{pgfplots}
++% Gambar dan tabel tidak pernah muncul sebelum paragraf yang merujuknya.
++\usepackage{flafter}
++\pgfplotsset{compat=1.18}
+ 
+ % Tata letak float. Nilai bawaan LaTeX memaksa tabel atau gambar besar pindah
+ % ke halaman tersendiri, sehingga muncul celah kosong di halaman sebelumnya.
+diff --git a/assets/tikz-v3/g3-alur-penelitian.tex b/assets/tikz-v3/g3-alur-penelitian.tex
+index 5020624..536cc1f 100644
+--- a/assets/tikz-v3/g3-alur-penelitian.tex
++++ b/assets/tikz-v3/g3-alur-penelitian.tex
+@@ -1,50 +1,44 @@
+-% G3-1 Alur penelitian.
+-% Sumber: diolah penulis; rincian collector dari
+-% context/konteks_collector_data_v3.1.md.
++% G3-1 Alur penelitian dalam bentuk diagram alir (dua kolom agar muat satu
++% halaman bersama teks). Simbol: terminal (sudut bulat), proses (persegi
++% panjang), data (jajaran genjang), data tersimpan (silinder), keputusan
++% (belah ketupat). Sumber: diolah penulis; rincian collector dari
++% context/konteks_collector_data_v3.1.md; perulangan per konfigurasi sesuai
++% run.py di prediksi_btc.
+ \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+-    tahap/.style={draw,rectangle,text width=96mm,align=left,
+-      inner sep=3pt,minimum height=11mm},
+-    nomor/.style={draw,circle,inner sep=0pt,minimum size=7mm,font=\small},
+-    panah/.style={-{Stealth[length=2.2mm]}}]
+-
+-  % Tinggi kotak 11mm dan jarak antarbaris 17mm, seragam untuk semua langkah.
+-  \node[nomor] at (6,0) {1};
+-  \node[tahap] (t1) at (62,0)
+-    {\textbf{Pengumpulan data.}\\
+-     \textit{Candle} 1 menit BTC/IDR dari API publik Indodax.};
+-
+-  \node[nomor] at (6,17) {2};
+-  \node[tahap] (t2) at (62,17)
+-    {\textbf{Praproses.}\\
+-     \textit{Candle} 5 menit dibentuk dari agregasi \textit{candle} 1 menit.};
+-
+-  \node[nomor] at (6,34) {3};
+-  \node[tahap] (t3) at (62,34)
+-    {\textbf{Pembentukan fitur dan target.}\\
+-     Fitur dari data sampai waktu $t$, target $r_{t,h} = \ln(P_{t+h}/P_t)$.};
+-
+-  \node[nomor] at (6,51) {4};
+-  \node[tahap] (t4) at (62,51)
+-    {\textbf{Pembagian data.}\\
+-     Data latih dan data uji; \textit{purging} berbasis
+-     waktu.};
+-
+-  \node[nomor] at (6,68) {5};
+-  \node[tahap] (t5) at (62,68)
+-    {\textbf{Optimasi \textit{hyperparameter}.}\\
+-     Validasi \textit{walk-forward} di data latih.};
+-
+-  \node[nomor] at (6,85) {6};
+-  \node[tahap] (t6) at (62,85)
+-    {\textbf{Pelatihan model akhir dan prediksi.}\\
+-     Konfigurasi ditetapkan, diuji sekali pada data uji.};
+-
+-  \node[nomor] at (6,102) {7};
+-  \node[tahap] (t7) at (62,102)
+-    {\textbf{Evaluasi terhadap Naive.}\\
+-     MAE, RMSE, MAPE, akurasi arah, uji DM, dan koreksi Holm.};
+-
+-  \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7}{
+-    \draw[panah] (t\a.south) -- (t\b.north);
++    terminal/.style={draw,rectangle,rounded corners=3mm,minimum width=24mm,
++      minimum height=6mm,align=center},
++    proses/.style={draw,rectangle,text width=46mm,align=left,inner sep=2pt,
++      minimum height=7mm},
++    data/.style={draw,trapezium,trapezium left angle=72,trapezium right angle=108,
++      text width=36mm,align=center,inner sep=1.5pt,minimum height=6mm},
++    simpan/.style={draw,cylinder,shape border rotate=90,aspect=0.18,
++      minimum width=17mm,minimum height=10mm,align=center,inner sep=1pt},
++    putusan/.style={draw,diamond,aspect=4,align=center,inner sep=0pt,
++      text width=30mm,font=\scriptsize},
++    panah/.style={-{Stealth[length=2mm]}}]
++
++  % kolom kiri
++  \node[terminal] (mulai) at (30,0) {Mulai};
++  \node[proses] (lit) at (30,9.5) {Studi literatur};
++  \node[data] (api) at (30,19) {API publik Indodax};
++  \node[proses] (t1) at (30,28.5) {1. Pengumpulan data};
++  \node[simpan] (db) at (30,40) {Basis data\\SQLite};
++  \node[proses] (t2) at (30,51.5) {2. Praproses data};
++
++  % kolom kanan
++  \node[proses] (t3) at (96,0) {3. Pembentukan fitur dan target};
++  \node[proses] (t4) at (96,9.5) {4. Pembagian data};
++  \node[proses] (t5) at (96,19) {5. Optimasi \textit{hyperparameter}};
++  \node[proses] (t6) at (96,28.5) {6. Pelatihan dan prediksi};
++  \node[putusan] (cek) at (96,42) {Semua konfigurasi\\Tahap 1--4 selesai?};
++  \node[proses] (t7) at (96,56) {7. Evaluasi terhadap Naive};
++  \node[data] (hasil) at (96,65) {Hasil evaluasi};
++  \node[terminal] (selesai) at (96,74) {Selesai};
++
++  \foreach \a/\b in {mulai/lit,lit/api,api/t1,t1/db,db/t2,t3/t4,t4/t5,t5/t6,t6/cek,t7/hasil,hasil/selesai}{
++    \draw[panah] (\a) -- (\b);
+   }
++  \draw[panah] (t2.east) -- ++(6,0) |- (t3.west);
++  \draw[panah] (cek.south) -- node[anchor=west] {Ya} (t7.north);
++  \draw[panah] (cek.east) -- node[anchor=south,pos=0.4] {Tidak} (126,42) |- (t3.east);
+ \end{tikzpicture}
+diff --git a/scripts/cek_tata_letak.py b/scripts/cek_tata_letak.py
+new file mode 100644
+index 0000000..ab3440d
+--- /dev/null
++++ b/scripts/cek_tata_letak.py
+@@ -0,0 +1,72 @@
++#!/usr/bin/env python3
++"""cek_tata_letak.py — cek dua aturan tata letak pada PDF hasil compile.
++
++1. Rujuk dulu, baru gambar: setiap gambar harus sudah disebut di teks
++   ("ditunjukkan pada Gambar X.Y") sebelum gambarnya muncul, lalu dijelaskan
++   sesudahnya. Pelanggaran = caption muncul sebelum rujukan pertamanya.
++   Tabel hanya dilaporkan sebagai info.
++2. Ruang kosong: tidak boleh ada ruang putih > 3 cm di area teks, kecuali di
++   halaman terakhir setiap bab (diperiksa manual dari daftar yang dicetak).
++
++Butuh: pdftotext dan pdftoppm (poppler), Pillow, numpy.
++Pemakaian: python scripts/cek_tata_letak.py build/praskripsi.pdf
++Kalau ada pelanggaran: pastikan lingkungan figure diletakkan sesudah paragraf
++yang pertama kali merujuknya (flafter di praskripsi.tex mencegah gambar naik
++ke atas rujukannya). Jangan pakai [H].
++"""
++import re, subprocess, sys, tempfile, glob, os
++import numpy as np
++from PIL import Image
++
++pdf = sys.argv[1]
++xml = subprocess.run(["pdftotext", "-bbox-layout", pdf, "-"], capture_output=True, text=True).stdout
++# kata per kata, supaya "Gambar" di akhir baris dan "2.3" di baris berikutnya tetap terbaca
++words = []   # (halaman, y, x, teks, awal_baris)
++for pi, pg in enumerate(xml.split("<page ")[1:], 1):
++    for ln in re.finditer(r'<line [^>]*>(.*?)</line>', pg, re.S):
++        ws = re.findall(r'<word xMin="([\d.]+)" yMin="([\d.]+)"[^>]*>([^<]*)</word>', ln.group(1))
++        for k, (x, y, t) in enumerate(ws):
++            words.append((pi, float(y), float(x), t, k == 0))
++# lewati halaman depan (daftar isi/tabel/gambar): mulai dari halaman "BAB I"
++mulai = next((w[0] for i, w in enumerate(words[:-2])
++              if w[3] == "BAB" and w[4] and words[i + 1][3] == "I" and words[i + 2][4]), 1)
++caps, refs = {}, {}
++for i in range(len(words) - 1):
++    pi, y, x, t, awal = words[i]
++    if pi < mulai or t not in ("Gambar", "Tabel"):
++        continue
++    m = re.match(r"(\d+\.\d+)", words[i + 1][3])
++    if not m:
++        continue
++    key = f"{t} {m.group(1)}"
++    nxt = words[i + 2][3] if i + 2 < len(words) else ""
++    # caption: di awal baris, angka tanpa tanda baca, tidak diikuti kata kerja narasi
++    iscap = awal and words[i + 1][3] == m.group(1) and nxt not in ("menunjukkan", "bagian")
++    if iscap and key not in caps:
++        caps[key] = (pi, y, x)
++    else:
++        refs.setdefault(key, []).append((pi, y, x))
++langgar = 0
++for k, pos in caps.items():
++    sebelum = [r for r in refs.get(k, []) if r < pos]
++    if not sebelum:
++        jenis = "PELANGGARAN" if k.startswith("Gambar") else "info"
++        langgar += k.startswith("Gambar")
++        print(f"{jenis}: {k} (hlm. PDF {pos[0]}) muncul sebelum dirujuk di teks")
++print(f"Urutan gambar: {langgar} pelanggaran dari {sum(k.startswith('Gambar') for k in caps)} gambar")
++
++with tempfile.TemporaryDirectory() as d:
++    subprocess.run(["pdftoppm", "-r", "40", "-gray", "-png", pdf, os.path.join(d, "p")], check=True)
++    px = 40 / 2.54
++    for f in sorted(glob.glob(os.path.join(d, "p-*.png"))):
++        a = np.array(Image.open(f).convert("L")); h, w = a.shape
++        top, bot = int(3 * px), h - int(3 * px)
++        ink = np.where((a[top:bot, int(4 * px):w - int(3 * px)] < 200).any(axis=1))[0]
++        if len(ink) == 0:
++            continue
++        gap = (np.diff(ink).max() if len(ink) > 1 else 0) / px
++        tail = ((bot - top) - ink[-1]) / px
++        if gap > 3 or tail > 3:
++            n = re.search(r"p-(\d+)", f).group(1)
++            print(f"Ruang kosong > 3 cm di hlm. PDF {int(n)} (celah {gap:.1f} cm, sisa bawah {tail:.1f} cm)"
++                  " -> boleh hanya bila halaman terakhir bab/daftar")
+diff --git a/scripts/grafik_data.py b/scripts/grafik_data.py
+new file mode 100644
+index 0000000..dc86b2d
+--- /dev/null
++++ b/scripts/grafik_data.py
+@@ -0,0 +1,67 @@
++#!/usr/bin/env python3
++"""grafik_data.py — data untuk Gambar 3.x (grafik statistik data, Bab III).
++
++Membaca CSV candle 1 menit hasil ekspor collector lewat btcpred.data.load
++(repo prediksi_btc), sehingga harga typical dan aturan candle volume nol sama
++persis dengan pipeline eksperimen. Keluaran (dibaca pgfplots):
++  assets/data/harga_per_jam.dat   jam ke-, harga typical (juta Rp) tiap awal jam
++  assets/data/hist_return_1m.dat  tengah bin (bp), persentase return; bin tepi memuat semua nilai di luarnya
++  assets/data/ringkasan_data.txt  angka deskriptif untuk narasi (cek manual)
++
++Pemakaian:
++  python scripts/grafik_data.py --csv <btcidr_candle_1menit_XXXX.csv> \
++      --prediksi-btc ../prediksi_btc --start "2026-10-10 00:00" --end "2026-11-12 23:59"
++Untuk eksperimen final: --end "2027-02-10 23:59" dengan CSV ekspor terbaru.
++"""
++import argparse, sys
++from pathlib import Path
++import numpy as np
++
++ap = argparse.ArgumentParser()
++ap.add_argument("--csv", required=True)
++ap.add_argument("--prediksi-btc", required=True)
++ap.add_argument("--start", required=True)
++ap.add_argument("--end", required=True)
++ap.add_argument("--out", default="assets/data")
++ap.add_argument("--batas-bp", type=float, default=20.0)
++ap.add_argument("--lebar-bin-bp", type=float, default=1.0)
++a = ap.parse_args()
++
++sys.path.insert(0, str(Path(a.prediksi_btc).resolve()))
++from btcpred.data import load  # noqa: E402
++
++df, info = load(a.csv, "candle", 1, "typical", start=a.start, end=a.end)
++df = df.loc[a.start:a.end]
++harga = df["harga"]
++out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
++
++# (a) harga tiap awal jam, sumbu x = hari sejak awal periode
++jam = harga[harga.index.minute == 0].dropna()
++hari = (jam.index - jam.index[0]).total_seconds() / 86400
++with open(out / "harga_per_jam.dat", "w") as f:
++    f.write("hari harga_juta\n")
++    for x, y in zip(hari, jam.values / 1e6):
++        f.write(f"{x:.4f} {y:.3f}\n")
++
++# (b) sebaran return logaritmik 1 menit (bp); di luar batas dijumlah ke bin tepi
++r = (np.log(harga).diff() * 1e4).dropna()
++b = a.batas_bp; w = a.lebar_bin_bp
++edges = np.arange(-b - w / 2, b + w / 2 + 1e-9, w)   # bin berpusat di kelipatan w
++rc = r.clip(edges[0] + 1e-9, edges[-1] - 1e-9)
++cnt, _ = np.histogram(rc, bins=edges)
++pct = cnt / len(r) * 100
++with open(out / "hist_return_1m.dat", "w") as f:
++    f.write("tengah persen\n")
++    for e, p in zip(edges[:-1] + w / 2, pct):
++        f.write(f"{e:.2f} {p:.4f}\n")
++
++ret_nol = float((r == 0).mean() * 100)
++with open(out / "ringkasan_data.txt", "w") as f:
++    f.write(f"periode={a.start} s.d. {a.end}\n")
++    for k, v in info.items():
++        f.write(f"{k}={v}\n")
++    f.write(f"harga_min_juta={harga.min()/1e6:.1f}\nharga_maks_juta={harga.max()/1e6:.1f}\n")
++    f.write(f"n_return={len(r)}\nreturn_nol_pct={ret_nol:.1f}\n")
++    f.write(f"return_std_bp={r.std():.2f}\nreturn_luar_batas_pct={(r.abs() > b + w / 2).mean()*100:.2f}\n")
++    f.write(f"kurtosis_berlebih={r.kurt():.1f}\n")
++print((out / "ringkasan_data.txt").read_text())
+diff --git a/chapters/bab1-pendahuluan.tex b/chapters/bab1-pendahuluan.tex
+index 51024b0..a0c5b88 100644
+--- a/chapters/bab1-pendahuluan.tex
++++ b/chapters/bab1-pendahuluan.tex
+@@ -82,6 +82,14 @@ Penelitian tersebut tidak melakukan \textit{tuning} pada model boosting, tidak m
+ naive, tidak memakai uji Diebold-Mariano, dan melakukan normalisasi sebelum data dibagi, sehingga informasi dari data uji ikut masuk ke data latih. Dari literatur yang dibaca, belum ada penelitian yang memprediksi harga Bitcoin dalam rupiah (BTC/IDR) dengan membandingkan
+ keempat model boosting yang semuanya dioptimasi.
+ 
++% P5b -- hipotesis (dugaan, bukan hasil)
++Berdasarkan uraian tersebut, penelitian ini menduga bahwa optimasi
++\textit{hyperparameter} dapat membuat prediksi model boosting lebih akurat
++daripada pengaturan \textit{default}. Namun, karena pasar Bitcoin mendekati
++efisien, keunggulan model terhadap Naive diduga tidak besar. Karena itu,
++dugaan tersebut perlu diuji dengan uji statistik, bukan hanya dari selisih
++nilai metrik.
++
+ % P6 -- sumber data dari context/konteks_collector_data_v3.1.md (Bagian 3, 6)
+ Penelitian ini memakai data harga BTC/IDR dari \textit{Application Programming Interface} (API) publik Indodax dalam bentuk
+ \textit{candle} dengan \textit{time frame} 1 menit. \textit{Candle} 5 menit
+@@ -156,8 +164,11 @@ Batasan masalah penelitian ini adalah sebagai berikut:
+         Naive sebagai pembanding.
+   \item Metode optimasi \textit{hyperparameter} terbatas pada Grid Search,
+         Random Search, TPE, CMA-ES, Genetic Algorithm (NSGA-II), dan
+-        Quasi-Monte Carlo.
+-  \item Horizon prediksi terbatas pada 1, 5, 15, 30, dan 60 menit.
++        Quasi-Monte Carlo. Teknik tambahan yang diuji terbatas pada
++        \textit{early stopping}, seleksi 15 fitur teratas, \textit{loss}
++        absolut, dan \textit{median pruner}.
++  \item Horizon prediksi terbatas pada 1, 5, 15, 30, dan 60 menit, yang
++        pada penelitian ini disebut prediksi jangka pendek.
+         Horizon 1 menit hanya dipakai pada \textit{candle} 1 menit.
+   \item Fitur hanya berasal dari data OHLCV dan waktu (\textit{timestamp})
+         \textit{candle}.
+diff --git a/chapters/bab2-tinjauan-pustaka.tex b/chapters/bab2-tinjauan-pustaka.tex
+index 6567126..9e4ec47 100644
+--- a/chapters/bab2-tinjauan-pustaka.tex
++++ b/chapters/bab2-tinjauan-pustaka.tex
+@@ -28,10 +28,56 @@ sudah cukup banyak. Namun, penelitian-penelitian tersebut berbeda dalam
+ beberapa hal, yaitu jenis data, target yang diprediksi, ada tidaknya
+ \textit{tuning hyperparameter}, serta pembanding dan uji statistik yang
+ dipakai. Karena perbedaan itu, hasil antarpenelitian sulit dibandingkan secara
+-langsung.
++langsung. Penelitian tersebut dapat dibagi menjadi tiga kelompok menurut
++jenis data dan target yang diprediksi.
+ 
+-Tabel~\ref{tab:terdahulu} merangkum penelitian terdahulu yang paling dekat
+-dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
++% [kartu A2, B1, B5, B8]
++Kelompok pertama memakai data harian. Hasil penelitian menunjukkan bahwa XGBoost paling baik dalam
++menggabungkan beberapa prediksi harian Bitcoin \cite{wei2023}. Penelitian
++tersebut juga memeriksa apakah hasil baiknya hanya muncul karena kebetulan,
++yaitu dengan \textit{model confidence set} dan uji \textit{superior predictive
++ability}. LightGBM dan AdaBoost dilaporkan memberi hasil yang baik untuk
++memprediksi \textit{return} Bitcoin harian \cite{bouteska2024}. Namun, pembanding
++\textit{random walk} pada penelitian tersebut dihitung pada \textit{return},
++bukan pada harga. Model yang menyesuaikan diri dengan kondisi pasar juga sudah
++dipakai untuk memprediksi harga Bitcoin harian \cite{oprea2026}. Pada data harga
++kripto harian, model naive dilaporkan sulit dikalahkan \cite{puoti2024}.
++Karena semuanya memakai data harian, hasilnya belum tentu berlaku pada data
++per menit.
++
++% [kartu B2, B3]
++Kelompok kedua memakai data per menit, tetapi memprediksi arah harga, bukan
++nilai harganya. Harga Bitcoin jangka pendek ditemukan sulit ditebak, tetapi
++hasil tebakannya masih sedikit di atas tebakan acak. Keuntungan sebelum biaya
++transaksi juga dapat berubah menjadi kerugian setelah biaya dihitung
++\cite{jaquart2021}. Pada data \textit{futures} Bitcoin, XGBoost dipakai untuk
++menebak arah harga tengah (\textit{mid-price}) dengan tiga rasio pembagian
++data \cite{akyildirim2023}. Karena targetnya berupa arah, hasil kedua
++penelitian ini tidak dapat langsung dibandingkan dengan penelitian yang
++memprediksi nilai harga.
++
++% [kartu A1]
++Kelompok ketiga memprediksi nilai harga pada data per menit. Penelitian yang
++paling dekat dengan penelitian ini, sekaligus menjadi acuan utama,
++membandingkan beberapa model \textit{machine learning} untuk memprediksi harga
++sepuluh aset kripto per menit selama 30 hari, dengan eksperimen utama pada
++Bitcoin \cite{rodrigues2025}. Data OHLCV pada penelitian tersebut diambil dari
++YFinance, dan horizon utamanya 60 menit. Model yang dibandingkan meliputi
++SARIMA, regresi linear, Random Forest, XGBoost, LightGBM, LSTM, dan GRU,
++dengan metrik antara lain MAE, RMSE, dan MAPE. Model terbaiknya, yaitu GRU, tetap stabil
++sampai horizon 240 menit, tetapi memburuk tajam pada horizon 1.440 menit.
++
++Model boosting pada penelitian acuan tersebut memakai pengaturan
++\textit{default}, yaitu pengaturan bawaan dari pustakanya, sedangkan model
++jaringan sarafnya dituning. Akibatnya, perbandingan keduanya belum setara,
++sehingga hasilnya belum dapat dipakai untuk menyimpulkan bahwa model boosting
++lebih buruk. Penelitian tersebut juga tidak memakai pembanding naive dan uji
++Diebold-Mariano. Selain itu, normalisasi dilakukan sebelum data dibagi,
++sehingga informasi dari data uji ikut masuk ke data latih. Kekurangan tersebut
++menjadi celah yang diisi oleh penelitian ini.
++
++Ketiga kelompok penelitian tersebut, beserta posisi penelitian ini
++terhadapnya, dirangkum pada Tabel~\ref{tab:terdahulu}.
+ 
+ \begin{table}[htbp]
+   \caption{Ringkasan Penelitian Terdahulu}
+@@ -40,7 +86,8 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
+   \begingroup
+   \setstretch{1}\footnotesize
+   \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+-  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}%
++  \begin{tabular}{|>{\centering\arraybackslash}p{0.03\textwidth}%
++                  |>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.14\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.11\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.13\textwidth}%
+@@ -48,33 +95,33 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
+                   |>{\raggedright\arraybackslash}p{0.09\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.11\textwidth}|}
+     \hline
+-    \textbf{Peneliti} & \textbf{Data} & \textbf{Target} &
++    \textbf{No} & \textbf{Peneliti} & \textbf{Data} & \textbf{Target} &
+     \textbf{Model boosting} & \textbf{\textit{Tuning}} &
+     \textbf{Naive harga} & \textbf{Uji signifikansi} \\
+     \hline
+-    Rodrigues \& Machado \cite{rodrigues2025} & Menit, 30 hari & Harga &
++    1 & Rodrigues \& Machado \cite{rodrigues2025} & Menit, 30 hari & Harga &
+     XGBoost, LightGBM & \textit{Default} & Tidak & Wilcoxon \\
+     \hline
+-    Wei dkk. \cite{wei2023} & Harian & Return & XGBoost, LightGBM &
++    2 & Wei dkk. \cite{wei2023} & Harian & Return & XGBoost, LightGBM &
+     Tidak dicatat & Tidak & MDM, MCS, SPA \\
+     \hline
+-    Bouteska dkk. \cite{bouteska2024} & Harian & Return &
++    3 & Bouteska dkk. \cite{bouteska2024} & Harian & Return &
+     AdaBoost, LightGBM & Grid Search & Tidak & Friedman \\
+     \hline
+-    Jaquart dkk. \cite{jaquart2021} & Menit, 1--60 menit & Arah &
++    4 & Jaquart dkk. \cite{jaquart2021} & Menit, 1--60 menit & Arah &
+     XGBoost & Grid Search & Tidak & Diebold-Mariano \\
+     \hline
+-    Akyildirim dkk. \cite{akyildirim2023} & 5--60 menit, \textit{futures} &
++    5 & Akyildirim dkk. \cite{akyildirim2023} & 5--60 menit, \textit{futures} &
+     Arah & XGBoost & Tidak dicatat & Tidak & Uji $t$ \\
+     \hline
+-    Puoti dkk. \cite{puoti2024} & Harian & Harga & XGBoost & Tidak disebut &
++    6 & Puoti dkk. \cite{puoti2024} & Harian & Harga & XGBoost & Tidak disebut &
+     Ya & Tidak jelas \\
+     \hline
+-    Oprea \& B\^{a}ra \cite{oprea2026} & Harian & Harga &
++    7 & Oprea \& B\^{a}ra \cite{oprea2026} & Harian & Harga &
+     XGBoost (\textit{meta-learner}) & Tidak dicatat & Tidak &
+     Diebold-Mariano \\
+     \hline
+-    \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
++    -- & \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
+     XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah \textit{default}) dan empat teknik &
+     Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
+     \hline
+@@ -88,44 +135,7 @@ dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
+ Berdasarkan Tabel~\ref{tab:terdahulu}, sebagian besar penelitian terdahulu
+ memakai data harian. Hanya satu penelitian yang memakai pembanding naive
+ harga, dan belum ada penelitian yang memakai keempat model boosting
+-sekaligus. Penelitian tersebut dapat dibagi menjadi tiga kelompok menurut
+-jenis data dan target yang diprediksi.
+-
+-% [kartu A2, B1, B5, B8]
+-Kelompok pertama memakai data harian. Hasil penelitian menunjukkan bahwa XGBoost paling baik dalam
+-menggabungkan beberapa prediksi harian Bitcoin \cite{wei2023}. Penelitian
+-tersebut juga memeriksa apakah hasil baiknya hanya muncul karena kebetulan,
+-yaitu dengan \textit{model confidence set} dan uji \textit{superior predictive
+-ability}. LightGBM dan AdaBoost dilaporkan memberi hasil yang baik untuk
+-memprediksi \textit{return} Bitcoin harian \cite{bouteska2024}. Namun, pembanding
+-\textit{random walk} pada penelitian tersebut dihitung pada \textit{return},
+-bukan pada harga. Model yang menyesuaikan diri dengan kondisi pasar juga sudah
+-dipakai untuk memprediksi harga Bitcoin harian \cite{oprea2026}. Pada data harga
+-kripto harian, model naive dilaporkan sulit dikalahkan \cite{puoti2024}.
+-Karena semuanya memakai data harian, hasilnya belum tentu berlaku pada data
+-per menit.
+-
+-% [kartu B2, B3]
+-Kelompok kedua memakai data per menit, tetapi memprediksi arah harga, bukan
+-nilai harganya. Harga Bitcoin jangka pendek ditemukan sulit ditebak, tetapi
+-hasil tebakannya masih sedikit di atas tebakan acak. Keuntungan sebelum biaya
+-transaksi juga dapat berubah menjadi kerugian setelah biaya dihitung
+-\cite{jaquart2021}. Pada data \textit{futures} Bitcoin, XGBoost dipakai untuk
+-menebak arah harga tengah (\textit{mid-price}) dengan tiga rasio pembagian
+-data \cite{akyildirim2023}. Karena targetnya berupa arah, hasil kedua
+-penelitian ini tidak dapat langsung dibandingkan dengan penelitian yang
+-memprediksi nilai harga.
+-
+-% [kartu A1]
+-Kelompok ketiga memprediksi nilai harga pada data per menit. Penelitian yang
+-paling dekat dengan penelitian ini membandingkan beberapa model
+-\textit{machine learning} pada data kripto per menit selama 30 hari
+-\cite{rodrigues2025}. Model terbaiknya tetap stabil sampai horizon 240 menit,
+-tetapi memburuk tajam pada horizon 1.440 menit. Model boosting pada penelitian
+-tersebut memakai pengaturan \textit{default}, yaitu pengaturan bawaan dari
+-pustakanya, sedangkan model jaringan sarafnya dituning.
+-Akibatnya, perbandingan keduanya belum setara. Penelitian tersebut juga tidak
+-memakai pembanding naive.
++sekaligus.
+ 
+ 
+ \section{Bitcoin}
+@@ -137,7 +147,7 @@ keuangan. Transaksi dicatat berurutan dalam rantai blok yang diamankan dengan
+ \cite{nakamoto2008}.
+ Bitcoin diperdagangkan setiap hari tanpa jam buka dan jam tutup.
+ % CEK: butuh sumber (perdagangan 24 jam). Kartu H3 tidak memuatnya.
+-Di Indodax, Bitcoin diperdagangkan dengan rupiah dalam pasangan BTC/IDR
++Harga Bitcoin dalam rupiah (BTC/IDR) tersedia melalui API publik Indodax
+ \cite{indodaxapi}.
+ 
+ % [kartu D4]
+@@ -245,6 +255,48 @@ misalnya 1 menit atau 5 menit.
+ Data OHLCV per menit sudah dipakai untuk memprediksi harga kripto jangka pendek
+ \cite{rodrigues2025}.
+ 
++Data \textit{candle} dari API publik Indodax berbentuk tabel. Setiap baris
++mewakili satu \textit{candle}, dan kolomnya terdiri atas waktu awal
++\textit{candle} serta kelima nilai OHLCV. Cuplikan data asli \textit{candle}
++1 menit BTC/IDR yang dikumpulkan pada penelitian ini disajikan pada Tabel~\ref{tab:cuplikan}.
++
++\begin{table}[htbp]
++  \caption[Cuplikan Data \textit{Candle} 1 Menit BTC/IDR]{Cuplikan Data
++    \textit{Candle} 1 Menit BTC/IDR, 10 Oktober 2026 (UTC)}
++  \label{tab:cuplikan}
++  \centering
++  \begingroup
++    \setstretch{1}\footnotesize
++  \setlength{\tabcolsep}{3pt}
++  \begin{tabular}{|c|c|r|r|r|r|r|}
++    \hline
++    \textbf{No} & \textbf{Waktu} & \textbf{\textit{Open} (Rp)} &
++    \textbf{\textit{High} (Rp)} & \textbf{\textit{Low} (Rp)} &
++    \textbf{\textit{Close} (Rp)} & \textbf{\shortstack{Volume\\(BTC)}} \\
++    \hline
++    1 & 00.00 & 1.476.999.000 & 1.476.999.000 & 1.475.037.000 & 1.475.037.000 & 0,00016762 \\
++    \hline
++    2 & 00.01 & 1.476.969.000 & 1.476.999.000 & 1.475.037.000 & 1.475.037.000 & 0,00045913 \\
++    \hline
++    3 & 00.02 & 1.476.933.000 & 1.476.933.000 & 1.476.933.000 & 1.476.933.000 & 0,00006756 \\
++    \hline
++    4 & 00.03 & 1.476.933.000 & 1.476.933.000 & 1.475.036.000 & 1.475.036.000 & 0,00087109 \\
++    \hline
++    5 & 00.04 & 1.475.036.000 & 1.476.932.000 & 1.475.036.000 & 1.476.932.000 & 0,00087943 \\
++    \hline
++    6 & 00.05 & 1.476.932.000 & 1.476.932.000 & 1.476.932.000 & 1.476.932.000 & 0,00000000 \\
++    \hline
++  \end{tabular}
++  \endgroup
++\end{table}
++
++Pada tabel tersebut, setiap \textit{candle} dicatat
++per menit menurut waktu awalnya. Volume perdagangan dalam satu menit dapat
++sangat kecil, bahkan bernilai nol seperti pada \textit{candle} 00.05. Pada
++\textit{candle} tanpa transaksi tersebut, nilai \textit{open}, \textit{high},
++\textit{low}, dan \textit{close} sama dengan harga penutupan menit
++sebelumnya. Penanganan \textit{candle} seperti ini dibahas pada Bab~III.
++
+ \subsection{Return Logaritmik}
+ \label{subsec:return}
+ Penelitian ini tidak memprediksi harga secara langsung, melainkan memprediksi
+@@ -280,10 +332,11 @@ sebelumnya \cite{hyndman2014fpp}.
+ dan disebut juga \textit{continuously compounded return}. \textit{Return}
+ logaritmik untuk beberapa periode sama dengan jumlah \textit{return}
+ logaritmik setiap periodenya \cite{tsay2002}.
+-\textit{Return} logaritmik sudah lazim dipakai sebagai target pada peramalan
++\textit{Return} logaritmik sudah dipakai sebagai target pada peramalan
+ aset kripto \cite{bouteska2024}.
+ 
+ \subsection{Horizon Prediksi dan Metode Naive}
++\label{subsec:naive}
+ Horizon prediksi $h$ menyatakan seberapa jauh ke depan prediksi dibuat. Metode
+ naive
+ merupakan metode peramalan paling sederhana, yaitu menebak bahwa harga pada
+@@ -297,15 +350,15 @@ waktu $t+h$ sama dengan observasi terakhir \cite{hyndman2006},
+     waktu $t+h$,
+   \item[$P_t$] harga pada waktu $t$.
+ \end{keterangan}
+-Gambar~\ref{fig:horizon-naive} membandingkan prediksi Naive dengan prediksi model pada horizon $h$.
++Perbandingan prediksi Naive dengan prediksi model pada horizon $h$ ditunjukkan pada Gambar~\ref{fig:horizon-naive}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-horizon-naive}
+   \caption{Horizon Prediksi dan Pembanding Naive}
+   \label{fig:horizon-naive}
+ \end{figure}
+-Pada Gambar~\ref{fig:horizon-naive}, data hanya tersedia sampai waktu $t$.
++Pada gambar tersebut, data hanya tersedia sampai waktu $t$.
+ Naive memakai harga terakhir $P_t$ sebagai prediksi untuk waktu $t+h$,
+ sedangkan model boosting memprediksi \textit{return} $\hat{r}_{t,h}$ lalu
+ mengubahnya menjadi harga prediksi.
+@@ -365,17 +418,16 @@ Nilai $\nu$ dan jumlah pohon $M$ berfungsi untuk mencegah model terlalu
+ menyesuaikan diri dengan data latih \cite{friedman2001}. Nilai $\nu$ yang
+ kecil membuat setiap pohon hanya memberi sumbangan kecil. Model jadi
+ membutuhkan lebih banyak pohon, tetapi hasilnya lebih baik daripada sekadar
+-membatasi jumlah pohon. Gambar~\ref{fig:gradient-boosting} menggambarkan
+-proses penambahan pohon tersebut.
++membatasi jumlah pohon. Proses penambahan pohon tersebut ditunjukkan pada Gambar~\ref{fig:gradient-boosting}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-gradient-boosting}
+   \caption[Skema \textit{Gradient Boosting}]{Skema \textit{Gradient Boosting}
+     \cite{friedman2001}}
+   \label{fig:gradient-boosting}
+ \end{figure}
+-Gambar~\ref{fig:gradient-boosting} menunjukkan bahwa proses dimulai dari model
++Berdasarkan Gambar~\ref{fig:gradient-boosting}, proses dimulai dari model
+ awal $F_0(x)$. Pohon ditambahkan satu per satu sampai pohon ke-$M$, dan setiap
+ pohon memperbaiki kesalahan model sebelumnya. Gabungan seluruh pohon menjadi
+ model akhir.
+@@ -392,8 +444,10 @@ deret sekaligus beserta data eksogen.
+ % [kartu E5]
+ XGBoost merupakan implementasi \textit{gradient boosting} yang menambahkan
+ penalti pada fungsi objektifnya agar pohon tidak terlalu rumit
+-\cite{chen2016}. Penalti tersebut disebut suku regularisasi. Untuk satu pohon,
+-suku regularisasinya merupakan
++\cite{chen2016}.
++
++Penalti tersebut disebut suku regularisasi. Untuk satu pohon, suku
++regularisasinya merupakan
+ \begin{equation}
+   \Omega(f) = \gamma T + \tfrac{1}{2}\lambda \lVert \mathbf{w} \rVert^2 .
+   \label{eq:xgbreg}
+@@ -459,9 +513,9 @@ umumnya menghasilkan \textit{loss} yang lebih rendah daripada pertumbuhan
+ \textit{level-wise}. Kelemahannya, pohon dapat mengalami \textit{overfitting}
+ pada data berukuran kecil. Untuk mengatasinya, tersedia parameter \texttt{max\_depth}
+ untuk membatasi kedalaman pohon \cite{lightgbmfeatures}.
+-Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
++Perbandingan kedua cara pertumbuhan tersebut ditunjukkan pada Gambar~\ref{fig:leafwise}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-leafwise-levelwise}
+   \caption[Pertumbuhan Pohon \textit{Level-wise} dan
+@@ -480,6 +534,7 @@ Bila \texttt{max\_depth} ditetapkan, maka \texttt{num\_leaves} sebaiknya
+ bernilai lebih kecil daripada $2^{\texttt{max\_depth}}$ \cite{lightgbmtuning}.
+ 
+ \subsection{CatBoost}
++\label{subsec:catboost}
+ % [kartu E3]
+ CatBoost merupakan implementasi \textit{gradient boosting} yang dirancang
+ untuk mengatasi \textit{prediction shift} \cite{prokhorenkova2018}.
+@@ -489,17 +544,12 @@ terjadi pada semua implementasi \textit{gradient boosting}.
+ CatBoost mengatasi masalah tersebut dengan \textit{ordered boosting}. Data
+ diurutkan secara acak, lalu model untuk setiap contoh dilatih hanya dari
+ contoh yang berada sebelumnya dalam urutan itu \cite{prokhorenkova2018}.
+-% CEK: kode prediksi_btc belum memasang has_time=True pada CatBoost. Bila
+-% ditambahkan sebelum eksperimen final, tambahkan kalimat "Pada penelitian ini,
+-% urutan tersebut mengikuti urutan waktu data." di sini dan sebut has_time di
+-% Subbab Model yang Dibandingkan (Bab III).
+ 
+ Pohon dasar CatBoost berupa pohon simetris atau \textit{oblivious}, yaitu
+ seluruh simpul pada satu kedalaman memakai kondisi pemecahan yang sama
+-\cite{prokhorenkova2018}. Gambar~\ref{fig:pohon-simetris} membandingkan pohon
+-biasa dengan pohon simetris.
++\cite{prokhorenkova2018}. Perbedaan pohon biasa dan pohon simetris ditunjukkan pada Gambar~\ref{fig:pohon-simetris}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-pohon-simetris}
+   \caption[Pohon Biasa dan Pohon Simetris (\textit{Oblivious})]{Pohon Biasa dan
+@@ -510,8 +560,9 @@ Pada Gambar~\ref{fig:pohon-simetris}, pohon biasa dapat memakai kondisi yang
+ berbeda pada setiap simpul. Pada pohon simetris, semua simpul pada kedalaman
+ yang sama memakai kondisi yang sama, misalnya $x_2 < c_2$.
+ 
+-Mode \textit{ordered} dilaporkan paling bermanfaat pada kumpulan data
+-berukuran kecil. Pada pengujian dalam penelitian tersebut, CatBoost mengungguli XGBoost dan LightGBM \cite{prokhorenkova2018}. Data yang diuji bukan data deret waktu, sehingga hasilnya belum tentu berlaku pada penelitian ini.
++CatBoost menyediakan dua mode pelatihan, yaitu mode Ordered yang memakai
++\textit{ordered boosting} dan mode Plain. Mode Ordered dilaporkan paling
++bermanfaat pada kumpulan data berukuran kecil. Pada pengujian dalam penelitian tersebut, CatBoost mengungguli XGBoost dan LightGBM \cite{prokhorenkova2018}. Data yang diuji bukan data deret waktu, sehingga hasilnya belum tentu berlaku pada penelitian ini.
+ 
+ \subsection{AdaBoost}
+ % [kartu E2]
+@@ -569,17 +620,19 @@ Bobot sampel kemudian diperbarui dengan
+ Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ \cite{drucker1997} atau bila
+ jumlah pohon mencapai batas $M$ (\texttt{n\_estimators}) \cite{sklearnadaboost}.
+ Prediksi akhir berupa median berbobot dari prediksi seluruh pohon, dengan bobot
+-$\log(1/\beta_m)$ untuk pohon ke-$m$ \cite{drucker1997}. Gambar~\ref{fig:adaboost} merangkum alur
+-tersebut.
++$\log(1/\beta_m)$ untuk pohon ke-$m$ \cite{drucker1997}. Alur tersebut dirangkum pada
++Gambar~\ref{fig:adaboost}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-adaboost-r2}
+   \caption[Alur Satu Iterasi AdaBoost.R2]{Alur Satu Iterasi AdaBoost.R2
+     \cite{drucker1997}}
+   \label{fig:adaboost}
+ \end{figure}
+-Gambar~\ref{fig:adaboost} menunjukkan bahwa satu iterasi terdiri atas
++
++
++Berdasarkan Gambar~\ref{fig:adaboost}, satu iterasi terdiri atas
+ pengambilan sampel ulang, pelatihan pohon, perhitungan \textit{loss}, dan
+ pembaruan bobot. Iterasi diulang sampai jumlah pohon mencapai $M$ atau
+ pelatihan berhenti karena $\bar{L} \ge 0{,}5$. Setelah itu, seluruh pohon
+@@ -623,9 +676,9 @@ yang sama baik atau lebih baik daripada Grid Search dengan waktu komputasi
+ lebih sedikit \cite{bergstra2012}. Alasannya, biasanya hanya sedikit \textit{hyperparameter} yang benar-benar
+ berpengaruh, dan \textit{hyperparameter} yang berpengaruh itu berbeda
+ antarkumpulan data.
+-Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
++Perbedaan keduanya ditunjukkan pada Gambar~\ref{fig:grid-random}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-grid-random}
+   \caption[Perbandingan Grid Search dan Random Search]{Perbandingan Grid Search
+@@ -760,11 +813,27 @@ Validasi silang biasa mengacak data, sehingga urutan waktunya rusak
+ \cite{cerqueira2020}. Pada data deret waktu, data latih dan data validasi
+ harus tetap berurutan. Salah satu caranya merupakan \textit{prequential in
+ blocks}, yaitu model dilatih pada data awal, lalu diuji pada bagian data berikutnya. Data latihnya terus bertambah pada setiap putaran. Penelitian ini
+-menyebut cara tersebut validasi \textit{walk-forward}.
++menyebut cara tersebut validasi \textit{walk-forward}. Titik asal merupakan batas
++antara data latih dan data uji. Perbedaan cara tersebut dengan evaluasi yang
++memakai satu titik asal ditunjukkan pada Gambar~\ref{fig:asal}.
++
++\begin{figure}[!htbp]
++  \centering
++  \gambartikz{assets/tikz-v3/g2-validasi-asal}
++  \caption[Evaluasi dengan Satu dan Beberapa Titik Asal]{Evaluasi dengan
++    Satu dan Beberapa Titik Asal \cite{tashman2000,cerqueira2020}}
++  \label{fig:asal}
++\end{figure}
++
++Pada Gambar~\ref{fig:asal}, evaluasi dengan satu titik asal hanya
++menghasilkan satu periode uji. Pada evaluasi dengan beberapa titik asal, data
++latih bertambah pada setiap putaran, dan periode uji bergeser ke data
++berikutnya. Dengan cara itu, akurasi dinilai pada beberapa periode, bukan
++hanya pada satu periode.
+ 
+ % [kartu G5]
+ Evaluasi yang hanya memakai satu titik awal atau satu periode uji rentan
+-terhadap kejadian unik pada periode tersebut \cite{tashman2000}. Akurasi
++terhadap kejadian unik pada periode tersebut. Akurasi
+ relatif antarmetode juga dapat berubah ketika periode ujinya diganti
+ \cite{tashman2000}. Temuan tersebut menjadi dasar penggunaan validasi
+ \textit{walk-forward} dengan beberapa \textit{fold} pada penelitian ini.
+@@ -795,7 +864,20 @@ tidak dipakai.
+ Kinerja prediksi diukur dengan membandingkan harga prediksi terhadap harga
+ sebenarnya pada data uji. Galat prediksi pada waktu $t$ merupakan
+ $e_t = P_{t+h} - \hat{P}_{t+h}$, dengan $n$ menyatakan banyaknya data uji
+-\cite{hyndman2006}.
++\cite{hyndman2006}. Galat tersebut ditunjukkan pada Gambar~\ref{fig:galat}.
++
++\begin{figure}[!htbp]
++  \centering
++  \gambartikz{assets/tikz-v3/g2-galat}
++  \caption{Galat Prediksi pada Setiap Waktu}
++  \label{fig:galat}
++\end{figure}
++
++Pada gambar tersebut, galat $e_t$ merupakan jarak antara
++harga sebenarnya dan harga prediksi pada setiap waktu. Galat dapat bernilai
++positif atau negatif, tergantung apakah prediksi berada di bawah atau di atas
++harga sebenarnya. Metrik pada subbab berikut dihitung dari kumpulan galat
++tersebut.
+ 
+ \subsection{Mean Absolute Error}
+ \label{subsec:mae}
+@@ -814,7 +896,6 @@ Satuan MAE sama dengan satuan variabel yang diukur \cite{willmott2005},
+ sehingga pada penelitian ini MAE bersatuan rupiah dan mudah ditafsirkan.
+ MAE juga lebih \textit{robust} terhadap pencilan dibandingkan ukuran yang
+ berbasis kuadrat \cite{hodson2022}.
+-
+ % [kartu I5, I6]
+ Karena nilai MAE bergantung pada skala harga, penelitian ini juga memakai
+ ukuran relatif terhadap Naive. Ukuran tersebut merupakan turunan dari
+@@ -895,7 +976,7 @@ Ukuran ini mengikuti definisi akurasi arah sebagai proporsi arah perubahan
+ yang tertebak benar \cite{pesaran1992}.
+ Ukuran ini dipakai sebagai metrik pendukung saja, karena prediksi dapat menebak
+ arah dengan benar tetapi tetap meleset jauh dalam besaran. Akurasi arah sudah
+-lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
++dipakai pada penelitian prediksi Bitcoin jangka pendek
+ \cite{jaquart2021}.
+ 
+ 
+@@ -937,7 +1018,6 @@ merupakan
+   \item[$n$] banyaknya data uji.
+ \end{keterangan}
+ Nilai DM negatif berarti prediksi pertama memiliki \textit{loss} lebih kecil.
+-
+ % [kartu G1]
+ Pada sampel berukuran kecil, statistik uji tersebut cenderung menolak
+ hipotesis nol terlalu sering. Koreksi Harvey-Leybourne-Newbold (HLN) yang dipakai berupa pengali
+@@ -950,7 +1030,7 @@ hipotesis nol terlalu sering. Koreksi Harvey-Leybourne-Newbold (HLN) yang dipaka
+   \item[$h_b$] horizon dalam satuan \textit{candle}, yaitu $h$ dibagi
+     \textit{time frame} \textit{candle} (1 atau 5 menit).
+ \end{keterangan}
+-dengan nilai kritis diambil dari distribusi $t$ berderajat bebas $n-1$
++Nilai kritisnya diambil dari distribusi $t$ berderajat bebas $n-1$
+ \cite{harvey1997}.
+ 
+ % [kartu G3]
+@@ -963,16 +1043,32 @@ karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
+ $p_{(1)} \le p_{(2)} \le \dots \le p_{(J)}$. Hipotesis ke-$i$ ditolak bila
+ \begin{equation}
+   p_{(i)} \le \frac{\alpha}{J - i + 1},
+-  \label{eq:holm}
++    \label{eq:holm}
+ \end{equation}
+-dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
+-ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
+-Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
+ \begin{keterangan}
+   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
+   \item[$J$] banyaknya uji dalam satu keluarga uji, yaitu kelompok uji yang dikoreksi bersama,
+   \item[$\alpha$] taraf signifikansi, yaitu 0,05.
+ \end{keterangan}
++Pengujian dimulai dari $i = 1$ dan berhenti pada hipotesis pertama yang gagal
++ditolak. Seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
++Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
++Seluruh langkah uji pada subbab ini dirangkum pada Gambar~\ref{fig:alurdm}.
++
++\begin{figure}[!htbp]
++  \centering
++  \gambartikz{assets/tikz-v3/g2-diebold-mariano}
++  \caption{Alur Uji Diebold-Mariano, Koreksi HLN, dan Koreksi Holm}
++  \label{fig:alurdm}
++\end{figure}
++
++Berdasarkan Gambar~\ref{fig:alurdm}, uji dimulai dari galat dua prediksi
++yang dibandingkan. Galat tersebut diubah menjadi selisih \textit{loss} $d_t$
++pada Persamaan~\eqref{eq:dmstat}, lalu dihitung statistik DM pada
++Persamaan~\eqref{eq:dm}. Statistik tersebut
++dikoreksi dengan HLN pada Persamaan~\eqref{eq:hln} untuk mendapatkan nilai $p$.
++Nilai $p$ dari banyak uji kemudian dikoreksi bersama dengan koreksi Holm pada
++Persamaan~\eqref{eq:holm}.
+ 
+ 
+ \section{Research Gap Penelitian}
+@@ -1040,20 +1136,37 @@ angka metrik. Uji yang sama juga dipakai untuk membandingkan antarkonfigurasi,
+ misalnya hasil \textit{tuning} terhadap pengaturan \textit{default}, dengan
+ koreksi Holm pada setiap keluarga uji.
+ 
+-Gambar~\ref{fig:kerangka} menyajikan kerangka pemikiran penelitian ini, mulai
+-dari masalah sampai keluaran yang diharapkan.
++Seluruh uraian pada bab ini dirangkum dalam kerangka pemikiran pada
++Gambar~\ref{fig:kerangka}, mulai dari masalah sampai keluaran yang diharapkan.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g2-kerangka-pemikiran}
+   \caption{Kerangka Pemikiran Penelitian}
+   \label{fig:kerangka}
+ \end{figure}
+ 
+-Kerangka pemikiran pada Gambar~\ref{fig:kerangka} mengarah pada tiga rumusan masalah. Rumusan
+-masalah pertama membahas cara membangun model XGBoost, LightGBM, CatBoost,
+-dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
+-horizon prediksi. Rumusan masalah kedua membahas pengaruh optimasi
+-\textit{hyperparameter} terhadap akurasi keempat model tersebut. Rumusan
+-masalah ketiga membahas model yang memiliki performa terbaik berdasarkan
+-nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive.
++Kerangka pemikiran tersebut terdiri atas lima lajur yang dibaca dari atas ke bawah. Lajur pertama merupakan masalah.
++Harga BTC/IDR jangka pendek sulit diprediksi, dan Naive sulit dikalahkan,
++seperti dibahas pada Subbab~\ref{sec:terdahulu} dan Subbab~\ref{subsec:naive}.
++
++Lajur kedua merupakan celah penelitian. Penelitian pada data per menit
++umumnya memprediksi arah harga, atau memakai model boosting dengan pengaturan
++\textit{default} tanpa pembanding naive dan tanpa uji Diebold-Mariano.
++Rinciannya dimuat pada Tabel~\ref{tab:gap}.
++
++Lajur ketiga merupakan pendekatan yang dipakai untuk menjawab rumusan masalah
++pertama dan kedua. Keempat model boosting dibangun pada \textit{candle}
++BTC/IDR dengan \textit{time frame} 1 dan 5 menit dan beberapa horizon
++prediksi. Model tersebut lalu dioptimasi dengan beberapa metode optimasi dan
++diuji dengan panjang data latih yang berbeda.
++
++Lajur keempat merupakan evaluasi yang dipakai untuk menjawab rumusan masalah
++ketiga. Prediksi setiap model diukur dengan MAE, RMSE, MAPE, dan akurasi arah.
++Selisihnya terhadap Naive diuji dengan uji Diebold-Mariano yang dikoreksi
++dengan HLN dan Holm.
++
++Lajur kelima merupakan keluaran yang diharapkan, yaitu jawaban atas ketiga
++rumusan masalah. Keluaran tersebut berupa cara membangun keempat model,
++pengaruh optimasi \textit{hyperparameter} terhadap akurasinya, dan model
++dengan performa terbaik dibandingkan dengan Naive.
+diff --git a/chapters/bab3-contoh-perhitungan.tex b/chapters/bab3-contoh-perhitungan.tex
+index 4f8f2c6..aa6d888 100644
+--- a/chapters/bab3-contoh-perhitungan.tex
++++ b/chapters/bab3-contoh-perhitungan.tex
+@@ -26,7 +26,7 @@ Supaya ringkas, harga ditulis dalam juta rupiah.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|l|r|r|r|r|r|}
+     \hline
+-    Waktu & Open & High & Low & Close & Volume \\
++    \textbf{Waktu} & \textbf{Open} & \textbf{High} & \textbf{Low} & \textbf{Close} & \textbf{Volume} \\
+     \hline
+     10.00 & $1.000{,}0$ & $1.000{,}3$ & $999{,}9$ & $1.000{,}1$ & $0{,}1$ \\
+     10.01 & $1.000{,}1$ & $1.000{,}5$ & $1.000{,}0$ & $1.000{,}4$ & $0{,}2$ \\
+@@ -84,7 +84,7 @@ baris data uji pada Tabel~\ref{tab:man-uji}.
+   \setlength{\tabcolsep}{6pt}
+   \begin{tabular}{|c|r|r|r|r|}
+     \hline
+-    $j$ & $x_1$ (bp) & $x_2$ (bp) & $y$ (bp) & $g_j$ \\
++    \textbf{$j$} & \textbf{$x_1$ (bp)} & \textbf{$x_2$ (bp)} & \textbf{$y$ (bp)} & \textbf{$g_j$} \\
+     \hline
+     1 & $-1$ & $-2$ & $-3$ & $3$ \\
+     2 & $-2$ & $-1$ & $-3$ & $3$ \\
+@@ -103,7 +103,7 @@ Berdasarkan Tabel~\ref{tab:man-latih}, tiga baris pertama memiliki
+ \textit{return} target positif. Kolom $g_j$ dijelaskan pada subbab berikutnya.
+ 
+ \subsection{Satu Iterasi XGBoost}
+-Contoh ini memakai $\lambda = 1$ dan $\gamma = 0$. Nilai awal $F_0$ diambil dari
++Contoh ini memakai pohon dengan kedalaman 1, $\lambda = 1$, dan $\gamma = 0$. Nilai awal $F_0$ diambil dari
+ rata-rata target data latih, yaitu $F_0 = 0/6 = 0$. Karena \textit{loss}
+ kuadrat, $g_j = F_0 - y_j = -y_j$ dan $q_j = 1$, seperti pada kolom $g_j$
+ Tabel~\ref{tab:man-latih}. Setiap nilai tengah antara dua nilai fitur
+@@ -120,7 +120,7 @@ dengan Persamaan~\eqref{eq:xgbgain} dan dimuat pada Tabel~\ref{tab:man-gain}.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|l|l|r|r|r|r|r|}
+     \hline
+-    Kondisi & Baris kiri & $G_{\text{kiri}}$ & $Q_{\text{kiri}}$ & $G_{\text{kanan}}$ & $Q_{\text{kanan}}$ & \textit{Gain} \\
++    \textbf{Kondisi} & \textbf{Baris kiri} & \textbf{$G_{\text{kiri}}$} & \textbf{$Q_{\text{kiri}}$} & \textbf{$G_{\text{kanan}}$} & \textbf{$Q_{\text{kanan}}$} & \textbf{\textit{Gain}} \\
+     \hline
+     $x_1 < -1{,}5$ & 2 & $3$ & $1$ & $-3$ & $5$ & $3{,}00$ \\
+     $x_1 < 0$ & 1, 2, 3 & $6$ & $3$ & $-6$ & $3$ & \textbf{9,00} \\
+@@ -171,7 +171,7 @@ Hasilnya dimuat pada Tabel~\ref{tab:man-lgbm}.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|l|l|l|r|r|r|}
+     \hline
+-    Daun & Kondisi & Pembagian baris & $G_{\text{kiri}}$, $G_{\text{kanan}}$ & $Q_{\text{kiri}}$, $Q_{\text{kanan}}$ & \textit{Gain} \\
++    \textbf{Daun} & \textbf{Kondisi} & \textbf{Pembagian baris} & \textbf{$G_{\text{kiri}}$, $G_{\text{kanan}}$} & \textbf{$Q_{\text{kiri}}$, $Q_{\text{kanan}}$} & \textbf{\textit{Gain}} \\
+     \hline
+     Kiri ($x_1 < 0$) & $x_1 < -1{,}5$ & \{2\} dan \{1, 3\} & $3$, $3$ & $1$, $2$ & $-0{,}75$ \\
+     Kiri ($x_1 < 0$) & $x_2 < -1{,}5$ & \{1\} dan \{2, 3\} & $3$, $3$ & $1$, $2$ & $-0{,}75$ \\
+@@ -219,7 +219,7 @@ $\lambda = 1$. Hasilnya dimuat pada Tabel~\ref{tab:man-cat}.
+   \setlength{\tabcolsep}{6pt}
+   \begin{tabular}{|l|r|r|r|}
+     \hline
+-    Kondisi & \textit{Gain} simpul kiri & \textit{Gain} simpul kanan & Jumlah \\
++    \textbf{Kondisi} & \textbf{\textit{Gain} simpul kiri} & \textbf{\textit{Gain} simpul kanan} & \textbf{Jumlah} \\
+     \hline
+     $x_1 < -1{,}5$ & $-0{,}75$ & $0{,}00$ & $-0{,}75$ \\
+     $x_1 < 1{,}5$ & $0{,}00$ & $-0{,}83$ & $-0{,}83$ \\
+@@ -259,7 +259,7 @@ Tabel~\ref{tab:man-ordered}.
+   \setlength{\tabcolsep}{6pt}
+   \begin{tabular}{|c|c|c|r|}
+     \hline
+-    $j$ & Daun & Baris sebelumnya di daun yang sama & Nilai untuk baris $j$ (bp) \\
++    \textbf{$j$} & \textbf{Daun} & \textbf{Baris sebelumnya di daun yang sama} & \textbf{Nilai untuk baris $j$ (bp)} \\
+     \hline
+     1 & A & -- & $0$ \\
+     2 & A & 1 & $-3$ \\
+@@ -275,10 +275,14 @@ Tabel~\ref{tab:man-ordered}.
+ Berdasarkan Tabel~\ref{tab:man-ordered}, target baris ke-$j$ tidak pernah ikut
+ menentukan nilai untuk baris itu sendiri. Sebagai contoh, nilai untuk baris 2
+ hanya berasal dari baris 1. Model akhir untuk data uji tetap memakai nilai
+-daun dari seluruh data latih.
++daun dari seluruh data latih. Ilustrasi ini hanya menjelaskan ide
++\textit{ordered boosting}. Eksperimen penelitian ini memakai mode Plain,
++sehingga nilai daun dan prediksi CatBoost pada contoh ini juga dihitung dengan
++mode Plain.
+ 
+ \subsection{Satu Iterasi AdaBoost.R2}
+-Pohon AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
++Sebagai penyederhanaan, contoh ini memakai pohon dengan kedalaman 1. Pohon
++AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
+ diikuti, contoh ini memakai seluruh data latih tanpa pengambilan sampel ulang,
+ sehingga $p_j = 1/6$, dan memakai \textit{loss} linear. Pemecahan terbaik
+ merupakan $x_1 < 0$ dengan jumlah kuadrat galat 6. Prediksi di daun kiri
+@@ -296,7 +300,7 @@ Persamaan~\eqref{eq:adaloss} dan dimuat pada Tabel~\ref{tab:man-ada}.
+   \setlength{\tabcolsep}{6pt}
+   \begin{tabular}{|c|r|r|r|r|r|}
+     \hline
+-    $j$ & $y$ (bp) & $\hat{y}$ (bp) & $|\hat{y}-y|$ & $L_j$ & $w_j$ baru \\
++    \textbf{$j$} & \textbf{$y$ (bp)} & \textbf{$\hat{y}$ (bp)} & \textbf{$|\hat{y}-y|$} & \textbf{$L_j$} & \textbf{$w_j$ baru} \\
+     \hline
+     1 & $-3$ & $-2$ & $1$ & $0{,}5$ & $0{,}7071$ \\
+     2 & $-3$ & $-2$ & $1$ & $0{,}5$ & $0{,}7071$ \\
+@@ -337,7 +341,7 @@ dan $y$ ditulis dalam bp.
+   \setlength{\tabcolsep}{6pt}
+   \begin{tabular}{|c|r|r|r|r|r|}
+     \hline
+-    Baris & $x_1$ & $x_2$ & $y$ & $P_t$ (Rp) & $P_{t+1}$ (Rp) \\
++    \textbf{Baris} & \textbf{$x_1$} & \textbf{$x_2$} & \textbf{$y$} & \textbf{$P_t$ (Rp)} & \textbf{$P_{t+1}$ (Rp)} \\
+     \hline
+     U1 & $-2$ & $-1$ & $-2$ & $1.000.000.000$ & $999.800.000$ \\
+     U2 & $1$ & $2$ & $1$ & $999.800.000$ & $999.900.000$ \\
+@@ -363,7 +367,7 @@ harga dianggap tidak berubah.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|c|r|r|r|r|r|}
+     \hline
+-    Baris & Naive & XGBoost & LightGBM & CatBoost & AdaBoost.R2 \\
++    \textbf{Baris} & \textbf{Naive} & \textbf{XGBoost} & \textbf{LightGBM} & \textbf{CatBoost} & \textbf{AdaBoost.R2} \\
+     \hline
+     U1 & $0$ & $-0{,}75$ & $-1$ & $-1{,}5$ & $-2$ \\
+     U2 & $0$ & $0{,}75$ & $0{,}75$ & $1$ & $2$ \\
+@@ -395,7 +399,7 @@ Hasilnya dimuat pada Tabel~\ref{tab:man-galat}.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|c|r|r|r|r|r|}
+     \hline
+-    Baris & Naive & XGBoost & LightGBM & CatBoost & AdaBoost.R2 \\
++    \textbf{Baris} & \textbf{Naive} & \textbf{XGBoost} & \textbf{LightGBM} & \textbf{CatBoost} & \textbf{AdaBoost.R2} \\
+     \hline
+     U1 & $-200.000$ & $-125.000$ & $-100.000$ & $-50.000$ & $0$ \\
+     U2 & $100.000$ & $25.000$ & $25.000$ & $0$ & $-100.000$ \\
+@@ -442,7 +446,7 @@ Tabel~\ref{tab:man-metrik} merangkum seluruh metrik.
+   \setlength{\tabcolsep}{3pt}
+   \begin{tabular}{|l|r|r|r|r|r|}
+     \hline
+-    Model & MAE (Rp) & RMSE (Rp) & MAPE (\%) & MAE vs Naive (\%) & Akurasi arah (\%) \\
++    \textbf{Model} & \textbf{MAE (Rp)} & \textbf{RMSE (Rp)} & \textbf{MAPE (\%)} & \textbf{\shortstack{MAE vs\\Naive (\%)}} & \textbf{\shortstack{Akurasi\\arah (\%)}} \\
+     \hline
+     Naive & $133.333{,}33$ & $141.421{,}36$ & $0{,}0133$ & -- & -- \\
+     XGBoost & $108.333{,}33$ & $125.000{,}00$ & $0{,}0108$ & $-18{,}75$ & $66{,}67$ \\
+@@ -491,7 +495,7 @@ keempat model.
+   \setlength{\tabcolsep}{4pt}
+   \begin{tabular}{|l|r|r|r|r|r|}
+     \hline
+-    Model & $\bar{d}$ & $\hat{\phi}_0$ & DM & DM$^{*}$ & $p$ \\
++    \textbf{Model} & \textbf{$\bar{d}$} & \textbf{$\hat{\phi}_0$} & \textbf{DM} & \textbf{DM$^{*}$} & \textbf{$p$} \\
+     \hline
+     XGBoost & $-25.000{,}00$ & $5.000.000.000{,}00$ & $-0{,}6124$ & $-0{,}5000$ & $0{,}6667$ \\
+     LightGBM & $-58.333{,}33$ & $1.805.555.555{,}56$ & $-2{,}3778$ & $-1{,}9415$ & $0{,}1917$ \\
+diff --git a/chapters/bab3-metodologi.tex b/chapters/bab3-metodologi.tex
+index 4af2145..1b7cf67 100644
+--- a/chapters/bab3-metodologi.tex
++++ b/chapters/bab3-metodologi.tex
+@@ -1,6 +1,6 @@
+ \chapter{Metodologi}
+ % Bab III v3.0 -- rancangan penelitian prediksi harga BTC/IDR dengan boosting.
+-% Angka desain diambil dari source code di context/hasil_eksperimen_v3.5.md
++% Angka desain diambil dari source code di context/hasil_eksperimen_v3.6.md
+ % (Lampiran B) dan context/konteks_collector_data_v3.1.md.
+ % Versi v2.9 diarsipkan di chapters/arsip-v2.9/bab3-metodologi.tex.
+ % CEK: subbab desain aplikasi ditambahkan bila dosen meminta.
+@@ -10,20 +10,36 @@
+ % shapes.geometric, shapes.misc, dan calc.
+ \usetikzlibrary{patterns,decorations.pathreplacing}
+ 
++Bab ini menjelaskan metodologi penelitian, yaitu jenis penelitian, objek dan
++data, cara pengumpulan dan pengolahan data, rancangan eksperimen, cara
++analisis, serta peralatan yang dipakai. Penelitian ini merupakan penelitian
++kuantitatif dengan strategi eksperimen, karena beberapa model dan metode
++optimasi dibandingkan dalam kondisi yang sama dan hasilnya diukur dengan
++angka. Objek penelitiannya merupakan harga BTC/IDR, sedangkan datanya
++merupakan data primer berupa \textit{candle} yang dikumpulkan secara otomatis
++dari API publik Indodax. Pengumpulan data berjalan pada server virtual,
++sedangkan eksperimen dijalankan pada komputer pribadi. Hasil prediksi dianalisis
++dengan metrik galat dan uji Diebold-Mariano terhadap Naive. Rincian peralatan
++yang dipakai dimuat pada Subbab~\ref{sec:lingkungan}.
++
+ \section{Tahapan Penelitian}
+ Penelitian ini diawali dengan studi literatur untuk menemukan celah penelitian
+ dan landasan metode, seperti dijelaskan pada Subbab~\ref{sec:literatur}.
+-Setelah itu, penelitian dijalankan dalam tujuh langkah.
+-Gambar~\ref{fig:alur} menampilkan alur ketujuh langkah tersebut.
++Setelah itu, penelitian dijalankan dalam tujuh langkah. Alur ketujuh langkah tersebut ditunjukkan dalam bentuk diagram alir pada Gambar~\ref{fig:alur}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-alur-penelitian}
+-  \caption{Alur Penelitian}
++  \caption{Diagram Alir Penelitian}
+   \label{fig:alur}
+ \end{figure}
+ 
+-Berdasarkan Gambar~\ref{fig:alur}, langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
++Pada diagram alir tersebut,
++simbol bersudut bulat menandai awal dan akhir, persegi panjang menandai
++proses, jajaran genjang menandai data masukan atau keluaran, silinder menandai
++data tersimpan, dan belah ketupat menandai keputusan.
++
++Langkah pertama merupakan pengumpulan data. Harga BTC/IDR diambil dari API
+ publik Indodax oleh program \textit{collector} yang berjalan otomatis di
+ server, lalu disimpan ke basis data. Rinciannya dibahas pada
+ Subbab~\ref{sec:kumpul}.
+@@ -52,6 +68,12 @@ konfigurasi ditetapkan, model dilatih ulang pada seluruh data latih, lalu
+ dipakai untuk memprediksi data uji, dan hasilnya dikonversi ke rupiah.
+ Rinciannya dibahas pada Subbab~\ref{sec:model}.
+ 
++Langkah ketiga sampai keenam diulang untuk setiap konfigurasi, yaitu setiap
++kombinasi dataset, horizon prediksi, panjang data latih, model, metode
++optimasi, dan teknik tambahan pada Tahap pertama sampai keempat. Perulangan
++ini ditandai dengan simbol keputusan pada Gambar~\ref{fig:alur}. Rincian
++keempat tahap tersebut dibahas pada Subbab~\ref{sec:skenario}.
++
+ Langkah ketujuh merupakan evaluasi. Prediksi model dibandingkan dengan prediksi
+ Naive memakai beberapa metrik dan uji statistik. Rinciannya dibahas pada
+ Subbab~\ref{sec:evaluasi}.
+@@ -73,16 +95,15 @@ Objek penelitian ini merupakan harga Bitcoin dalam rupiah (BTC/IDR). Data
+ harga diambil dari API publik Indodax sebagai sumber data. Penelitian ini
+ tidak membuat sistem prediksi untuk platform tertentu, melainkan memprediksi
+ nilai harganya saja. Data penelitian ini merupakan data primer yang
+-dikumpulkan sendiri.
+-Gambar~\ref{fig:kumpul} menampilkan skema pengumpulannya.
++dikumpulkan sendiri. Skema pengumpulannya ditunjukkan pada Gambar~\ref{fig:kumpul}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-pengumpulan-data}
+   \caption{Skema Pengumpulan Data}
+   \label{fig:kumpul}
+ \end{figure}
+-Gambar~\ref{fig:kumpul} menunjukkan bahwa program \textit{collector} mengambil
++Berdasarkan Gambar~\ref{fig:kumpul}, program \textit{collector} mengambil
+ dua jenis data dari API publik Indodax, yaitu ticker dan \textit{candle}
+ 1 menit. Keduanya disimpan di basis data SQLite. Data ticker hanya disimpan,
+ sedangkan \textit{candle} 1 menit dipakai langsung sebagai dataset pertama dan
+@@ -102,7 +123,7 @@ pada tabel \texttt{ohlc\_1m}. Waktu setiap \textit{candle} menandai awal
+ mencakup transaksi pukul 10.04.00 sampai 10.04.59, sehingga nilai OHLCV-nya
+ baru lengkap pada pukul 10.05. Lama satu \textit{candle} disebut
+ \textit{time frame}. Indodax hanya menyediakan \textit{candle} dengan
+-\textit{time frame} 1, 15, 30, 60, dan 240 menit, serta harian dan mingguan.
++\textit{time frame} 1, 15, 30, 60, dan 240 menit, serta harian, 3 harian, dan mingguan.
+ Karena itu, \textit{candle} 1 menit dipakai sebagai \textit{time frame}
+ terkecil yang tersedia.
+ 
+@@ -165,6 +186,29 @@ transaksi.
+ % CEK: perbarui persentase candle bervolume nol dan jumlah menit hilang
+ % dengan data final.
+ 
++Gambaran umum data dapat dilihat dari pergerakan harga dan sebaran
++\textit{return}-nya. Keduanya ditunjukkan pada Gambar~\ref{fig:statdata}, yang dibuat dari
++data 10 Oktober sampai 12 November 2026.
++% CEK: ganti periode grafik dan narasinya dengan data final 10 Okt 2026 -
++% 10 Feb 2027 (jalankan ulang scripts/grafik_data.py).
++
++\begin{figure}[!htbp]
++  \centering
++  \gambartikz{assets/tikz-v3/g3-statistik-data}
++  \caption[Statistik Data \textit{Candle} 1 Menit BTC/IDR]{Statistik Data
++    \textit{Candle} 1 Menit BTC/IDR, 10 Oktober -- 12 November 2026}
++  \label{fig:statdata}
++\end{figure}
++
++Bagian (a) gambar tersebut menunjukkan bahwa harga BTC/IDR pada
++periode tersebut bergerak antara sekitar Rp1,30 miliar dan Rp1,52 miliar,
++dengan pola naik turun yang tidak teratur. Bagian (b) menunjukkan bahwa
++\textit{return} 1 menit berpusat di sekitar nol. Sekitar 18\% \textit{return}
++bernilai tepat nol, karena harga tidak berubah dari menit sebelumnya.
++Sebagian kecil \textit{return} berada jauh dari nol, sehingga ekor sebarannya
++lebih tebal daripada sebaran normal. Hal ini sejalan dengan sifat
++\textit{return} kripto yang dibahas pada Bab~I.
++
+ \section{Praproses Data}
+ \label{sec:praproses}
+ Data mentah hasil \textit{collector} belum dapat langsung dipakai oleh model.
+@@ -286,10 +330,9 @@ dibahas pada Subbab~\ref{sec:validasi}, yaitu normalisasi yang dilakukan sebelum
+ \label{sec:fitur}
+ Prinsip utama pada tahap ini adalah semua fitur pada waktu $t$ hanya boleh
+ memakai data sampai waktu $t$. Jenis fitur yang dipakai sudah dibahas pada
+-Subbab~\ref{subsec:teorifitur}. Gambar~\ref{fig:fitur} menggambarkan hubungan
+-antara jendela fitur dan target.
++Subbab~\ref{subsec:teorifitur}. Hubungan antara jendela fitur dan target ditunjukkan pada Gambar~\ref{fig:fitur}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-fitur-target}
+   \caption{Pembentukan Fitur dan Target}
+@@ -309,39 +352,40 @@ Tabel~\ref{tab:fitur} merinci keempat puluh dua fitur yang dibentuk.
+   \begingroup
+   \setstretch{1}\footnotesize
+   \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+-  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.16\textwidth}%
++  \begin{tabular}{|>{\centering\arraybackslash}p{0.04\textwidth}%
++                  |>{\raggedright\arraybackslash}p{0.16\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.20\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.37\textwidth}%
+                   |>{\centering\arraybackslash}p{0.10\textwidth}|}
+     \hline
+-    \textbf{Kelompok} & \textbf{Nama fitur} & \textbf{Penjelasan} &
++    \textbf{No} & \textbf{Kelompok} & \textbf{Nama fitur} & \textbf{Penjelasan} &
+     \textbf{Jumlah} \\
+     \hline
+-    \textit{Lag return} & \texttt{ret\_lag1} s.d.\ \texttt{ret\_lag12} &
++    1 & \textit{Lag return} & \texttt{ret\_lag1} s.d.\ \texttt{ret\_lag12} &
+     \textit{return} logaritmik 1 \textit{candle} pada 12 \textit{candle} terakhir sampai waktu $t$ & 12 \\
+     \hline
+-    Statistik bergulir & \texttt{ret\_sum\_w}, \texttt{ret\_std\_w},
++    2 & Statistik bergulir & \texttt{ret\_sum\_w}, \texttt{ret\_std\_w},
+     \texttt{nol\_w} & jumlah \textit{return}, simpangan baku \textit{return},
+     dan proporsi \textit{return} bernilai nol dalam jendela $s$ & 15 \\
+     \hline
+-    \textit{Candle} & \texttt{range\_rel} &
++    3 & \textit{Candle} & \texttt{range\_rel} &
+     $(P^{H}_t - P^{L}_t)/P^{C}_t$ & 1 \\
+     \hline
+-    \textit{Candle} & \texttt{posisi\_bar} &
++    4 & \textit{Candle} & \texttt{posisi\_bar} &
+     $(P^{C}_t - P^{L}_t)/(P^{H}_t - P^{L}_t)$, bernilai 0,5 bila
+     $P^{H}_t = P^{L}_t$ & 1 \\
+     \hline
+-    \textit{Candle} & \texttt{log\_vol} & $\ln(1 + V_t)$ & 1 \\
++    5 & \textit{Candle} & \texttt{log\_vol} & $\ln(1 + V_t)$ & 1 \\
+     \hline
+-    \textit{Candle} bergulir & \texttt{range\_mean\_w},
++    6 & \textit{Candle} bergulir & \texttt{range\_mean\_w},
+     \texttt{vol\_rasio\_w} & rata-rata \texttt{range\_rel} dalam jendela $s$, dan
+     $\texttt{log\_vol}_t - \frac{1}{s}\sum_{i=0}^{s-1}\texttt{log\_vol}_{t-i}$
+     & 10 \\
+     \hline
+-    Waktu & \texttt{jam\_sin}, \texttt{jam\_cos} &
++    7 & Waktu & \texttt{jam\_sin}, \texttt{jam\_cos} &
+     jam UTC dalam sehari dikodekan dengan sinus dan kosinus & 2 \\
+     \hline
+-    \multicolumn{3}{|r|}{\textbf{Total}} & \textbf{42} \\
++    \multicolumn{4}{|r|}{\textbf{Total}} & \textbf{42} \\
+     \hline
+   \end{tabular}
+   \endgroup
+@@ -381,15 +425,16 @@ pada Tahap pertama dan kedua dilakukan di bagian ini. Bagian kedua merupakan
+ data uji, yaitu 20\% data akhir. Data uji tidak dipakai untuk memilih apa pun
+ dan baru dipakai setelah seluruh pilihan ditetapkan. Data uji hanya mencakup
+ satu periode, sehingga hasilnya dapat dipengaruhi kondisi
+-pasar pada periode tersebut \cite{tashman2000}. Hal ini menjadi keterbatasan penelitian.
+-Gambar~\ref{fig:bagi} menggambarkan pembagian tersebut.
++pasar pada periode tersebut \cite{tashman2000}. Hal ini menjadi keterbatasan penelitian. Pembagian tersebut ditunjukkan pada
++Gambar~\ref{fig:bagi}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-split-purging}
+   \caption{Pembagian Data dan \textit{Purging}}
+   \label{fig:bagi}
+ \end{figure}
++
+ Pada Gambar~\ref{fig:bagi} bagian (a), data latih berada sebelum data uji, dan
+ potongan yang diarsir di antara keduanya dibuang. Bagian
+ (b) menunjukkan panjang data latih 100\%, 75\%, dan 50\% pada Tahap ketiga.
+@@ -442,6 +487,12 @@ Pengaturan \textit{default} merupakan nilai bawaan dari masing-masing pustaka.
+ Pada AdaBoost, pohon dasar \textit{default}-nya merupakan pohon regresi dengan kedalaman
+ 3 \cite{sklearnadaboost}.
+ 
++CatBoost dijalankan dalam mode Plain (\texttt{boosting\_type="Plain"}). Mode
++Ordered tidak dipakai karena mode tersebut paling bermanfaat pada data
++berukuran kecil (Subbab~\ref{subsec:catboost}), sedangkan setiap dataset pada
++penelitian ini berisi puluhan ribu sampai ratusan ribu \textit{candle}
++(Tabel~\ref{tab:data}).
++
+ \subsection{Ruang Pencarian \textit{Hyperparameter}}
+ Tabel~\ref{tab:ruang} dan Tabel~\ref{tab:ruang2} merinci ruang pencarian
+ untuk metode Random Search, TPE, CMA-ES, Genetic Algorithm, dan Quasi-Monte
+@@ -486,7 +537,8 @@ Berdasarkan Tabel~\ref{tab:ruang}, ruang pencarian XGBoost dan LightGBM sebagian
+ merupakan implementasi \textit{gradient boosting} berbasis pohon. Perbedaannya
+ terletak pada dua parameter. LightGBM menambah \texttt{num\_leaves} karena
+ pohonnya tumbuh secara \textit{leaf-wise}, dan memakai
+-\texttt{min\_child\_samples}, bukan \texttt{min\_child\_weight}. Karena
++\texttt{min\_child\_samples} (nama lain \texttt{min\_data\_in\_leaf}), bukan
++\texttt{min\_child\_weight}. Karena
+ \texttt{max\_depth} juga dicari, sebagian kombinasi dapat memiliki
+ \texttt{num\_leaves} lebih besar daripada $2^{\texttt{max\_depth}}$. Pada
+ kombinasi seperti itu, jumlah daun yang benar-benar terbentuk tetap dibatasi
+@@ -569,7 +621,8 @@ jumlah kombinasinya menjadi $3 \times 3 \times 3 = 27$ per model.
+ Berdasarkan Tabel~\ref{tab:grid}, jenis ketiga parameter tersebut sama untuk keempat model, yaitu jumlah pohon,
+ ukuran pohon, dan \textit{learning rate}. Parameter lain dibiarkan pada nilai
+ \textit{default}-nya. Nilai yang dipakai AdaBoost berbeda dari ketiga model
+-lain karena rentang \textit{learning rate} \textit{default}-nya juga berbeda.
++lain karena \textit{learning rate} \textit{default} AdaBoost bernilai 1,0
++\cite{sklearnadaboost}.
+ 
+ \subsection{Metode Optimasi}
+ Tujuh metode optimasi dibandingkan, yaitu satu pengaturan tanpa
+@@ -585,28 +638,29 @@ pengaturannya.
+   \centering
+   \begingroup
+   \setstretch{1}\footnotesize
+-  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.24\textwidth}%
++  \begin{tabular}{|>{\centering\arraybackslash}p{0.04\textwidth}%
++                  |>{\raggedright\arraybackslash}p{0.22\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.22\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.38\textwidth}|}
+     \hline
+-    \textbf{Metode} & \textbf{Implementasi Optuna} & \textbf{Pengaturan} \\
++    \textbf{No} & \textbf{Metode} & \textbf{Implementasi Optuna} & \textbf{Pengaturan} \\
+     \hline
+-    \textit{Default} & --- & tanpa \textit{tuning} \\
++    1 & \textit{Default} & --- & tanpa \textit{tuning} \\
+     \hline
+-    Grid Search & \texttt{GridSampler} & 27 kombinasi \\
++    2 & Grid Search & \texttt{GridSampler} & 27 kombinasi \\
+     \hline
+-    Random Search & \texttt{RandomSampler} & 30 \textit{trial}, \textit{seed} 42 \\
++    3 & Random Search & \texttt{RandomSampler} & 30 \textit{trial}, \textit{seed} 42 \\
+     \hline
+-    TPE & \texttt{TPESampler} & 30 \textit{trial}, 10 \textit{trial} awal acak,
++    4 & TPE & \texttt{TPESampler} & 30 \textit{trial}, 10 \textit{trial} awal acak,
+     \textit{seed} 42 \\
+     \hline
+-    CMA-ES & \texttt{CmaEsSampler} & 30 \textit{trial}, 5 \textit{trial} awal
++    5 & CMA-ES & \texttt{CmaEsSampler} & 30 \textit{trial}, 5 \textit{trial} awal
+     acak, \textit{seed} 42 \\
+     \hline
+-    Genetic Algorithm & \texttt{NSGAIISampler} & 30 \textit{trial}, populasi
++    6 & Genetic Algorithm & \texttt{NSGAIISampler} & 30 \textit{trial}, populasi
+     10, \textit{seed} 42 \\
+     \hline
+-    Quasi-Monte Carlo & \texttt{QMCSampler} & 30 \textit{trial}, barisan Sobol
++    7 & Quasi-Monte Carlo & \texttt{QMCSampler} & 30 \textit{trial}, barisan Sobol
+     teracak, \textit{seed} 42 \\
+     \hline
+   \end{tabular}
+@@ -637,10 +691,9 @@ konfigurasi yang identik.
+ 
+ \subsection{Validasi \textit{Walk-Forward}}
+ Pencarian \textit{hyperparameter} hanya memakai data latih. Data uji tidak
+-disentuh sama sekali pada tahap ini. Gambar~\ref{fig:walk} menggambarkan
+-skema validasinya.
++disentuh sama sekali pada tahap ini. Skema validasinya ditunjukkan pada Gambar~\ref{fig:walk}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-walk-forward}
+   \caption{Validasi \textit{Walk-Forward} untuk Optimasi
+@@ -648,7 +701,7 @@ skema validasinya.
+   \label{fig:walk}
+ \end{figure}
+ 
+-Seperti terlihat pada Gambar~\ref{fig:walk}, data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
++Berdasarkan Gambar~\ref{fig:walk}, data latih dibagi menjadi $K = 5$ \textit{fold} dengan \texttt{TimeSeriesSplit}.
+ Jendela latih bertambah pada setiap \textit{fold}, dan data validasinya selalu
+ berada sesudah jendela latih. Baris latih yang waktu targetnya tidak
+ mendahului awal data validasi dibuang, sehingga target pada data latih tidak
+@@ -808,6 +861,11 @@ tidak memerlukan \textit{run} tambahan, karena konfigurasi dasarnya sudah
+ dijalankan pada Tahap kedua. Selisih antarmetode optimasi lainnya dilaporkan
+ secara deskriptif dari MAE validasi.
+ 
++Koreksi Holm tidak memperhitungkan korelasi antaruji. Uji dalam satu keluarga
++memakai data uji yang sama, sehingga hasilnya saling berkaitan. Akibatnya,
++koreksi ini dapat terlalu ketat, dan sebagian perbedaan yang sebenarnya ada
++mungkin tidak terdeteksi signifikan. Hal ini menjadi keterbatasan penelitian.
++
+ Penelitian ini tidak mengevaluasi biaya transaksi maupun keuntungan \textit{trading},
+ sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
+ 
+@@ -815,10 +873,9 @@ sesuai batasan masalah pada Subbab~\ref{sec:batasan}.
+ 
+ \section{Skenario Pengujian}
+ \label{sec:skenario}
+-Eksperimen dijalankan dalam empat tahap yang berurutan.
+-Gambar~\ref{fig:tahap} menampilkan keempat tahap tersebut.
++Eksperimen dijalankan dalam empat tahap yang berurutan, seperti ditunjukkan pada Gambar~\ref{fig:tahap}.
+ 
+-\begin{figure}[htbp]
++\begin{figure}[!htbp]
+   \centering
+   \gambartikz{assets/tikz-v3/g3-tahapan-eksperimen}
+   \caption{Tahapan Eksperimen}
+@@ -894,19 +951,19 @@ pada Subbab~\ref{sec:rumusan}.
+                   |>{\raggedright\arraybackslash}p{0.31\textwidth}%
+                   |>{\raggedright\arraybackslash}p{0.44\textwidth}|}
+     \hline
+-    \textbf{Rumusan} & \textbf{Tahap} & \textbf{Keterangan} \\
++    \textbf{Rumusan masalah} & \textbf{Tahap} & \textbf{Keterangan} \\
+     \hline
+-    RM1 & Tahap pertama dan ketiga, ditambah Subbab~\ref{sec:fitur} sampai
++    Pertama & Tahap pertama dan ketiga, ditambah Subbab~\ref{sec:fitur} sampai
+     Subbab~\ref{sec:model} &
+     Cara membangun keempat model pada berbagai horizon prediksi, termasuk
+     panjang data latih yang dipakai \\
+     \hline
+-    RM2 & Tahap kedua dan Tahap keempat &
++    Kedua & Tahap kedua dan Tahap keempat &
+     Pengaruh metode optimasi dan teknik tambahan terhadap akurasi,
+     diuji terhadap pengaturan \textit{default} dan terhadap konfigurasi tanpa
+     teknik tambahan \\
+     \hline
+-    RM3 & Evaluasi pada data uji &
++    Ketiga & Evaluasi pada data uji &
+     Perbandingan performa keempat model terhadap Naive \\
+     \hline
+   \end{tabular}
+@@ -936,7 +993,8 @@ Tabel~\ref{tab:lingkungan} merinci perangkat dan pustaka yang dipakai.
+     \hline
+     Bahasa pemrograman & Python 3.14.8 \\
+     \hline
+-    Pustaka pengolahan data & pandas 3.1, numpy 2.5, scipy 1.18.1 \\
++    Pustaka pengolahan data & pandas 3.1, numpy 2.5, scipy 1.18.1,
++    statsmodels \\
+     \hline
+     Pustaka model & scikit-learn 1.9, xgboost 3.4, lightgbm 4.7,
+     catboost 1.2.10 \\
+@@ -958,5 +1016,5 @@ Berdasarkan Tabel~\ref{tab:lingkungan}, seluruh eksperimen dijalankan pada satu
+ terpisah di VPS, sehingga proses pengumpulan tetap berjalan ketika eksperimen
+ dijalankan.
+ % CEK: perbarui versi bila berubah sebelum eksperimen final.
+-% CEK: isi versi pustaka dari berkas hasil/lingkungan.txt yang dibuat pada
++% CEK: isi versi pustaka (termasuk statsmodels) dari hasil/lingkungan.txt yang dibuat pada
+ % eksperimen final (brief kode, bagian K9).
+diff --git a/context/hasil_eksperimen_v3.5.md b/context/arsip/hasil_eksperimen_v3.5.md
+similarity index 100%
+copy from context/hasil_eksperimen_v3.5.md
+copy to context/arsip/hasil_eksperimen_v3.5.md
+diff --git a/context/hasil_riset_v3.7.md b/context/arsip/hasil_riset_v3.7.md
+similarity index 100%
+copy from context/hasil_riset_v3.7.md
+copy to context/arsip/hasil_riset_v3.7.md
+diff --git a/context/konteks_skripsi_v3.4.md b/context/arsip/konteks_skripsi_v3.4.md
+similarity index 100%
+copy from context/konteks_skripsi_v3.4.md
+copy to context/arsip/konteks_skripsi_v3.4.md
+diff --git a/context/hasil_eksperimen_v3.5.md b/context/hasil_eksperimen_v3.6.md
+similarity index 98%
+rename from context/hasil_eksperimen_v3.5.md
+rename to context/hasil_eksperimen_v3.6.md
+index ea8736c..aadd81b 100644
+--- a/context/hasil_eksperimen_v3.5.md
++++ b/context/hasil_eksperimen_v3.6.md
+@@ -1,4 +1,4 @@
+-# Hasil Eksperimen Skripsi v3.5 — Uji Coba P1 & P2, Desain Final v4, dan Source Code
++# Hasil Eksperimen Skripsi v3.6 — Uji Coba P1 & P2, Desain Final v4, dan Source Code
+ 
+ > **Fungsi file ini:** konteks lengkap eksperimen untuk skripsi v3 (prediksi harga BTC/IDR dengan model boosting). Isinya: kronologi, **desain final v4** (hasil review dosen 11 Nov 2026) yang akan dipakai pada eksperimen Februari 2027, hasil **dua uji coba** (P1: satu minggu, P2: ±31,7 hari), temuan uji coba, kalimat yang aman ditulis, hal yang masih terbuka, cara menjalankan, dan **source code final v4**.
+ >
+@@ -7,6 +7,8 @@
+ > - Kode direvisi menjadi **v4** sesuai review dosen 11 Nov 2026 (K1–K10). Repo `ferdiendahas/prediksi_btc`, branch `main` = commit `8524462` (merge `revisi-audit`, 17 Nov 2026). `revisi-dosen-v4` (`ed8b735`) = versi v4 awal, 12 Nov. Uji cepat lolos; v4 **belum** dipakai untuk eksperimen penuh. SHA-256 di Lampiran B dicocokkan ulang dengan `main` pada 17 Nov 2026 (semua sama).
+ > - Eksperimen final dijalankan **Februari 2027** dengan kode v4 dan data Okt 2026 – Feb 2027.
+ >
++> **Perubahan v3.6 (27 November 2026):** CatBoost diberi `boosting_type="Plain"` secara eksplisit di `btcpred/models.py` (patch `revisi_catboost_plain_v1`, temuan review v5 K1). Prediksi identik dengan sebelumnya, karena catboost 1.2.10 memakai Plain sebagai nilai bawaan (dicek 27 Nov 2026 untuk *loss* L2 dan L1, selisih 0). `has_time` ditutup karena tidak berpengaruh pada mode Plain tanpa fitur kategorikal. Lampiran B: kode CatBoost dan SHA-256 `models.py` diperbarui. **Menggantikan:** `hasil_eksperimen_v3.5.md` (arsip).
++>
+ > **Perubahan v3.5 (23 November 2026):** istilah di Bagian 1–9 diganti ke istilah umum (blok Istilah di bawah). Angka, desain, dan source code (Lampiran B) tidak berubah. **Menggantikan:** `hasil_eksperimen_v3.4.md` (arsip).
+ >
+ > **Istilah (23 Nov 2026, keputusan Ferdi):** **horizon prediksi** ($h$) = berapa menit ke depan harga diprediksi. ***Time frame*** = lama satu *candle* (1 dan 5 menit). Di dokumen ini, kata "horizon" pada hasil P1/P2 juga berarti jarak prediksi (dulu ditulis *time frame*). **Data latih** = dulu "periode pengembangan"; **data uji** = dulu "blok uji final"; **metode optimasi** = dulu "strategi *tuning*"; **MAE validasi** = dulu "skor validasi". Source code di Lampiran B **tidak diubah**, jadi komentar kode masih memakai istilah lama (mis. "blok uji final").
+@@ -294,7 +296,7 @@ Keunggulan run P1 ±Rp2.500 per prediksi (0,723% × MAE Naive candle_1m h1 Rp349
+ 6. **Cek `hasil/deskripsi_data.csv`** setelah Tahap 1 (celah, `n_parsial`, `t_u`) untuk Tabel data di Bab III.
+ 7. **Jangan mengubah aturan setelah melihat hasil.** `--uji-final` menolak jalan bila baris validasi Tahap 1–2 berubah setelah dikunci.
+ 8. ~~**Aturan duplikat Holm.**~~ ✅ **Selesai 16 Nov 2026.** Bab III sudah mengikuti kode: *"Satu keluarga uji berisi seluruh perbandingan model terhadap Naive dalam satu tahap. Keempat teknik pada Tahap keempat digabung menjadi satu keluarga. Konfigurasi yang sama persis di dalam satu keluarga dihitung satu kali."* Aturan lintas tahap dibuang karena ambigu, dan `holm()` di `ringkas.py` tidak perlu diubah.
+-9. **Belum diputuskan (sengaja belum dikerjakan):** QMC 30 atau 32 trial; `has_time=True` CatBoost; beberapa seed untuk Tahap 2.
++9. **Belum diputuskan (sengaja belum dikerjakan):** QMC 30 atau 32 trial; beberapa seed untuk Tahap 2. (`has_time` CatBoost ditutup 27 Nov 2026: tidak berpengaruh pada mode Plain.)
+ 
+ ---
+ 
+@@ -359,16 +361,16 @@ Ruang pencarian, seed, jumlah trial, fold, model, dan fitur tidak berubah.
+ 
+ ---
+ 
+-## Lampiran B — Source code final v4 (`prediksi_btc`, branch `main`, commit `8524462`)
++## Lampiran B — Source code final v4 (`prediksi_btc`, branch `main`, commit `8524462` + patch `revisi_catboost_plain_v1`)
+ 
+-SHA-256 (dihitung ulang 17 Nov 2026 dari `main` commit `8524462`):
++SHA-256 (dihitung ulang 17 Nov 2026 dari `main` commit `8524462`; `models.py` dihitung ulang 27 Nov 2026 setelah patch CatBoost Plain, hash commit dicatat setelah push):
+ ```text
+ 91d304cf7607550ff9c7d1b3801739e36f21779bb73748bff001ae0a42fe742a  config.py
+ a348731469a11a274bbc8df949bd53772f1eb6a6e0f5c3c2cb3af5a500e231a7  run.py
+ ec200b49a8b20b4b57869a7c6d112aa82b67e20aaad0f1ab240db503a26b6285  ringkas.py
+ d3eb736e266e52cdf4b593595e850ae2cab7ad1a60aa3a6b9e7256be3a774b3a  requirements.txt
+ 105a9024e4d43e9e719f0bbcf0e0994731bd390af893f1430bae2a8aa5cd4dce  btcpred/data.py
+-d9602204d678acebe7cff0e2e6468e5a85bd10a60e6f997708b2ba80b937a192  btcpred/models.py
++616621212ffbe80b10b39cc53d1a1c000d28fe8b5554d8e4aec3be7d7b937579  btcpred/models.py
+ 2ef5a0d9e0283d11a1728752c297b03938afc12daf37d10bda34481047464e31  btcpred/optim.py
+ 70d51a0f1b2e3afdd0fadd8cbe84c6bcc565f73a6b57b72c8a50666785a92e04  btcpred/evaluate.py
+ ```
+@@ -1520,8 +1522,10 @@ def make(name, params, loss="l2", seed=42, early_stop=False):
+     if name == "CatBoost":
+         if loss == "l1":
+             prm["loss_function"] = "MAE"
+-        return CatBoostRegressor(**prm, random_seed=seed, verbose=0, thread_count=-1,
+-                                 allow_writing_files=False)
++        # Mode Plain ditulis eksplisit (sama dengan nilai bawaan catboost 1.2.10).
++        # Mode Ordered paling berguna pada data kecil dan lebih lambat (Prokhorenkova dkk., 2018).
++        return CatBoostRegressor(**prm, boosting_type="Plain", random_seed=seed, verbose=0,
++                                 thread_count=-1, allow_writing_files=False)
+     if name == "AdaBoost":
+         # AdaBoost.R2 punya parameter 'loss' sendiri (linear/square/exponential);
+         # pengaturan LOSS l1/l2 tidak berlaku untuk AdaBoost.
+diff --git a/context/konteks_collector_data_v3.1.md b/context/konteks_collector_data_v3.1.md
+index 8799849..d8c769b 100644
+--- a/context/konteks_collector_data_v3.1.md
++++ b/context/konteks_collector_data_v3.1.md
+@@ -4,7 +4,7 @@
+ >
+ > **Perubahan v3.1 (16 November 2026):** Bagian 7 poin 5 dikoreksi. Indodax ternyata **tetap** membuat candle untuk menit tanpa transaksi, sehingga celah pada data berarti collector gagal mengambil data. **Menggantikan:** `konteks_collector_data_v3.0.md` (arsip).
+ >
+-> **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.5.md`. Konteks umum ada di `konteks_skripsi_v3.4.md`.
++> **Dibuat:** 4 November 2026. **Pasangan dokumen:** source code eksperimen (`prediksi_btc`) ada di Lampiran B `hasil_eksperimen_v3.6.md`. Konteks umum ada di `konteks_skripsi_v3.5.md`.
+ >
+ > **Notasi:** BTC/IDR = harga Bitcoin dalam rupiah; sumber data API publik Indodax (Indodax hanya sumber data, bukan objek atau platform tujuan prediksi). Semua timestamp di database dalam UTC. WIB = UTC+7.
+ 
+diff --git a/context/hasil_riset_v3.7.md b/context/hasil_riset_v3.8.md
+similarity index 92%
+rename from context/hasil_riset_v3.7.md
+rename to context/hasil_riset_v3.8.md
+index 44efefe..36bc01e 100644
+--- a/context/hasil_riset_v3.7.md
++++ b/context/hasil_riset_v3.8.md
+@@ -1,5 +1,7 @@
+-# Riset Skripsi v3.7: Prediksi Harga BTC/IDR Jangka Pendek dengan Model Boosting dan Optimasi Hyperparameter
++# Riset Skripsi v3.8: Prediksi Harga BTC/IDR Jangka Pendek dengan Model Boosting dan Optimasi Hyperparameter
+ 
++> **Perubahan v3.8 (27 November 2026):** review v5 ditindaklanjuti. Keputusan CatBoost (Bagian IX no. 7) selesai: **mode Plain**, ditulis eksplisit di kode dan Bab III; `has_time` ditutup. Keterbatasan Holm sudah ditulis di Bab III. Perbaikan kalimat N1–N11 masuk Bab I–III. Bab I–III juga disesuaikan dengan panduan format penulisan (analisis 27 Nov): prinsip gambar rujuk → gambar → penjelasan (keputusan Ferdi, menggantikan aturan "gambar dulu" dari panduan), pembuka Bab III, penelitian terdahulu paragraf dulu baru tabel, narasi kerangka per lajur, kolom No, paragraf hipotesis, cuplikan data asli (Bab II), grafik statistik data (Bab III), ilustrasi validasi/galat/DM (Bab II), diagram alir Gambar 3.1. Semuanya dalam satu patch `revisi_review5_format_v1`. Rujukan ke `hasil_eksperimen_v3.6.md`. **Menggantikan:** `hasil_riset_v3.7.md` (arsip).
++>
+ > **Perubahan v3.7 (26 November 2026):** catatan yang sudah selesai dibersihkan (sumber Silber, Tsay, Guyon, Nasios, López de Prado bab 7; periode data; DOI Silber); status Bab I–III diperbarui ke commit `30265eb`; temuan review v5 dicatat (CatBoost berjalan dalam mode Plain; keterbatasan Holm belum ditulis di Bab III). **Menggantikan:** `hasil_riset_v3.6.md` (arsip).
+ >
+ > **Perubahan v3.6 (23 November 2026):** istilah diganti ke istilah umum (lihat blok Istilah); judul sementara diganti; butir 5 *research gap* menyebut API publik Indodax. **Menggantikan:** `hasil_riset_v3.5.md` (arsip).
+@@ -12,7 +14,7 @@
+ >
+ > **Perubahan v3.3 (16 November 2026):** rujukan kartu diganti ke `kartu_paper_v3.4.md`; angka autokorelasi di Bagian VIII diperbarui dengan data 10 Okt – 12 Nov 2026 dan aturan bar bervolume nol; aturan duplikat Holm di Bagian IX ditandai **selesai**. **Menggantikan:** `hasil_riset_v3.2.md` (arsip).
+ >
+-> **Status (26 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `8524462`; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `30265eb`, 25 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.5.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
++> **Status (27 November 2026):** dua uji coba sudah dijalankan (P1: 14–20 Okt 2026; P2: 10 Okt – 10 Nov 2026). Desain final **v4** hasil review dosen 11 Nov 2026 sudah diimplementasikan di kode (`prediksi_btc`, `main` = commit `8524462` + patch CatBoost Plain 27 Nov; versi v4 awal `ed8b735`, 12 Nov) dan sejalan dengan Bab III di repo `skripsi-latex` (commit `a1a533b` + patch review v5, 27 Nov 2026). Eksperimen final dijalankan **Februari 2027**. Rincian hasil dan kode: `hasil_eksperimen_v3.6.md`. Referensi: `kartu_paper_v3.6.md` (A1–J7). **Judul masih sementara**; rumusan masalah mengikuti versi 6 Nov 2026 yang sudah dipakai di Bab I.
+ >
+ > **Menggantikan:** `hasil_riset_v3.1.md` dan `hasil_riset_v3.0.md` (arsip). Versi v2.9 (realized variance / HAR-RV) tetap arsip.
+ >
+@@ -263,7 +265,7 @@ Pendukung minor: B6 Dudek dkk. (2025, preprint; target volatilitas; contoh Optun
+ 
+ ## V. Rancangan penelitian (ringkas, desain v4)
+ 
+-Rincian lengkap dan kode: `hasil_eksperimen_v3.5.md` Bagian 3 dan Lampiran B. Bab III repo `skripsi-latex` sudah memakai desain ini.
++Rincian lengkap dan kode: `hasil_eksperimen_v3.6.md` Bagian 3 dan Lampiran B. Bab III repo `skripsi-latex` sudah memakai desain ini.
+ 
+ | Komponen | Keputusan | Dasar |
+ |---|---|---|
+@@ -338,7 +340,7 @@ Judul sementara di repo LaTeX (`metadata.tex`): **"Prediksi Harga BTC/IDR Jangka
+ 
+ ## VII. Gambaran uji coba dan kaitannya dengan literatur (untuk Bab IV–V, bukan Bab I–III)
+ 
+-Rincian: `hasil_eksperimen_v3.5.md` Bagian 4–5. Angka di bawah dari **uji coba** dengan kode lama (P1: 92 run, P2: 120 run); hasil skripsi menunggu eksperimen final v4.
++Rincian: `hasil_eksperimen_v3.6.md` Bagian 4–5. Angka di bawah dari **uji coba** dengan kode lama (P1: 92 run, P2: 120 run); hasil skripsi menunggu eksperimen final v4.
+ 
+ | Temuan uji coba | Kaitan literatur | Batasan saat menulis |
+ |---|---|---|
+@@ -389,9 +391,10 @@ Rincian: `hasil_eksperimen_v3.5.md` Bagian 4–5. Angka di bawah dari **uji coba
+    - Cakupan RM3 sudah ditulis di Bab III (20 Nov 2026); tetap konfirmasi ke dosen.
+ 4. Judul final.
+ 5. ~~Istilah data primer atau sekunder~~ — selesai 17 Nov 2026: **data primer**.
+-6. QMC 30 atau 32 trial; `has_time=True` CatBoost; beberapa seed untuk Tahap 2.
+-7. **CatBoost: mode Plain atau Ordered** (temuan review v5, 26 Nov 2026). Kode membuat `CatBoostRegressor` tanpa `boosting_type`, dan catboost 1.2.10 memakai nilai bawaan **Plain**, sehingga eksperimen tidak memakai *ordered boosting* yang dijelaskan di Bab II. Pilihan: (a) tulis di Bab III bahwa CatBoost memakai mode Plain (*default*), kode tetap; (b) pasang `boosting_type='Ordered'` dan `has_time=True`. Putuskan sebelum eksperimen final.
++6. QMC 30 atau 32 trial; beberapa seed untuk Tahap 2. (`has_time` CatBoost ditutup 27 Nov 2026: tidak berpengaruh pada mode Plain.)
++7. ~~**CatBoost: mode Plain atau Ordered**~~ ✅ **Selesai 27 Nov 2026: mode Plain**, ditulis eksplisit di kode (`boosting_type="Plain"`, prediksi identik dengan sebelumnya) dan Bab III (alasan: mode Ordered paling bermanfaat pada data kecil, E3 hlm. 8). Bab II menyebut dua mode CatBoost; contoh perhitungan memberi catatan bahwa ilustrasi *ordered boosting* hanya menjelaskan ide. Catatan lama: (temuan review v5, 26 Nov 2026). Kode membuat `CatBoostRegressor` tanpa `boosting_type`, dan catboost 1.2.10 memakai nilai bawaan **Plain**, sehingga eksperimen tidak memakai *ordered boosting* yang dijelaskan di Bab II. Pilihan: (a) tulis di Bab III bahwa CatBoost memakai mode Plain (*default*), kode tetap; (b) pasang `boosting_type='Ordered'` dan `has_time=True`. Putuskan sebelum eksperimen final.
+ 8. Judul sementara dan RM1 baru ("horizon prediksi", 23 Nov 2026) perlu diberitahukan ke dosen.
++9. **Dari panduan format (27 Nov 2026), ditahan sampai dikonfirmasi pembimbing:** pola RM data → metode → evaluasi (RM sekarang tidak punya RM data); judul berfokus aplikasi (terkait web app); nama Bab III "Metodologi Penelitian"; jumlah skenario Bab III menjadi batas minimum sidang hasil; judul bahasa Inggris; indeks jurnal acuan utama *Information* (MDPI); tabel simbol ISO 5807 (opsional).
+ 
+ ### Perlu disamakan sebelum Februari
+ - ~~**Aturan duplikat Holm.**~~ ✅ **Selesai 16 Nov 2026.** Bab III sekarang mengikuti kode: *"Satu keluarga uji berisi seluruh perbandingan model terhadap Naive dalam satu tahap. Keempat teknik pada Tahap keempat digabung menjadi satu keluarga. Konfigurasi yang sama persis di dalam satu keluarga dihitung satu kali."* Aturan lintas tahap dibuang karena ambigu.
+@@ -423,7 +426,7 @@ Masih terbuka:
+ - Biaya transaksi dan spread tidak masuk evaluasi.
+ - Data satu bursa, ±4 bulan; kondisi pasar periode uji memengaruhi hasil (uji coba P1 vs P2).
+ - Harga typical dapat menimbulkan pola mekanis pada return 1 menit (H2).
+-- Holm konservatif karena uji saling berkorelasi; bias pemilihan antartahap tidak ditangani (saran lanjutan: SPA/MCS seperti A2). ⚠ Belum ditulis di Bab III (temuan review v5).
++- Holm konservatif karena uji saling berkorelasi; bias pemilihan antartahap tidak ditangani (saran lanjutan: SPA/MCS seperti A2). ✅ Bagian Holm ditulis di Bab III Evaluasi Model (27 Nov 2026); SPA/MCS tetap saran lanjutan.
+ - Ruang pencarian dan jumlah *trial* tiap metode optimasi tidak sama (Grid 27 kombinasi; GA/CMA-ES hanya beberapa generasi dalam 30 *trial*), jadi Tahap 2 = perbandingan metode optimasi secara utuh, bukan algoritme murni (sudah di Bab III).
+ - Tahap 1 memakai TPE, sehingga TPE dapat diuntungkan di Tahap 2 (sudah di Bab III).
+ - Perbandingan *candle* 1 menit vs 5 menit adalah perbandingan dua konfigurasi utuh (lag, jendela, dan harga agregat ikut berubah), bukan efek resolusi murni (sudah di Bab III).
+@@ -441,7 +444,8 @@ Masih terbuka:
+ | Review dosen → kode v4 | ✅ 12 Nov 2026 (commit `ed8b735`) |
+ | Dokumen riset v3.3 dan eksperimen v3.4 | ✅ 16 Nov 2026 |
+ | Bab I–III (LaTeX) | 🔄 commit `30265eb` (25 Nov 2026): istilah umum, contoh perhitungan permisalan; menunggu keputusan dosen dan perbaikan review v5 |
+-| Review v5 (11 poin, 26 Nov 2026) | 🔄 context selesai (v3.7); perbaikan Bab I–III (CatBoost Plain, keterbatasan Holm, 11 kalimat kecil) menunggu |
++| Review v5 (11 poin, 26 Nov 2026) | ✅ 27 Nov 2026: context v3.7/v3.8; Bab I–III (CatBoost Plain, keterbatasan Holm, N1–N11); kode `boosting_type="Plain"` |
++| Panduan format penulisan (27 Nov 2026) | ✅ perbaikan tanpa keputusan pembimbing masuk Bab I–III; 7 hal ditahan (Bagian IX no. 9) |
+ | Samakan aturan duplikat Holm (Bab III vs kode) | ✅ 16 Nov 2026 |
+ | Perbarui `context/` di repo LaTeX | ✅ 16 Nov 2026 (v3.3 / v3.4 / v3.1) |
+ | Audit 16–17 Nov (v1–v3): volume nol di kode, resep *close*, `qmc`, median Tahap 1–2, narasi Bab I–III | ✅ 17 Nov 2026 |
+diff --git a/context/konteks_skripsi_v3.4.md b/context/konteks_skripsi_v3.5.md
+similarity index 92%
+rename from context/konteks_skripsi_v3.4.md
+rename to context/konteks_skripsi_v3.5.md
+index b365a11..a89f8b9 100644
+--- a/context/konteks_skripsi_v3.4.md
++++ b/context/konteks_skripsi_v3.5.md
+@@ -1,8 +1,10 @@
+-# Konteks Skripsi Ferdi — v3.4
++# Konteks Skripsi Ferdi — v3.5
+ 
+-Diperbarui: 26 November 2026 (v3.3: 23 November 2026; v3.2: 17 November 2026; v3.1: 16 November 2026; v3.0: 24 Oktober 2026)
++Diperbarui: 27 November 2026 (v3.4: 26 November 2026; v3.3: 23 November 2026; v3.2: 17 November 2026; v3.1: 16 November 2026; v3.0: 24 Oktober 2026)
+ Dokumen ini menggantikan seluruh konteks sebelumnya. Kalau ada dokumen lama yang bertentangan dengan isi di sini, ikuti dokumen ini.
+ 
++> **Perubahan v3.5 (27 November 2026):** Tugas 5 disesuaikan: CatBoost diputuskan memakai mode Plain, `has_time` ditutup, perbaikan review v5 dan panduan format masuk Bab I–III. **Menggantikan:** `konteks_skripsi_v3.4.md` (arsip).
++>
+ > **Perubahan v3.4 (26 November 2026):** Bagian 3 dan 5 disesuaikan: periode data sudah pasti, sumber *scalper* sudah ada, istilah data primer sudah diputuskan. **Menggantikan:** `konteks_skripsi_v3.3.md` (arsip).
+ >
+ > **Perubahan v3.3 (23 November 2026):** istilah diganti ke istilah umum (keputusan Ferdi): **horizon prediksi** = berapa menit ke depan; ***time frame*** = lama satu *candle*; **data latih**, **data uji**, **metode optimasi**, **MAE validasi**. Judul sementara diganti. **Menggantikan:** `konteks_skripsi_v3.2.md` (arsip).
+@@ -79,7 +81,7 @@ Folder kode lama `/Users/ea/Documents/Skripsi BTC/skripsi_rv` berisi pipeline re
+ 2. ~~Mencari paper referensi untuk keempat metode boosting~~ — selesai (kartu E1–E10).
+ 3. ~~Menentukan metode optimasi hyperparameter yang dipakai~~ — selesai: 7 metode optimasi + 4 teknik tambahan (Bab III).
+ 4. ~~Menentukan fitur input dan metrik evaluasi~~ — selesai, lihat Bab III 3.5 dan 3.8.
+-5. Menyusun ulang praskripsi Bab 1–3. — draft lengkap (commit `30265eb`, 25 Nov 2026). Data primer sudah diputuskan 17 Nov. Masih menunggu dosen: aturan model terbaik RM3, QMC 30/32, `has_time`, multi-*seed*. Masih perlu diputuskan sendiri: CatBoost mode Plain atau Ordered (review v5).
++5. Menyusun ulang praskripsi Bab 1–3. — draft lengkap (commit `30265eb`, 25 Nov 2026). Data primer sudah diputuskan 17 Nov. Perbaikan review v5 dan penyesuaian panduan format penulisan sudah masuk (27 Nov 2026); hal yang perlu keputusan pembimbing dicatat di `hasil_riset_v3.8.md` Bagian IX no. 9. Masih menunggu dosen: aturan model terbaik RM3, QMC 30/32, multi-*seed*. CatBoost diputuskan memakai mode Plain (27 Nov 2026), sehingga `has_time` tidak diperlukan.
+ 6. Menetapkan judul final bersama dosen.
+ 7. ~~Menetapkan tanggal pasti periode data~~ — selesai 17 Nov 2026 (10 Okt 2026 – 10 Feb 2027). Ada/tidaknya aplikasi web masih menunggu dosen.
+ 8. ~~Memutuskan skor Tahap 1–2: rata-rata atau median 4 model~~ — selesai 16 Nov 2026: **median** (Bab III Skenario Pengujian; `ringkas.py` di `main` commit `8524462`).
+diff --git a/assets/data/harga_per_jam.dat b/assets/data/harga_per_jam.dat
+new file mode 100644
+index 0000000..6bb39bf
+--- /dev/null
++++ b/assets/data/harga_per_jam.dat
+@@ -0,0 +1,817 @@
++hari harga_juta
++0.0000 1475.691
++0.0417 1476.798
++0.0833 1476.197
++0.1250 1472.000
++0.1667 1471.434
++0.2083 1473.829
++0.2500 1473.477
++0.2917 1473.300
++0.3333 1472.061
++0.3750 1472.507
++0.4167 1472.854
++0.4583 1472.290
++0.5000 1473.285
++0.5417 1473.286
++0.5833 1477.199
++0.6250 1481.260
++0.6667 1481.090
++0.7083 1479.000
++0.7500 1478.509
++0.7917 1479.112
++0.8333 1478.941
++0.8750 1480.003
++0.9167 1480.332
++0.9583 1478.806
++1.0000 1479.859
++1.0417 1476.113
++1.0833 1475.510
++1.1250 1475.585
++1.1667 1475.239
++1.2083 1476.152
++1.2500 1476.233
++1.2917 1476.137
++1.3333 1475.534
++1.3750 1475.505
++1.4167 1475.915
++1.4583 1476.245
++1.5000 1476.413
++1.5417 1476.678
++1.5833 1474.019
++1.6250 1475.434
++1.6667 1492.043
++1.7083 1491.171
++1.7500 1491.686
++1.7917 1488.065
++1.8333 1487.931
++1.8750 1488.020
++1.9167 1486.266
++1.9583 1491.553
++2.0000 1493.020
++2.0417 1496.299
++2.0833 1488.898
++2.1250 1493.419
++2.1667 1488.725
++2.2083 1497.594
++2.2500 1495.306
++2.2917 1498.000
++2.3333 1496.561
++2.3750 1489.033
++2.4167 1488.671
++2.4583 1489.602
++2.5000 1487.935
++2.5417 1479.460
++2.5833 1481.937
++2.6250 1475.605
++2.6667 1477.695
++2.7083 1476.762
++2.7500 1476.254
++2.7917 1474.612
++2.8333 1481.297
++2.8750 1484.894
++2.9167 1478.210
++2.9583 1471.000
++3.0000 1464.954
++3.0417 1458.325
++3.0833 1474.668
++3.1250 1482.006
++3.1667 1488.755
++3.2083 1489.862
++3.2500 1491.892
++3.2917 1492.556
++3.3333 1496.556
++3.3750 1488.246
++3.4167 1489.656
++3.4583 1485.786
++3.5000 1485.663
++3.5417 1485.935
++3.5833 1485.414
++3.6250 1489.833
++3.6667 1489.080
++3.7083 1488.622
++3.7500 1482.697
++3.7917 1484.109
++3.8333 1484.756
++3.8750 1484.992
++3.9167 1489.073
++3.9583 1490.597
++4.0000 1485.324
++4.0417 1488.582
++4.0833 1486.628
++4.1250 1491.286
++4.1667 1493.577
++4.2083 1494.195
++4.2500 1490.626
++4.2917 1490.419
++4.3333 1493.151
++4.3750 1491.502
++4.4167 1488.219
++4.4583 1490.726
++4.5000 1491.761
++4.5417 1481.407
++4.5833 1476.922
++4.6250 1467.881
++4.6667 1465.001
++4.7083 1468.688
++4.7500 1465.379
++4.7917 1464.442
++4.8333 1467.084
++4.8750 1466.547
++4.9167 1467.369
++4.9583 1464.527
++5.0000 1464.165
++5.0417 1464.245
++5.0833 1466.000
++5.1250 1463.809
++5.1667 1452.954
++5.2083 1466.512
++5.2500 1450.113
++5.2917 1451.151
++5.3333 1460.674
++5.3750 1457.487
++5.4167 1458.420
++5.4583 1452.425
++5.5000 1451.592
++5.5417 1447.094
++5.5833 1440.146
++5.6250 1462.859
++5.6667 1472.399
++5.7083 1469.999
++5.7500 1475.243
++5.7917 1472.621
++5.8333 1474.602
++5.8750 1467.001
++5.9167 1473.282
++5.9583 1473.081
++6.0000 1469.617
++6.0417 1475.001
++6.0833 1471.427
++6.1250 1470.945
++6.1667 1471.000
++6.2083 1472.266
++6.2500 1474.000
++6.2917 1472.584
++6.3333 1474.909
++6.3750 1477.592
++6.4167 1474.006
++6.4583 1474.999
++6.5000 1483.470
++6.5417 1475.124
++6.5833 1470.907
++6.6250 1471.678
++6.6667 1461.149
++6.7083 1461.738
++6.7500 1459.996
++6.7917 1457.577
++6.8333 1464.506
++6.8750 1468.837
++6.9167 1468.146
++6.9583 1469.127
++7.0000 1464.944
++7.0417 1463.111
++7.0833 1464.448
++7.1250 1464.201
++7.1667 1463.873
++7.2083 1463.000
++7.2500 1462.542
++7.2917 1458.713
++7.3333 1461.367
++7.3750 1460.970
++7.4167 1459.919
++7.4583 1459.914
++7.5000 1459.484
++7.5417 1459.084
++7.5833 1459.194
++7.6250 1459.600
++7.6667 1457.952
++7.7083 1455.509
++7.7500 1457.005
++7.7917 1459.632
++7.8333 1459.710
++7.8750 1459.804
++7.9167 1454.424
++7.9583 1458.685
++8.0000 1458.455
++8.0417 1461.417
++8.0833 1461.994
++8.1250 1462.866
++8.1667 1466.972
++8.2083 1464.373
++8.2500 1464.331
++8.2917 1464.261
++8.3333 1463.784
++8.3750 1464.413
++8.4167 1472.372
++8.4583 1472.111
++8.5000 1468.414
++8.5417 1468.096
++8.5833 1460.361
++8.6250 1455.204
++8.6667 1455.063
++8.7083 1454.202
++8.7500 1454.112
++8.7917 1456.203
++8.8333 1451.501
++8.8750 1450.691
++8.9167 1458.303
++8.9583 1465.905
++9.0000 1470.655
++9.0417 1475.410
++9.0833 1477.298
++9.1250 1480.367
++9.1667 1478.606
++9.2083 1481.701
++9.2500 1481.922
++9.2917 1485.206
++9.3333 1485.253
++9.3750 1489.001
++9.4167 1489.000
++9.4583 1483.483
++9.5000 1480.265
++9.5417 1485.000
++9.5833 1477.832
++9.6250 1479.768
++9.6667 1474.918
++9.7083 1475.501
++9.7500 1475.276
++9.7917 1475.277
++9.8333 1471.972
++9.8750 1475.547
++9.9167 1475.000
++9.9583 1476.039
++10.0000 1475.968
++10.0417 1470.244
++10.0833 1470.879
++10.1250 1471.264
++10.1667 1474.246
++10.2083 1471.628
++10.2500 1469.121
++10.2917 1468.803
++10.3333 1462.834
++10.3750 1463.007
++10.4167 1461.041
++10.4583 1462.659
++10.5000 1462.090
++10.5417 1463.280
++10.5833 1471.494
++10.6250 1488.843
++10.6667 1477.890
++10.7083 1483.554
++10.7500 1483.554
++10.7917 1480.125
++10.8333 1480.133
++10.8750 1483.555
++10.9167 1483.553
++10.9583 1485.949
++11.0000 1487.502
++11.0417 1488.139
++11.0833 1487.320
++11.1250 1481.000
++11.1667 1481.000
++11.2083 1483.767
++11.2500 1481.239
++11.2917 1484.232
++11.3333 1490.030
++11.3750 1494.063
++11.4167 1499.551
++11.4583 1497.499
++11.5000 1499.356
++11.5417 1499.999
++11.5833 1505.000
++11.6250 1515.374
++11.6667 1517.456
++11.7083 1519.668
++11.7500 1519.695
++11.7917 1517.523
++11.8333 1518.389
++11.8750 1520.183
++11.9167 1520.000
++11.9583 1517.032
++12.0000 1511.343
++12.0417 1514.944
++12.0833 1500.784
++12.1250 1491.230
++12.1667 1491.072
++12.2083 1491.159
++12.2500 1490.000
++12.2917 1485.407
++12.3333 1480.732
++12.3750 1475.561
++12.4167 1475.504
++12.4583 1479.204
++12.5000 1475.266
++12.5417 1474.633
++12.5833 1475.798
++12.6250 1478.409
++12.6667 1476.095
++12.7083 1469.919
++12.7500 1470.218
++12.7917 1473.964
++12.8333 1475.001
++12.8750 1472.147
++12.9167 1475.351
++12.9583 1474.433
++13.0000 1474.432
++13.0417 1475.603
++13.0833 1474.294
++13.1250 1483.490
++13.1667 1481.429
++13.2083 1475.623
++13.2500 1480.438
++13.2917 1480.510
++13.3333 1475.343
++13.3750 1476.114
++13.4167 1476.940
++13.4583 1477.233
++13.5000 1476.370
++13.5417 1479.803
++13.5833 1481.699
++13.6250 1483.224
++13.6667 1477.142
++13.7083 1480.091
++13.7500 1479.176
++13.7917 1477.032
++13.8333 1473.003
++13.8750 1473.608
++13.9167 1473.483
++13.9583 1465.989
++14.0000 1470.904
++14.0417 1463.035
++14.0833 1468.901
++14.1250 1468.382
++14.1667 1468.501
++14.2083 1466.688
++14.2500 1465.127
++14.2917 1463.961
++14.3333 1464.525
++14.3750 1463.456
++14.4167 1461.929
++14.4583 1462.412
++14.5000 1459.914
++14.5417 1464.484
++14.5833 1461.286
++14.6250 1457.683
++14.6667 1449.900
++14.7083 1456.175
++14.7500 1456.521
++14.7917 1461.500
++14.8333 1461.534
++14.8750 1462.096
++14.9167 1460.658
++14.9583 1462.378
++15.0000 1466.975
++15.0417 1464.900
++15.0833 1463.763
++15.1250 1463.402
++15.1667 1463.603
++15.2083 1463.932
++15.2500 1458.777
++15.2917 1456.690
++15.3333 1458.206
++15.3750 1455.667
++15.4167 1454.365
++15.4583 1454.297
++15.5000 1461.177
++15.5417 1458.274
++15.5833 1458.073
++15.6250 1462.606
++15.6667 1462.750
++15.7083 1463.772
++15.7500 1464.716
++15.7917 1463.583
++15.8333 1461.973
++15.8750 1461.001
++15.9167 1458.007
++15.9583 1461.087
++16.0000 1454.437
++16.0417 1455.113
++16.0833 1449.024
++16.1250 1444.222
++16.1667 1445.659
++16.2083 1452.287
++16.2500 1453.373
++16.2917 1452.052
++16.3333 1450.000
++16.3750 1456.231
++16.4167 1459.037
++16.4583 1459.999
++16.5000 1456.147
++16.5417 1454.892
++16.5833 1443.957
++16.6250 1455.171
++16.6667 1454.448
++16.7083 1453.436
++16.7500 1456.069
++16.7917 1450.000
++16.8333 1448.840
++16.8750 1448.335
++16.9167 1451.581
++16.9583 1450.184
++17.0000 1451.034
++17.0417 1451.810
++17.0833 1449.998
++17.1250 1445.000
++17.1667 1445.024
++17.2083 1444.035
++17.2500 1449.994
++17.2917 1445.405
++17.3333 1450.547
++17.3750 1450.566
++17.4167 1448.862
++17.4583 1453.686
++17.5000 1452.221
++17.5417 1457.703
++17.5833 1449.586
++17.6250 1454.657
++17.6667 1460.096
++17.7083 1461.237
++17.7500 1459.793
++17.7917 1461.075
++17.8333 1461.076
++17.8750 1461.076
++17.9167 1464.948
++17.9583 1463.974
++18.0000 1465.296
++18.0417 1460.245
++18.0833 1463.375
++18.1250 1465.598
++18.1667 1469.710
++18.2083 1467.785
++18.2500 1468.925
++18.2917 1469.139
++18.3333 1469.999
++18.3750 1480.918
++18.4167 1480.648
++18.4583 1480.219
++18.5000 1475.908
++18.5417 1464.999
++18.5833 1464.488
++18.6250 1463.351
++18.6667 1462.371
++18.7083 1463.679
++18.7500 1467.106
++18.7917 1469.671
++18.8333 1479.111
++18.8750 1475.000
++18.9167 1474.306
++18.9583 1473.747
++19.0000 1475.289
++19.0417 1471.518
++19.0833 1452.221
++19.1250 1451.793
++19.1667 1448.325
++19.2083 1452.983
++19.2500 1455.001
++19.2917 1449.086
++19.3333 1445.804
++19.3750 1448.513
++19.4167 1450.774
++19.4583 1451.268
++19.5000 1449.896
++19.5417 1446.504
++19.5833 1450.000
++19.6250 1464.991
++19.6667 1472.357
++19.7083 1464.340
++19.7500 1456.430
++19.7917 1457.695
++19.8333 1457.404
++19.8750 1436.882
++19.9167 1436.410
++19.9583 1442.980
++20.0000 1429.333
++20.0417 1428.333
++20.0833 1436.999
++20.1250 1435.001
++20.1667 1439.999
++20.2083 1439.665
++20.2500 1438.338
++20.2917 1441.895
++20.3333 1439.664
++20.3750 1436.000
++20.4167 1436.001
++20.4583 1442.999
++20.5000 1449.000
++20.5417 1441.317
++20.5833 1430.007
++20.6250 1426.668
++20.6667 1429.135
++20.7083 1426.020
++20.7500 1425.012
++20.7917 1432.999
++20.8333 1425.000
++20.8750 1425.010
++20.9167 1425.010
++20.9583 1431.900
++21.0000 1433.000
++21.0417 1430.685
++21.0833 1427.071
++21.1250 1432.366
++21.1667 1434.999
++21.2083 1439.311
++21.2500 1434.333
++21.2917 1435.997
++21.3333 1427.995
++21.3750 1422.667
++21.4167 1419.658
++21.4583 1415.407
++21.5000 1421.890
++21.5417 1421.423
++21.5833 1416.366
++21.6250 1407.339
++21.6667 1403.049
++21.7083 1413.440
++21.7500 1411.001
++21.7917 1408.020
++21.8333 1406.024
++21.8750 1406.029
++21.9167 1406.027
++21.9583 1405.685
++22.0000 1405.573
++22.0417 1405.992
++22.0833 1407.469
++22.1250 1407.402
++22.1667 1410.437
++22.2083 1410.002
++22.2500 1409.108
++22.2917 1412.504
++22.3333 1414.164
++22.3750 1417.150
++22.4167 1415.015
++22.4583 1413.308
++22.5000 1410.963
++22.5417 1408.983
++22.5833 1409.999
++22.6250 1411.105
++22.6667 1411.107
++22.7083 1412.642
++22.7500 1412.640
++22.7917 1410.500
++22.8333 1407.198
++22.8750 1409.913
++22.9167 1411.059
++22.9583 1411.023
++23.0000 1420.058
++23.0417 1415.763
++23.0833 1421.840
++23.1250 1423.632
++23.1667 1428.192
++23.2083 1426.001
++23.2500 1425.001
++23.2917 1419.910
++23.3333 1418.457
++23.3750 1419.768
++23.4167 1416.180
++23.4583 1415.352
++23.5000 1413.523
++23.5417 1414.210
++23.5833 1414.761
++23.6250 1413.186
++23.6667 1407.136
++23.7083 1408.497
++23.7500 1401.989
++23.7917 1399.499
++23.8333 1399.752
++23.8750 1396.001
++23.9167 1397.366
++23.9583 1397.852
++24.0000 1396.179
++24.0417 1402.115
++24.0833 1404.307
++24.1250 1396.829
++24.1667 1399.005
++24.2083 1397.522
++24.2500 1392.312
++24.2917 1391.010
++24.3333 1392.623
++24.3750 1391.019
++24.4167 1396.739
++24.4583 1399.800
++24.5000 1398.335
++24.5417 1404.086
++24.5833 1403.398
++24.6250 1403.122
++24.6667 1407.867
++24.7083 1406.114
++24.7500 1407.414
++24.7917 1407.386
++24.8333 1407.002
++24.8750 1410.000
++24.9167 1411.770
++24.9583 1408.012
++25.0000 1406.487
++25.0417 1400.211
++25.0833 1396.593
++25.1250 1382.314
++25.1667 1387.375
++25.2083 1401.819
++25.2500 1408.103
++25.2917 1411.293
++25.3333 1415.387
++25.3750 1421.246
++25.4167 1419.353
++25.4583 1422.039
++25.5000 1423.000
++25.5417 1417.607
++25.5833 1419.797
++25.6250 1435.890
++25.6667 1454.574
++25.7083 1457.794
++25.7500 1454.953
++25.7917 1457.105
++25.8333 1450.157
++25.8750 1452.206
++25.9167 1453.300
++25.9583 1461.170
++26.0000 1459.915
++26.0417 1459.841
++26.0833 1460.690
++26.1250 1458.600
++26.1667 1458.783
++26.2083 1458.705
++26.2500 1455.561
++26.2917 1456.890
++26.3333 1455.244
++26.3750 1454.142
++26.4167 1451.692
++26.4583 1450.524
++26.5000 1447.563
++26.5417 1435.202
++26.5833 1434.860
++26.6250 1414.447
++26.6667 1379.280
++26.7083 1384.743
++26.7500 1376.629
++26.7917 1378.976
++26.8333 1384.502
++26.8750 1381.410
++26.9167 1375.392
++26.9583 1372.993
++27.0000 1379.810
++27.0417 1385.000
++27.0833 1381.298
++27.1250 1381.297
++27.1667 1375.999
++27.2083 1374.362
++27.2500 1375.441
++27.2917 1374.376
++27.3333 1370.000
++27.3750 1370.000
++27.4167 1378.001
++27.4583 1376.077
++27.5000 1375.030
++27.5417 1375.354
++27.5833 1372.127
++27.6250 1365.990
++27.6667 1372.665
++27.7083 1373.496
++27.7500 1367.000
++27.7917 1370.252
++27.8333 1370.066
++27.8750 1373.208
++27.9167 1373.160
++27.9583 1373.272
++28.0000 1372.970
++28.0417 1372.970
++28.0833 1373.872
++28.1250 1373.871
++28.1667 1371.851
++28.2083 1371.380
++28.2500 1373.736
++28.2917 1373.834
++28.3333 1373.876
++28.3750 1376.596
++28.4167 1374.287
++28.4583 1373.676
++28.5000 1373.850
++28.5417 1372.725
++28.5833 1373.468
++28.6250 1372.877
++28.6667 1369.334
++28.7083 1369.872
++28.7500 1370.293
++28.7917 1370.356
++28.8333 1370.180
++28.8750 1367.658
++28.9167 1368.196
++28.9583 1369.186
++29.0000 1370.006
++29.0417 1369.296
++29.0833 1369.991
++29.1250 1367.860
++29.1667 1370.001
++29.2083 1369.265
++29.2500 1369.336
++29.2917 1369.001
++29.3333 1371.042
++29.3750 1370.532
++29.4167 1370.664
++29.4583 1370.378
++29.5000 1372.318
++29.5417 1371.129
++29.5833 1370.667
++29.6250 1374.199
++29.6667 1373.513
++29.7083 1370.001
++29.7500 1369.356
++29.7917 1372.252
++29.8333 1370.127
++29.8750 1369.233
++29.9167 1342.843
++29.9583 1350.253
++30.0000 1351.999
++30.0417 1361.651
++30.0833 1359.877
++30.1250 1360.319
++30.1667 1354.186
++30.2083 1352.587
++30.2500 1345.943
++30.2917 1343.731
++30.3333 1337.452
++30.3750 1348.819
++30.4167 1340.945
++30.4583 1340.093
++30.5000 1346.400
++30.5417 1353.541
++30.5833 1351.148
++30.6250 1351.797
++30.6667 1363.997
++30.7083 1356.965
++30.7500 1349.998
++30.7917 1346.000
++30.8333 1351.998
++30.8750 1351.980
++30.9167 1355.000
++30.9583 1360.606
++31.0000 1359.577
++31.0417 1358.168
++31.0833 1355.675
++31.1250 1350.403
++31.1667 1345.152
++31.2083 1348.856
++31.2500 1348.976
++31.2917 1345.909
++31.3333 1351.195
++31.3750 1348.020
++31.4167 1345.666
++31.4583 1339.750
++31.5000 1343.300
++31.5417 1339.463
++31.5833 1333.909
++31.6250 1344.925
++31.6667 1325.567
++31.7083 1318.637
++31.7500 1324.876
++31.7917 1330.924
++31.8333 1330.159
++31.8750 1334.000
++31.9167 1334.725
++31.9583 1332.224
++32.0000 1332.450
++32.0417 1329.533
++32.0833 1331.956
++32.1250 1332.666
++32.1667 1334.451
++32.2083 1334.889
++32.2500 1339.819
++32.2917 1334.493
++32.3333 1340.907
++32.3750 1336.188
++32.4167 1337.287
++32.4583 1343.405
++32.5000 1341.849
++32.5417 1340.222
++32.5833 1337.825
++32.6250 1334.474
++32.6667 1343.493
++32.7083 1348.001
++32.7500 1352.273
++32.7917 1352.701
++32.8333 1350.299
++32.8750 1354.958
++32.9167 1351.584
++32.9583 1341.717
++33.0000 1343.647
++33.0417 1344.418
++33.0833 1338.123
++33.1250 1343.112
++33.1667 1341.627
++33.2083 1341.617
++33.2500 1340.254
++33.2917 1339.667
++33.3333 1341.333
++33.3750 1341.315
++33.4167 1339.676
++33.4583 1340.044
++33.5000 1330.430
++33.5417 1330.747
++33.5833 1325.932
++33.6250 1308.817
++33.6667 1308.161
++33.7083 1312.603
++33.7500 1314.019
++33.7917 1310.145
++33.8333 1310.708
++33.8750 1305.959
++33.9167 1307.223
++33.9583 1305.873
+diff --git a/assets/data/hist_return_1m.dat b/assets/data/hist_return_1m.dat
+new file mode 100644
+index 0000000..11c7f0d
+--- /dev/null
++++ b/assets/data/hist_return_1m.dat
+@@ -0,0 +1,42 @@
++tengah persen
++-20.00 0.9927
++-19.00 0.1205
++-18.00 0.0837
++-17.00 0.1062
++-16.00 0.1797
++-15.00 0.1552
++-14.00 0.2328
++-13.00 0.2737
++-12.00 0.3636
++-11.00 0.4146
++-10.00 0.5351
++-9.00 0.7414
++-8.00 0.9314
++-7.00 1.2378
++-6.00 1.5952
++-5.00 2.1712
++-4.00 2.7901
++-3.00 3.8502
++-2.00 4.9409
++-1.00 6.7587
++0.00 44.2350
++1.00 6.3175
++2.00 4.9082
++3.00 3.6439
++4.00 2.6410
++5.00 2.0058
++6.00 1.3971
++7.00 1.1785
++8.00 0.8762
++9.00 0.7292
++10.00 0.5004
++11.00 0.4187
++12.00 0.3370
++13.00 0.2860
++14.00 0.2921
++15.00 0.1614
++16.00 0.1920
++17.00 0.1083
++18.00 0.1123
++19.00 0.1491
++20.00 1.0356
+diff --git a/assets/data/ringkasan_data.txt b/assets/data/ringkasan_data.txt
+new file mode 100644
+index 0000000..80136d8
+--- /dev/null
++++ b/assets/data/ringkasan_data.txt
+@@ -0,0 +1,18 @@
++periode=2026-10-10 00:00 s.d. 2026-11-12 23:59
++tanggal_awal=2026-10-10 00:00:00
++tanggal_akhir=2026-11-12 23:59:00
++n_baris_mentah=48960
++n_bar=48960
++n_parsial=0
++n_bar_grid=48960
++n_hilang=0
++n_celah=0
++celah_terpanjang_mnt=0
++n_volume_nol=3215
++harga_min_juta=1302.2
++harga_maks_juta=1524.5
++n_return=48959
++return_nol_pct=17.6
++return_std_bp=7.06
++return_luar_batas_pct=1.86
++kurtosis_berlebih=59.2

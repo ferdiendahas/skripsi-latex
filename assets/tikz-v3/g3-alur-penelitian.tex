@@ -1,50 +1,44 @@
-% G3-1 Alur penelitian.
-% Sumber: diolah penulis; rincian collector dari
-% context/konteks_collector_data_v3.1.md.
+% G3-1 Alur penelitian dalam bentuk diagram alir (dua kolom agar muat satu
+% halaman bersama teks). Simbol: terminal (sudut bulat), proses (persegi
+% panjang), data (jajaran genjang), data tersimpan (silinder), keputusan
+% (belah ketupat). Sumber: diolah penulis; rincian collector dari
+% context/konteks_collector_data_v3.1.md; perulangan per konfigurasi sesuai
+% run.py di prediksi_btc.
 \begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
-    tahap/.style={draw,rectangle,text width=96mm,align=left,
-      inner sep=3pt,minimum height=11mm},
-    nomor/.style={draw,circle,inner sep=0pt,minimum size=7mm,font=\small},
-    panah/.style={-{Stealth[length=2.2mm]}}]
+    terminal/.style={draw,rectangle,rounded corners=3mm,minimum width=24mm,
+      minimum height=6mm,align=center},
+    proses/.style={draw,rectangle,text width=46mm,align=left,inner sep=2pt,
+      minimum height=7mm},
+    data/.style={draw,trapezium,trapezium left angle=72,trapezium right angle=108,
+      text width=36mm,align=center,inner sep=1.5pt,minimum height=6mm},
+    simpan/.style={draw,cylinder,shape border rotate=90,aspect=0.18,
+      minimum width=17mm,minimum height=10mm,align=center,inner sep=1pt},
+    putusan/.style={draw,diamond,aspect=4,align=center,inner sep=0pt,
+      text width=30mm,font=\scriptsize},
+    panah/.style={-{Stealth[length=2mm]}}]
 
-  % Tinggi kotak 11mm dan jarak antarbaris 17mm, seragam untuk semua langkah.
-  \node[nomor] at (6,0) {1};
-  \node[tahap] (t1) at (62,0)
-    {\textbf{Pengumpulan data.}\\
-     \textit{Candle} 1 menit BTC/IDR dari API publik Indodax.};
+  % kolom kiri
+  \node[terminal] (mulai) at (30,0) {Mulai};
+  \node[proses] (lit) at (30,9.5) {Studi literatur};
+  \node[data] (api) at (30,19) {API publik Indodax};
+  \node[proses] (t1) at (30,28.5) {1. Pengumpulan data};
+  \node[simpan] (db) at (30,40) {Basis data\\SQLite};
+  \node[proses] (t2) at (30,51.5) {2. Praproses data};
 
-  \node[nomor] at (6,17) {2};
-  \node[tahap] (t2) at (62,17)
-    {\textbf{Praproses.}\\
-     \textit{Candle} 5 menit dibentuk dari agregasi \textit{candle} 1 menit.};
+  % kolom kanan
+  \node[proses] (t3) at (96,0) {3. Pembentukan fitur dan target};
+  \node[proses] (t4) at (96,9.5) {4. Pembagian data};
+  \node[proses] (t5) at (96,19) {5. Optimasi \textit{hyperparameter}};
+  \node[proses] (t6) at (96,28.5) {6. Pelatihan dan prediksi};
+  \node[putusan] (cek) at (96,42) {Semua konfigurasi\\Tahap 1--4 selesai?};
+  \node[proses] (t7) at (96,56) {7. Evaluasi terhadap Naive};
+  \node[data] (hasil) at (96,65) {Hasil evaluasi};
+  \node[terminal] (selesai) at (96,74) {Selesai};
 
-  \node[nomor] at (6,34) {3};
-  \node[tahap] (t3) at (62,34)
-    {\textbf{Pembentukan fitur dan target.}\\
-     Fitur dari data sampai waktu $t$, target $r_{t,h} = \ln(P_{t+h}/P_t)$.};
-
-  \node[nomor] at (6,51) {4};
-  \node[tahap] (t4) at (62,51)
-    {\textbf{Pembagian data.}\\
-     Data latih dan data uji; \textit{purging} berbasis
-     waktu.};
-
-  \node[nomor] at (6,68) {5};
-  \node[tahap] (t5) at (62,68)
-    {\textbf{Optimasi \textit{hyperparameter}.}\\
-     Validasi \textit{walk-forward} di data latih.};
-
-  \node[nomor] at (6,85) {6};
-  \node[tahap] (t6) at (62,85)
-    {\textbf{Pelatihan model akhir dan prediksi.}\\
-     Konfigurasi ditetapkan, diuji sekali pada data uji.};
-
-  \node[nomor] at (6,102) {7};
-  \node[tahap] (t7) at (62,102)
-    {\textbf{Evaluasi terhadap Naive.}\\
-     MAE, RMSE, MAPE, akurasi arah, uji DM, dan koreksi Holm.};
-
-  \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7}{
-    \draw[panah] (t\a.south) -- (t\b.north);
+  \foreach \a/\b in {mulai/lit,lit/api,api/t1,t1/db,db/t2,t3/t4,t4/t5,t5/t6,t6/cek,t7/hasil,hasil/selesai}{
+    \draw[panah] (\a) -- (\b);
   }
+  \draw[panah] (t2.east) -- ++(6,0) |- (t3.west);
+  \draw[panah] (cek.south) -- node[anchor=west] {Ya} (t7.north);
+  \draw[panah] (cek.east) -- node[anchor=south,pos=0.4] {Tidak} (126,42) |- (t3.east);
 \end{tikzpicture}

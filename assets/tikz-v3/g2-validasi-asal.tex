@@ -1,0 +1,21 @@
+% G2-8 Satu titik asal vs beberapa titik asal (prequential in blocks).
+% Sumber konsep: tashman2000 (G5) dan cerqueira2020 (G4). Simbolik, tanpa angka.
+\begin{tikzpicture}[x=1mm,y=-1mm,font=\footnotesize,
+    latih/.style={draw,minimum height=4.5mm,inner sep=0pt,anchor=west},
+    uji/.style={draw,fill=black!25,minimum height=4.5mm,inner sep=0pt,anchor=west},
+    panah/.style={-{Stealth[length=2.2mm]}}]
+  \node[anchor=west,font=\small] at (0,0) {(a) Satu titik asal};
+  \node[latih,minimum width=80mm] at (22,6.5) {latih};
+  \node[uji,minimum width=20mm] at (102,6.5) {uji};
+  \node[anchor=east] at (20,6.5) {putaran 1};
+  \node[anchor=west,font=\small] at (0,14) {(b) Beberapa titik asal};
+  \foreach \i in {1,2,3,4}{
+    \pgfmathsetmacro{\y}{14 + 6.5*\i}
+    \pgfmathsetmacro{\w}{20*\i}
+    \node[anchor=east] at (20,\y) {putaran \i};
+    \node[latih,minimum width=\w mm] at (22,\y) {latih};
+    \node[uji,minimum width=20mm] at (22+\w,\y) {uji};
+  }
+  \draw[panah] (22,45) -- (124,45);
+  \node[anchor=north] at (73,46) {arah waktu};
+\end{tikzpicture}

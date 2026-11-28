@@ -28,67 +28,7 @@ sudah cukup banyak. Namun, penelitian-penelitian tersebut berbeda dalam
 beberapa hal, yaitu jenis data, target yang diprediksi, ada tidaknya
 \textit{tuning hyperparameter}, serta pembanding dan uji statistik yang
 dipakai. Karena perbedaan itu, hasil antarpenelitian sulit dibandingkan secara
-langsung.
-
-Tabel~\ref{tab:terdahulu} merangkum penelitian terdahulu yang paling dekat
-dengan penelitian ini, beserta posisi penelitian ini terhadapnya.
-
-\begin{table}[htbp]
-  \caption{Ringkasan Penelitian Terdahulu}
-  \label{tab:terdahulu}
-  \centering
-  \begingroup
-  \setstretch{1}\footnotesize
-  \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
-  \begin{tabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.14\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.11\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.13\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.11\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.09\textwidth}%
-                  |>{\raggedright\arraybackslash}p{0.11\textwidth}|}
-    \hline
-    \textbf{Peneliti} & \textbf{Data} & \textbf{Target} &
-    \textbf{Model boosting} & \textbf{\textit{Tuning}} &
-    \textbf{Naive harga} & \textbf{Uji signifikansi} \\
-    \hline
-    Rodrigues \& Machado \cite{rodrigues2025} & Menit, 30 hari & Harga &
-    XGBoost, LightGBM & \textit{Default} & Tidak & Wilcoxon \\
-    \hline
-    Wei dkk. \cite{wei2023} & Harian & Return & XGBoost, LightGBM &
-    Tidak dicatat & Tidak & MDM, MCS, SPA \\
-    \hline
-    Bouteska dkk. \cite{bouteska2024} & Harian & Return &
-    AdaBoost, LightGBM & Grid Search & Tidak & Friedman \\
-    \hline
-    Jaquart dkk. \cite{jaquart2021} & Menit, 1--60 menit & Arah &
-    XGBoost & Grid Search & Tidak & Diebold-Mariano \\
-    \hline
-    Akyildirim dkk. \cite{akyildirim2023} & 5--60 menit, \textit{futures} &
-    Arah & XGBoost & Tidak dicatat & Tidak & Uji $t$ \\
-    \hline
-    Puoti dkk. \cite{puoti2024} & Harian & Harga & XGBoost & Tidak disebut &
-    Ya & Tidak jelas \\
-    \hline
-    Oprea \& B\^{a}ra \cite{oprea2026} & Harian & Harga &
-    XGBoost (\textit{meta-learner}) & Tidak dicatat & Tidak &
-    Diebold-Mariano \\
-    \hline
-    \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
-    XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah \textit{default}) dan empat teknik &
-    Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
-    \hline
-  \end{tabular}
-  \endgroup
-  {\footnotesize Keterangan: MDM = uji Diebold-Mariano termodifikasi;
-  MCS = \textit{model confidence set}; SPA = \textit{superior predictive
-  ability}; HLN = koreksi Harvey-Leybourne-Newbold.\par}
-\end{table}
-
-Berdasarkan Tabel~\ref{tab:terdahulu}, sebagian besar penelitian terdahulu
-memakai data harian. Hanya satu penelitian yang memakai pembanding naive
-harga, dan belum ada penelitian yang memakai keempat model boosting
-sekaligus. Penelitian tersebut dapat dibagi menjadi tiga kelompok menurut
+langsung. Penelitian tersebut dapat dibagi menjadi tiga kelompok menurut
 jenis data dan target yang diprediksi.
 
 % [kartu A2, B1, B5, B8]
@@ -118,14 +58,84 @@ memprediksi nilai harga.
 
 % [kartu A1]
 Kelompok ketiga memprediksi nilai harga pada data per menit. Penelitian yang
-paling dekat dengan penelitian ini membandingkan beberapa model
-\textit{machine learning} pada data kripto per menit selama 30 hari
-\cite{rodrigues2025}. Model terbaiknya tetap stabil sampai horizon 240 menit,
-tetapi memburuk tajam pada horizon 1.440 menit. Model boosting pada penelitian
-tersebut memakai pengaturan \textit{default}, yaitu pengaturan bawaan dari
-pustakanya, sedangkan model jaringan sarafnya dituning.
-Akibatnya, perbandingan keduanya belum setara. Penelitian tersebut juga tidak
-memakai pembanding naive.
+paling dekat dengan penelitian ini, sekaligus menjadi acuan utama,
+membandingkan beberapa model \textit{machine learning} untuk memprediksi harga
+sepuluh aset kripto per menit selama 30 hari, dengan eksperimen utama pada
+Bitcoin \cite{rodrigues2025}. Data OHLCV pada penelitian tersebut diambil dari
+YFinance, dan horizon utamanya 60 menit. Model yang dibandingkan meliputi
+SARIMA, regresi linear, Random Forest, XGBoost, LightGBM, LSTM, dan GRU,
+dengan metrik antara lain MAE, RMSE, dan MAPE. Model terbaiknya, yaitu GRU, tetap stabil
+sampai horizon 240 menit, tetapi memburuk tajam pada horizon 1.440 menit.
+
+Model boosting pada penelitian acuan tersebut memakai pengaturan
+\textit{default}, yaitu pengaturan bawaan dari pustakanya, sedangkan model
+jaringan sarafnya dituning. Akibatnya, perbandingan keduanya belum setara,
+sehingga hasilnya belum dapat dipakai untuk menyimpulkan bahwa model boosting
+lebih buruk. Penelitian tersebut juga tidak memakai pembanding naive dan uji
+Diebold-Mariano. Selain itu, normalisasi dilakukan sebelum data dibagi,
+sehingga informasi dari data uji ikut masuk ke data latih. Kekurangan tersebut
+menjadi celah yang diisi oleh penelitian ini.
+
+Ketiga kelompok penelitian tersebut, beserta posisi penelitian ini
+terhadapnya, dirangkum pada Tabel~\ref{tab:terdahulu}.
+
+\begin{table}[htbp]
+  \caption{Ringkasan Penelitian Terdahulu}
+  \label{tab:terdahulu}
+  \centering
+  \begingroup
+  \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}\hyphenpenalty=50\exhyphenpenalty=50
+  \begin{tabular}{|>{\centering\arraybackslash}p{0.03\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.14\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.11\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.13\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.11\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.09\textwidth}%
+                  |>{\raggedright\arraybackslash}p{0.11\textwidth}|}
+    \hline
+    \textbf{No} & \textbf{Peneliti} & \textbf{Data} & \textbf{Target} &
+    \textbf{Model boosting} & \textbf{\textit{Tuning}} &
+    \textbf{Naive harga} & \textbf{Uji signifikansi} \\
+    \hline
+    1 & Rodrigues \& Machado \cite{rodrigues2025} & Menit, 30 hari & Harga &
+    XGBoost, LightGBM & \textit{Default} & Tidak & Wilcoxon \\
+    \hline
+    2 & Wei dkk. \cite{wei2023} & Harian & Return & XGBoost, LightGBM &
+    Tidak dicatat & Tidak & MDM, MCS, SPA \\
+    \hline
+    3 & Bouteska dkk. \cite{bouteska2024} & Harian & Return &
+    AdaBoost, LightGBM & Grid Search & Tidak & Friedman \\
+    \hline
+    4 & Jaquart dkk. \cite{jaquart2021} & Menit, 1--60 menit & Arah &
+    XGBoost & Grid Search & Tidak & Diebold-Mariano \\
+    \hline
+    5 & Akyildirim dkk. \cite{akyildirim2023} & 5--60 menit, \textit{futures} &
+    Arah & XGBoost & Tidak dicatat & Tidak & Uji $t$ \\
+    \hline
+    6 & Puoti dkk. \cite{puoti2024} & Harian & Harga & XGBoost & Tidak disebut &
+    Ya & Tidak jelas \\
+    \hline
+    7 & Oprea \& B\^{a}ra \cite{oprea2026} & Harian & Harga &
+    XGBoost (\textit{meta-learner}) & Tidak dicatat & Tidak &
+    Diebold-Mariano \\
+    \hline
+    -- & \textbf{Penelitian ini} & Menit (1 dan 5) & Harga &
+    XGBoost, LightGBM, CatBoost, AdaBoost & Enam metode (ditambah \textit{default}) dan empat teknik &
+    Ya & Diebold-Mariano (HLN) dan koreksi Holm \\
+    \hline
+  \end{tabular}
+  \endgroup
+  {\footnotesize Keterangan: MDM = uji Diebold-Mariano termodifikasi;
+  MCS = \textit{model confidence set}; SPA = \textit{superior predictive
+  ability}; HLN = koreksi Harvey-Leybourne-Newbold.\par}
+\end{table}
+
+Berdasarkan Tabel~\ref{tab:terdahulu}, sebagian besar penelitian terdahulu
+memakai data harian. Hanya satu penelitian yang memakai pembanding naive
+harga, dan belum ada penelitian yang memakai keempat model boosting
+sekaligus.
 
 
 \section{Bitcoin}
@@ -137,7 +147,7 @@ keuangan. Transaksi dicatat berurutan dalam rantai blok yang diamankan dengan
 \cite{nakamoto2008}.
 Bitcoin diperdagangkan setiap hari tanpa jam buka dan jam tutup.
 % CEK: butuh sumber (perdagangan 24 jam). Kartu H3 tidak memuatnya.
-Di Indodax, Bitcoin diperdagangkan dengan rupiah dalam pasangan BTC/IDR
+Harga Bitcoin dalam rupiah (BTC/IDR) tersedia melalui API publik Indodax
 \cite{indodaxapi}.
 
 % [kartu D4]
@@ -245,6 +255,48 @@ misalnya 1 menit atau 5 menit.
 Data OHLCV per menit sudah dipakai untuk memprediksi harga kripto jangka pendek
 \cite{rodrigues2025}.
 
+Data \textit{candle} dari API publik Indodax berbentuk tabel. Setiap baris
+mewakili satu \textit{candle}, dan kolomnya terdiri atas waktu awal
+\textit{candle} serta kelima nilai OHLCV. Cuplikan data asli \textit{candle}
+1 menit BTC/IDR yang dikumpulkan pada penelitian ini disajikan pada Tabel~\ref{tab:cuplikan}.
+
+\begin{table}[htbp]
+  \caption[Cuplikan Data \textit{Candle} 1 Menit BTC/IDR]{Cuplikan Data
+    \textit{Candle} 1 Menit BTC/IDR, 10 Oktober 2026 (UTC)}
+  \label{tab:cuplikan}
+  \centering
+  \begingroup
+    \setstretch{1}\footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{|c|c|r|r|r|r|r|}
+    \hline
+    \textbf{No} & \textbf{Waktu} & \textbf{\textit{Open} (Rp)} &
+    \textbf{\textit{High} (Rp)} & \textbf{\textit{Low} (Rp)} &
+    \textbf{\textit{Close} (Rp)} & \textbf{\shortstack{Volume\\(BTC)}} \\
+    \hline
+    1 & 00.00 & 1.476.999.000 & 1.476.999.000 & 1.475.037.000 & 1.475.037.000 & 0,00016762 \\
+    \hline
+    2 & 00.01 & 1.476.969.000 & 1.476.999.000 & 1.475.037.000 & 1.475.037.000 & 0,00045913 \\
+    \hline
+    3 & 00.02 & 1.476.933.000 & 1.476.933.000 & 1.476.933.000 & 1.476.933.000 & 0,00006756 \\
+    \hline
+    4 & 00.03 & 1.476.933.000 & 1.476.933.000 & 1.475.036.000 & 1.475.036.000 & 0,00087109 \\
+    \hline
+    5 & 00.04 & 1.475.036.000 & 1.476.932.000 & 1.475.036.000 & 1.476.932.000 & 0,00087943 \\
+    \hline
+    6 & 00.05 & 1.476.932.000 & 1.476.932.000 & 1.476.932.000 & 1.476.932.000 & 0,00000000 \\
+    \hline
+  \end{tabular}
+  \endgroup
+\end{table}
+
+Pada tabel tersebut, setiap \textit{candle} dicatat
+per menit menurut waktu awalnya. Volume perdagangan dalam satu menit dapat
+sangat kecil, bahkan bernilai nol seperti pada \textit{candle} 00.05. Pada
+\textit{candle} tanpa transaksi tersebut, nilai \textit{open}, \textit{high},
+\textit{low}, dan \textit{close} sama dengan harga penutupan menit
+sebelumnya. Penanganan \textit{candle} seperti ini dibahas pada Bab~III.
+
 \subsection{Return Logaritmik}
 \label{subsec:return}
 Penelitian ini tidak memprediksi harga secara langsung, melainkan memprediksi
@@ -280,10 +332,11 @@ sebelumnya \cite{hyndman2014fpp}.
 dan disebut juga \textit{continuously compounded return}. \textit{Return}
 logaritmik untuk beberapa periode sama dengan jumlah \textit{return}
 logaritmik setiap periodenya \cite{tsay2002}.
-\textit{Return} logaritmik sudah lazim dipakai sebagai target pada peramalan
+\textit{Return} logaritmik sudah dipakai sebagai target pada peramalan
 aset kripto \cite{bouteska2024}.
 
 \subsection{Horizon Prediksi dan Metode Naive}
+\label{subsec:naive}
 Horizon prediksi $h$ menyatakan seberapa jauh ke depan prediksi dibuat. Metode
 naive
 merupakan metode peramalan paling sederhana, yaitu menebak bahwa harga pada
@@ -297,15 +350,15 @@ waktu $t+h$ sama dengan observasi terakhir \cite{hyndman2006},
     waktu $t+h$,
   \item[$P_t$] harga pada waktu $t$.
 \end{keterangan}
-Gambar~\ref{fig:horizon-naive} membandingkan prediksi Naive dengan prediksi model pada horizon $h$.
+Perbandingan prediksi Naive dengan prediksi model pada horizon $h$ ditunjukkan pada Gambar~\ref{fig:horizon-naive}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-horizon-naive}
   \caption{Horizon Prediksi dan Pembanding Naive}
   \label{fig:horizon-naive}
 \end{figure}
-Pada Gambar~\ref{fig:horizon-naive}, data hanya tersedia sampai waktu $t$.
+Pada gambar tersebut, data hanya tersedia sampai waktu $t$.
 Naive memakai harga terakhir $P_t$ sebagai prediksi untuk waktu $t+h$,
 sedangkan model boosting memprediksi \textit{return} $\hat{r}_{t,h}$ lalu
 mengubahnya menjadi harga prediksi.
@@ -365,17 +418,16 @@ Nilai $\nu$ dan jumlah pohon $M$ berfungsi untuk mencegah model terlalu
 menyesuaikan diri dengan data latih \cite{friedman2001}. Nilai $\nu$ yang
 kecil membuat setiap pohon hanya memberi sumbangan kecil. Model jadi
 membutuhkan lebih banyak pohon, tetapi hasilnya lebih baik daripada sekadar
-membatasi jumlah pohon. Gambar~\ref{fig:gradient-boosting} menggambarkan
-proses penambahan pohon tersebut.
+membatasi jumlah pohon. Proses penambahan pohon tersebut ditunjukkan pada Gambar~\ref{fig:gradient-boosting}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-gradient-boosting}
   \caption[Skema \textit{Gradient Boosting}]{Skema \textit{Gradient Boosting}
     \cite{friedman2001}}
   \label{fig:gradient-boosting}
 \end{figure}
-Gambar~\ref{fig:gradient-boosting} menunjukkan bahwa proses dimulai dari model
+Berdasarkan Gambar~\ref{fig:gradient-boosting}, proses dimulai dari model
 awal $F_0(x)$. Pohon ditambahkan satu per satu sampai pohon ke-$M$, dan setiap
 pohon memperbaiki kesalahan model sebelumnya. Gabungan seluruh pohon menjadi
 model akhir.
@@ -392,8 +444,10 @@ deret sekaligus beserta data eksogen.
 % [kartu E5]
 XGBoost merupakan implementasi \textit{gradient boosting} yang menambahkan
 penalti pada fungsi objektifnya agar pohon tidak terlalu rumit
-\cite{chen2016}. Penalti tersebut disebut suku regularisasi. Untuk satu pohon,
-suku regularisasinya merupakan
+\cite{chen2016}.
+
+Penalti tersebut disebut suku regularisasi. Untuk satu pohon, suku
+regularisasinya merupakan
 \begin{equation}
   \Omega(f) = \gamma T + \tfrac{1}{2}\lambda \lVert \mathbf{w} \rVert^2 .
   \label{eq:xgbreg}
@@ -459,9 +513,9 @@ umumnya menghasilkan \textit{loss} yang lebih rendah daripada pertumbuhan
 \textit{level-wise}. Kelemahannya, pohon dapat mengalami \textit{overfitting}
 pada data berukuran kecil. Untuk mengatasinya, tersedia parameter \texttt{max\_depth}
 untuk membatasi kedalaman pohon \cite{lightgbmfeatures}.
-Gambar~\ref{fig:leafwise} membandingkan kedua cara pertumbuhan tersebut.
+Perbandingan kedua cara pertumbuhan tersebut ditunjukkan pada Gambar~\ref{fig:leafwise}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-leafwise-levelwise}
   \caption[Pertumbuhan Pohon \textit{Level-wise} dan
@@ -480,6 +534,7 @@ Bila \texttt{max\_depth} ditetapkan, maka \texttt{num\_leaves} sebaiknya
 bernilai lebih kecil daripada $2^{\texttt{max\_depth}}$ \cite{lightgbmtuning}.
 
 \subsection{CatBoost}
+\label{subsec:catboost}
 % [kartu E3]
 CatBoost merupakan implementasi \textit{gradient boosting} yang dirancang
 untuk mengatasi \textit{prediction shift} \cite{prokhorenkova2018}.
@@ -489,17 +544,12 @@ terjadi pada semua implementasi \textit{gradient boosting}.
 CatBoost mengatasi masalah tersebut dengan \textit{ordered boosting}. Data
 diurutkan secara acak, lalu model untuk setiap contoh dilatih hanya dari
 contoh yang berada sebelumnya dalam urutan itu \cite{prokhorenkova2018}.
-% CEK: kode prediksi_btc belum memasang has_time=True pada CatBoost. Bila
-% ditambahkan sebelum eksperimen final, tambahkan kalimat "Pada penelitian ini,
-% urutan tersebut mengikuti urutan waktu data." di sini dan sebut has_time di
-% Subbab Model yang Dibandingkan (Bab III).
 
 Pohon dasar CatBoost berupa pohon simetris atau \textit{oblivious}, yaitu
 seluruh simpul pada satu kedalaman memakai kondisi pemecahan yang sama
-\cite{prokhorenkova2018}. Gambar~\ref{fig:pohon-simetris} membandingkan pohon
-biasa dengan pohon simetris.
+\cite{prokhorenkova2018}. Perbedaan pohon biasa dan pohon simetris ditunjukkan pada Gambar~\ref{fig:pohon-simetris}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-pohon-simetris}
   \caption[Pohon Biasa dan Pohon Simetris (\textit{Oblivious})]{Pohon Biasa dan
@@ -510,8 +560,9 @@ Pada Gambar~\ref{fig:pohon-simetris}, pohon biasa dapat memakai kondisi yang
 berbeda pada setiap simpul. Pada pohon simetris, semua simpul pada kedalaman
 yang sama memakai kondisi yang sama, misalnya $x_2 < c_2$.
 
-Mode \textit{ordered} dilaporkan paling bermanfaat pada kumpulan data
-berukuran kecil. Pada pengujian dalam penelitian tersebut, CatBoost mengungguli XGBoost dan LightGBM \cite{prokhorenkova2018}. Data yang diuji bukan data deret waktu, sehingga hasilnya belum tentu berlaku pada penelitian ini.
+CatBoost menyediakan dua mode pelatihan, yaitu mode Ordered yang memakai
+\textit{ordered boosting} dan mode Plain. Mode Ordered dilaporkan paling
+bermanfaat pada kumpulan data berukuran kecil. Pada pengujian dalam penelitian tersebut, CatBoost mengungguli XGBoost dan LightGBM \cite{prokhorenkova2018}. Data yang diuji bukan data deret waktu, sehingga hasilnya belum tentu berlaku pada penelitian ini.
 
 \subsection{AdaBoost}
 % [kartu E2]
@@ -569,17 +620,19 @@ Bobot sampel kemudian diperbarui dengan
 Pelatihan berhenti bila $\bar{L} \ge 0{,}5$ \cite{drucker1997} atau bila
 jumlah pohon mencapai batas $M$ (\texttt{n\_estimators}) \cite{sklearnadaboost}.
 Prediksi akhir berupa median berbobot dari prediksi seluruh pohon, dengan bobot
-$\log(1/\beta_m)$ untuk pohon ke-$m$ \cite{drucker1997}. Gambar~\ref{fig:adaboost} merangkum alur
-tersebut.
+$\log(1/\beta_m)$ untuk pohon ke-$m$ \cite{drucker1997}. Alur tersebut dirangkum pada
+Gambar~\ref{fig:adaboost}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-adaboost-r2}
   \caption[Alur Satu Iterasi AdaBoost.R2]{Alur Satu Iterasi AdaBoost.R2
     \cite{drucker1997}}
   \label{fig:adaboost}
 \end{figure}
-Gambar~\ref{fig:adaboost} menunjukkan bahwa satu iterasi terdiri atas
+
+
+Berdasarkan Gambar~\ref{fig:adaboost}, satu iterasi terdiri atas
 pengambilan sampel ulang, pelatihan pohon, perhitungan \textit{loss}, dan
 pembaruan bobot. Iterasi diulang sampai jumlah pohon mencapai $M$ atau
 pelatihan berhenti karena $\bar{L} \ge 0{,}5$. Setelah itu, seluruh pohon
@@ -623,9 +676,9 @@ yang sama baik atau lebih baik daripada Grid Search dengan waktu komputasi
 lebih sedikit \cite{bergstra2012}. Alasannya, biasanya hanya sedikit \textit{hyperparameter} yang benar-benar
 berpengaruh, dan \textit{hyperparameter} yang berpengaruh itu berbeda
 antarkumpulan data.
-Gambar~\ref{fig:grid-random} menggambarkan perbedaan keduanya.
+Perbedaan keduanya ditunjukkan pada Gambar~\ref{fig:grid-random}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-grid-random}
   \caption[Perbandingan Grid Search dan Random Search]{Perbandingan Grid Search
@@ -760,11 +813,27 @@ Validasi silang biasa mengacak data, sehingga urutan waktunya rusak
 \cite{cerqueira2020}. Pada data deret waktu, data latih dan data validasi
 harus tetap berurutan. Salah satu caranya merupakan \textit{prequential in
 blocks}, yaitu model dilatih pada data awal, lalu diuji pada bagian data berikutnya. Data latihnya terus bertambah pada setiap putaran. Penelitian ini
-menyebut cara tersebut validasi \textit{walk-forward}.
+menyebut cara tersebut validasi \textit{walk-forward}. Titik asal merupakan batas
+antara data latih dan data uji. Perbedaan cara tersebut dengan evaluasi yang
+memakai satu titik asal ditunjukkan pada Gambar~\ref{fig:asal}.
+
+\begin{figure}[!htbp]
+  \centering
+  \gambartikz{assets/tikz-v3/g2-validasi-asal}
+  \caption[Evaluasi dengan Satu dan Beberapa Titik Asal]{Evaluasi dengan
+    Satu dan Beberapa Titik Asal \cite{tashman2000,cerqueira2020}}
+  \label{fig:asal}
+\end{figure}
+
+Pada Gambar~\ref{fig:asal}, evaluasi dengan satu titik asal hanya
+menghasilkan satu periode uji. Pada evaluasi dengan beberapa titik asal, data
+latih bertambah pada setiap putaran, dan periode uji bergeser ke data
+berikutnya. Dengan cara itu, akurasi dinilai pada beberapa periode, bukan
+hanya pada satu periode.
 
 % [kartu G5]
 Evaluasi yang hanya memakai satu titik awal atau satu periode uji rentan
-terhadap kejadian unik pada periode tersebut \cite{tashman2000}. Akurasi
+terhadap kejadian unik pada periode tersebut. Akurasi
 relatif antarmetode juga dapat berubah ketika periode ujinya diganti
 \cite{tashman2000}. Temuan tersebut menjadi dasar penggunaan validasi
 \textit{walk-forward} dengan beberapa \textit{fold} pada penelitian ini.
@@ -795,7 +864,20 @@ tidak dipakai.
 Kinerja prediksi diukur dengan membandingkan harga prediksi terhadap harga
 sebenarnya pada data uji. Galat prediksi pada waktu $t$ merupakan
 $e_t = P_{t+h} - \hat{P}_{t+h}$, dengan $n$ menyatakan banyaknya data uji
-\cite{hyndman2006}.
+\cite{hyndman2006}. Galat tersebut ditunjukkan pada Gambar~\ref{fig:galat}.
+
+\begin{figure}[!htbp]
+  \centering
+  \gambartikz{assets/tikz-v3/g2-galat}
+  \caption{Galat Prediksi pada Setiap Waktu}
+  \label{fig:galat}
+\end{figure}
+
+Pada gambar tersebut, galat $e_t$ merupakan jarak antara
+harga sebenarnya dan harga prediksi pada setiap waktu. Galat dapat bernilai
+positif atau negatif, tergantung apakah prediksi berada di bawah atau di atas
+harga sebenarnya. Metrik pada subbab berikut dihitung dari kumpulan galat
+tersebut.
 
 \subsection{Mean Absolute Error}
 \label{subsec:mae}
@@ -814,7 +896,6 @@ Satuan MAE sama dengan satuan variabel yang diukur \cite{willmott2005},
 sehingga pada penelitian ini MAE bersatuan rupiah dan mudah ditafsirkan.
 MAE juga lebih \textit{robust} terhadap pencilan dibandingkan ukuran yang
 berbasis kuadrat \cite{hodson2022}.
-
 % [kartu I5, I6]
 Karena nilai MAE bergantung pada skala harga, penelitian ini juga memakai
 ukuran relatif terhadap Naive. Ukuran tersebut merupakan turunan dari
@@ -895,7 +976,7 @@ Ukuran ini mengikuti definisi akurasi arah sebagai proporsi arah perubahan
 yang tertebak benar \cite{pesaran1992}.
 Ukuran ini dipakai sebagai metrik pendukung saja, karena prediksi dapat menebak
 arah dengan benar tetapi tetap meleset jauh dalam besaran. Akurasi arah sudah
-lazim dipakai pada penelitian prediksi Bitcoin jangka pendek
+dipakai pada penelitian prediksi Bitcoin jangka pendek
 \cite{jaquart2021}.
 
 
@@ -937,7 +1018,6 @@ merupakan
   \item[$n$] banyaknya data uji.
 \end{keterangan}
 Nilai DM negatif berarti prediksi pertama memiliki \textit{loss} lebih kecil.
-
 % [kartu G1]
 Pada sampel berukuran kecil, statistik uji tersebut cenderung menolak
 hipotesis nol terlalu sering. Koreksi Harvey-Leybourne-Newbold (HLN) yang dipakai berupa pengali
@@ -950,7 +1030,7 @@ hipotesis nol terlalu sering. Koreksi Harvey-Leybourne-Newbold (HLN) yang dipaka
   \item[$h_b$] horizon dalam satuan \textit{candle}, yaitu $h$ dibagi
     \textit{time frame} \textit{candle} (1 atau 5 menit).
 \end{keterangan}
-dengan nilai kritis diambil dari distribusi $t$ berderajat bebas $n-1$
+Nilai kritisnya diambil dari distribusi $t$ berderajat bebas $n-1$
 \cite{harvey1997}.
 
 % [kartu G3]
@@ -963,16 +1043,32 @@ karena kebetulan. Koreksi Holm dipakai untuk mengendalikan kemungkinan tersebut
 $p_{(1)} \le p_{(2)} \le \dots \le p_{(J)}$. Hipotesis ke-$i$ ditolak bila
 \begin{equation}
   p_{(i)} \le \frac{\alpha}{J - i + 1},
-  \label{eq:holm}
+    \label{eq:holm}
 \end{equation}
-dimulai dari $i = 1$. Pengujian berhenti pada hipotesis pertama yang gagal
-ditolak, dan seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
-Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
 \begin{keterangan}
   \item[$p_{(i)}$] nilai $p$ terkecil ke-$i$,
   \item[$J$] banyaknya uji dalam satu keluarga uji, yaitu kelompok uji yang dikoreksi bersama,
   \item[$\alpha$] taraf signifikansi, yaitu 0,05.
 \end{keterangan}
+Pengujian dimulai dari $i = 1$ dan berhenti pada hipotesis pertama yang gagal
+ditolak. Seluruh hipotesis sesudahnya tidak ditolak \cite{holm1979}.
+Simbol $J$ dipakai karena simbol $n$ sudah dipakai untuk banyaknya data uji.
+Seluruh langkah uji pada subbab ini dirangkum pada Gambar~\ref{fig:alurdm}.
+
+\begin{figure}[!htbp]
+  \centering
+  \gambartikz{assets/tikz-v3/g2-diebold-mariano}
+  \caption{Alur Uji Diebold-Mariano, Koreksi HLN, dan Koreksi Holm}
+  \label{fig:alurdm}
+\end{figure}
+
+Berdasarkan Gambar~\ref{fig:alurdm}, uji dimulai dari galat dua prediksi
+yang dibandingkan. Galat tersebut diubah menjadi selisih \textit{loss} $d_t$
+pada Persamaan~\eqref{eq:dmstat}, lalu dihitung statistik DM pada
+Persamaan~\eqref{eq:dm}. Statistik tersebut
+dikoreksi dengan HLN pada Persamaan~\eqref{eq:hln} untuk mendapatkan nilai $p$.
+Nilai $p$ dari banyak uji kemudian dikoreksi bersama dengan koreksi Holm pada
+Persamaan~\eqref{eq:holm}.
 
 
 \section{Research Gap Penelitian}
@@ -1040,20 +1136,37 @@ angka metrik. Uji yang sama juga dipakai untuk membandingkan antarkonfigurasi,
 misalnya hasil \textit{tuning} terhadap pengaturan \textit{default}, dengan
 koreksi Holm pada setiap keluarga uji.
 
-Gambar~\ref{fig:kerangka} menyajikan kerangka pemikiran penelitian ini, mulai
-dari masalah sampai keluaran yang diharapkan.
+Seluruh uraian pada bab ini dirangkum dalam kerangka pemikiran pada
+Gambar~\ref{fig:kerangka}, mulai dari masalah sampai keluaran yang diharapkan.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
   \centering
   \gambartikz{assets/tikz-v3/g2-kerangka-pemikiran}
   \caption{Kerangka Pemikiran Penelitian}
   \label{fig:kerangka}
 \end{figure}
 
-Kerangka pemikiran pada Gambar~\ref{fig:kerangka} mengarah pada tiga rumusan masalah. Rumusan
-masalah pertama membahas cara membangun model XGBoost, LightGBM, CatBoost,
-dan AdaBoost untuk memprediksi harga BTC/IDR pada berbagai
-horizon prediksi. Rumusan masalah kedua membahas pengaruh optimasi
-\textit{hyperparameter} terhadap akurasi keempat model tersebut. Rumusan
-masalah ketiga membahas model yang memiliki performa terbaik berdasarkan
-nilai MAE, RMSE, dan MAPE dibandingkan dengan Naive.
+Kerangka pemikiran tersebut terdiri atas lima lajur yang dibaca dari atas ke bawah. Lajur pertama merupakan masalah.
+Harga BTC/IDR jangka pendek sulit diprediksi, dan Naive sulit dikalahkan,
+seperti dibahas pada Subbab~\ref{sec:terdahulu} dan Subbab~\ref{subsec:naive}.
+
+Lajur kedua merupakan celah penelitian. Penelitian pada data per menit
+umumnya memprediksi arah harga, atau memakai model boosting dengan pengaturan
+\textit{default} tanpa pembanding naive dan tanpa uji Diebold-Mariano.
+Rinciannya dimuat pada Tabel~\ref{tab:gap}.
+
+Lajur ketiga merupakan pendekatan yang dipakai untuk menjawab rumusan masalah
+pertama dan kedua. Keempat model boosting dibangun pada \textit{candle}
+BTC/IDR dengan \textit{time frame} 1 dan 5 menit dan beberapa horizon
+prediksi. Model tersebut lalu dioptimasi dengan beberapa metode optimasi dan
+diuji dengan panjang data latih yang berbeda.
+
+Lajur keempat merupakan evaluasi yang dipakai untuk menjawab rumusan masalah
+ketiga. Prediksi setiap model diukur dengan MAE, RMSE, MAPE, dan akurasi arah.
+Selisihnya terhadap Naive diuji dengan uji Diebold-Mariano yang dikoreksi
+dengan HLN dan Holm.
+
+Lajur kelima merupakan keluaran yang diharapkan, yaitu jawaban atas ketiga
+rumusan masalah. Keluaran tersebut berupa cara membangun keempat model,
+pengaruh optimasi \textit{hyperparameter} terhadap akurasinya, dan model
+dengan performa terbaik dibandingkan dengan Naive.

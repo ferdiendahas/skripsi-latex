@@ -26,7 +26,7 @@ Supaya ringkas, harga ditulis dalam juta rupiah.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|l|r|r|r|r|r|}
     \hline
-    Waktu & Open & High & Low & Close & Volume \\
+    \textbf{Waktu} & \textbf{Open} & \textbf{High} & \textbf{Low} & \textbf{Close} & \textbf{Volume} \\
     \hline
     10.00 & $1.000{,}0$ & $1.000{,}3$ & $999{,}9$ & $1.000{,}1$ & $0{,}1$ \\
     10.01 & $1.000{,}1$ & $1.000{,}5$ & $1.000{,}0$ & $1.000{,}4$ & $0{,}2$ \\
@@ -84,7 +84,7 @@ baris data uji pada Tabel~\ref{tab:man-uji}.
   \setlength{\tabcolsep}{6pt}
   \begin{tabular}{|c|r|r|r|r|}
     \hline
-    $j$ & $x_1$ (bp) & $x_2$ (bp) & $y$ (bp) & $g_j$ \\
+    \textbf{$j$} & \textbf{$x_1$ (bp)} & \textbf{$x_2$ (bp)} & \textbf{$y$ (bp)} & \textbf{$g_j$} \\
     \hline
     1 & $-1$ & $-2$ & $-3$ & $3$ \\
     2 & $-2$ & $-1$ & $-3$ & $3$ \\
@@ -103,7 +103,7 @@ Berdasarkan Tabel~\ref{tab:man-latih}, tiga baris pertama memiliki
 \textit{return} target positif. Kolom $g_j$ dijelaskan pada subbab berikutnya.
 
 \subsection{Satu Iterasi XGBoost}
-Contoh ini memakai $\lambda = 1$ dan $\gamma = 0$. Nilai awal $F_0$ diambil dari
+Contoh ini memakai pohon dengan kedalaman 1, $\lambda = 1$, dan $\gamma = 0$. Nilai awal $F_0$ diambil dari
 rata-rata target data latih, yaitu $F_0 = 0/6 = 0$. Karena \textit{loss}
 kuadrat, $g_j = F_0 - y_j = -y_j$ dan $q_j = 1$, seperti pada kolom $g_j$
 Tabel~\ref{tab:man-latih}. Setiap nilai tengah antara dua nilai fitur
@@ -120,7 +120,7 @@ dengan Persamaan~\eqref{eq:xgbgain} dan dimuat pada Tabel~\ref{tab:man-gain}.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|l|l|r|r|r|r|r|}
     \hline
-    Kondisi & Baris kiri & $G_{\text{kiri}}$ & $Q_{\text{kiri}}$ & $G_{\text{kanan}}$ & $Q_{\text{kanan}}$ & \textit{Gain} \\
+    \textbf{Kondisi} & \textbf{Baris kiri} & \textbf{$G_{\text{kiri}}$} & \textbf{$Q_{\text{kiri}}$} & \textbf{$G_{\text{kanan}}$} & \textbf{$Q_{\text{kanan}}$} & \textbf{\textit{Gain}} \\
     \hline
     $x_1 < -1{,}5$ & 2 & $3$ & $1$ & $-3$ & $5$ & $3{,}00$ \\
     $x_1 < 0$ & 1, 2, 3 & $6$ & $3$ & $-6$ & $3$ & \textbf{9,00} \\
@@ -171,7 +171,7 @@ Hasilnya dimuat pada Tabel~\ref{tab:man-lgbm}.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|l|l|l|r|r|r|}
     \hline
-    Daun & Kondisi & Pembagian baris & $G_{\text{kiri}}$, $G_{\text{kanan}}$ & $Q_{\text{kiri}}$, $Q_{\text{kanan}}$ & \textit{Gain} \\
+    \textbf{Daun} & \textbf{Kondisi} & \textbf{Pembagian baris} & \textbf{$G_{\text{kiri}}$, $G_{\text{kanan}}$} & \textbf{$Q_{\text{kiri}}$, $Q_{\text{kanan}}$} & \textbf{\textit{Gain}} \\
     \hline
     Kiri ($x_1 < 0$) & $x_1 < -1{,}5$ & \{2\} dan \{1, 3\} & $3$, $3$ & $1$, $2$ & $-0{,}75$ \\
     Kiri ($x_1 < 0$) & $x_2 < -1{,}5$ & \{1\} dan \{2, 3\} & $3$, $3$ & $1$, $2$ & $-0{,}75$ \\
@@ -219,7 +219,7 @@ $\lambda = 1$. Hasilnya dimuat pada Tabel~\ref{tab:man-cat}.
   \setlength{\tabcolsep}{6pt}
   \begin{tabular}{|l|r|r|r|}
     \hline
-    Kondisi & \textit{Gain} simpul kiri & \textit{Gain} simpul kanan & Jumlah \\
+    \textbf{Kondisi} & \textbf{\textit{Gain} simpul kiri} & \textbf{\textit{Gain} simpul kanan} & \textbf{Jumlah} \\
     \hline
     $x_1 < -1{,}5$ & $-0{,}75$ & $0{,}00$ & $-0{,}75$ \\
     $x_1 < 1{,}5$ & $0{,}00$ & $-0{,}83$ & $-0{,}83$ \\
@@ -259,7 +259,7 @@ Tabel~\ref{tab:man-ordered}.
   \setlength{\tabcolsep}{6pt}
   \begin{tabular}{|c|c|c|r|}
     \hline
-    $j$ & Daun & Baris sebelumnya di daun yang sama & Nilai untuk baris $j$ (bp) \\
+    \textbf{$j$} & \textbf{Daun} & \textbf{Baris sebelumnya di daun yang sama} & \textbf{Nilai untuk baris $j$ (bp)} \\
     \hline
     1 & A & -- & $0$ \\
     2 & A & 1 & $-3$ \\
@@ -275,10 +275,14 @@ Tabel~\ref{tab:man-ordered}.
 Berdasarkan Tabel~\ref{tab:man-ordered}, target baris ke-$j$ tidak pernah ikut
 menentukan nilai untuk baris itu sendiri. Sebagai contoh, nilai untuk baris 2
 hanya berasal dari baris 1. Model akhir untuk data uji tetap memakai nilai
-daun dari seluruh data latih.
+daun dari seluruh data latih. Ilustrasi ini hanya menjelaskan ide
+\textit{ordered boosting}. Eksperimen penelitian ini memakai mode Plain,
+sehingga nilai daun dan prediksi CatBoost pada contoh ini juga dihitung dengan
+mode Plain.
 
 \subsection{Satu Iterasi AdaBoost.R2}
-Pohon AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
+Sebagai penyederhanaan, contoh ini memakai pohon dengan kedalaman 1. Pohon
+AdaBoost.R2 dipilih dengan jumlah kuadrat galat terkecil. Supaya mudah
 diikuti, contoh ini memakai seluruh data latih tanpa pengambilan sampel ulang,
 sehingga $p_j = 1/6$, dan memakai \textit{loss} linear. Pemecahan terbaik
 merupakan $x_1 < 0$ dengan jumlah kuadrat galat 6. Prediksi di daun kiri
@@ -296,7 +300,7 @@ Persamaan~\eqref{eq:adaloss} dan dimuat pada Tabel~\ref{tab:man-ada}.
   \setlength{\tabcolsep}{6pt}
   \begin{tabular}{|c|r|r|r|r|r|}
     \hline
-    $j$ & $y$ (bp) & $\hat{y}$ (bp) & $|\hat{y}-y|$ & $L_j$ & $w_j$ baru \\
+    \textbf{$j$} & \textbf{$y$ (bp)} & \textbf{$\hat{y}$ (bp)} & \textbf{$|\hat{y}-y|$} & \textbf{$L_j$} & \textbf{$w_j$ baru} \\
     \hline
     1 & $-3$ & $-2$ & $1$ & $0{,}5$ & $0{,}7071$ \\
     2 & $-3$ & $-2$ & $1$ & $0{,}5$ & $0{,}7071$ \\
@@ -337,7 +341,7 @@ dan $y$ ditulis dalam bp.
   \setlength{\tabcolsep}{6pt}
   \begin{tabular}{|c|r|r|r|r|r|}
     \hline
-    Baris & $x_1$ & $x_2$ & $y$ & $P_t$ (Rp) & $P_{t+1}$ (Rp) \\
+    \textbf{Baris} & \textbf{$x_1$} & \textbf{$x_2$} & \textbf{$y$} & \textbf{$P_t$ (Rp)} & \textbf{$P_{t+1}$ (Rp)} \\
     \hline
     U1 & $-2$ & $-1$ & $-2$ & $1.000.000.000$ & $999.800.000$ \\
     U2 & $1$ & $2$ & $1$ & $999.800.000$ & $999.900.000$ \\
@@ -363,7 +367,7 @@ harga dianggap tidak berubah.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|c|r|r|r|r|r|}
     \hline
-    Baris & Naive & XGBoost & LightGBM & CatBoost & AdaBoost.R2 \\
+    \textbf{Baris} & \textbf{Naive} & \textbf{XGBoost} & \textbf{LightGBM} & \textbf{CatBoost} & \textbf{AdaBoost.R2} \\
     \hline
     U1 & $0$ & $-0{,}75$ & $-1$ & $-1{,}5$ & $-2$ \\
     U2 & $0$ & $0{,}75$ & $0{,}75$ & $1$ & $2$ \\
@@ -395,7 +399,7 @@ Hasilnya dimuat pada Tabel~\ref{tab:man-galat}.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|c|r|r|r|r|r|}
     \hline
-    Baris & Naive & XGBoost & LightGBM & CatBoost & AdaBoost.R2 \\
+    \textbf{Baris} & \textbf{Naive} & \textbf{XGBoost} & \textbf{LightGBM} & \textbf{CatBoost} & \textbf{AdaBoost.R2} \\
     \hline
     U1 & $-200.000$ & $-125.000$ & $-100.000$ & $-50.000$ & $0$ \\
     U2 & $100.000$ & $25.000$ & $25.000$ & $0$ & $-100.000$ \\
@@ -442,7 +446,7 @@ Tabel~\ref{tab:man-metrik} merangkum seluruh metrik.
   \setlength{\tabcolsep}{3pt}
   \begin{tabular}{|l|r|r|r|r|r|}
     \hline
-    Model & MAE (Rp) & RMSE (Rp) & MAPE (\%) & MAE vs Naive (\%) & Akurasi arah (\%) \\
+    \textbf{Model} & \textbf{MAE (Rp)} & \textbf{RMSE (Rp)} & \textbf{MAPE (\%)} & \textbf{\shortstack{MAE vs\\Naive (\%)}} & \textbf{\shortstack{Akurasi\\arah (\%)}} \\
     \hline
     Naive & $133.333{,}33$ & $141.421{,}36$ & $0{,}0133$ & -- & -- \\
     XGBoost & $108.333{,}33$ & $125.000{,}00$ & $0{,}0108$ & $-18{,}75$ & $66{,}67$ \\
@@ -491,7 +495,7 @@ keempat model.
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{|l|r|r|r|r|r|}
     \hline
-    Model & $\bar{d}$ & $\hat{\phi}_0$ & DM & DM$^{*}$ & $p$ \\
+    \textbf{Model} & \textbf{$\bar{d}$} & \textbf{$\hat{\phi}_0$} & \textbf{DM} & \textbf{DM$^{*}$} & \textbf{$p$} \\
     \hline
     XGBoost & $-25.000{,}00$ & $5.000.000.000{,}00$ & $-0{,}6124$ & $-0{,}5000$ & $0{,}6667$ \\
     LightGBM & $-58.333{,}33$ & $1.805.555.555{,}56$ & $-2{,}3778$ & $-1{,}9415$ & $0{,}1917$ \\

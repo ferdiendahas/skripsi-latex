@@ -4,6 +4,11 @@
 % Kelas memberi caption tabel justification=raggedright sehingga rata kiri,
 % padahal tabelnya sendiri di tengah. Samakan dengan caption gambar.
 \captionsetup[table]{justification=centering,singlelinecheck=true}
+% Grafik data (Gambar statistik data di Bab III) digambar dengan pgfplots.
+\usepackage{pgfplots}
+% Gambar dan tabel tidak pernah muncul sebelum paragraf yang merujuknya.
+\usepackage{flafter}
+\pgfplotsset{compat=1.18}
 
 % Tata letak float. Nilai bawaan LaTeX memaksa tabel atau gambar besar pindah
 % ke halaman tersendiri, sehingga muncul celah kosong di halaman sebelumnya.

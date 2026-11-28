@@ -1,0 +1,17 @@
+% G2-9 Galat prediksi e_t untuk MAE dan RMSE. Simbolik, tanpa angka.
+\begin{tikzpicture}[x=1mm,y=1mm,font=\footnotesize,
+    asli/.style={circle,fill=black,inner sep=1.4pt},
+    pred/.style={circle,draw=black,fill=white,inner sep=1.4pt}]
+  \draw[-{Stealth[length=2.2mm]}] (0,0) -- (110,0) node[anchor=west] {waktu};
+  \draw[-{Stealth[length=2.2mm]}] (0,0) -- (0,40) node[anchor=south] {harga};
+  \foreach \x/\a/\p [count=\k] in {15/24/12, 35/20/32, 55/14/26, 75/34/22, 95/27/33}{
+    \draw[densely dashed] (\x,\a) -- (\x,\p);
+    \node[asli] at (\x,\a) {};
+    \node[pred] at (\x,\p) {};
+    \node[anchor=north] at (\x,0) {$t_{\k}$};
+  }
+  \node[anchor=west] at (36.5,26) {$e_{t_2}$};
+  \node[asli,label={[font=\footnotesize]right:harga sebenarnya $P_{t+h}$}] at (8,-12) {};
+  \node[pred,label={[font=\footnotesize]right:harga prediksi $\hat{P}_{t+h}$}] at (58,-12) {};
+  \draw[densely dashed] (5,-18) -- (11,-18) node[anchor=west] {galat $e_t$};
+\end{tikzpicture}
