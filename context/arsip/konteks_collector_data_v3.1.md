@@ -419,7 +419,7 @@ echo "  sudo -u $USR $APP/venv/bin/python $APP/cek_status.py"
 set -euo pipefail
 DB=${INDODAX_DB:-/opt/indodax/data/indodax_btcidr.db}
 LOG=$(dirname "$DB")/collector.log
-VPS_IP=43.173.15.230
+VPS_IP=<IP_VPS>                 # disamarkan (28 Nov 2026)
 RUN=${INDODAX_RUN-"sudo -u collector"}        # baca DB sebagai user collector
 q() { $RUN sqlite3 "$@"; }
 WIB="'unixepoch','+7 hours'"

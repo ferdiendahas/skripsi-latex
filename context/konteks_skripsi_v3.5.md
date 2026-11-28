@@ -81,7 +81,7 @@ Folder kode lama `/Users/ea/Documents/Skripsi BTC/skripsi_rv` berisi pipeline re
 2. ~~Mencari paper referensi untuk keempat metode boosting~~ — selesai (kartu E1–E10).
 3. ~~Menentukan metode optimasi hyperparameter yang dipakai~~ — selesai: 7 metode optimasi + 4 teknik tambahan (Bab III).
 4. ~~Menentukan fitur input dan metrik evaluasi~~ — selesai, lihat Bab III 3.5 dan 3.8.
-5. Menyusun ulang praskripsi Bab 1–3. — draft lengkap (commit `30265eb`, 25 Nov 2026). Data primer sudah diputuskan 17 Nov. Perbaikan review v5 dan penyesuaian panduan format penulisan sudah masuk (27 Nov 2026); hal yang perlu keputusan pembimbing dicatat di `hasil_riset_v3.8.md` Bagian IX no. 9. Masih menunggu dosen: aturan model terbaik RM3, QMC 30/32, multi-*seed*. CatBoost diputuskan memakai mode Plain (27 Nov 2026), sehingga `has_time` tidak diperlukan.
+5. Menyusun ulang praskripsi Bab 1–3. — draft lengkap (commit `130cfdd`, 28 Nov 2026). Data primer sudah diputuskan 17 Nov. Perbaikan review v5 dan penyesuaian panduan format penulisan sudah masuk (27 Nov 2026); hal yang perlu keputusan pembimbing dicatat di `hasil_riset_v3.9.md` Bagian IX no. 9. Masih menunggu dosen: aturan model terbaik RM3, QMC 30/32, multi-*seed*. CatBoost diputuskan memakai mode Plain (27 Nov 2026), sehingga `has_time` tidak diperlukan.
 6. Menetapkan judul final bersama dosen.
 7. ~~Menetapkan tanggal pasti periode data~~ — selesai 17 Nov 2026 (10 Okt 2026 – 10 Feb 2027). Ada/tidaknya aplikasi web masih menunggu dosen.
 8. ~~Memutuskan skor Tahap 1–2: rata-rata atau median 4 model~~ — selesai 16 Nov 2026: **median** (Bab III Skenario Pengujian; `ringkas.py` di `main` commit `8524462`).
